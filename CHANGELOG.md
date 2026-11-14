@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.20
+
+Plainer words in the editor.
+
+- "Zone" is now "level" everywhere: a column is a stack of levels. "Opening" is now "niche", and "Doors + shelves" is "Cupboard with doors".
+- The setting on open shelves that was also called "Niche" is now "Use these shelves as" (plain shelves, bar, coffee corner).
+- Plain names for the technical settings: "Carcass" → "Sides, tops & bottoms", "Skirts" → "Closing strips", "Clear width" → "Inside width", "Scribe allowance" → "Extra to trim against the wall", "Saw kerf" → "Saw blade thickness", "Carcass fasteners" → "How the boards are joined", "Grommet" → "Cable hole", and more.
+- "Dividers" in the editor are called "uprights", matching "Split side by side".
+
 ## v0.19
 
 Simpler budget and simpler side-by-side splitting.
