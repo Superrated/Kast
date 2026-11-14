@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.29
+
+- Panel wall: it now has a toe kick like the cabinets. The panel stops above the plinth and the set-back plinth board runs on underneath it, in one line with the rest. The side next to the panel no longer runs down to the floor. Switch it off under the panel wall's settings ("Toe kick at the bottom") if you want the panel down to the floor again.
+- Faux-door panel walls get the same plinth; before, there was an open gap under them.
+
 ## v0.28
 
 - 3D view: making a piece see-through also hides the styling objects that stand on it, hang on it or lean against it (books and vases on a shelf, pegs and boxes on a peg wall). They come back when the piece is made solid again.

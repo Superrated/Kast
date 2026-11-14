@@ -929,7 +929,7 @@ function artInner(w,h,style,frame,seed){const r=prng(seed),fc=(ARTFRAMES[frame]|
   return `<rect width="${w}" height="${h}" fill="${fc}"/><rect x="${fr}" y="${fr}" width="${w-2*fr}" height="${h-2*fr}" fill="#F6F3EC"/><svg x="${ax}" y="${ay}" width="${aw}" height="${ah}" viewBox="0 0 ${aw} ${ah}" preserveAspectRatio="none">${artBody(aw,ah,style,r)}</svg><rect x="${ax}" y="${ay}" width="${aw}" height="${ah}" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="${Math.max(2,fr*0.12)}"/>`}
 function Z(type,o={}){return Object.assign({id:uid(),type,h:null,shelves:0,doors:0,rail:false,hinge:'L',count:3,tv:0,header:true,grommet:true,woofer:145,nw:1,tweeter:52,grille:false,fabric:false,fabricCol:'charcoal',span:0,box:false,boxT:null,boxFin:'front',fin:'',fins:[],inFin:''},o)}
 function Sec(o){return Object.assign({id:uid(),w:null,base:'cab',back:'full',deskH:740,over:20,zones:[]},o)}
-const PANEL_DEF={mat:'ply',fin:'birch',t:18,hatch:true,hatchY:300,hatchH:600,fun:'climb',chart:true,climbH:1900,seed:7,pegS:3,pegB:2,pegD:1,pegH:3};
+const PANEL_DEF={mat:'ply',fin:'birch',t:18,hatch:true,hatchY:300,hatchH:600,fun:'climb',chart:true,climbH:1900,seed:7,toe:1,pegS:3,pegB:2,pegD:1,pegH:3};
 const FUN=[['climb','Climbing holds'],['busy','Busy board'],['marble','Marble run'],['ledges','Book ledges'],['mural','Painted mural'],['chalk','Chalkboard'],['magnet','Magnetic board'],['cork','Cork pinboard'],['peg','Peg wall'],['mirror','Kids mirror'],['faux','Faux doors'],['slats','Wood slat wall'],['frames','Gallery frames'],['plants','Plant wall'],['bricks','Brick-building wall'],['relief','Relief tiles'],['none','Plain']];
 const HOLDC=['#E4572E','#F3A712','#29335C','#669BBC','#A8C686','#D3A4C9','#F0E6D2'];
 const PRESETS={
@@ -1109,7 +1109,7 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
 
   function buildPanel(q){const s=q.s,pn=Object.assign({},PANEL_DEF,s.panel||{}),lab='S'+(q.i+1),fin=FIN[pn.fin]?pn.fin:'birch',t=+pn.t||18,r=prng((+pn.seed||7)*131+q.i*17);
     q.zones=[];q.backPieces=[];q.backHoles=[];q.panelOpt=pn;
-    const L=q.bL+g/2,Rr=q.bR-g/2,yb0=5,maxL=sheetOf(M.front.sheet).L-2*(+O.trim||0);
+    const toeOn=P>0&&(pn.fun==='faux'||(pn.toe==null?true:!!pn.toe));q.toe=toeOn;const L=q.bL+g/2,Rr=q.bR-g/2,yb0=toeOn?P+g/2:5,maxL=sheetOf(M.front.sheet).L-2*(+O.trim||0);
     const topMin=Math.min(...sampleLine(q.top,L,Rr).map(p=>p[1]));
     if(Rr-L<450)warns.push(`${lab}: the panel wall is only ${f0(Rr-L)} mm wide.`);
     const pmt=MATS[pn.mat]?pn.mat:'ply';if(pn.fun==='climb'&&(t<18||pmt!=='ply'))warns.push(`${lab}: a climbing wall needs at least 18 mm birch plywood (T-nuts pull out of MDF and chipboard).`);
@@ -1654,7 +1654,7 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
   else{walls.push({x:secs[0].lx,L:null,R:secs[0]});secs.forEach((q,i)=>walls.push({x:q.rx,L:q,R:secs[i+1]||null}))}
   for(let wi=walls.length-1;wi>=0;wi--)if(![walls[wi].L,walls[wi].R].filter(Boolean).some(q=>!q.panel))walls.splice(wi,1);
   walls.forEach((wl,wi)=>{const xL=wl.x,Lq=wl.L,Rq=wl.R,own=[Lq,Rq].filter(Boolean),zmn=Math.min(...own.map(q=>q.z0)),dW=Math.max(...own.map(q=>q.z0+q.D))-zmn;
-    const hF=Math.max(...own.flatMap(q=>[q.top(xL),q.top(xL+tc)])),nearDesk=own.some(q=>q.desk||q.panel||q.door),yb=nearDesk?0:Math.min(...own.map(q=>q.Pq));
+    const hF=Math.max(...own.flatMap(q=>[q.top(xL),q.top(xL+tc)])),nearDesk=own.some(q=>q.desk||(q.panel&&!q.toe)||q.door),yb=nearDesk?0:Math.min(...own.map(q=>q.panel?P:(q.Pq??P)));
     let gIn=null;if(boxes){const q=own[0];if(q.grp&&((wl.side==='left'&&q.i>q.grp.lead)||(wl.side==='right'&&q.i<q.grp.last)))gIn=q.grp}else if(Lq&&Rq&&Lq.grp&&Lq.grp===Rq.grp)gIn=Lq.grp;if(gIn&&!((secs[gIn.lead].zones||[])[gIn.ko]&&(gIn.ko===0||secs[gIn.lead].zones[gIn.ko-1])))gIn=null;
     const capped=own.some(q=>q.cap<Infinity&&Math.abs(q.top(xL)-q.cap)<0.01),base=[];
     const sl=Math.atan((ceilAt(xL+tc)-ceilAt(xL))/tc)*DEG;if(Math.abs(sl)>0.5&&!capped)base.push(`Top edge bevel ∠${Math.abs(sl).toFixed(1)}° across thickness (follows ceiling)`);
@@ -1674,7 +1674,7 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
   secs.forEach((q,i)=>{const nx=secs[i+1];if(nx&&nx.z0!==q.z0&&!q.panel&&!nx.panel){const deep=q.z0<nx.z0?q:nx;if(boxes)warns.push(`The front steps back ${f0(Math.abs(q.z0-nx.z0))} mm between S${i+1} and S${i+2} — the side of S${deep.i+1} shows; it gets a finished cover panel in the cut list.`);
     if(boxes){const sh=deep===q?nx:q,hF=Math.max(sh.top(sh.bL),sh.top(sh.bR));addPanel({type:'Side cover (front step)',role:'front',sec:`S${deep.i+1} ${deep===q?'right':'left'}`,poly:rect(Math.abs(q.z0-nx.z0),hF-(deep.desk?0:P)),grain:'h',band:'front',bandLen:hF,notes:['Glue to the exposed box side where the front steps back']})}}});
   // plinth
-  const runs=[];secs.forEach(q=>{if(q.desk||q.panel||q.door||(q.free&&q.mount!=='plinth'))return;const l=runs[runs.length-1];if(l&&Math.abs(l[1]-q.bL)<0.01&&l[2]===q.z0)l[1]=q.bR;else runs.push([q.bL,q.bR,q.z0])});
+  const runs=[];secs.forEach(q=>{if(q.desk||(q.panel&&!q.toe)||q.door||(q.free&&q.mount!=='plinth'))return;const l=runs[runs.length-1];if(l&&Math.abs(l[1]-q.bL)<0.01&&l[2]===q.z0)l[1]=q.bR;else runs.push([q.bL,q.bR,q.z0])});
   {const fl_=parts.filter(p_=>p_.yb<1&&p_.h>P+1);runs.forEach(r_=>{fl_.forEach(p_=>{if(p_.x<r_[0]+0.5&&p_.x+tc>r_[0]+0.5)r_[0]=p_.x+tc;if(p_.x<r_[1]-0.5&&p_.x+tc>r_[1]-0.5)r_[1]=p_.x})})}
   const mlK=(()=>{let m=sheetOf(M.skirt.sheet).L-2*(+O.trim||0);const so=O.stock;if(so&&so.on&&(!so.roles||so.roles.skirt)&&M.skirt.type==='melamine')m=Math.min(m,(+so.L||2500)-2);if(+O.maxSkirtL>0)m=Math.min(m,+O.maxSkirtL);return m})();result.maxSkirt=mlK;
   const jointNote=x=>`Butt joint at ${f0(x)} mm from the left wall — over a cabinet side; glue and screw a 100 mm backing strip behind`;
@@ -2407,7 +2407,7 @@ function panelEditor(i){const p=`sections.${i}.panel`,pn=Object.assign({},PANEL_
     <p class="hintp" style="margin-top:-2px">${S.sections[i].pinX!=null&&S.sections[i].pinX!==''?'📌 Pinned. The cabinets on each side resize to fit around it.':'Type the distance from the left wall to where the shaft starts to pin it in place.'}</p>
     <div class="fld"><span>Fun side</span><div class="tchips">${FUN.map(([k,l])=>`<button type="button" class="tchip ${pn.fun===k?'on':''}" data-act="setv" data-a="${p}.fun|${k}|s">${l}</button>`).join('')}</div></div>
     <div class="grid2">${sel('Board type',p+'.mat',Object.entries(MATS).filter(([m])=>m!=='hdf').map(([m,v])=>[m,v.name]),{re:true})}${fld('Board thickness',p+'.t',{ph:'18'})}<div style="grid-column:1/-1">${finSelect('Cladding finish',p+'.fin','Birch plywood')}</div></div>
-    <div style="display:grid;gap:6px">${chk(pn.fun==='faux'?'One faux door comes off for access to the shaft':'Access hatch for the shaft',p+'.hatch')}${pn.fun==='faux'?'':chk('Height chart strip',p+'.chart')}</div>${pn.fun==='faux'?'<p class="hintp" style="margin:0">Faux doors copy the cabinet next to the panel wall: same lines, front colour, gaps and handles. They are fixed panels, so the wall looks like one run of cabinets. Board and finish follow your fronts.</p>':''}`;
+    <div style="display:grid;gap:6px">${pn.fun==='faux'?'':`<label class="chk"><input type="checkbox" data-act="setv" data-a="${p}.toe|${(pn.toe==null?true:!!pn.toe)?0:1}|n" ${(pn.toe==null?true:!!pn.toe)?'checked':''}> Toe kick at the bottom, like the cabinets (the panel stops above a set-back plinth)</label>`}${chk(pn.fun==='faux'?'One faux door comes off for access to the shaft':'Access hatch for the shaft',p+'.hatch')}${pn.fun==='faux'?'':chk('Height chart strip',p+'.chart')}</div>${pn.fun==='faux'?'<p class="hintp" style="margin:0">Faux doors copy the cabinet next to the panel wall: same lines, front colour, gaps and handles. They are fixed panels, so the wall looks like one run of cabinets. Board and finish follow your fronts.</p>':''}`;
   if(pn.hatch&&pn.fun!=='faux')h+=`<div class="grid2">${fld('Hatch bottom',p+'.hatchY')}${fld('Hatch height',p+'.hatchH')}</div>`;
   if(pn.fun==='peg'){const st_=(l,k_,mx_)=>`<div class="fld"><span>${l}</span><div class="step"><button type="button" data-act="pegN" data-a="${i}|${k_}|-1|${mx_}" aria-label="Fewer">−</button><b>${Math.max(0,Math.min(mx_,+pn[k_]||0))}</b><button type="button" data-act="pegN" data-a="${i}|${k_}|1|${mx_}" aria-label="More">+</button></div></div>`,pc=q&&q.pegN;
     h+=`<div class="grid2">${st_('Shelves on pegs','pegS',8)}${st_('Boxes','pegB',4)}${st_('Drawer boxes','pegD',2)}${st_('Hooks for bags and baskets','pegH',10)}</div><div class="pbrow"><button class="btn sm" data-act="setv" data-a="${p}.seed|${Math.floor(Math.random()*9999)}|n">Rearrange</button></div><p class="hintp">A board full of Ø20 holes on a 120 mm grid. Wooden pegs push into the holes; shelves, boxes and bags hang on them and can move any time. Use 18 mm birch plywood. ${pc?`Now on the wall: ${pc.shelves} shel${pc.shelves===1?'f':'ves'}, ${pc.boxes} box${pc.boxes===1?'':'es'}, ${pc.drawers} drawer box${pc.drawers===1?'':'es'}, ${pc.hooks} hook${pc.hooks===1?'':'s'} — ${pc.pegs} pegs.${pc.shelves<(+pn.pegS||0)||pc.boxes<(+pn.pegB||0)||pc.drawers<(+pn.pegD||0)||pc.hooks<(+pn.pegH||0)?' Not everything fitted: make the panel wider or ask for less.':''}`:''} The baskets, bags and toys in the drawing are decoration.</p>`}
@@ -4000,7 +4000,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.28';
+const APP_VERSION='v0.29';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
