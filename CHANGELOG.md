@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.33
+
+- Open shelves: "Storage boxes on the shelves". Open wooden boxes with a hand slot, made to fit each compartment, on the bottom row, every other row or every row. "Box colour" follows the inside colour (so they join a colour-drench) or takes any colour you pick.
+- The box parts are on the cut list, and the styling objects make room for the boxes in the drawing.
+- Not available together with a fixed slatted screen, because the boxes could not come out.
+
 ## v0.32
 
 - Niche: new choice "Reading nook" under "Show in the niche", next to TV, Art frame and DJ setup. A foam mattress on the niche floor in a fabric you pick, cushions against the back and a warm reading light above. The mattress, cushions and light are on the shopping list.
