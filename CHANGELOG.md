@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.30
+
+Slatted screens.
+
+- Cupboards: new front style "Slats". The doors are made of slats on cross rails with open gaps, so air and light pass through. The two edge pieces of every door are wider, for the hinge cups and the handle.
+- Open shelves: "Slatted screen" puts fixed slats in front of the level; it half hides the shelves. It has its own slat colour.
+- Both have "Slats run: up and down / left to right" and three sizes: fine (20 mm slats, 10 mm gaps), medium (30 / 15) and wide (45 / 20). Gaps are evened out so the slats end flush at both edges. Under a sloping ceiling the slats always run up and down and are cut to the slope.
+- Every slat, stile and rail is on the cut list, with the gap to use as a spacer block. Design notes warn about horizontal slats spanning more than 900 mm and long vertical slats with nothing behind them.
+
 ## v0.29
 
 - Panel wall: it now has a toe kick like the cabinets. The panel stops above the plinth and the set-back plinth board runs on underneath it, in one line with the rest. The side next to the panel no longer runs down to the floor. Switch it off under the panel wall's settings ("Toe kick at the bottom") if you want the panel down to the floor again.
