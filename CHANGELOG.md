@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.27
+
+- Arched tops: the shelves in an arched level now run right up to the front, so the front frame sits on them without a gap.
+- 3D, colour-drench: the thin colour layer on the inside walls was thinner than the shadow tolerance and came out speckled and dark. It is thicker now, and left out where the panel behind it is already in the drench colour.
+
 ## v0.26
 
 - Narrower compartments: "Split side by side" now goes up to 6, and compartments can be as narrow as 100 mm (was 200 mm). The uprights stepper goes up to 7 uprights, and an upright can be moved to within 100 mm of the next one.

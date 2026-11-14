@@ -1389,7 +1389,7 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
       if(z.type==='open'||(z.type==='closed'&&z.face==='glass')){const full_=(z.type==='open'&&z.niche)||(q.desk&&zr.k===0&&s.deskBack&&s.deskBack!=='plain');if(!full_)comps.forEach(([cl,cr],ci)=>{const f=(z.cFin||[])[ci];if(FIN[f])insert(cl,cr,f,'colour','Colour insert (back)')})}
       if(z.type==='open'&&z.niche)comps.forEach(([cl,cr])=>insert(cl,cr,z.niche==='bar'?'mirror':'concrete',z.niche==='bar'?'mirror':'colour',z.niche==='bar'?'Mirror back (bar niche)':'Splashback (coffee niche)'));
       if(q.desk&&zr.k===0&&s.deskBack&&s.deskBack!=='plain'&&!(z.type==='open'&&z.niche)){const kb=s.deskBack,f=kb==='cork'?'cork':kb==='mirror'?'mirror':kb==='peg'?(FIN[s.deskBackFin]?s.deskBackFin:'ral9010'):(FIN[s.deskBackFin]?s.deskBackFin:'ral6021');comps.forEach(([cl,cr])=>insert(cl,cr,f,kb,kb==='peg'?'Pegboard (desk back)':kb==='cork'?'Cork pinboard (desk back)':kb==='mirror'?'Mirror (desk back)':'Colour panel (desk back)'))}
-      const ledge=z.type==='open'&&!!z.ledge;let sbk=ledge?Math.max(O.setback,q.Dh-110):(z.inset||z.face==='glass'||z.doorMode==='slide')?Math.max(+O.setback,(z.doorMode==='slide'?0:tf)+5):+O.setback;
+      const ledge=z.type==='open'&&!!z.ledge;let sbk=ledge?Math.max(O.setback,q.Dh-110):(z.inset||z.face==='glass'||z.doorMode==='slide')?Math.max(+O.setback,(z.doorMode==='slide'?0:tf)+5):+O.setback;if(z.type==='open'&&z.arch&&!ledge&&!(q.desk&&zr.k===0))sbk=0;
       if(recOff&&zr.k>0)sbk=Math.max(sbk,recOff+(z.type==='open'?0:tf+5));
       const addShelf=(y,cl,cr)=>{let iv=okInterval(q.under,y+ts+(zr.top&&zr.lined?zr.lined*1.5:0));if(iv&&zr.lined)iv=[iv[0]+zr.lined,iv[1]-zr.lined];if(!iv)return;iv=[Math.max(iv[0],cl),Math.min(iv[1],cr)];if(iv[1]-iv[0]<70||y<zr.y0)return;const L=iv[1]-iv[0]-2,dep=q.Dh-sbk-(zr.insD||0);
         addPanel({type:ledge?'Picture ledge':'Shelf',role:'shelf',fin:zr.inFin||undefined,sec:lab,poly:rect(L,dep),grain:'w',band:'front',bandLen:L,notes:(L<cr-cl-3?['Shortened by ceiling slope']:[]).concat(ledge?['Screw from the back; add a 30 × 12 mm lip strip along the front edge']:[])});
@@ -1409,8 +1409,8 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
           addPanel({type:'Vertical divider',role:'carcass',fin:dren||undefined,sec:lab,poly:rect(q.Dh,yt-y0v),grain:'h',band:'front',bandLen:yt-y0v,notes:[`${f0(v)} mm from the inside left of ${lab}; fix with dowels top and bottom`].concat(vdA?['Needed here: the middle doors hinge on this upright']:[],zr.k>0||q.desk?['Screw the back panel to its rear edge every 150 mm: the back then carries it, so the board it stands on does not bend']:[],dren?[`Colour-drenched: ${FIN[dren].name}, like the inside of this level`]:[])});
           if(zr.k>0&&(q.s.back==='none')&&!q._vdNB){q._vdNB=1;warns.push(`${lab}: the upright divider stands on a board with nothing under it, and this column has no back panel to carry it — give the column a back, or put a divider in the same place in the level below.`)}
           items.push(wf({k:'prism',poly:[[0,y0v],[q.Dh,y0v],[q.Dh,yt],[0,yt]],toW:(u,v2)=>[x,v2,-u-q.z0],ext:[tc,0,0],role:'carcass'},dren));(result.vdivs=result.vdivs||[]).push({x,y0:y0v,y1:yt,sec:i,zone:zr.k,vis:z.type==='open',fin:dren||null})})}
-      if(dren&&!zr.lined){const sk=0.8,yTop=x=>zr.top?underAt(q,x):zr.y0+zr.h;let area=0;
-        [[q.xa,1],[q.xb-sk,-1]].forEach(([x,dir])=>{const yt=yTop(dir>0?q.xa:q.xb);if(yt-zr.y0<60)return;items.push(wf({k:'prism',poly:[[0,zr.y0],[q.Dh,zr.y0],[q.Dh,yt],[0,yt]],toW:(u,v2)=>[x,v2,-u-q.z0],ext:[sk,0,0],role:'shelf'},dren));area+=q.Dh*(yt-zr.y0)});
+      if(dren&&!zr.lined){const sk=3,yTop=x=>zr.top?underAt(q,x):zr.y0+zr.h,full=colDrench(q)===dren,sideOwn=d_=>{if(!full)return false;if(boxes)return true;const nb=secs[i+d_];return !nb||nb.panel||colDrench(nb)===dren};let area=0;
+        [[q.xa,1],[q.xb-sk,-1]].forEach(([x,dir])=>{const yt=yTop(dir>0?q.xa:q.xb);if(yt-zr.y0<60)return;area+=q.Dh*(yt-zr.y0);if(sideOwn(-dir))return;items.push(wf({k:'prism',poly:[[0,zr.y0],[q.Dh,zr.y0],[q.Dh,yt],[0,yt]],toW:(u,v2)=>[x,v2,-u-q.z0],ext:[sk,0,0],role:'shelf'},dren))});
         items.push(wf(hzq(q.xa,q.xb,zr.y0,sk,0,q.Dh,'shelf'),dren));area+=q.w*q.Dh;
         if(!zr.top){items.push(wf(hzq(q.xa,q.xb,zr.y0+zr.h-sk,sk,0,q.Dh,'shelf'),dren));area+=q.w*q.Dh}
         else{const t=sampleLine(x=>underAt(q,x),q.xa,q.xb);for(let j=1;j<t.length;j++){const [ax,ay]=t[j-1],[bx,by]=t[j];items.push({k:'prism',poly:[[ax,ay],[bx,by],[bx,by-sk],[ax,ay-sk]],toW:(u,v)=>[u,v,-q.z0],ext:[0,0,-q.Dh],role:'shelf',fin:dren});area+=Math.hypot(bx-ax,by-ay)*q.Dh}}
@@ -4000,7 +4000,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.26';
+const APP_VERSION='v0.27';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
