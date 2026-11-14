@@ -7,7 +7,7 @@
 - a hardware list and a price estimate (Belgian woodworking shops)
 - a step-by-step build guide, and a PDF with all of the above
 
-Version **v0.01**.
+Version **v0.02**.
 
 ## Use it
 
@@ -43,7 +43,7 @@ On a free GitHub account this only works when the repository is public.
 2. Run `python3 build.py`.
 3. Open `index.html` to check.
 
-For a new version, change `APP_VERSION` near the photo code in `src/kast.html` (and the version shown in the header), then run the build again. The offline cache picks up the new version number by itself.
+For a new version, change `APP_VERSION` near the photo code in `src/kast.html`, then run the build again. The header, the loading screen and the offline cache all pick up the new version number by themselves.
 
 ## Good to know
 

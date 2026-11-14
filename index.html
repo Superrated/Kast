@@ -520,6 +520,8 @@ details.mx .mustbox{border:0;background:none;padding:0;margin:0}details.mx .must
 .sbstyles button.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}.sbstyles .ssw i{width:12px;height:12px}
 .shufbar .sb2{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.shufbar .sbl{font-size:11.5px;color:var(--ink2)}
 .shufbar .seg button{padding:5px 8px;font-size:12px}
+.sbfold{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;border:0;border-top:1px solid var(--line);background:none;color:var(--ink2);padding:7px 2px 0;font:inherit;font-size:12px;font-weight:600;cursor:pointer}.sbfold em{font-style:normal;color:var(--accent)}.sbfold:hover span{color:var(--ink)}
+.shufbar.fold{gap:6px;padding-bottom:6px}
 .lockchip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 12px 6px 8px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
 .pchip{font-family:var(--f-m,inherit);border-color:var(--accent)}.pchip small{font-weight:500;color:var(--ink2);margin-left:2px}
 .lockchip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}.lockchip .ssw i{width:12px;height:12px;border:1px solid rgba(128,128,128,.4)}
@@ -712,14 +714,23 @@ details.mx{grid-column:1/-1}
   .stygrid{grid-template-columns:repeat(3,minmax(0,1fr))}.shufbar .sb1{grid-template-columns:1fr 1fr}
   .statusbar span:nth-child(3),.statusbar span:nth-child(5){display:none}
 }
+
+/* loading screen: name and version, fades out by itself (CSS only, so it can never get stuck) */
+#splash{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:var(--bg);color:var(--ink);animation:splashOut .45s ease 1.2s forwards}
+#splash b{font-family:var(--f-d);font-weight:400;font-size:64px;line-height:1;letter-spacing:-.015em}
+#splash span{font-family:var(--f-m);font-size:13px;color:var(--ink2);border:1px solid var(--line);border-radius:999px;padding:4px 12px;background:var(--raised)}
+@keyframes splashOut{to{opacity:0;visibility:hidden;pointer-events:none}}
+@media (prefers-reduced-motion:reduce){#splash{animation-duration:.01s}}
 </style>
+
+<div id="splash" role="status" aria-label="Kast v0.02 is loading"><b>Kast</b><span>v0.02</span></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
 
 <div class="app" data-tab="elev">
   <header class="top">
     <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-    <div class="brand" title="Kast v0.01">Kast<small>built-in furniture, drawn and cut · v0.01</small></div>
+    <div class="brand" title="Kast v0.02">Kast<small>built-in furniture, drawn and cut · v0.02</small></div>
     <nav class="tabs" id="tabs">
       <button data-act="tab" data-a="elev" class="on">Elevation</button>
       <button data-act="tab" data-a="3d">3D view</button>
@@ -2312,13 +2323,15 @@ function stylePick(){const cur=ui.style&&STYLES[ui.style]?STYLES[ui.style]:null,
 function lockChip(){const on=!!S.opts.lockFin,M=S.mat;return `<button type="button" class="lockchip ${on?'on':''}" data-act="lockFin" aria-pressed="${on}" title="Shuffles and styles keep your main colours and finishes; only layout, contents and accents change"><span class="ssw"><i style="background:${FIN[M.front.fin]?.base||'#ccc'}"></i><i style="background:${FIN[M.carcass.fin]?.base||'#ccc'}"></i></span>${on?'🔒 Colours locked':'🔓 Lock main colours'}</button>`}
 const WMODES=[['same','Same'],['two','2 sizes'],['mixed','3 sizes'],['free','Free'],['fixed','Fixed']];
 function sbn(l,p,ph){const v=getP(p);return `<label class="sbn"><span class="sbl">${l}</span><input type="number" inputmode="numeric" id="${idOf(p)}" data-p="${p}" value="${v==null?'':v}" placeholder="${ph}" step="10"><em>mm</em></label>`}
-function shufBar(){const nm=(S.opts.must||[]).length;
-  return `<div class="shufbar"><div class="sb1"><button type="button" class="pri" data-act="rand" data-a="all" title="New layout, contents and look">✨ Surprise me</button><button type="button" data-act="rand" data-a="keep" title="Keep every column's width and position; change what's inside">Contents</button><button type="button" data-act="rand" data-a="layout" title="New layout for this wall">Layout</button><button type="button" data-act="rand" data-a="fin" title="New colours and accents">Colours</button></div>
-    ${stylePick()}
+function shufBar(){const nm=(S.opts.must||[]).length,op=shufOpen();
+  return `<div class="shufbar ${op?'':'fold'}"><div class="sb1"><button type="button" class="pri" data-act="rand" data-a="all" title="New layout, contents and look">✨ Surprise me</button><button type="button" data-act="rand" data-a="keep" title="Keep every column's width and position; change what's inside">Contents</button><button type="button" data-act="rand" data-a="layout" title="New layout for this wall">Layout</button><button type="button" data-act="rand" data-a="fin" title="New colours and accents">Colours</button></div>
+    <button type="button" class="sbfold" data-act="shufFold" aria-expanded="${op}" title="${op?'Fold the shuffle options away':'Show styles, box widths, budget and the other shuffle options'}"><span>Shuffle options</span><em>${op?'Hide ▴':'Show ▾'}</em></button>
+    ${op?`${stylePick()}
     <div class="sbw"><span class="sbl">Box widths when shuffling the layout</span>${seg('opts.wmode',WMODES,{dflt:'mixed'})}</div>
     <div class="sbr">${S.opts.wmode==='fixed'?sbn('Every box','opts.wFix','600')+'<span class="sbl">TV niche, desk and the like become a double box; leftover is one filler box</span>':sbn('Narrowest','opts.wMin','any')+sbn('Widest','opts.wMax','any')+`<span class="sbg"><span class="sbl">Columns</span><div class="step"><button type="button" data-act="cols" data-a="-1" aria-label="Fewer columns">−</button><b style="min-width:34px;text-align:center">${+S.opts.cols>0?S.opts.cols:'Free'}</b><button type="button" data-act="cols" data-a="1" aria-label="More columns">+</button></div></span>`}</div>
     <div class="sb2"><button type="button" class="lockchip pchip" data-act="toPriceTab" title="Estimated price of this design — tap for the full price list">${pchipText()}</button><button type="button" class="lockchip ${budgetKind()?'on':''}" data-act="budgetCycle" title="Budget build: cheap boards and hardware that every shuffle keeps">💶 Budget: ${budgetKind()==='mel'?'melamine':budgetKind()==='mdf'?'MDF fronts':'off'}</button></div>
-    <div class="sb2">${lockChip()}${S.sections.some(x=>x.base==='panel')?`<button type="button" class="lockchip ${S.opts.shufPanel!==false?'on':''}" data-act="shufPanel" aria-pressed="${S.opts.shufPanel!==false}" title="Shuffles also give the panel wall a new colour, finish and decoration">${S.opts.shufPanel!==false?'✓ ':''}Panel wall too</button>`:''}<button type="button" class="lockchip ${ui.mustOpen?'on':''}" data-act="mustT" aria-expanded="${!!ui.mustOpen}">Always include${nm?' · '+nm:''} ${ui.mustOpen?'▴':'▾'}</button></div></div>${ui.mustOpen?mustUI():''}`}
+    <div class="sb2">${lockChip()}${S.sections.some(x=>x.base==='panel')?`<button type="button" class="lockchip ${S.opts.shufPanel!==false?'on':''}" data-act="shufPanel" aria-pressed="${S.opts.shufPanel!==false}" title="Shuffles also give the panel wall a new colour, finish and decoration">${S.opts.shufPanel!==false?'✓ ':''}Panel wall too</button>`:''}<button type="button" class="lockchip ${ui.mustOpen?'on':''}" data-act="mustT" aria-expanded="${!!ui.mustOpen}">Always include${nm?' · '+nm:''} ${ui.mustOpen?'▴':'▾'}</button></div>`:''}</div>${op&&ui.mustOpen?mustUI():''}`}
+function shufOpen(){if(ui.shufOpen==null){try{ui.shufOpen=localStorage.getItem('kast-shufopen')==='1'}catch(e){ui.shufOpen=false}}return !!ui.shufOpen}
 function lockMain(st,base){if(!base.opts.lockFin)return st;st.mat=JSON.parse(JSON.stringify(base.mat));['handle','handleWood','handleSize'].forEach(k=>{st.opts[k]=base.opts[k]});st.opts.two=JSON.parse(JSON.stringify(base.opts.two||{on:false}));st.room.wallFin=base.room.wallFin||'';st.sections.forEach(sc=>{if(sc.base!=='panel')return;const b=base.sections.find(x=>x.id===sc.id&&x.base==='panel')||base.sections.find(x=>x.base==='panel');if(b&&b.panel)sc.panel=Object.assign({},sc.panel||{},{fin:b.panel.fin,mat:b.panel.mat,t:b.panel.t});if(sc.panel.fun==='climb'&&(sc.panel.mat!=='ply'||+sc.panel.t<18))sc.panel.fun='slats'});st.opts.lockFin=true;return st}
 function linkUI(i,s){if(s.base==='panel'||s.base==='door')return '';const li=s.link!=null&&s.link!==''?S.sections.findIndex(y=>y.id===s.link):-1,lk=li>=0?li:null,cands=S.sections.map((x,j)=>j).filter(j=>j!==i&&S.sections[j].base===s.base&&(S.sections[j].link==null||S.sections[j].link===''));
   return `<div class="linkbox">${lk!=null?`<p class="linked">🔗 Same as column ${lk+1} — its zones follow that column. Edit column ${lk+1}, or <button type="button" class="lnk" data-act="unlink">unlink</button>.</p>`:''}
@@ -3704,7 +3717,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.01';
+const APP_VERSION='v0.02';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
@@ -4180,6 +4193,7 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'styleAgain':if(ui.style&&STYLES[ui.style])styleNow(ui.style);break;
     case 'styleSel':break;
     case 'toonsT':S.opts.noToons=!b.checked;changed(false);renderTab('guide');break;
+    case 'shufFold':ui.shufOpen=!shufOpen();try{localStorage.setItem('kast-shufopen',ui.shufOpen?'1':'0')}catch(e){}renderSide();break;
     case 'mustT':ui.mustOpen=!ui.mustOpen;renderSide();break;
     case 'mustAdd':ui.mustOpen=true;{(S.opts.must=Array.isArray(S.opts.must)?S.opts.must:[]).push({type:a,pos:a==='tv'?'centre':'any',w:null});openMx.add('must');changed(true);break}
     case 'mustDel':{const m_=(S.opts.must||[]).splice(+a,1)[0];if(m_&&!(S.opts.must||[]).some(x=>x.type===m_.type))S.sections.forEach(sc=>{if(sc.must===m_.type)delete sc.must});changed(true);break}
@@ -4395,6 +4409,7 @@ document.getElementById('wiz').addEventListener('toggle',e=>{if(e.target.classLi
 document.getElementById('wiz').addEventListener('click',e=>{const b=e.target.closest('[data-act="wizSet"]');if(!b)return;const[k,v]=b.dataset.a.split(':');WZ[k]=+v;if(k==='t')WZ.tf=+v+1;wizRender()});
 
 /* ===== boot ===== */
+{const sp=document.getElementById('splash');if(sp)sp.addEventListener('animationend',()=>sp.remove())}
 try{new ResizeObserver(()=>{const f=document.getElementById('fmode');if(f)f.style.top=(document.getElementById('bar').offsetHeight+10)+'px'}).observe(document.getElementById('bar'))}catch(e){}
 buildDefs();
 if(!load())S=slopeFix(exampleState());

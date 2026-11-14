@@ -8,6 +8,8 @@ import re, pathlib
 root = pathlib.Path(__file__).parent
 src = (root / "src" / "kast.html").read_text(encoding="utf-8")
 version = re.search(r"const APP_VERSION='([^']+)'", src).group(1)
+# the version shown in the header and on the loading screen comes from APP_VERSION
+src = src.replace("__KAST_VERSION__", version)
 
 # the first lines of the source (title, meta, font links) belong in <head>
 head_lines, body_lines, in_head = [], [], True

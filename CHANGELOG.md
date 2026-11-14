@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.02
+
+- The shuffle options in the Layout panel fold away (only the four shuffle buttons stay), so they no longer cover the column editing. The app remembers whether they are open.
+- The version number shows on a short loading screen when the app opens, also on phones where the header hides it.
+
 ## v0.01
 
 First version in this repository.
