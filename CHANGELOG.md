@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.32
+
+- Niche: new choice "Reading nook" under "Show in the niche", next to TV, Art frame and DJ setup. A foam mattress on the niche floor in a fabric you pick, cushions against the back and a warm reading light above. The mattress, cushions and light are on the shopping list.
+- Design notes for the nook: too low to sit upright (under 800 mm inside), too high to climb into (over 550 mm from the floor), too shallow or too narrow, and when the board under it needs an upright because it carries a sitting child.
+- A reading nook has no cable hole and no TV.
+
 ## v0.31
 
 - Niches and open shelves: "Line the inside…" is now called "Own box, flush with the doors". The niche gets its own box whose front edge stands one door thickness (about 18 mm) proud of the cabinet body, in line with the door fronts above and below.
