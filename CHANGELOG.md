@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.25
+
+Two new units, and colour-drench on the outside.
+
+- Panel wall, "Peg wall" (replaces the old small-hole pegboard): a plywood board full of Ø20 holes on a 120 mm grid, with wooden pegs, loose shelves, small boxes, a drawer box and hooks. You set how many of each and tap "Rearrange"; pegs go on the shopping list, shelves and boxes on the cut list, the holes on the lofting drawing.
+- Open shelves, "Arched tops": one front board with a rounded opening over every compartment. Works with "Split side by side" and the shelf count, has its own frame colour, and is on the cut list as one board with the arches drawn in.
+- New ready-made column "Arched bookcase": 3 wide, 4 high, colour-drenched.
+- Colour-drench: when every level of a column is drenched in one colour, the column's own box takes that colour on the outside too — top, bottom, fixed boards and each side it does not share with a column in another colour. The extra paint is on the shopping list.
+
 ## v0.24
 
 Saving designs can no longer lose work.
