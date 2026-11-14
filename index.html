@@ -734,14 +734,14 @@ details.mx{grid-column:1/-1}
 @media (prefers-reduced-motion:reduce){#splash{animation-duration:.01s}}
 </style>
 
-<div id="splash" role="status" aria-label="Kast v0.22 is loading"><b>Kast</b><span>v0.22</span></div>
+<div id="splash" role="status" aria-label="Kast v0.23 is loading"><b>Kast</b><span>v0.23</span></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
 
 <div class="app" data-tab="elev">
   <header class="top">
     <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-    <div class="brand" title="Kast v0.22">Kast<small>built-in furniture, drawn and cut · v0.22</small></div>
+    <div class="brand" title="Kast v0.23">Kast<small>built-in furniture, drawn and cut · v0.23</small></div>
     <nav class="tabs" id="tabs">
       <button data-act="tab" data-a="elev" class="on">Elevation</button>
       <button data-act="tab" data-a="3d">3D view</button>
@@ -3742,17 +3742,17 @@ function init3D(){
   function place(){if(photoActive()){photoCam();return}const c=T3.ctl;cam.position.set(c.target.x+c.r*Math.cos(c.phi)*Math.sin(c.theta),c.target.y+c.r*Math.sin(c.phi),c.target.z+c.r*Math.cos(c.phi)*Math.cos(c.theta));cam.lookAt(c.target)}
   const ro=new ResizeObserver(()=>{const w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;if(photoActive()){photoLayout();req();return}renderer.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();req()});ro.observe(host);T3.ro=ro;
   const ptrs=new Map();let last=null;const el=renderer.domElement;
-  let panBtn=false,vel=null,velRaf=0;
+  let panBtn=false,vel=null,velRaf=0,tap=null;
   el.addEventListener('contextmenu',e=>e.preventDefault());
   el.addEventListener('dblclick',()=>{if(ui.iso)isoFrame();else camPreset('angle')});
-  el.addEventListener('pointerdown',e=>{cancelAnimationFrame(velRaf);cancelAnimationFrame(camTo.raf);vel=null;panBtn=e.pointerType==='mouse'&&(e.button===2||e.button===1||e.shiftKey);el.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});last=null});
-  el.addEventListener('pointermove',e=>{if(!ptrs.has(e.pointerId))return;const p=ptrs.get(e.pointerId),dx=e.clientX-p.x,dy=e.clientY-p.y;ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  el.addEventListener('pointerdown',e=>{cancelAnimationFrame(velRaf);cancelAnimationFrame(camTo.raf);vel=null;panBtn=e.pointerType==='mouse'&&(e.button===2||e.button===1||e.shiftKey);el.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});last=null;tap=ptrs.size===1&&!panBtn?{id:e.pointerId,x:e.clientX,y:e.clientY,t:performance.now()}:null});
+  el.addEventListener('pointermove',e=>{if(!ptrs.has(e.pointerId))return;if(tap&&Math.hypot(e.clientX-tap.x,e.clientY-tap.y)>7)tap=null;const p=ptrs.get(e.pointerId),dx=e.clientX-p.x,dy=e.clientY-p.y;ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
     if(ptrs.size===1&&panBtn){const k=ctl.r*0.0011,right=new THREE.Vector3(Math.cos(ctl.theta),0,-Math.sin(ctl.theta));ctl.target.addScaledVector(right,-dx*k);ctl.target.y+=dy*k}
     else if(ptrs.size===1){ctl.theta-=dx*0.006;ctl.phi=Math.max(-0.15,Math.min(1.35,ctl.phi+dy*0.005));vel={x:dx,y:dy,t:performance.now()}}
     else if(ptrs.size===2){const a=[...ptrs.values()];const d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y),m={x:(a[0].x+a[1].x)/2,y:(a[0].y+a[1].y)/2};
       if(last){ctl.r=Math.max(800,Math.min(40000,ctl.r*last.d/d));const k=ctl.r*0.0011,right=new THREE.Vector3(Math.cos(ctl.theta),0,-Math.sin(ctl.theta));ctl.target.addScaledVector(right,-(m.x-last.m.x)*k);ctl.target.y+=(m.y-last.m.y)*k}last={d,m}}
     req()});
-  const up=e=>{ptrs.delete(e.pointerId);last=null;if(!ptrs.size&&vel&&!panBtn&&performance.now()-vel.t<60&&Math.hypot(vel.x,vel.y)>3){let vx=vel.x,vy=vel.y;const glide=()=>{vx*=0.9;vy*=0.9;ctl.theta-=vx*0.006;ctl.phi=Math.max(-0.15,Math.min(1.35,ctl.phi+vy*0.005));req();if(Math.hypot(vx,vy)>0.25)velRaf=requestAnimationFrame(glide)};velRaf=requestAnimationFrame(glide)}vel=null};el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);
+  const up=e=>{if(tap&&e.type==='pointerup'&&tap.id===e.pointerId&&performance.now()-tap.t<450&&Math.hypot(e.clientX-tap.x,e.clientY-tap.y)<=7){tap=null;try{pick3D(e)}catch(er){}}tap=null;ptrs.delete(e.pointerId);last=null;if(!ptrs.size&&vel&&!panBtn&&performance.now()-vel.t<60&&Math.hypot(vel.x,vel.y)>3){let vx=vel.x,vy=vel.y;const glide=()=>{vx*=0.9;vy*=0.9;ctl.theta-=vx*0.006;ctl.phi=Math.max(-0.15,Math.min(1.35,ctl.phi+vy*0.005));req();if(Math.hypot(vx,vy)>0.25)velRaf=requestAnimationFrame(glide)};velRaf=requestAnimationFrame(glide)}vel=null};el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);
   el.addEventListener('wheel',e=>{e.preventDefault();ctl.r=Math.max(800,Math.min(40000,ctl.r*(1+e.deltaY*0.0012)));req()},{passive:false});
   return true}
 function mat3(fin,type){const key=fin+'|'+(type||'');if(T3.mats[key])return T3.mats[key];const f=FIN[fin]||FIN.ral9010,m=MATS[type];if(!T3.tex)T3.tex={};const tex=T3.tex[fin]||(T3.tex[fin]=texFor(fin));try{if(tex&&!tex._an){tex._an=1;tex.anisotropy=Math.min(8,T3.renderer.capabilities.getMaxAnisotropy())}}catch(e){}try{const wood=f.kind==='wood'||f.kind==='ply',lac=f.kind==='plain'&&(type==='mdfpaint'||type==='hpl'),o_={envMapIntensity:f.kind==='plain'?0.9:0.7,map:tex,roughness:m?(f.kind==='plain'?m.rough:(m.rough+f.rough)/2):f.rough,metalness:0,side:THREE.DoubleSide};
@@ -3831,6 +3831,13 @@ function handle3D(hs,tf,metal){if(!hs||hs.type==='none')return null;const W_=WOO
 function caneMat(){const c=document.createElement('canvas');c.width=c.height=128;const x=c.getContext('2d');x.fillStyle='#E3CFA3';x.fillRect(0,0,128,128);x.strokeStyle='#B58F55';x.lineWidth=10;
   for(let k=-128;k<=256;k+=64){x.beginPath();x.moveTo(k,0);x.lineTo(k+128,128);x.stroke();x.beginPath();x.moveTo(k+128,0);x.lineTo(k,128);x.stroke()}x.fillStyle='rgba(59,48,36,.6)';for(let a=32;a<128;a+=64)for(let b=0;b<128;b+=64){x.beginPath();x.arc(a,b,9,0,7);x.fill();x.beginPath();x.arc(b,a,9,0,7);x.fill()}
   const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(12,12);return new THREE.MeshStandardMaterial({map:t,roughness:.85})}
+/* a stable name for one piece of the 3D model, so a piece you made see-through stays see-through after the scene is rebuilt */
+function pkOf(it){try{const t=JSON.stringify(it,(k,v)=>typeof v==='number'?Math.round(v):v);let h=7;for(let i=0;i<t.length;i++)h=(h*31+t.charCodeAt(i))|0;return h}catch(e){return null}}
+function pick3D(e){if(!T3||!window.THREE||!THREE.Raycaster)return;if(ui.photoOn&&PH.adjust)return;const el=T3.renderer.domElement,r=el.getBoundingClientRect();if(!r.width||!r.height)return;
+  const v=new THREE.Vector2(((e.clientX-r.left)/r.width)*2-1,-((e.clientY-r.top)/r.height)*2+1);if(!T3.rc)T3.rc=new THREE.Raycaster();T3.cam.updateMatrixWorld();T3.rc.setFromCamera(v,T3.cam);
+  const shown=o=>{for(let p=o;p;p=p.parent)if(!p.visible)return false;return true},inFront=o=>{for(let p=o;p;p=p.parent)if(p===T3.frontG)return true;return false};
+  const hit=T3.rc.intersectObjects([T3.frontG,T3.root],true).find(h=>{const o=h.object;return o.isMesh&&o.userData.pk!=null&&!o.userData.gap&&shown(o)&&!(ui.fm==='glass'&&inFront(o))});if(!hit)return;
+  if(!ui.see)ui.see=new Set();const k=hit.object.userData.pk,was=ui.see.has(k);if(was)ui.see.delete(k);else ui.see.add(k);applyFronts3D();renderBar();if(!was&&!ui.seeTold){ui.seeTold=1;toast('See-through. Tap it again to make it solid — or tap the next piece behind it.')}}
 function rebuild3D(){
   if(!init3D())return;const G=geo,{root,frontG,roomG}=T3;clearG(root);clearG(frontG);clearG(roomG);if(!T3.propG){T3.propG=new THREE.Group();T3.scene.add(T3.propG)}clearG(T3.propG);
   const M=S.mat,maxC=Math.max(...G.cps.map(p=>p.y),+S.room.H);
@@ -3846,7 +3853,7 @@ function rebuild3D(){
       const scr=new THREE.Mesh(new THREE.PlaneGeometry(it.w-14,it.h-14),colMat('#1a222c',.12,.3));scr.position.set(it.x+it.w/2,it.y+it.h/2,it.z+14.5);mesh.add(body,scr)}
     else if(it.k==='holdX'){}
     else if(it.k==='rail'){const L=it.xb-it.xa;mesh=new THREE.Mesh(new THREE.CylinderGeometry(12.5,12.5,L,20),metal);mesh.rotation.z=Math.PI/2;mesh.position.set((it.xa+it.xb)/2,it.y,-it.z)}
-    if(mesh){mesh.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;if(it.sz)o.userData.sz=it.sz}});
+    if(mesh){const pk=pkOf(it);mesh.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;if(it.sz)o.userData.sz=it.sz;o.userData.pk=pk}});
       /* dark line in the gaps round each door and drawer, like the real shadow there */
       try{if(it.k==='prism'&&it.tag==='front'&&it.ext&&Math.abs(it.ext[2])>=12&&!it.ext[0]&&!it.ext[1]&&mesh.geometry){const xs=it.poly.map(p=>p[0]),ys=it.poly.map(p=>p[1]),x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys),w=x1-x0,h=y1-y0;if(w>90&&h>60){const zc=it.toW(x0,y0)[2]+it.ext[2]/2,sx=1+5/w,sy=1+5/h,sz=0.8,gm=T3.gapM||(T3.gapM=new THREE.MeshBasicMaterial({color:0x050505,transparent:true,opacity:0.5,depthWrite:false})),sl=new THREE.Mesh(mesh.geometry,gm);sl.scale.set(sx,sy,sz);sl.position.set((x0+x1)/2*(1-sx),(y0+y1)/2*(1-sy),zc*(1-sz)-1.2);sl.userData.gap=1;mesh.add(sl)}}}catch(e){}
       tgt.add(mesh)}});
@@ -3918,7 +3925,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.22';
+const APP_VERSION='v0.23';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
@@ -4247,7 +4254,7 @@ function camPreset(k){if(!T3)return;const maxC=Math.max(...geo.cps.map(p=>p.y),+
 function renderBar(){
   const b=document.getElementById('bar');const w=geo.warns;let h='';
   if(ui.tab==='elev')h+=`<button class="btn sm ${ui.props?'on':''}" data-act="props">Styling</button>${fmodeHTML()}<button class="btn sm" data-act="zoom" data-a="-1" aria-label="Zoom out">−</button><button class="btn sm" data-act="zoom" data-a="1" aria-label="Zoom in">+</button>`;
-  if(ui.tab==='3d')h+=`<button class="btn sm ${ui.photoOn?'on':''}" data-act="photo" title="Line the design up with a photo of your room">${ui.photoOn?'Photo on':PH.img?'Room photo':'+ Room photo'}</button><button class="btn sm" data-act="cam" data-a="front">Front</button><button class="btn sm" data-act="cam" data-a="angle">Right ¾</button><button class="btn sm" data-act="cam" data-a="left">Left ¾</button><button class="btn sm ${ui.props?'on':''}" data-act="props">Styling</button>${fmodeHTML()}<button class="btn sm ${ui.room3D?'on':''}" data-act="room3D">Room</button><button class="btn sm ${ui.exOn?'on':''}" data-act="explode" title="Pull every column and every part apart">Exploded</button><button class="btn sm ${ui.iso?'on':''}" data-act="iso" title="Show one column on its own">${ui.iso?'Column '+(ui.sel+1):'One column'}</button>${ui.iso?`<button class="btn sm" data-act="isoSec" data-a="-1" aria-label="Previous column">◀</button><button class="btn sm" data-act="isoSec" data-a="1" aria-label="Next column">▶</button>`:''}`;
+  if(ui.tab==='3d')h+=`<button class="btn sm ${ui.photoOn?'on':''}" data-act="photo" title="Line the design up with a photo of your room">${ui.photoOn?'Photo on':PH.img?'Room photo':'+ Room photo'}</button><button class="btn sm" data-act="cam" data-a="front">Front</button><button class="btn sm" data-act="cam" data-a="angle">Right ¾</button><button class="btn sm" data-act="cam" data-a="left">Left ¾</button><button class="btn sm ${ui.props?'on':''}" data-act="props">Styling</button>${fmodeHTML()}<button class="btn sm ${ui.see&&ui.see.size?'on':''}" data-act="seeClear" title="Tap any door, panel or shelf in the 3D view to see through it">${ui.see&&ui.see.size?`Solid again (${ui.see.size})`:'Tap a piece to see through'}</button><button class="btn sm ${ui.room3D?'on':''}" data-act="room3D">Room</button><button class="btn sm ${ui.exOn?'on':''}" data-act="explode" title="Pull every column and every part apart">Exploded</button><button class="btn sm ${ui.iso?'on':''}" data-act="iso" title="Show one column on its own">${ui.iso?'Column '+(ui.sel+1):'One column'}</button>${ui.iso?`<button class="btn sm" data-act="isoSec" data-a="-1" aria-label="Previous column">◀</button><button class="btn sm" data-act="isoSec" data-a="1" aria-label="Next column">▶</button>`:''}`;
   if(ui.tab==='elev'||ui.tab==='3d')h+=`<span class="sp"></span><span class="note" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">Fronts ${finSel('front')} Carcass ${finSel('carcass')}</span>`;
   else h+='<span class="sp"></span>';
   if(ui.tab==='elev'||ui.tab==='3d')h+=`<button class="btn sm mobonly" data-act="bigView" aria-label="${ui.big?'Smaller drawing':'Bigger drawing'}">${ui.big?'⤡ Smaller':'⤢ Bigger'}</button>`;
@@ -4276,7 +4283,9 @@ function setFm(m){ui.fm=m;dirty.elev=true;renderBar();if(ui.tab==='elev')renderT
 function applyFronts3D(noReq){if(!T3)return;if(!T3.glass)T3.glass={};T3.frontG.visible=ui.fm!=='off';
   T3.frontG.traverse(o=>{if(!o.isMesh)return;if(o.userData.gap){o.visible=ui.fm!=='glass';o.castShadow=false;return}if(!o.userData.solid)o.userData.solid=o.material;const sm=o.userData.solid;
     const peek=ui.peek&&ui.zsel!=null&&(o.userData.sz===ui.sel+':'+ui.zsel||o.userData.sz===ui.sel+':-1');
-    if(ui.fm==='glass'||peek){const k=sm.uuid;if(!T3.glass[k]){const gm=sm.clone();gm.transparent=true;gm.opacity=.2;gm.depthWrite=false;T3.glass[k]=gm}o.material=T3.glass[k];o.castShadow=false}else{o.material=sm;o.castShadow=true}});
+    if(ui.fm==='glass'||peek||(ui.see&&ui.see.has(o.userData.pk))){const k=sm.uuid;if(!T3.glass[k]){const gm=sm.clone();gm.transparent=true;gm.opacity=.2;gm.depthWrite=false;T3.glass[k]=gm}o.material=T3.glass[k];o.castShadow=false}else{o.material=sm;o.castShadow=true}});
+  if((ui.see&&ui.see.size)||T3.rootSee){T3.rootSee=!!(ui.see&&ui.see.size);T3.root.traverse(o=>{if(!o.isMesh||o.userData.pk==null||Array.isArray(o.material))return;const on=ui.see&&ui.see.has(o.userData.pk);if(!on&&!o.userData.solid)return;if(!o.userData.solid)o.userData.solid=o.material;const sm=o.userData.solid;
+      if(on){const k=sm.uuid;if(!T3.glass[k]){const gm=sm.clone();gm.transparent=true;gm.opacity=.2;gm.depthWrite=false;T3.glass[k]=gm}o.material=T3.glass[k];o.castShadow=false}else{o.material=sm;o.castShadow=true}})}
   if(ui.iso||ui.exT)applyExplode(true);if(!noReq)T3.req()}
 function renderViews(){
   groupsCache=null;renderBar();
@@ -4487,6 +4496,7 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'stagAlt':{const pa=a.split('|').map(Number),z=(S.sections[pa[0]]||{zones:[]}).zones[pa[1]],zr=geo.secs[pa[0]]&&geo.secs[pa[0]].zones[pa[1]];if(!z||!zr)break;const n=(zr.comps||[]).length,any=(z.vst||[]).slice(0,n).some(Boolean);z.vst=Array.from({length:n},(_,j)=>!any&&j%2?1:null);changed(true);break}
     case 'railStep':{const[si,zk,d]=a.split('|').map(Number);const zr=geo.secs[si]&&geo.secs[si].zones[zk];if(!zr||!zr.railY)break;S.sections[si].zones[zk].railH=Math.round((zr.railY+d)/10)*10;changed(true);break}
     case 'pane':ui.pane=a;renderSide();document.getElementById('side').scrollTop=0;if(isSheet()){openSheetAt()}else if(innerWidth<=860){const sd=document.getElementById('side'),st=document.querySelector('.stage').offsetHeight,y=sd.getBoundingClientRect().top+scrollY-st;if(scrollY>y)scrollTo({top:y})}break;
+    case 'seeClear':if(ui.see&&ui.see.size){ui.see.clear();applyFronts3D();renderBar()}else toast('Tap any door, panel or shelf in the 3D view to see through it. Tap it again to make it solid.');break;
     case 'peek':ui.peek=!ui.peek;dirty.elev=true;renderBar();if(ui.tab==='elev')renderTab('elev');applyFronts3D();break;
     case 'splitN':case 'splitShift':{const pa=a.split('|'),si=+pa[0],zk=+pa[1],z=(S.sections[si]||{zones:[]}).zones[zk],q=geo.secs[si];if(!q||!z)break;const w=q.w,tc=geo.tc,lb=(q.zones[zk]&&q.zones[zk].lined)||0;
       if(z.type==='drawers'){if(act==='splitN'){z.split=Math.max(1,+pa[2]||1);changed(true)}break}

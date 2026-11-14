@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.23
+
+- 3D view: tap (or click) any door, drawer front, panel or shelf to make just that piece see-through. Tap it again to make it solid. "Solid again" in the toolbar resets all of them. Dragging still turns the view; only a short tap selects.
+
 ## v0.22
 
 - Doors: "Join with the cupboard above" on a cupboard level makes one tall door that runs over this level and the one above it, in one piece and one colour. Switch it on in the next level too to run the door over three levels. Shelves and inside stay separate per level; the fixed board between the levels sits behind the door.
