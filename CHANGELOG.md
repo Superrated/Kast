@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.19
+
+Simpler budget and simpler side-by-side splitting.
+
+- Budget: one card at the top of the price list replaces the Budget chip, "Budget build" and "Budget joints". Drag the slider to the amount you want to spend; below it is a list of savings, each with what it saves on this design, that you switch on or off. When the design is over budget, the least noticeable savings are marked "suggested" and one button switches them on. The Budget chip now shows how far over or under you are.
+- Layout: every part of a column has "Split side by side · 1 2 3 4" right under its height. Doors, open shelves and drawers all split this way, so a wide niche with three cupboards above it is one wide column.
+- Layout: "Shift" moves the uprights of a part half a step, so they sit between the uprights above or below, like bricks.
+- "Vertical dividers" is now called "Uprights" and stays below for moving them one by one.
+
 ## v0.18
 
 Audit of the wizard, saved designs and photos.
