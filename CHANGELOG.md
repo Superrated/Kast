@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.18
+
+Audit of the wizard, saved designs and photos.
+
+- Shuffler and wizard: with "Free" box widths, an automatic TV-and-speakers group could overwrite "Always include" items (a window seat or dog den silently became a speaker column). It now only uses columns that are still free.
+- Projector screen: the screen drawer is one piece, so it is no longer planned wider than a board.
+- Window seats wider than 800 mm get enough drawers side by side to support the seat board.
+
 ## v0.17
 
 Audit of the build guide and the PDF.

@@ -1169,7 +1169,7 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
       return {i,l:(i===0||boxes)?q.lx:q.lx+tc/2,r:(i===n-1||boxes)?q.rx+tc:q.rx+tc/2,top:m,ok:!q.panel&&!q.door&&!q.free&&q.s.ownMode!=='own'&&q.z0===0&&q.D>=D-1&&m>900}});
     const dm=w=>({w,h:w*0.5625}),STD=[3200,3000,2800,2600,2400,2200,2000,1800,1600,1400,1200,1000,900,800,700,600],cas=cl_(+SC.cas||90,70,140),Hb=cas+44,wallC=(E[0].l+E[n-1].r)/2,pos=SC.pos||'auto',xu=SC.x!=null&&SC.x!==''?+SC.x:pos==="centre"?W/2:null,
       wantW=+SC.w>0?cl_(+SC.w,600,4000):+SC.diag>0?Math.round(+SC.diag*22.14):0,wLo=!wantW&&+SC.wMin>0?+SC.wMin:0,wHi=!wantW&&+SC.wMax>0?Math.max(+SC.wMax,wLo):0;if(wHi){const k_=STD.filter(d=>d<wHi);STD.length=0;STD.push(wHi,...k_)}
-    const hiTop=(()=>{let m=0;const need=dm(600).w+160+2*tc+40;for(let a=0;a<n;a++){if(!E[a].ok)continue;let t=Infinity;for(let b=a;b<n&&E[b].ok;b++){t=Math.min(t,E[b].top);if(E[b].r-E[a].l>=need){m=Math.max(m,t);break}}}return m})();const tryD=(d,minTop=-1e9)=>{const d_=dm(d),cl=d_.w+160,need=cl+2*tc+40;let best=null;for(let a=0;a<n;a++){if(!E[a].ok)continue;for(let b=a;b<n&&E[b].ok;b++){const wd=E[b].r-E[a].l;if(wd<need)continue;const yT=Math.min(...E.slice(a,b+1).map(e=>e.top)),c=(E[a].l+E[b].r)/2,imgBot=yT-Hb-80-d_.h;if(yT<minTop)continue;const lo_=E[a].l+cl/2+tc+20,hi_=E[b].r-cl/2-tc-20,off=xu!=null?Math.abs(cl_(xu,lo_,hi_)-xu):0,score=(xu!=null?Math.abs(c-xu)*4+off*40:Math.abs(c-wallC)*4)-yT*1.5+(wd-need)*0.6;
+    const hiTop=(()=>{let m=0;const need=dm(600).w+160+2*tc+40;for(let a=0;a<n;a++){if(!E[a].ok)continue;let t=Infinity;for(let b=a;b<n&&E[b].ok;b++){t=Math.min(t,E[b].top);if(E[b].r-E[a].l>=need){m=Math.max(m,t);break}}}return m})();const tryD=(d,minTop=-1e9)=>{const d_=dm(d),cl=d_.w+160,need=cl+2*tc+40;let best=null;for(let a=0;a<n;a++){if(!E[a].ok)continue;for(let b=a;b<n&&E[b].ok;b++){const wd=E[b].r-E[a].l;if(wd<need||wd>Math.min(sheetOf(M.front.sheet).L,sheetOf(M.carcass.sheet).L)-2*(+O.trim||0)-10)continue;const yT=Math.min(...E.slice(a,b+1).map(e=>e.top)),c=(E[a].l+E[b].r)/2,imgBot=yT-Hb-80-d_.h;if(yT<minTop)continue;const lo_=E[a].l+cl/2+tc+20,hi_=E[b].r-cl/2-tc-20,off=xu!=null?Math.abs(cl_(xu,lo_,hi_)-xu):0,score=(xu!=null?Math.abs(c-xu)*4+off*40:Math.abs(c-wallC)*4)-yT*1.5+(wd-need)*0.6;
         if(!best||score<best.score)best={a,b,yT,c,imgBot,score,d,d_,cl,off}}}return best};
     let pk=null,fit=0;{let firstFit=null;for(const mt of (xu!=null?[hiTop-260,-1e9]:[hiTop-260])){for(const d of STD){const t=tryD(d,mt);if(t&&t.imgBot>=480){if(!firstFit){firstFit=t;fit=d}if(xu!=null?t.off<25:Math.abs(t.c-wallC)<60){if(!wantW)pk=t;break}}}if(pk)break}if(!pk&&firstFit&&!wantW)pk=firstFit}
     let shrunk=0;if(wantW){pk=tryD(wantW);if(!pk){for(const d of STD){if(d>=wantW)continue;const t=tryD(d);if(t){pk=t;shrunk=d;break}}}}
@@ -2527,6 +2527,7 @@ function tidy(st){const linked=sc=>sc.link!=null&&sc.link!=='';
       if(!zr.top&&+z.h>0&&h<280&&!(q.desk&&zr.k===0)){const d=280-h,nx=sc.zones[zr.k+1],pv=sc.zones[zr.k-1];z.h=280;if(nx&&+nx.h>0&&zr.k+1<sc.zones.length-1&&+nx.h-d>=280&&nx.type!=='opening')nx.h=Math.round(+nx.h-d);else if(pv&&+pv.h>0&&+pv.h-d>=280&&pv.type!=='opening'&&pv.type!=='seat'&&!(q.desk&&zr.k===1))pv.h=Math.round(+pv.h-d)}
       const hh=Math.max(280,zr.top?(q.minU+q.maxU)/2-zr.y0:h),ts_=G.ts;let n=+z.shelves||0;while(n>0&&(hh-n*ts_)/(n+1)<220)n--;z.shelves=n;if(Array.isArray(z.vsh))z.vsh=z.vsh.map(v=>v==null?v:Math.min(+v,n));
       if(Array.isArray(z.vd)&&z.vd.length){let k_=z.vd.length;while(k_>0&&(q.w-k_*G.tc)/(k_+1)<250)k_--;if(k_<z.vd.length){z.vd=k_?vdPos(k_,'even',q.w,G.tc).map(v=>Math.round(v)):[];z.vdMode=k_?'even':null}}}
+    if(z.type==='seat'&&G.tc<22){const need=Math.min(4,Math.ceil((q.w+G.tc)/(800+G.tc)));if((+z.count||1)<need)z.count=need} // a seat board wider than 800 mm needs a support under it: more drawers side by side give one
     if(z.type==='drawers'&&!zr.top&&h>0){const mn=Math.ceil(h/400),mx=Math.max(1,Math.floor(h/140));z.count=Math.max(mn,Math.min(mx,+z.count||2))}})});
   return st}
 /* lines that almost line up (3–40 mm apart in different columns) are forced onto one line. TV, speaker, seat and desk columns keep their line; the others move to it. */
@@ -2959,14 +2960,14 @@ function randomLayout(base,r){
       const pat=pick(r,['wideCentre','narrowEnds','rhythm','steps','ends']);
       for(let i=0;i<half;i++){const dc=Math.abs(i-c);let si;if(pat==='wideCentre')si=dc<0.6?sizes.length-1:(sizes.length>2&&dc<1.6?1:0);else if(pat==='narrowEnds')si=i===0?0:sizes.length-1;else if(pat==='rhythm')si=i%2?0:sizes.length-1;else if(pat==='ends')si=i===0?sizes.length-1:0;else si=Math.min(sizes.length-1,Math.floor(i*sizes.length/half));specs[i].wt=sizes[si];specs[k-1-i].wt=sizes[si]}}
     const midH=hAt(run.x0+span*0.3,run.x0+span*0.7);
-    if(!mediaUsed&&!WMN&&!WMX&&wm==='free'&&k>=5&&k%2===1&&midH>2050&&clear>2400&&r()<0.55){mediaUsed=true;const m=(k-1)/2;const sw=r10(360+r()*40);
+    if(!mediaUsed&&!WMN&&!WMX&&wm==='free'&&k>=5&&k%2===1&&midH>2050&&clear>2400&&[-1,0,1].every(d=>!specs[(k-1)/2+d].type)&&r()<0.55){mediaUsed=true;const m=(k-1)/2;const sw=r10(360+r()*40);
       specs[m-1].type='speaker';specs[m-1].w=sw;specs[m].type='tv';specs[m].w=r10(Math.min(1500,Math.max(1000,clear*0.35)));specs[m+1].type='speaker';specs[m+1].w=sw}
     const fixed=specs.reduce((a,x)=>a+(x.w||0),0),free=specs.filter(x=>!x.w),wsum=free.reduce((a,x)=>a+x.wt,0);
     free.forEach(x=>x.w=Math.floor((clear-fixed)*x.wt/wsum));
     if(wm==='mixed'&&free.some(x=>x.w<340)){const mn=Math.min(...free.map(x=>x.wt)),unit=(clear-fixed)/wsum;if(unit*mn<340){const tgt=340/unit;free.forEach(x=>x.wt=Math.max(x.wt,tgt));const ws2=free.reduce((a,x)=>a+x.wt,0);free.forEach(x=>x.w=Math.floor((clear-fixed)*x.wt/ws2))}}
     if((WMN||WMX)&&free.length&&free.some(x=>(WMN&&x.w<WMN)||(WMX&&x.w>WMX))){const lo=WMN||0,hi=WMX||1e9,cl=()=>free.forEach(x=>x.w=Math.max(lo,Math.min(hi,x.w)));cl();for(let it=0;it<8;it++){const d=(clear-fixed)-free.reduce((a,x)=>a+x.w,0);if(Math.abs(d)<free.length)break;const adj=free.filter(x=>d>0?x.w<hi-1:x.w>lo+1);if(!adj.length)break;adj.forEach(x=>x.w=Math.floor(x.w+d/adj.length));cl()}
       if(Math.abs((clear-fixed)-free.reduce((a,x)=>a+x.w,0))>free.length+2){const e=Math.floor((clear-fixed)/free.length);free.forEach(x=>x.w=e)}}
-    if(!mediaUsed&&!WMN&&!WMX&&wm==='mixed'&&k>=5&&k%2===1&&midH>2050&&r()<0.5){const m=(k-1)/2;if(specs[m].w>=1000&&specs[m-1].w>=330&&specs[m-1].w<=470){mediaUsed=true;specs[m-1].type='speaker';specs[m].type='tv';specs[m+1].type='speaker'}}
+    if(!mediaUsed&&!WMN&&!WMX&&wm==='mixed'&&k>=5&&k%2===1&&midH>2050&&r()<0.5){const m=(k-1)/2;if(specs[m].w>=1000&&specs[m-1].w>=330&&specs[m-1].w<=470&&[-1,0,1].every(d=>!specs[m+d].type)){mediaUsed=true;specs[m-1].type='speaker';specs[m].type='tv';specs[m+1].type='speaker'}}
     {let drift=clear-specs.reduce((a,x)=>a+x.w,0);const fl=specs.filter(x=>(!x.type||x.type==='desk')&&!x.mw);if(!fl.length&&drift>0){const c_=specs.filter(x=>!(x.must&&x.must.D.pair));(c_.length?c_:specs).forEach(x=>fl.push(x))} // only fixed items in this stretch: they share the leftover instead of leaving a gap
       const per1=Math.floor(drift/Math.max(1,fl.length));fl.forEach(x=>x.w+=per1);drift-=per1*fl.length;const ord=specs.map((_,i)=>i).sort((a,b)=>Math.abs(a-(k-1)/2)-Math.abs(b-(k-1)/2));for(const i of ord){if(drift<=0)break;specs[i].w+=1;drift--}}
     let x=run.x0;specs.forEach(sp=>{const a=x+tc,b=a+sp.w;sp.h=hAt(a,b)-(+K.top)-(+K.plinth)-2*tc;x=boxes?b+tc:b});
@@ -3828,7 +3829,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.17';
+const APP_VERSION='v0.18';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
