@@ -1042,7 +1042,7 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
     H.drawerBoxes=(H.drawerBoxes||0)+1;if(LW>1200&&!warns.some(w=>w.startsWith(lab+': a drawer '+f0(LW))))warns.push(`${lab}: a drawer ${f0(LW)} mm wide is more than runners are made for (about 1200 mm) and its bottom will sag — make two drawers side by side or a narrower column.`)};
   const TT=(S.opts&&S.opts.two&&S.opts.two.on&&FIN[S.opts.two.fin])?S.opts.two:null;
   const ttFin=poly=>{if(!TT)return null;const ys=poly.map(p=>p[1]),cy=(Math.min(...ys)+Math.max(...ys))/2;return cy>(+TT.y||900)?TT.fin:null};
-  const boxFinOf=z=>FIN[z.inFin]?z.inFin:FIN[z.boxFin]?z.boxFin:(z.boxFin==='carcass'?M.carcass.fin:z.boxFin==='desk'?M.desk.fin:M.front.fin);
+  const linFin=z=>FIN[z.boxFin]?z.boxFin:(z.boxFin==='carcass'?M.carcass.fin:z.boxFin==='desk'?M.desk.fin:M.front.fin),boxFinOf=z=>FIN[z.inFin]?z.inFin:linFin(z);
   const autoVd=(z,bL_,bR_,xa_)=>{const nd=+z.doors||0;if(!z||z.type!=='closed'||(z.doorMode&&z.doorMode!=='hinged')||z.face==='curtain'||z.dog||nd<3||(Array.isArray(z.vd)&&z.vd.length))return null;return Array.from({length:Math.ceil(nd/2)-1},(_,k_)=>bL_+(k_+1)*2*(bR_-bL_)/nd-xa_)};
   const hz=(xa,xb,y,t,z0,z1,role)=>({k:'prism',poly:[[xa,z0],[xb,z0],[xb,z1],[xa,z1]],toW:(u,v)=>[u,y,-v],ext:[0,t,0],role,grainU:true});
   const fp=(poly,z,t,role,tag,grainU)=>({k:'prism',poly,toW:(u,v)=>[u,v,z],ext:[0,0,-t],role,tag,grainU});
@@ -1471,7 +1471,7 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
         if(!z.grille)hs.forEach(h=>items.push({k:'hole',x:h.x,y:h.y,d:h.d,z:tf-q.z0,tag:'front'}))}
       if(z.type==='opening'&&!lead){const isG=gp&&zr.k===gp.ko,gx0=q.xa,gx1=isG?gEnd:q.xb,oh=zr.top?zr.hMin:zr.h,oy0=zr.y0,oy1=zr.y0+oh,ol=isG?glab:lab;
         let ix0=gx0,ix1=gx1,iy0=oy0,iy1=oy1;
-        if(z.box){const bt=+z.boxT>0?+z.boxT:tf,ext=tf,dep=q.Dh+ext,role='front',fin=boxFinOf(z),nt=`Projects ${ext} mm past the carcass so its front edge is flush with the doors`;
+        if(z.box){const bt=+z.boxT>0?+z.boxT:tf,ext=tf,dep=q.Dh+ext,role='front',fin=linFin(z),nt=`Projects ${ext} mm past the carcass so its front edge is flush with the doors`;
           for(let l=0;l<2;l++)addPanel({type:'Opening box (top/bottom)',role,fin,t:bt,sec:ol,poly:rect(gx1-gx0,dep),grain:'w',band:'front',bandLen:gx1-gx0,notes:[nt]});
           for(let l=0;l<2;l++)addPanel({type:'Opening box (side)',role,fin,t:bt,sec:ol,poly:rect(oh-2*bt,dep),grain:'h',band:'front',bandLen:oh-2*bt,notes:[nt]});
           items.push(wf(hzq(gx0,gx1,oy0,bt,-ext,q.Dh,role),fin));items.push(wf(hzq(gx0,gx1,oy1-bt,bt,-ext,q.Dh,role),fin));
@@ -1902,7 +1902,7 @@ function elevSVG(S,G,o={}){
   G.secs.forEach(q=>q.zones.forEach(zr=>{if(!zr.passage)return;const y1=zr.y0+zr.h;if(zr.passage==='open'||zr.passage==='hallway'){push(`<rect x="${q.xa}" y="${Y(y1)}" width="${q.w}" height="${y1}" fill="#2B2D30" opacity=".55"/>`);
       if(zr.hall&&zr.hall.leaf){const lf=zr.hall.leaf;push(`<polygon points="${pp(lf.poly)}" fill="${pvF(M.front.fin)}" stroke="rgba(0,0,0,.45)" stroke-width="${sw}"/><polygon points="${pp(lf.poly)}" fill="rgba(0,0,0,.28)"/>`+handleSVG(lf.hs,Y,false,S.opts.handleWood))}}
       else push(`<rect x="${q.xa}" y="${Y(y1)}" width="${q.w}" height="${y1}" fill="#2B2D30" opacity=".45"/>`)}));
-  G.secs.forEach(q=>q.zones.forEach(zr=>{const op=zr.open;if(!op)return;push(`<rect x="${op.x0}" y="${Y(op.y1)}" width="${op.x1-op.x0}" height="${op.y1-op.y0}" fill="${pv('back')}"/><rect x="${op.x0}" y="${Y(op.y1)}" width="${op.x1-op.x0}" height="${op.y1-op.y0}" fill="rgba(0,0,0,.22)"/>`)}));
+  G.secs.forEach(q=>q.zones.forEach(zr=>{const op=zr.open;if(!op)return;push(`<rect x="${op.x0}" y="${Y(op.y1)}" width="${op.x1-op.x0}" height="${op.y1-op.y0}" fill="${pvF(zr.inFin||M.back.fin)}"/><rect x="${op.x0}" y="${Y(op.y1)}" width="${op.x1-op.x0}" height="${op.y1-op.y0}" fill="rgba(0,0,0,.22)"/>`)}));
   G.secs.forEach(q=>q.zones.forEach(zr=>{
     if(zr.divIv)push(`<rect x="${zr.divIv[0]}" y="${Y(zr.divY+zr.divT)}" width="${zr.divIv[1]-zr.divIv[0]}" height="${zr.divT}" fill="${ph('carcass')}" stroke="rgba(0,0,0,.25)" stroke-width="${sw*.5}"/>`);
     const pk=o.peek&&o.peek[0]===q.i&&o.peek[1]===zr.k,vis=zr.z.type==='open'||showIn||pk||zr.glass;
@@ -3710,7 +3710,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.03';
+const APP_VERSION='v0.04';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;

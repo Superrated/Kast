@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.04
+
+- TV niche: the inside (back) colour now shows in the front drawing; before, it always showed the plain back colour.
+- TV niche with a box lining: the lining keeps its own "Lining colour" instead of taking the inside colour.
+
 ## v0.03
 
 - Clothes rails sit at a comfortable height for the person set in Room → people (just under their own height; 1.75 m if none is set), instead of a fixed 1750 mm above the bottom of the zone.
