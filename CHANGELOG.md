@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.31
+
+- Niches and open shelves: "Line the inside…" is now called "Own box, flush with the doors". The niche gets its own box whose front edge stands one door thickness (about 18 mm) proud of the cabinet body, in line with the door fronts above and below.
+- New "Stands proud by" field on that box: leave it empty to line up with the doors, or type a little more or less.
+- Niches (TV, art, DJ) can now be colour-drenched: with an inside colour set, "Colour-drench" puts back, sides, top and bottom in that colour. A drenched niche gets its own box automatically.
+- Cut list: "Opening box" parts are now called "Niche box".
+
 ## v0.30
 
 Slatted screens.
