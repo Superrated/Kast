@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.34
+
+- "Install app" button: in the top bar on a computer and in the ☰ menu on a phone. It appears only where the browser can really install Kast (the GitHub site, in Chrome, Edge or Android), and disappears once Kast is installed. On iPhone and iPad it explains the Share → "Add to Home Screen" steps.
+- Messages at the bottom of the screen now stay long enough to read; longer messages stay longer.
+
 ## v0.33
 
 - Open shelves: "Storage boxes on the shelves". Open wooden boxes with a hand slot, made to fit each compartment, on the bottom row, every other row or every row. "Box colour" follows the inside colour (so they join a colour-drench) or takes any colour you pick.
