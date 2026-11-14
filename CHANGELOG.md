@@ -1,5 +1,20 @@
 # Changelog
 
+## v0.11
+
+Shuffler
+- Lines that almost line up between columns (3–40 mm apart) are forced onto one line.
+- Doors under a slope hinge on their tall side; a door across a ridge gets an upright at the ridge so each half can open.
+- More varied and playful shuffles: less weight on symmetry, more on variety and open parts; playful styles come up more often.
+- Open shelves and niches have a minimum usable size: 280 mm high, 220 mm clear between shelves, compartments at least 250 mm wide.
+
+Structural review
+- Header over a TV niche wider than 900 mm with open shelves or glass doors above: 3 layers (54 mm) instead of 2, because it has no front rail to stiffen it.
+- A doorway wider than 800 mm gets a double head with rails, like a TV niche, because a cabinet stands on it.
+- Wardrobe rails longer than 1 m get a centre support in the hardware list.
+- Upright dividers that stand on a board get a note to screw the back panel to them (the back carries them); a design note warns when the column has no back.
+- A design note warns when an opening wider than 1600 mm has cabinets standing on it.
+
 ## v0.10
 
 - Items under "Always include" now follow Left / Middle / Right: picking a side moves the item straight away, and a Contents shuffle no longer leaves it on the wrong side.
