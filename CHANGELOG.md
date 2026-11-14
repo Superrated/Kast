@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.24
+
+Saving designs can no longer lose work.
+
+- The Designs window now says in plain words which design is open and whether it has unsaved changes. With a design open the buttons are "Save changes" and "Save as a new design"; with a new design there is only "Save as a new design".
+- A design made with the wizard, the example or pasted text is always a new design. Before, "Save" could silently replace the design that was open earlier.
+- "Save changes" keeps the version from before under "Earlier versions" on that design's card (the last 8).
+- Opening another design, starting the wizard or loading the example while there is unsaved work first puts a copy under "Recovered work and deleted designs".
+- Deleting a design moves it to "Recovered work and deleted designs" instead of removing it for good. Copies stay about three months.
+- The Designs button shows the name of the open design and a dot when there are unsaved changes.
+
 ## v0.23
 
 - 3D view: tap (or click) any door, drawer front, panel or shelf to make just that piece see-through. Tap it again to make it solid. "Solid again" in the toolbar resets all of them. Dragging still turns the view; only a short tap selects.

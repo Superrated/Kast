@@ -421,6 +421,8 @@ details.acc>summary::after{font-family:var(--f-b);font-weight:400;font-size:18px
 .vdsh{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px}
 .ttbox{display:grid;gap:8px;padding:10px;border-radius:10px;background:var(--panel2,rgba(0,0,0,.03))}
 .fdot{width:14px;height:14px;border-radius:4px;display:inline-block;background:#d8d2c6;border:1px solid rgba(0,0,0,.15)}.fdot.f-fluted{background:repeating-linear-gradient(90deg,#cbbfa8 0 3px,#e6dccb 3px 6px)}.fdot.f-cane{background:#E3CFA3 radial-gradient(circle,#3B3024 25%,transparent 30%) 0 0/5px 5px}.fdot.f-glass{background:repeating-linear-gradient(90deg,#cfe0dc 0 3px,#f1f7f5 3px 6px)}
+.dsnow{display:grid;gap:2px;padding:10px 12px;border-radius:12px;background:var(--accent-soft);margin-bottom:10px}.dsnow b{font-size:14px}.dsnow span{font-size:12.5px;color:var(--ink2)}.dsnow.dirty{background:var(--warn-soft)}.dsnow.dirty span{color:var(--warn);font-weight:600}
+.dver{margin-top:2px}.dvrow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 0;font-size:12px;color:var(--ink2);border-top:1px solid var(--line)}#dsBtn{white-space:nowrap;display:inline-flex;align-items:center}.dsdot{display:inline-block;flex:none;width:8px;height:8px;border-radius:50%;background:var(--warn);margin-left:6px;vertical-align:middle}.dsnm{font-weight:500;color:var(--ink2)}
 .dsave{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:end}.dbtns{display:flex;gap:6px}@media(max-width:520px){.dsave{grid-template-columns:minmax(0,1fr)}}
 .dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin:6px 0 12px}
 .dcard{display:grid;gap:6px;padding:8px;border-radius:12px;border:1px solid var(--line,rgba(0,0,0,.1));background:var(--card,#fff);min-width:0}.dcard.on{border-color:var(--accent,#3446D6);box-shadow:0 0 0 2px var(--accent-soft,rgba(52,70,214,.15))}
@@ -739,7 +741,7 @@ details.mx{grid-column:1/-1}
     <div class="acts">
       <button class="btn" data-act="undo" id="bUndo" aria-label="Undo" title="Undo (Ctrl+Z)" disabled>↶</button><button class="btn" data-act="redo" id="bRedo" aria-label="Redo" title="Redo" disabled>↷</button><button class="btn pri dsk" data-act="wizard">Wizard</button>
       <button class="btn dsk" data-act="pdf" title="Download a PDF with elevation, cut list and build guide">PDF</button>
-      <button class="btn dsk" data-act="io">Designs</button><button class="btn phone" data-act="mmenu" aria-label="Menu" aria-expanded="false">☰</button>
+      <button class="btn dsk" data-act="io" id="dsBtn">Designs</button><button class="btn phone" data-act="mmenu" aria-label="Menu" aria-expanded="false">☰</button>
     </div>
   </header>
   <div class="main">
@@ -769,7 +771,7 @@ details.mx{grid-column:1/-1}
   
   <button data-act="tab" data-a="guide"><svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="9" cy="9" r="1.6" fill="currentColor"/><path d="M12 9h4M8 14h8M8 17.5h6" stroke="currentColor" stroke-width="1.6"/></svg><span>Guide</span></button>
 </nav>
-<div class="mmenu" id="mmenu" hidden><button type="button" data-act="io">📁 My designs</button><button type="button" data-act="wizard">✨ Start with the wizard</button><button type="button" data-act="pdf">⬇ Download PDF</button></div>
+<div class="mmenu" id="mmenu" hidden><button type="button" data-act="io" id="dsBtnM">📁 My designs</button><button type="button" data-act="wizard">✨ Start with the wizard</button><button type="button" data-act="pdf">⬇ Download PDF</button></div>
 <div class="pcal" id="pcal" hidden role="dialog" aria-label="Line up your room photo"><header><b>Line up your photo</b><span class="sp"></span><label class="btn sm" style="position:relative;overflow:hidden;cursor:pointer">Other photo<input type="file" accept="image/*" data-photoin style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0"></label><button type="button" class="btn sm" data-act="pcalClose">Cancel</button></header><div class="pstage" id="pstage"></div><footer id="pfoot"></footer></div>
 <input type="file" id="photoIn" accept="image/*" hidden>
 <div class="modal" id="wiz" hidden>
@@ -784,10 +786,13 @@ details.mx{grid-column:1/-1}
   <div class="mbox">
     <div class="mhead"><h2>Designs</h2></div>
     <div class="mbody">
-      <div class="dsave"><label class="fld"><span>This design</span><span class="inp"><input type="text" id="dsName" placeholder="Name it — e.g. Attic, oak + sage" maxlength="80"></span></label>
-        <div class="dbtns"><button class="btn pri" data-act="dsSave">Save</button><button class="btn" data-act="dsSaveNew">Save as new</button></div></div>
+      <div class="dsnow" id="dsNow"></div>
+      <div class="dsave"><label class="fld"><span>Name of this design</span><span class="inp"><input type="text" id="dsName" placeholder="Name it — e.g. Attic, oak + sage" maxlength="80"></span></label>
+        <div class="dbtns" id="dsBtns"></div></div>
+      <p class="hintp" id="dsHelp" style="margin:0"></p>
       <p class="hintp" id="dsNote">Loading saved designs…</p>
       <div class="dgrid" id="dsList"></div>
+      <div id="dsBack"></div>
       <details class="pf"><summary>Copy as text / paste a design</summary><p class="hintp">Copy the text to move a design somewhere else, or paste one back and load it.</p><textarea class="io" id="ioText" spellcheck="false"></textarea>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button class="btn" data-act="ioCopy">Copy</button><button class="btn" data-act="ioLoad">Load pasted text</button><button class="btn" data-act="ioReset">Load example</button></div></details>
     </div>
@@ -1792,8 +1797,8 @@ function packGroup(parts,sheet,kerf,trim,grainLock){
 /* ================= UI ================= */
 const LS='builtin-lofter-v1';
 let S, geo, ui={peek:true,pane:'layout',fm:'solid',props:true,tab:'elev',sel:0,zsel:null,xray:false,hide:false,zoom:1,hide3D:false,room3D:true,wizSeen:false};
-function load(){try{const t=localStorage.getItem(LS);if(t){const o=JSON.parse(t);if(o&&o.S&&o.S.sections){S=fixFins(o.S);ui.wizSeen=!!o.wizSeen;ui.docId=o.docId||null;ui.docName=o.docName||'';return true}}}catch(e){}return false}
-let saveT=null;function saveSoon(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(LS,JSON.stringify({S,wizSeen:ui.wizSeen,docId:ui.docId||null,docName:ui.docName||''}))}catch(e){}},400)}
+function load(){try{const t=localStorage.getItem(LS);if(t){const o=JSON.parse(t);if(o&&o.S&&o.S.sections){S=fixFins(o.S);ui.wizSeen=!!o.wizSeen;ui.docId=o.docId||null;ui.docName=o.docName||'';ui.savedSig=o.sv!=null?o.sv:null;return true}}}catch(e){}return false}
+let saveT=null;function saveSoon(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(LS,JSON.stringify({S,wizSeen:ui.wizSeen,docId:ui.docId||null,docName:ui.docName||'',sv:ui.savedSig??null}))}catch(e){}try{dsBadge()}catch(e){}},400)}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function toast(m){document.querySelectorAll('.toast').forEach(t=>t.remove());const d=document.createElement('div');d.className='toast';d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),1800)}
 function lum(hex){const n=parseInt(hex.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255}
@@ -2859,24 +2864,58 @@ async function exportPdf(){
 const DS={db:null,list:[],state:'loading',local:false,thumbs:{}};const DSL='kast-designs-v1';
 const dsLocalGet=()=>{try{return JSON.parse(localStorage.getItem(DSL)||'[]')}catch(e){return []}};
 const dsLocalPut=l=>{try{localStorage.setItem(DSL,JSON.stringify(l));return true}catch(e){return false}};
+const DSB='kast-backups-v1';DS.backs=[];
+const dsHash=t=>{let h=7;for(let i=0;i<t.length;i++)h=(h*31+t.charCodeAt(i))|0;return h},dsSig=()=>dsHash(JSON.stringify(S));
+const dsCur=()=>ui.docId?DS.list.find(d=>d.id===ui.docId)||null:null;
+/* is there work in the editor that is not in the saved list? */
+function dsDirty(){if(ui.savedSig!=null)return dsSig()!==ui.savedSig;const c=dsCur();return c?c.state!==JSON.stringify(S):true}
+const dsBackLocal=()=>{try{return JSON.parse(localStorage.getItem(DSB)||'[]')}catch(e){return []}};
 async function dsInit(){let db=null;try{if(window.claude&&claude.use)db=await claude.use('db')}catch(e){db=null}
-  if(!db){DS.local=true;DS.list=dsLocalGet().sort((a,b)=>b.updatedAt-a.updatedAt);DS.state='ready';renderDesigns();return}
+  if(ui.fresh&&ui.savedSig==null){try{ui.savedSig=dsSig()}catch(e){}}
+  if(!db){DS.local=true;DS.list=dsLocalGet().sort((a,b)=>b.updatedAt-a.updatedAt);DS.backs=dsBackLocal();DS.state='ready';renderDesigns();dsBadge();return}
   DS.db=db;const t=setTimeout(()=>{if(DS.state==='loading'){DS.state='slow';renderDesigns()}},10000);
-  db.collection('designs').orderBy('updatedAt','desc').limit(200).onSnapshot(snap=>{clearTimeout(t);DS.list=snap.docs.map(d=>Object.assign({id:d.id},d.data()));DS.state='ready';renderDesigns()},err=>{clearTimeout(t);DS.state='error';DS.err=err&&err.message;renderDesigns()})}
+  db.collection('designs').orderBy('updatedAt','desc').limit(200).onSnapshot(snap=>{clearTimeout(t);DS.list=snap.docs.map(d=>Object.assign({id:d.id},d.data()));DS.state='ready';renderDesigns();dsBadge()},err=>{clearTimeout(t);DS.state='error';DS.err=err&&err.message;renderDesigns()});
+  try{db.collection('backups').orderBy('savedAt','desc').limit(80).onSnapshot(snap=>{DS.backs=snap.docs.map(d=>Object.assign({id:d.id},d.data()));renderDesigns()},()=>{})}catch(e){}}
+/* Safety net: every time something would be replaced or thrown away, a copy goes here first.
+   kind 'version' = a saved design as it was before "Save changes"; 'auto' = unsaved work that was about to be replaced; 'deleted' = a deleted design */
+async function dsBackup(kind,name,state,of){if(!state||state.length>240000)return false;if(DS.backs.some(b=>b.state===state&&b.kind===kind))return true;const rec={kind,name:name||'Untitled design',state,savedAt:Date.now(),of:of||''};
+  try{if(DS.db){await DS.db.collection('backups').add(rec);dsPrune()}
+    else{const l=dsBackLocal();l.unshift(Object.assign({id:'b'+Date.now().toString(36)+Math.random().toString(36).slice(2,5)},rec));while(l.length>10)l.pop();let ok=false;while(l.length){try{localStorage.setItem(DSB,JSON.stringify(l));ok=true;break}catch(e){l.pop()}}DS.backs=l;if(!ok)return false}
+    return true}catch(e){return false}}
+function dsPrune(){if(!DS.db)return;const seen={},kill=[];DS.backs.forEach(b=>{const k=b.kind==='version'?'v:'+b.of:b.kind,max=b.kind==='version'?8:b.kind==='deleted'?15:10;seen[k]=(seen[k]||0)+1;if(seen[k]>max||Date.now()-(+b.savedAt||0)>90*864e5)kill.push(b.id)});kill.slice(0,10).forEach(id=>{try{DS.db.doc('backups/'+id).delete().catch(()=>{})}catch(e){}})}
 function dsAgo(ts){const m=Math.round((Date.now()-ts)/60000);return m<1?'just now':m<60?m+' min ago':m<1440?Math.round(m/60)+' h ago':new Date(ts).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'})}
-function dsThumb(d){const k=d.id+':'+d.updatedAt;if(DS.thumbs[k]!=null)return DS.thumbs[k];let h='';try{const st=fixFins(JSON.parse(d.state));h=elevSVG(st,build(st),{mini:true})}catch(e){h=''}DS.thumbs[k]=h;return h}
+function dsThumb(d){const k=d.id+':'+(d.updatedAt||d.savedAt);if(DS.thumbs[k]!=null)return DS.thumbs[k];let h='';try{const st=fixFins(JSON.parse(d.state));h=elevSVG(st,build(st),{mini:true})}catch(e){h=''}DS.thumbs[k]=h;return h}
+function dsBadge(){const c=dsCur(),dirty=dsDirty(),nm=c?(c.name||'Untitled design'):'',b=document.getElementById('dsBtn'),m=document.getElementById('dsBtnM');
+  if(b){b.innerHTML=`Designs${nm?` · <span class="dsnm">${esc(nm.length>18?nm.slice(0,17)+'…':nm)}</span>`:''}${dirty&&(c||!ui.fresh||ui.savedSig==null||dsSig()!==ui.savedSig)?'<i class="dsdot" title="Changes not saved yet"></i>':''}`;b.title=c?(dirty?`“${nm}” has changes that are not saved yet`:`“${nm}” — all changes saved`):(dirty?'This design is not saved yet':'Saved designs')}
+  if(m)m.textContent='📁 My designs'+(dirty?' · not saved yet':'')}
 function renderDesigns(){const el=document.getElementById('dsList'),note=document.getElementById('dsNote');if(!el||document.getElementById('iom').hidden)return;
+  const c=dsCur(),dirty=dsDirty(),now=document.getElementById('dsNow'),btns=document.getElementById('dsBtns'),help=document.getElementById('dsHelp'),nm=c?(c.name||'Untitled design'):'';
+  now.className='dsnow'+(dirty?' dirty':'');
+  now.innerHTML=c?`<b>Open now: “${esc(nm)}”</b><span>${dirty?'It has changes that are not saved yet.':'All changes are saved.'}</span>`:`<b>This design is not in your list yet</b><span>${dirty?'Give it a name and save it, or it only lives in this browser.':'It is the example. Change something and save it under your own name.'}</span>`;
+  btns.innerHTML=c?`<button class="btn pri" data-act="dsSave">Save changes</button><button class="btn" data-act="dsSaveNew">Save as a new design</button>`:`<button class="btn pri" data-act="dsSaveNew">Save as a new design</button>`;
+  help.textContent=c?`“Save changes” updates “${nm}” in the list below — the way it was before stays under its “Earlier versions”. “Save as a new design” leaves “${nm}” untouched and adds a second one.`:'Saving adds this design to the list below. Nothing in the list is replaced.';
   note.textContent=DS.state==='loading'?'Loading saved designs…':DS.state==='slow'?'Still loading — check your connection.':DS.state==='error'?'Saved designs could not be loaded right now.':DS.local?'Saved in this browser only (shared saving works in the published app).':DS.list.length?'Saved in the app — everyone you share Kast with sees these.':'No saved designs yet. Name this one and tap Save.';
-  el.innerHTML=DS.list.map(d=>`<div class="dcard${d.id===ui.docId?' on':''}"><button type="button" class="dthumb" data-act="dsOpen" data-a="${esc(d.id)}" aria-label="Open ${esc(d.name||'design')}">${dsThumb(d)}</button><div class="dmeta"><b>${esc(d.name||'Untitled design')}</b><span>${dsAgo(+d.updatedAt||0)}${d.id===ui.docId?' · open now':''}</span></div><div class="dact"><button type="button" class="btn sm" data-act="dsOpen" data-a="${esc(d.id)}">Open</button><button type="button" class="btn sm" data-act="dsDel" data-a="${esc(d.id)}">Delete</button></div></div>`).join('')}
+  const vers=id=>DS.backs.filter(b=>b.kind==='version'&&b.of===id);
+  el.innerHTML=DS.list.map(d=>{const v=vers(d.id);return `<div class="dcard${d.id===ui.docId?' on':''}"><button type="button" class="dthumb" data-act="dsOpen" data-a="${esc(d.id)}" aria-label="Open ${esc(d.name||'design')}">${dsThumb(d)}</button><div class="dmeta"><b>${esc(d.name||'Untitled design')}</b><span>${dsAgo(+d.updatedAt||0)}${d.id===ui.docId?' · open now':''}</span></div><div class="dact"><button type="button" class="btn sm" data-act="dsOpen" data-a="${esc(d.id)}">Open</button><button type="button" class="btn sm" data-act="dsDel" data-a="${esc(d.id)}">Delete</button></div>${v.length?`<details class="pf dver"><summary>Earlier versions (${v.length})</summary>${v.map(b=>`<div class="dvrow"><span>${dsAgo(+b.savedAt||0)}${b.name&&b.name!==d.name?' · “'+esc(b.name)+'”':''}</span><button type="button" class="btn sm" data-act="dsRestore" data-a="${esc(b.id)}">Open this version</button></div>`).join('')}</details>`:''}</div>`}).join('');
+  const rest=DS.backs.filter(b=>b.kind!=='version'||!DS.list.some(d=>d.id===b.of)),bk=document.getElementById('dsBack'),KL={auto:'unsaved work, kept automatically',deleted:'deleted design',version:'earlier version of a deleted design'};
+  if(bk)bk.innerHTML=rest.length?`<details class="pf"${ui.dsBackOpen?' open':''} data-dsback="1"><summary>Recovered work and deleted designs (${rest.length})</summary><p class="hintp">Kast puts a copy here whenever unsaved work is about to be replaced, and when you delete a design. Copies stay for about three months.</p><div class="dgrid">${rest.map(b=>`<div class="dcard"><div class="dthumb" aria-hidden="true">${dsThumb(b)}</div><div class="dmeta"><b>${esc(b.name||'Untitled design')}</b><span>${KL[b.kind]||''} · ${dsAgo(+b.savedAt||0)}</span></div><div class="dact"><button type="button" class="btn sm" data-act="dsRestore" data-a="${esc(b.id)}">Open</button><button type="button" class="btn sm" data-act="dsBackDel" data-a="${esc(b.id)}">Remove</button></div></div>`).join('')}</div></details>`:''}
 async function dsSave(asNew){const name=(document.getElementById('dsName').value||'').trim()||'Untitled design',state=JSON.stringify(S);
   if(state.length>240000){toast('This design is too big to save');return}
-  const rec={name,state,updatedAt:Date.now()};
-  try{if(DS.db){if(ui.docId&&!asNew&&DS.list.some(d=>d.id===ui.docId))await DS.db.doc('designs/'+ui.docId).set(rec);else{const ref=await DS.db.collection('designs').add(rec);ui.docId=ref.id}}
-    else{const l=dsLocalGet();let id=(!asNew&&ui.docId&&l.find(d=>d.id===ui.docId))?ui.docId:('d'+Date.now().toString(36));const i=l.findIndex(d=>d.id===id);const r=Object.assign({id},rec);if(i>=0)l[i]=r;else l.push(r);if(!dsLocalPut(l)){toast('Could not save in this browser');return}ui.docId=id;DS.list=l.sort((a,b)=>b.updatedAt-a.updatedAt)}
-    ui.docName=name;saveSoon();toast(`Saved “${name}”`);renderDesigns()}
+  const rec={name,state,updatedAt:Date.now()},cur=asNew?null:dsCur();
+  try{if(cur&&cur.state!==state){const ok=await dsBackup('version',cur.name,cur.state,cur.id);if(!ok){toast('Could not keep a copy of the earlier version, so nothing was replaced. Use “Save as a new design”.');return}}
+    if(DS.db){if(cur)await DS.db.doc('designs/'+cur.id).set(rec);else{const ref=await DS.db.collection('designs').add(rec);ui.docId=ref.id}}
+    else{const l=dsLocalGet();const id=cur?cur.id:('d'+Date.now().toString(36));const i=l.findIndex(d=>d.id===id);const r=Object.assign({id},rec);if(i>=0)l[i]=r;else l.push(r);if(!dsLocalPut(l)){toast('Could not save in this browser');return}ui.docId=id;DS.list=l.sort((a,b)=>b.updatedAt-a.updatedAt)}
+    ui.docName=name;ui.savedSig=dsHash(state);ui.fresh=0;saveSoon();toast(cur?`Saved the changes to “${name}”`:`Saved “${name}” as a new design`);renderDesigns();dsBadge()}
   catch(e){toast(e&&(e.code==='not_granted'||e.code==='revoked')?'You can look at designs but not save — ask for edit access':'Could not save right now')}}
-function dsOpen(id){const d=DS.list.find(x=>x.id===id);if(!d)return;try{S=fixFins(JSON.parse(d.state));ui.docId=d.id;ui.docName=d.name||'';ui.sel=0;ui.zsel=null;document.getElementById('iom').hidden=true;changed(true);toast(`Opened “${d.name||'design'}”`)}catch(e){toast('That design could not be opened')}}
-async function dsDelete(id){try{if(DS.db)await DS.db.doc('designs/'+id).delete();else{const l=dsLocalGet().filter(d=>d.id!==id);dsLocalPut(l);DS.list=l}if(ui.docId===id){ui.docId=null}toast('Deleted');renderDesigns()}catch(e){toast('Could not delete right now')}}
+/* keep unsaved work before something replaces what is in the editor */
+function dsKeep(){try{if(!dsDirty())return false;if(ui.fresh&&!ui.docId&&ui.savedSig!=null&&dsSig()===ui.savedSig)return false;dsBackup('auto',ui.docName||'Unsaved design',JSON.stringify(S),ui.docId||'');return true}catch(e){return false}}
+/* a brand-new design (wizard, example, pasted text) must never be saved over the design that was open before */
+function dsDetach(clean){ui.docId=null;ui.docName='';ui.savedSig=null;ui.fresh=clean?1:0;const n=document.getElementById('dsName');if(n)n.value=''}
+function dsOpen(id){const d=DS.list.find(x=>x.id===id);if(!d)return;const kept=dsKeep();try{S=fixFins(JSON.parse(d.state));ui.docId=d.id;ui.docName=d.name||'';ui.fresh=0;ui.sel=0;ui.zsel=null;document.getElementById('iom').hidden=true;changed(true);ui.savedSig=dsSig();saveSoon();toast(`Opened “${d.name||'design'}”`+(kept?'. Your unsaved work was kept under Designs → Recovered work.':''))}catch(e){toast('That design could not be opened')}}
+function dsRestore(bid){const b=DS.backs.find(x=>x.id===bid);if(!b)return;dsKeep();try{S=fixFins(JSON.parse(b.state));const still=b.kind==='version'&&DS.list.some(d=>d.id===b.of);ui.docId=still?b.of:null;ui.docName=still?(DS.list.find(d=>d.id===b.of).name||''):(b.name||'');ui.fresh=0;ui.sel=0;ui.zsel=null;document.getElementById('iom').hidden=true;changed(true);ui.savedSig=null;saveSoon();toast(still?`This earlier version of “${ui.docName}” is open. Tap Designs → Save changes to make it the current one.`:`“${b.name||'Design'}” is open again. Tap Designs → Save as a new design to keep it.`)}catch(e){toast('That copy could not be opened')}}
+async function dsBackDel(bid){try{if(DS.db)await DS.db.doc('backups/'+bid).delete();else{const l=dsBackLocal().filter(b=>b.id!==bid);localStorage.setItem(DSB,JSON.stringify(l));DS.backs=l}renderDesigns()}catch(e){toast('Could not remove it right now')}}
+async function dsDelete(id){const d=DS.list.find(x=>x.id===id);try{if(d){const ok=await dsBackup('deleted',d.name,d.state,d.id);if(!ok){toast('Could not keep a copy, so nothing was deleted');return}}
+    if(DS.db)await DS.db.doc('designs/'+id).delete();else{const l=dsLocalGet().filter(d=>d.id!==id);dsLocalPut(l);DS.list=l}if(ui.docId===id){ui.docId=null;ui.savedSig=null}ui.dsBackOpen=1;toast('Deleted — a copy stays under “Recovered work and deleted designs”');renderDesigns();dsBadge()}catch(e){toast('Could not delete right now')}}
 
 /* ===== Randomizer ===== */
 const PALETTES=[
@@ -3911,7 +3950,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.23';
+const APP_VERSION='v0.24';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
@@ -4439,14 +4478,16 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'isoSec':ui.sel=Math.max(0,Math.min(secs.length-1,ui.sel+(+a)));ui.zsel=null;applyExplode();isoFrame();renderBar();renderSide();dirty.elev=true;break;
     case 'copyCSV':copy(csv());break;
     case 'copyText':copy(txt());break;
-    case 'io':document.getElementById('ioText').value=JSON.stringify(S,null,1);document.getElementById('dsName').value=ui.docName||'';document.getElementById('iom').hidden=false;renderDesigns();break;
+    case 'io':document.getElementById('ioText').value=JSON.stringify(S,null,1);document.getElementById('dsName').value=(dsCur()?ui.docName:'')||ui.docName||'';document.getElementById('iom').hidden=false;renderDesigns();break;
     case 'dsSave':dsSave(false);break;case 'dsSaveNew':dsSave(true);break;
     case 'dsOpen':dsOpen(a);break;
+    case 'dsRestore':dsRestore(a);break;
+    case 'dsBackDel':{const b=e.target.closest('button');if(b.dataset.armed){dsBackDel(a)}else{b.dataset.armed='1';b.textContent='Tap again to remove';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Remove'}},3000)}break}
     case 'dsDel':{const b=e.target.closest('button');if(b.dataset.armed){dsDelete(a)}else{b.dataset.armed='1';b.textContent='Tap again to delete';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Delete'}},3000)}break}
     case 'ioClose':document.getElementById('iom').hidden=true;break;
     case 'ioCopy':copy(document.getElementById('ioText').value);break;
-    case 'ioLoad':try{const o=JSON.parse(document.getElementById('ioText').value);if(!o.sections||!o.room)throw 0;S=fixFins(o);ui.sel=0;ui.zsel=null;document.getElementById('iom').hidden=true;changed(true);toast('Design loaded')}catch(err){toast('That text is not a saved design')}break;
-    case 'ioReset':S=exampleState();ui.sel=0;document.getElementById('iom').hidden=true;changed(true);toast('Example loaded');break;
+    case 'ioLoad':try{const o=JSON.parse(document.getElementById('ioText').value);if(!o.sections||!o.room)throw 0;dsKeep();dsDetach(false);S=fixFins(o);ui.sel=0;ui.zsel=null;document.getElementById('iom').hidden=true;changed(true);toast('Design loaded')}catch(err){toast('That text is not a saved design')}break;
+    case 'ioReset':{const kept=dsKeep();dsDetach(true);S=exampleState();ui.sel=0;document.getElementById('iom').hidden=true;changed(true);ui.savedSig=dsSig();saveSoon();toast('Example loaded'+(kept?'. Your unsaved work was kept under Designs → Recovered work.':''));break}
     case 'setv':{const[pth,val,t]=a.split('|');setP(pth,t==='x'?null:t==='n'?+val:val);if(/^opts\.must\.\d+\.pos$/.test(pth)){geo=build(S);if(mustOff()){randomize('layout');break}}if(/^opts\.must\.\d+\.w(Min|Max)$/.test(pth)){const mm=getP(pth.replace(/\.w(Min|Max)$/,''));if(mm)mm.w=null}if(pth==='opts.screen.pos'&&val!=='x'&&S.opts.screen)S.opts.screen.x=null;if(pth==='opts.screen.w'&&S.opts.screen)S.opts.screen.diag=null;if(pth.endsWith('.ownMode')){const sx=getP(pth.slice(0,-8));if(sx&&val==='own'){if(!(+sx.ownH>0)){const qi=geo.secs[+pth.split('.')[1]],lo=qi?Math.min(geo.ceilAt(qi.lx),geo.ceilAt(qi.rx)):(+S.room.H||2500);sx.ownH=Math.max(600,Math.round(Math.min(2000,lo-250)/10)*10)}(sx.zones||[]).forEach((z,j,arr)=>{if(j<arr.length-1&&+z.h>0)z.h=null})}}if(pth.endsWith('.look')&&val==='dj'){const zz=getP(pth.slice(0,-5));if(zz.led==null)zz.led=true}if(pth.endsWith('.base')&&val==='door'){const sc=getP(pth.slice(0,-5));sc.zones=[Z('passage',{h:2050}),Z('closed',{shelves:1})];if(!(+sc.w>0))sc.w=900;sc.back='split'}if(pth.endsWith('.base')&&val!=='door'){const sc=getP(pth.slice(0,-5));if(sc.zones&&sc.zones[0]&&sc.zones[0].type==='passage'){sc.zones.shift();if(!sc.zones.length)sc.zones.push(Z('closed',{shelves:2}))}}if(pth.endsWith('.base')&&val==='desk'){const i=+pth.split('.')[1],sc=S.sections[i];if(sc.zones&&sc.zones[0]&&sc.zones.length>1&&+sc.zones[0].h>0&&+sc.zones[0].h<560)sc.zones[0].h=600;if(sc.zones&&sc.zones.length<2)sc.zones=[Z('open',{h:600,shelves:0}),Z('closed',{shelves:1})];const q=geo.secs[i];if(q&&q.w<1000){const nb=S.sections[i+1]&&!['panel','door','desk'].includes(S.sections[i+1].base)?i+1:(S.sections[i-1]&&!['panel','door','desk'].includes(S.sections[i-1].base)?i-1:-1);if(nb>=0){const per=geo.boxes?2*geo.tc:geo.tc,w=q.w+geo.secs[nb].w+per;S.sections.splice(nb,1);const k=nb<i?i-1:i;S.sections[k].w=Math.round(w);ui.sel=k;S.opts.cols=0;setTimeout(()=>toast(`The desk takes two columns: ${Math.round(w)} mm`),50)}}}if(pth.endsWith('.base')&&val==='free'){const sc=getP(pth.slice(0,-5));if(!(+sc.freeH>0))sc.freeH=900;sc.mount=sc.mount||'legs'}if(pth.endsWith('.base')&&val==='panel'){const sc=getP(pth.slice(0,-5));if(!sc.panel)sc.panel={...PANEL_DEF}}if(pth.endsWith('.type'))ui.zsel=+pth.split('.')[3];if(pth==='opts.wmode'){randomize('layout');break}changed(true);break}
     case 'step':{const[pth,d,mn,mx]=a.split('|');setP(pth,Math.max(+mn,Math.min(+mx,(+getP(pth)||0)+ +d)));changed(true);break}
     case 'zsel':if(isSheet()){ui.zsel=+a;ui.flow='zone';renderSide();document.getElementById('side').scrollTop=0;openSheetAt();dirty.elev=true;if(ui.tab==='elev')renderTab('elev');applyFronts3D();break}ui.zsel=ui.zsel===+a?null:+a;renderSide();dirty.elev=true;if(ui.tab==='elev')renderTab('elev');applyFronts3D();break;
@@ -4606,7 +4647,7 @@ function wizRender(){
 }
 function wizPrev(){const el=document.getElementById('wprev');if(!el)return;try{const s=wizState(WZ);const g=build(s);el.innerHTML=elevSVG(s,g,{mini:true})}catch(e){el.textContent=''}}
 function wizFinal(){if(WZ.manual||!WZ.props||!WZ.props[WZ.sel])return slopeFix(wizState(WZ));return JSON.parse(JSON.stringify(WZ.props[WZ.sel].tiers[WZ.tier].st))}
-function wizGo(d){if(d>0&&wstep===WSTEPS.length-1){const P=!WZ.manual&&WZ.props&&WZ.props[WZ.sel];S=wizFinal();ui.sel=0;ui.zsel=null;if(P)ui.style=P.key;closeWiz();changed(true);toast(P?`${STYLES[P.key].name} · ${WTIER[WZ.tier][0]} — refine it in the editor`:'Design created — refine it in the editor');return}wstep=Math.max(0,Math.min(WSTEPS.length-1,wstep+d));wizRender()}
+function wizGo(d){if(d>0&&wstep===WSTEPS.length-1){const P=!WZ.manual&&WZ.props&&WZ.props[WZ.sel];const kept_=dsKeep();dsDetach(false);S=wizFinal();ui.sel=0;ui.zsel=null;if(P)ui.style=P.key;closeWiz();changed(true);toast((P?`${STYLES[P.key].name} · ${WTIER[WZ.tier][0]} — refine it in the editor`:'Design created — refine it in the editor')+(kept_?'. The design you had open was kept under Designs → Recovered work.':''));return}wstep=Math.max(0,Math.min(WSTEPS.length-1,wstep+d));wizRender()}
 document.getElementById('fpSearch').addEventListener('input',e=>{FP.q=e.target.value;renderFinPicker()});
 document.getElementById('fpm').addEventListener('click',e=>{if(e.target.id==='fpm')document.getElementById('fpm').hidden=true});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!document.getElementById('fpm').hidden)document.getElementById('fpm').hidden=true});
@@ -4622,7 +4663,7 @@ document.getElementById('wiz').addEventListener('click',e=>{const b=e.target.clo
 {const sp=document.getElementById('splash');if(sp)sp.addEventListener('animationend',()=>sp.remove())}
 try{new ResizeObserver(()=>{const f=document.getElementById('fmode');if(f)f.style.top=(document.getElementById('bar').offsetHeight+10)+'px'}).observe(document.getElementById('bar'))}catch(e){}
 buildDefs();
-if(!load())S=slopeFix(exampleState());
+if(!load()){S=slopeFix(exampleState());ui.fresh=1}
 geo=build(S);renderSide();renderViews();lastSnap=JSON.stringify(S);updUndo();
 if(!ui.wizSeen)openWiz();
 priceSoon();
