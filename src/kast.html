@@ -2890,6 +2890,12 @@ function randomLayout(base,r){
   const G0=build(base),runs=[];let cur=null;
   (base.sections.length?base.sections:[Sec({})]).forEach((sc,i)=>{const q=G0.secs[i];if((sc.base==='panel'||sc.base==='door'||(sc.base==='desk'&&sc.pinX!=null&&sc.pinX!==''))&&q){if(cur){runs.push(cur);cur=null}runs.push({panel:JSON.parse(JSON.stringify(sc)),w:q.w})}else if(q){if(!cur)cur={x0:q.lx,ws:[]};cur.ws.push(q.w)}});
   if(cur)runs.push(cur);
+  // empty wall left over from an earlier layout (before a pinned part, or at the right end) goes back to the stretch of cabinets next to it, so every shuffle fills the wall
+  {const qs=G0.secs.filter(Boolean),gaps=[];for(let j=1;j<qs.length;j++)gaps.push(qs[j].lx-qs[j-1].rx);const c0=gaps.length?Math.max(0,Math.min(...gaps)):0;let ri=-1,prevCab=null;
+    (base.sections.length?base.sections:[]).forEach((sc,i)=>{const q=G0.secs[i];if(!q)return;const fixed=(sc.base==='panel'||sc.base==='door'||(sc.base==='desk'&&sc.pinX!=null&&sc.pinX!==''));
+      if(i>0&&G0.secs[i-1]){const ex=q.lx-G0.secs[i-1].rx-c0;if(ex>5&&fixed&&prevCab)prevCab.ws[prevCab.ws.length-1]+=ex}
+      if(fixed){ri++;prevCab=null}else{if(!prevCab){ri++;prevCab=runs.filter(x=>!x.panel)[runs.slice(0,ri+1).filter(x=>!x.panel).length-1]||null}}});
+    const lastQ=qs[qs.length-1],lastRun=runs[runs.length-1];if(lastQ&&lastRun&&!lastRun.panel){const ex=W-(+K.side)-lastQ.rx-(boxes?0:tc);if(ex>5)lastRun.ws[lastRun.ws.length-1]+=ex}}
   if(!runs.length)runs.push({x0:+K.side,ws:[W-2*K.side-2*tc]});
   let mediaUsed=false,deskUsed=base.sections.some(sc=>sc.base==='desk'&&sc.pinX!=null&&sc.pinX!=='');const out=[];const wmRaw=st.opts.wmode||'mixed',WF=wmRaw==='fixed'?Math.min(1500,Math.max(250,Math.round(+st.opts.wFix||600))):0,WMN=WF?0:Math.max(0,+st.opts.wMin||0),WMX0=WF?0:Math.max(0,+st.opts.wMax||0),WMX=WMX0&&WMX0>=Math.max(WMN,250)?WMX0:0;const NC=WF?0:(+st.opts.cols||0);
   const cruns=runs.filter(x=>!x.panel),cspans=cruns.map(x=>x.ws.reduce((a,b)=>a+b,0)+(x.ws.length-1)*per),cN=NC?splitCols(NC,cspans):null;
@@ -2943,7 +2949,8 @@ function randomLayout(base,r){
     if((WMN||WMX)&&free.length&&free.some(x=>(WMN&&x.w<WMN)||(WMX&&x.w>WMX))){const lo=WMN||0,hi=WMX||1e9,cl=()=>free.forEach(x=>x.w=Math.max(lo,Math.min(hi,x.w)));cl();for(let it=0;it<8;it++){const d=(clear-fixed)-free.reduce((a,x)=>a+x.w,0);if(Math.abs(d)<free.length)break;const adj=free.filter(x=>d>0?x.w<hi-1:x.w>lo+1);if(!adj.length)break;adj.forEach(x=>x.w=Math.floor(x.w+d/adj.length));cl()}
       if(Math.abs((clear-fixed)-free.reduce((a,x)=>a+x.w,0))>free.length+2){const e=Math.floor((clear-fixed)/free.length);free.forEach(x=>x.w=e)}}
     if(!mediaUsed&&!WMN&&!WMX&&wm==='mixed'&&k>=5&&k%2===1&&midH>2050&&r()<0.5){const m=(k-1)/2;if(specs[m].w>=1000&&specs[m-1].w>=330&&specs[m-1].w<=470){mediaUsed=true;specs[m-1].type='speaker';specs[m].type='tv';specs[m+1].type='speaker'}}
-    {let drift=clear-specs.reduce((a,x)=>a+x.w,0);const fl=specs.filter(x=>(!x.type||x.type==='desk')&&!x.mw);const per1=Math.floor(drift/Math.max(1,fl.length));fl.forEach(x=>x.w+=per1);drift-=per1*fl.length;const ord=specs.map((_,i)=>i).sort((a,b)=>Math.abs(a-(k-1)/2)-Math.abs(b-(k-1)/2));for(const i of ord){if(drift<=0)break;specs[i].w+=1;drift--}}
+    {let drift=clear-specs.reduce((a,x)=>a+x.w,0);const fl=specs.filter(x=>(!x.type||x.type==='desk')&&!x.mw);if(!fl.length&&drift>0){const c_=specs.filter(x=>!(x.must&&x.must.D.pair));(c_.length?c_:specs).forEach(x=>fl.push(x))} // only fixed items in this stretch: they share the leftover instead of leaving a gap
+      const per1=Math.floor(drift/Math.max(1,fl.length));fl.forEach(x=>x.w+=per1);drift-=per1*fl.length;const ord=specs.map((_,i)=>i).sort((a,b)=>Math.abs(a-(k-1)/2)-Math.abs(b-(k-1)/2));for(const i of ord){if(drift<=0)break;specs[i].w+=1;drift--}}
     let x=run.x0;specs.forEach(sp=>{const a=x+tc,b=a+sp.w;sp.h=hAt(a,b)-(+K.top)-(+K.plinth)-2*tc;x=boxes?b+tc:b});
     specs.forEach(sp=>{if(sp.must&&sp.must.hMin){const uh=sp.h+(+K.plinth)+2*tc;if(uh<sp.must.hMin-5&&!st._mustMiss.some(t=>t.startsWith(sp.must.D.n)))st._mustMiss.push(`${sp.must.D.n} (only ${f0(Math.floor(uh/10)*10)} mm high where it landed, not ${f0(sp.must.hMin)})`)}});
     if(!deskUsed&&r()<0.5){const cand=specs.map((_,i)=>i).filter(i=>!specs[i].type&&specs[i].w>=1000&&specs[i].w<=1600&&specs[i].h>1900&&(k%2===0||Math.abs(i-(k-1)/2)<0.6));
@@ -3802,7 +3809,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.11';
+const APP_VERSION='v0.12';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;

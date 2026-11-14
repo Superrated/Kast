@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.12
+
+- Shuffling no longer leaves empty wall on the right. It happened with a pinned panel wall or door plus "Always include" items: the stretch of wall after the pinned part kept its old, too-short width. Leftover wall now goes back to the cabinets next to it, and a stretch that holds only fixed items shares the leftover between them.
+
 ## v0.11
 
 Shuffler
