@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.14
+
+- Desk columns taller than one board are built as two stacked units, like the other tall columns. The joint is never at the board right above the knee space. The "Split into two units" button now also shows for desk columns.
+
 ## v0.13
 
 - A back panel that would be bigger than the board it is cut from is now made per zone, with the joints hidden behind the fixed dividers.
