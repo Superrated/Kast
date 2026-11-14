@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.15
+
+- Top skirt pieces under a steep slope are cut shorter so each fits the width of its board; a tall narrow filler piece gets its grain upright.
+- Stacked units leave a little more margin, so the upper sides under a slope no longer come out a few millimetres longer than the board.
+
 ## v0.14
 
 - Desk columns taller than one board are built as two stacked units, like the other tall columns. The joint is never at the board right above the knee space. The "Split into two units" button now also shows for desk columns.

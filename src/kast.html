@@ -1244,7 +1244,7 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
     else{
       q.splitK=-1;const ySide=(q.desk||q.door)?0:q.Pq,hSide=q.maxU+tc-ySide;
       if(!gp&&!q.door&&!q.panel&&hSide>MAXU&&nz>1){let fx0=0,au0=0;Z0.forEach(z=>{if(+z.h>0)fx0+=+z.h;else au0++});const sd0=(nz-1)*tc,aH0=au0?((q.minU-yB)-sd0-tc-fx0)/au0:0;let yy=yB;
-        for(let k=0;k<nz-1;k++){const h=+Z0[k].h>0?+Z0[k].h:aH0,dY=yy+h;const low=dY+2*tc-ySide,up=q.maxU+tc-(dY+tc);if(low<=MAXU&&up<=MAXU&&Z0[k].type!=='opening'&&!(q.desk&&k===0))q.splitK=k;yy=dY+tc}}
+        for(let k=0;k<nz-1;k++){const h=+Z0[k].h>0?+Z0[k].h:aH0,dY=yy+h;const low=dY+2*tc-ySide,up=q.maxU+tc-(dY+tc);if(low<=MAXU&&up<=MAXU-2*tc&&Z0[k].type!=='opening'&&!(q.desk&&k===0))q.splitK=k;yy=dY+tc}}
       if(boxes&&!q.free&&!q.door&&!q.panel&&q.splitK<0){const dg=Math.min(Math.hypot(hSide,q.D),Math.hypot(hSide,q.bR-q.bL)),rm=Math.max(...cps.map(p=>p.y));if(dg>rm-10){q.noTilt=Math.round(dg);warns.push(`${lab}: this box is ${f0(hSide)} mm tall and cannot be tilted upright after building it flat — its diagonal (${f0(dg)} mm) is more than the ${f0(rm)} mm ceiling. Build it standing in place (the guide says how), or split it into two stacked units in its settings.`)}}
       if(hSide>MAXU&&!q.door&&!q.panel&&!gp&&q.splitK<0)warns.push(`${lab}: ${f0(hSide)} mm tall — more than the ${f0(MAXU)} mm your boards allow. Tap “Split into two units” in its settings.`);
       const oSpan=gp?gp.members[gp.members.length-1].xb-gp.members[0].xa:q.w,visUp=k=>!!(Z0[k+1]&&(Z0[k+1].type==='open'||Z0[k+1].face==='glass'));
@@ -1633,13 +1633,16 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
     H.screen={diag:Math.round(d_.w/22.14),cl:f0(P_.cl),w:f0(d_.w),h:f0(d_.h),cas,pull:f0(pull),rl,len:f0(bx1-bx0)}}
   const steps=secs.slice(0,-1).filter((q,i)=>q.z0!==secs[i+1].z0).map(q=>q.bR);const kinks=[...cps.map(p=>p.x).filter(x=>x>sx0+20&&x<sx1-20),...steps,...secs.filter(q=>q.free||q.own).flatMap(q=>[q.bL,q.bR])].filter(x=>x>sx0+0.5&&x<sx1-0.5).sort((m,n)=>m-n);
   const allK=[...kinks,...scrK].sort((m,n)=>m-n);
-  while(a<sx1-0.5){const kk=allK.find(x=>x>a+1);let b=Math.min(a+mlK,kk??Infinity);if(b>=sx1)b=sx1;else if(!(kk!=null&&b===kk)){const c=bounds.filter(x=>x>a+1&&x<=b);if(c.length)b=Math.max(...c)}{const cy=x=>ceilAt(Math.max(0,Math.min(W,x))),ln=x=>Math.hypot(x-a,cy(x)-cy(a))+2*sc+25;if(ln(b)>mlK){const c=bounds.filter(x=>x>a+150&&x<b&&ln(x)<=mlK);b=c.length?Math.max(...c):a+(b-a)*mlK/ln(b)*0.97}}pieces.push([a,b]);a=b}
+  while(a<sx1-0.5){const kk=allK.find(x=>x>a+1);let b=Math.min(a+mlK,kk??Infinity);if(b>=sx1)b=sx1;else if(!(kk!=null&&b===kk)){const c=bounds.filter(x=>x>a+1&&x<=b);if(c.length)b=Math.max(...c)}{const cy=x=>ceilAt(Math.max(0,Math.min(W,x))),ln=x=>Math.hypot(x-a,cy(x)-cy(a))+2*sc+25;if(ln(b)>mlK){const c=bounds.filter(x=>x>a+150&&x<b&&ln(x)<=mlK);b=c.length?Math.max(...c):a+(b-a)*mlK/ln(b)*0.97}}
+    {const wK=sheetOf(M.skirt.sheet).W-2*(+O.trim||0),hBox=x=>{let lo=Infinity,hi=-Infinity;secs.forEach(q=>{const l=Math.max(a,q.bL),r=Math.min(x,q.bR);if(r-l>0.01)for(let u=0;u<=6;u++)lo=Math.min(lo,q.top(l+(r-l)*u/6))});upperLine(a,x).forEach(p_=>{hi=Math.max(hi,p_[1])});return hi+sc-lo};
+      for(let it=0;it<12&&b-a>260&&hBox(b)>wK;it++){const c=bounds.filter(x=>x>a+150&&x<b-1&&hBox(x)<=wK);b=c.length?Math.max(...c):a+(b-a)*0.8}} // a skirt piece under a steep slope is cut shorter so it fits the width of the board
+    pieces.push([a,b]);a=b}
   pieces.forEach(([a,b])=>{if(secs.some(q=>(q.free||q.own)&&(a+b)/2>q.bL&&(a+b)/2<q.bR))return;const lower=[];secs.forEach(q=>{const l=Math.max(a,q.bL),r=Math.min(b,q.bR);if(r-l>0.01)lower.push(...sampleLine(x=>(q.scrCap!=null&&scrPre?scrPre.yT:q.top(x))+g/2,l,r))});
     const up=upperLine(a,b);if(up.some(p=>{const lo=lower.find(l=>Math.abs(l[0]-p[0])<1);return lo&&p[1]-lo[1]<g})){warns.push('The top skirt is very thin somewhere — check the top gap and beam clearances.')}
     const poly=[...lower,...up.slice().reverse()];skirtW.push(poly);
     const jn=[a,b].filter(x=>x>sx0+0.5&&x<sx1-0.5&&!allK.some(k=>Math.abs(k-x)<0.5)).map(jointNote);const flap=false;
     if(flap)jn.push('Lift-up flap for the projector screen: hang it on 2 flap hinges at the top edge (or on push latches) so it tips open and the screen drops in front of the doors','Leave a 3 mm gap to the skirts beside it');
-    addPanel({type:flap?'Top skirt flap (projector screen)':'Top skirt',role:'skirt',sec:'top',poly:[...lower,...up.slice().reverse().map(p=>[p[0],p[1]+sc])],grain:'w',notes:[sc?`Includes ${sc} mm scribe allowance on the top edge`:'Scribe to ceiling',...(kinks.some(x=>Math.abs(x-a)<0.5||Math.abs(x-b)<0.5)?['Ends mitred where the ceiling changes slope']:[]),...jn]});
+    addPanel({type:flap?'Top skirt flap (projector screen)':'Top skirt',role:'skirt',sec:'top',poly:[...lower,...up.slice().reverse().map(p=>[p[0],p[1]+sc])],grain:(()=>{const ys_=[...lower,...up].map(p_=>p_[1]);return Math.max(...ys_)+sc-Math.min(...ys_)>(b-a)*1.5?'h':'w'})(),notes:[sc?`Includes ${sc} mm scribe allowance on the top edge`:'Scribe to ceiling',...(kinks.some(x=>Math.abs(x-a)<0.5||Math.abs(x-b)<0.5)?['Ends mitred where the ceiling changes slope']:[]),...jn]});
     const zq=(secs.find(q=>(a+b)/2>=q.bL&&(a+b)/2<=q.bR)||secs[0]).z0;items.push(fp(poly,tf-zq,tk,'skirt',null,true))});
   steps.forEach(x=>{const i=secs.findIndex(q=>Math.abs(q.bR-x)<0.01),qa=secs[i],qb=secs[i+1];const lo=Math.max(qa.top(x),qb.top(x)),hi=frontLim(x),dz=Math.abs(qa.z0-qb.z0),zm=Math.min(qa.z0,qb.z0);
     if(hi-lo>5){addPanel({type:'Skirt return (front step)',role:'skirt',sec:'top',poly:rect(dz,hi-lo),grain:'h',notes:['Closes the top skirt where the front steps back']});items.push({k:'prism',poly:[[zm-tf,lo],[zm+dz-tf,lo],[zm+dz-tf,hi],[zm-tf,hi]],toW:(u,v)=>[x-tk/2,v,-u],ext:[tk,0,0],role:'skirt'})}
@@ -3810,7 +3813,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.14';
+const APP_VERSION='v0.15';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
