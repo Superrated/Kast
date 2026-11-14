@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.08
+
+- Box lining now works on open shelves at the top of a column (for example above a TV niche), under a flat or a sloped top. Before, it was silently left out with only a design note.
+- The lining of open shelves keeps its own "Lining colour"; with colour-drench on it takes the inside colour.
+- Colour-drench also colours the underside of the cabinet top.
+- Vertical divider presets (Even, ⅓ · ⅔, Golden, Wide middle) now give exact compartment widths, stay in proportion when the column width changes, and show which one is active. Tap ⅓ · ⅔ or Golden again to swap sides.
+- Shelves that would sag under a moderate load (clothes and boxes) get a vertical divider automatically. It can be switched off per zone.
+
 ## v0.07
 
 - The reinforced double header above a TV niche takes the colour-drench colour of the open shelves above it (drawing, 3D and cut list).
