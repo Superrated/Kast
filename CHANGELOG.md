@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.06
+
+- Shelf spacing now works on open shelves split into compartments (for example above a TV niche): every compartment uses the same shelf heights, so the rows line up, and the spacing choice applies to the whole unit. Compartments that are lower under the slope just leave out the shelves that don't fit.
+- Columns that share one opening (a TV niche running over several columns) also share the shelf heights above it.
+- Above a TV niche with open shelves, the spacing is measured from the header itself, not from the top of the rear rail hidden behind the books.
+- A compartment where you set its own number of shelves keeps its own spacing.
+
 ## v0.05
 
 - Open shelves (or glass doors) above a TV niche: no more front header rail standing in front of the lowest shelf. Only the rear rail stays, in the inside colour of the shelves above.

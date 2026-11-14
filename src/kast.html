@@ -1272,7 +1272,7 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
       if(isHead){const nzr_=q.zones[zr.k+1],rh=Math.max(0,Math.min(100,(nzr_?(nzr_.top?nzr_.hMin:nzr_.h):100)-tc-2));if(rh>=40){
         let rIv=spanDiv&&gp?gp.members.map(m=>[m.xa,m.xb]):[[iv[0],iv[1]]];{const nz_=Z0[zr.k+1],vr0=(nz_&&Array.isArray(nz_.vd)?nz_.vd:[]).map(Number).filter(v=>isFinite(v));rIv=rIv.flatMap(([ra0,rb0])=>{const base=spanDiv&&gp?ra0:q.xa;let o_=[[ra0,rb0]];const pe_=boxes?tc:tc/2,va_=nz_?autoVd(nz_,ra0-pe_,rb0+pe_,ra0):null,vr=va_?va_:vr0.slice();if(nz_&&nz_.type==='drawers'){const w_=rb0-ra0,nc=Math.max(1,Math.ceil(w_/(ECO?900:1200))),bw=(w_-(nc-1)*tc)/nc;for(let c=1;c<nc;c++)vr.push(c*bw+(c-1)*tc+tc/2)}vr.sort((a_,b_)=>a_-b_).forEach(v0=>{const v=base+v0;o_=o_.flatMap(([ra,rb])=>v-tc/2>ra+20&&v+tc/2<rb-20?[[ra,v-tc/2],[v+tc/2,rb]]:[[ra,rb]])});return o_})}
         const nzV=!!(Z0[zr.k+1]&&(Z0[zr.k+1].type==='open'||Z0[zr.k+1].face==='glass')),rFin=nzV&&FIN[Z0[zr.k+1].inFin]?Z0[zr.k+1].inFin:undefined;zr.hRailsN=nzV?1:2;
-        rIv.forEach(([ra,rb])=>hRails.push({xa:ra,xb:rb,y0:yt,y1:yt+rh}));
+        rIv.forEach(([ra,rb])=>hRails.push({xa:ra,xb:rb,y0:yt,y1:yt+rh,rear:nzV}));
         rIv.forEach(([ra,rb])=>{addPanel({type:'Header rail (rear)',role:'carcass',fin:rFin,sec:dl,poly:rect(rb-ra,rh),grain:'w',notes:['On edge on top of header, against back; screw to sides + wall studs'].concat(rIv.length>1?['One per column: fits between the uprights that stand on the header']:[],nzV?['The shelves above are open, so there is no front rail: this rear rail and the double header carry the load']:[])});
         if(!nzV)addPanel({type:'Header rail (front)',role:'carcass',sec:dl,poly:rect(rb-ra,rh),grain:'w',notes:['On edge on top of header, 20 mm behind front; screw to sides']})});
         rIv.forEach(([ra,rb])=>{items.push(wf({k:'prism',poly:[[ra,yt],[rb,yt],[rb,yt+rh],[ra,yt+rh]],toW:(u,v)=>[u,v,-(q.Dh-tc)-q.z0],ext:[0,0,-tc],role:'carcass'},rFin));
@@ -1293,10 +1293,10 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
     // shelves + rail
     q.zones.forEach(zr=>{const z=zr.z;zr.shelvesY=[];
       const ns=(z.type==='open'||z.type==='closed')?Math.max(0,+z.shelves||0):0;
-      const ref=zr.top?((z.rail||z.fit==='lift')?q.minU:(q.minU+q.maxU)/2):zr.y0+zr.h;
+      const gmm=gp&&zr.top?[Math.min(...gp.members.map(m=>m.minU)),Math.max(...gp.members.map(m=>m.maxU))]:[q.minU,q.maxU],ref=zr.top?((z.rail||z.fit==='lift')?q.minU:(gmm[0]+gmm[1])/2):zr.y0+zr.h; // columns under one shared opening share shelf heights
       const vdA=autoVd(z,q.bL,q.bR,q.xa);zr.vdAuto=!!vdA;
       let lift=false;if(z.fit&&FITS[z.fit]&&FITS[z.fit].multi&&!(+z.fitN>0))z.fitN=1;
-      const yz=Math.max(zr.y0,hRails.filter(r_=>Math.abs(r_.y0-zr.y0)<1&&r_.xb>q.xa+5&&r_.xa<q.xb-5).reduce((m_,r_)=>Math.max(m_,r_.y1),0));
+      const hr_=hRails.filter(r_=>Math.abs(r_.y0-zr.y0)<1&&r_.xb>q.xa+5&&r_.xa<q.xb-5),yz=Math.max(zr.y0,hr_.reduce((m_,r_)=>Math.max(m_,r_.y1),0)),yzV=hr_.length&&hr_.every(r_=>r_.rear)?zr.y0:yz; // yzV: where the open space starts for the eye (a rear-only rail hides behind the books)
       const zb=(()=>{zr.fit=null;if(z.type!=='closed'||!z.fit||!FITS[z.fit]||z.dog)return yz;const F=FITS[z.fit],fl=`${lab}: the ${F.n.toLowerCase()}`;
         if((Array.isArray(z.vd)&&z.vd.length)||vdA){warns.push(`${fl} needs the full width of the zone — ${vdA?'use one or two doors there (three or more doors need uprights to hinge on)':'remove the vertical dividers there'}; for now it is left out.`);return yz}
         if(q.w<F.minW||q.w>F.maxW){warns.push(`${fl} needs an inside width of ${F.minW}–${F.maxW} mm; this column is ${f0(q.w)} mm inside — left out.`);return yz}
@@ -1325,7 +1325,7 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
         const drop=zr.railY-zr.hangFloor;if(drop<850)warns.push(`${lab}: ${f0(drop)} mm of hanging space under the rail — fine for shirts and folded trousers, too short for coats or dresses.`);
         if(zr.railY>zr.y0+200&&q.Dh<470)warns.push(`${lab}: a hanging rail needs about 550 mm of depth inside (a hanger is 420–450 mm wide plus sleeves); here there is ${f0(q.Dh)} mm, so clothes will stick out or the doors won't close. Use shelves here, or a pull-out rail that faces the front.`);
         if(zr.railY>zr.y0+200){if(lift)zr.lift=1;else H.rails.push({sec:lab,L:f0(q.w-2)})}else zr.railY=null}
-      else if(ns){const sy=shelfYs(zb,ref,ns,ts,z.space),sp=sy.min;if(sp<140)warns.push(`${lab}: shelves in zone ${zr.k+1} are only ${f0(sp)} mm apart${zr.fit?' above the '+FITS[zr.fit.kind].s.toLowerCase():''}.`);ys.push(...sy.ys)}
+      else if(ns){const b_=zb===yz?yzV:zb,sy=shelfYs(b_,ref,ns,ts,z.space),sp=sy.min;sy.ys=sy.ys.map(y=>Math.max(y,zb));if(sp<140)warns.push(`${lab}: shelves in zone ${zr.k+1} are only ${f0(sp)} mm apart${zr.fit?' above the '+FITS[zr.fit.kind].s.toLowerCase():''}.`);ys.push(...sy.ys)}
       const dren=z.type==='open'&&z.drench&&zr.inFin?zr.inFin:null;zr.drench=dren;
       const vd=vdA?vdA:(z.type==='open'||z.type==='closed')&&Array.isArray(z.vd)?z.vd.map(Number).filter(v=>v>60&&v<q.w-60).sort((a,b)=>a-b):[];
       const comps=[];{let a=q.xa;vd.forEach(v=>{comps.push([a,q.xa+v-tc/2]);a=q.xa+v+tc/2});comps.push([a,q.xb])}zr.comps=comps;zr.vdx=vd.map(v=>q.xa+v);
@@ -1346,7 +1346,9 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
       else{const widest=comps.reduce((b,c,ci)=>c[1]-c[0]>comps[b][1]-comps[b][0]?ci:b,0);
         comps.forEach(([cl,cr],ci)=>{const zTop=zr.top?minUnder(q,cl,cr):zr.y0+zr.h;
           if(zr.railY&&ci===widest){ys.forEach(y=>addShelf(y,cl,cr));zr.railComp=[cl,cr];return}
-          const hz_=zTop-yz,cnt=Math.max(0,+((z.vsh||[])[ci]??(z.rail?Math.max(0,Math.min(2,Math.floor(hz_/260)-1)):Math.min(ns,Math.max(0,Math.floor(hz_/(150+ts))))))||0),sy=shelfYs(yz,zTop,cnt,ts,z.space),sp=sy.min;
+          const own=(z.vsh||[])[ci];
+          if(own==null&&!z.rail&&ys.length){ys.filter(y=>y+ts<=zTop-100).forEach(y=>addShelf(y,cl,cr));return} // same shelf heights in every compartment, so the rows line up
+          const hz_=zTop-yz,cnt=Math.max(0,+(own??(z.rail?Math.max(0,Math.min(2,Math.floor(hz_/260)-1)):Math.min(ns,Math.max(0,Math.floor(hz_/(150+ts))))))||0),sy=shelfYs(yz,zTop,cnt,ts,z.space),sp=sy.min;
           if(cnt&&sp<140)warns.push(`${lab}: compartment ${ci+1} has shelves only ${f0(sp)} mm apart.`);sy.ys.forEach(y=>addShelf(y,cl,cr))});
         vd.forEach(v=>{const lb=zr.lined||0,x=q.xa+v-tc/2,yt=(zr.top?Math.min(underAt(q,x),underAt(q,x+tc)):zr.y0+zr.h)-lb;const y0v=zr.y0+lb;if(yt-y0v<100)return;
           addPanel({type:'Vertical divider',role:'carcass',fin:dren||undefined,sec:lab,poly:rect(q.Dh,yt-y0v),grain:'h',band:'front',bandLen:yt-y0v,notes:[`${f0(v)} mm from the inside left of ${lab}; fix with dowels top and bottom`].concat(vdA?['Needed here: the middle doors hinge on this upright']:[],dren?[`Colour-drenched: ${FIN[dren].name}, like the inside of this zone`]:[])});
@@ -3718,7 +3720,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.05';
+const APP_VERSION='v0.06';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
