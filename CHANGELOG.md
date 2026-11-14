@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.05
+
+- Open shelves (or glass doors) above a TV niche: no more front header rail standing in front of the lowest shelf. Only the rear rail stays, in the inside colour of the shelves above.
+- Colour-drench for open shelves: with an inside colour picked, tick "Colour-drench" to give the sides, top, bottom and dividers the same colour. Dividers are listed in that colour in the cut list; the paint for the sides, top and bottom is in the hardware list.
+
 ## v0.04
 
 - TV niche: the inside (back) colour now shows in the front drawing; before, it always showed the plain back colour.
