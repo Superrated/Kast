@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.07
+
+- The reinforced double header above a TV niche takes the colour-drench colour of the open shelves above it (drawing, 3D and cut list).
+
 ## v0.06
 
 - Shelf spacing now works on open shelves split into compartments (for example above a TV niche): every compartment uses the same shelf heights, so the rows line up, and the spacing choice applies to the whole unit. Compartments that are lower under the slope just leave out the shelves that don't fit.

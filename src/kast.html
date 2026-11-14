@@ -1267,8 +1267,9 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
       zr.divIv=iv;const L=iv[1]-iv[0],isHead=zr.divT>tc,short=!spanDiv&&L<q.w-1,dl=spanDiv?glab:lab;
       const isSplit=zr.k===q.splitK,nm=isSplit?'Top (lower unit)':zr.z.type==='seat'?'Seat board':zr.z.type==='passage'?'Door head (lining)':isHead?'Header layer':spanDiv?(zr.k===gp.ko?'Opening top':'Opening sill'):'Fixed divider';
       const dOff=recOff&&!spanDiv?recOff:0,dDep=(GRV&&!isSplit&&!q.door&&!q.noBack&&(q.s.back||'full')==='full')?q.Dh:q.Dc;
-      for(let l=0;l<(isHead||isSplit?2:1);l++)addPanel({type:isSplit&&l===1?'Bottom (upper unit)':dOff&&zr.k===0?'Bottom of the cabinet above the desk':nm,role:'carcass',sec:dl,poly:rect(L,dDep-dOff),grain:'w',band:'front',bandLen:L,notes:[isHead?`Glue + screw 2 layers into one ${2*tc} mm header`:'',spanDiv?'Continuous across the shared opening':'',short?'Shortened by ceiling slope':'',dOff?`Shallow cabinet: ${f0(dDep-dOff)} deep, set ${f0(dOff)} mm back from the front of the sides`:'',dDep<q.Dc?`${f0(q.Dc-dDep)} mm shallower than the sides: it stops in front of the back panel, which runs past it in one piece`:''].filter(Boolean)});
-      items.push(hzq(iv[0],iv[1],zr.divY,zr.divT,dOff,dDep,'carcass'));
+      const up_=Z0[zr.k+1],hFin=isHead&&up_&&up_.type==='open'&&up_.drench&&FIN[up_.inFin]?up_.inFin:undefined;zr.divFin=hFin||null; // header under a colour-drenched open zone takes its colour
+      for(let l=0;l<(isHead||isSplit?2:1);l++)addPanel({type:isSplit&&l===1?'Bottom (upper unit)':dOff&&zr.k===0?'Bottom of the cabinet above the desk':nm,role:'carcass',fin:hFin,sec:dl,poly:rect(L,dDep-dOff),grain:'w',band:'front',bandLen:L,notes:[isHead?`Glue + screw 2 layers into one ${2*tc} mm header`:'',spanDiv?'Continuous across the shared opening':'',short?'Shortened by ceiling slope':'',dOff?`Shallow cabinet: ${f0(dDep-dOff)} deep, set ${f0(dOff)} mm back from the front of the sides`:'',dDep<q.Dc?`${f0(q.Dc-dDep)} mm shallower than the sides: it stops in front of the back panel, which runs past it in one piece`:''].filter(Boolean)});
+      items.push(wf(hzq(iv[0],iv[1],zr.divY,zr.divT,dOff,dDep,'carcass'),hFin));
       if(isHead){const nzr_=q.zones[zr.k+1],rh=Math.max(0,Math.min(100,(nzr_?(nzr_.top?nzr_.hMin:nzr_.h):100)-tc-2));if(rh>=40){
         let rIv=spanDiv&&gp?gp.members.map(m=>[m.xa,m.xb]):[[iv[0],iv[1]]];{const nz_=Z0[zr.k+1],vr0=(nz_&&Array.isArray(nz_.vd)?nz_.vd:[]).map(Number).filter(v=>isFinite(v));rIv=rIv.flatMap(([ra0,rb0])=>{const base=spanDiv&&gp?ra0:q.xa;let o_=[[ra0,rb0]];const pe_=boxes?tc:tc/2,va_=nz_?autoVd(nz_,ra0-pe_,rb0+pe_,ra0):null,vr=va_?va_:vr0.slice();if(nz_&&nz_.type==='drawers'){const w_=rb0-ra0,nc=Math.max(1,Math.ceil(w_/(ECO?900:1200))),bw=(w_-(nc-1)*tc)/nc;for(let c=1;c<nc;c++)vr.push(c*bw+(c-1)*tc+tc/2)}vr.sort((a_,b_)=>a_-b_).forEach(v0=>{const v=base+v0;o_=o_.flatMap(([ra,rb])=>v-tc/2>ra+20&&v+tc/2<rb-20?[[ra,v-tc/2],[v+tc/2,rb]]:[[ra,rb]])});return o_})}
         const nzV=!!(Z0[zr.k+1]&&(Z0[zr.k+1].type==='open'||Z0[zr.k+1].face==='glass')),rFin=nzV&&FIN[Z0[zr.k+1].inFin]?Z0[zr.k+1].inFin:undefined;zr.hRailsN=nzV?1:2;
@@ -1913,7 +1914,7 @@ function elevSVG(S,G,o={}){
       else push(`<rect x="${q.xa}" y="${Y(y1)}" width="${q.w}" height="${y1}" fill="#2B2D30" opacity=".45"/>`)}));
   G.secs.forEach(q=>q.zones.forEach(zr=>{const op=zr.open;if(!op)return;push(`<rect x="${op.x0}" y="${Y(op.y1)}" width="${op.x1-op.x0}" height="${op.y1-op.y0}" fill="${pvF(zr.inFin||M.back.fin)}"/><rect x="${op.x0}" y="${Y(op.y1)}" width="${op.x1-op.x0}" height="${op.y1-op.y0}" fill="rgba(0,0,0,.22)"/>`)}));
   G.secs.forEach(q=>q.zones.forEach(zr=>{
-    if(zr.divIv)push(`<rect x="${zr.divIv[0]}" y="${Y(zr.divY+zr.divT)}" width="${zr.divIv[1]-zr.divIv[0]}" height="${zr.divT}" fill="${ph('carcass')}" stroke="rgba(0,0,0,.25)" stroke-width="${sw*.5}"/>`);
+    if(zr.divIv)push(`<rect x="${zr.divIv[0]}" y="${Y(zr.divY+zr.divT)}" width="${zr.divIv[1]-zr.divIv[0]}" height="${zr.divT}" fill="${zr.divFin?phF(zr.divFin):ph('carcass')}" stroke="rgba(0,0,0,.25)" stroke-width="${sw*.5}"/>`);
     const pk=o.peek&&o.peek[0]===q.i&&o.peek[1]===zr.k,vis=zr.z.type==='open'||showIn||pk||zr.glass;
     if(vis||(q.desk&&zr.k===0))(zr.cIns||[]).forEach(c=>{const f=FIN[c.fin]?c.fin:'ral9010';push(`<polygon points="${pp(c.poly)}" fill="${pvF(f)}"/>`+(c.kind==='peg'?`<polygon points="${pp(c.poly)}" fill="url(#peg)"/>`:c.kind==='mirror'?`<polygon points="${pp(c.poly)}" fill="url(#mirrg)" opacity=".9"/>`:''))});
     if(vis)zr.shelvesY.forEach(([y,l,r])=>push(`<rect x="${l}" y="${Y(y+G.ts)}" width="${r-l}" height="${G.ts}" fill="${phF(zr.inFin||M.shelf.fin)}" stroke="rgba(0,0,0,.25)" stroke-width="${sw*.5}"/>`));
@@ -3720,7 +3721,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.06';
+const APP_VERSION='v0.07';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
