@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.21
+
+Staggered shelves and a more flexible wardrobe.
+
+- Split levels: every compartment has its own card with its number of shelves, its own spacing (even, tall bottom, tall top, tall middle) and a "Staggered" switch that puts its shelves half a step lower than next door. "Stagger every other compartment" does it in one tap.
+- Hanging rail in a split cupboard: choose which compartment gets the rail ("Hanging rail here"), or give several compartments one. Before, it was always the widest.
+- Hanging rail: "Shelves above the rail" and "Shelves below the clothes" are now two separate counts.
+- Hanging rail: "Two rails, one above the other" for double hanging; needs about 1.75 m of height.
+- The shopping list now counts each rail at the width of its compartment.
+
 ## v0.20
 
 Plainer words in the editor.

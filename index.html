@@ -431,6 +431,7 @@ details.acc>summary::after{font-family:var(--f-b);font-weight:400;font-size:18px
 .vdrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .vdbar{display:flex;gap:3px;height:22px;border-radius:6px;overflow:hidden}.vdbar i{font-style:normal;font:500 10.5px/22px 'IBM Plex Mono',monospace;text-align:center;background:var(--accent-soft,rgba(52,70,214,.12));color:var(--accent,#3446D6);min-width:0;overflow:hidden}
 .vdlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}.vdi{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:12px}
+.ccs{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;grid-column:1/-1}.cc{display:grid;gap:8px;align-content:start;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--surface)}.cch{display:flex;justify-content:space-between;gap:8px;align-items:baseline}.cch b{font-size:13px}.cch span{font-size:11.5px;color:var(--ink3)}.cc .tchips{gap:4px}
 .vdsh{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px}
 .ttbox{display:grid;gap:8px;padding:10px;border-radius:10px;background:var(--panel2,rgba(0,0,0,.03))}
 .fdot{width:14px;height:14px;border-radius:4px;display:inline-block;background:#d8d2c6;border:1px solid rgba(0,0,0,.15)}.fdot.f-fluted{background:repeating-linear-gradient(90deg,#cbbfa8 0 3px,#e6dccb 3px 6px)}.fdot.f-cane{background:#E3CFA3 radial-gradient(circle,#3B3024 25%,transparent 30%) 0 0/5px 5px}.fdot.f-glass{background:repeating-linear-gradient(90deg,#cfe0dc 0 3px,#f1f7f5 3px 6px)}
@@ -733,14 +734,14 @@ details.mx{grid-column:1/-1}
 @media (prefers-reduced-motion:reduce){#splash{animation-duration:.01s}}
 </style>
 
-<div id="splash" role="status" aria-label="Kast v0.20 is loading"><b>Kast</b><span>v0.20</span></div>
+<div id="splash" role="status" aria-label="Kast v0.21 is loading"><b>Kast</b><span>v0.21</span></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
 
 <div class="app" data-tab="elev">
   <header class="top">
     <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-    <div class="brand" title="Kast v0.20">Kast<small>built-in furniture, drawn and cut · v0.20</small></div>
+    <div class="brand" title="Kast v0.21">Kast<small>built-in furniture, drawn and cut · v0.21</small></div>
     <nav class="tabs" id="tabs">
       <button data-act="tab" data-a="elev" class="on">Elevation</button>
       <button data-act="tab" data-a="3d">3D view</button>
@@ -1350,20 +1351,21 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
           for(let l=0;l<2;l++)addPanel({type:'Runner packer (internal drawer)',role:'carcass',sec:lab,poly:rect(sl,80),grain:'w',band:'front',bandLen:sl,notes:['Screw flat to the cabinet side, front edge 5 mm behind the door. The runner screws onto it, so the drawer clears the door and its hinges']})}}
         return yz+n*F.h+10})();
       const ys=[],near_=(a,b)=>Math.abs(a-b)<1;
-      if((z.rail||lift)&&z.type==='closed'){const nTot=Math.max(0,+z.shelves||0),lo=zb+400,hi=ref-90;
-        const RR=railReach(S),dflt=Math.max(lo,Math.min(hi,RR.ideal,ref-80-(nTot?ts+70:0)));
-        const want=lift?hi:+z.railH>0?+z.railH:dflt;zr.railY=Math.max(lo,Math.min(want,hi));zr.railAuto=lift||!(+z.railH>0);
+      if((z.rail||lift)&&z.type==='closed'){const man=!lift&&(z.railUp!=null||z.railDn!=null),nTot=man?Math.max(0,+z.railUp||0)+Math.max(0,+z.railDn||0):Math.max(0,+z.shelves||0),lo=zb+400,hi=ref-90;let dbl=!lift&&!!z.rail2;
+        if(dbl&&hi-zb<1740){dbl=false;warns.push(`${lab}: two rails above each other need about 1.75 m of height (two rows of shirts); there is ${f0(hi-zb)} mm here, so it has one rail.`)}
+        const RR=railReach(S),dflt=dbl?Math.min(hi,Math.max(RR.easy,zb+1760)):Math.max(lo,Math.min(hi,RR.ideal,ref-80-(nTot?ts+70:0)));
+        const want=lift?hi:+z.railH>0?+z.railH:dflt;zr.railY=Math.max(dbl?zb+1740:lo,Math.min(want,hi));const y2=dbl?Math.round(zb+(zr.railY-zb-40)/2):null;zr.rail2Y=y2;zr.railAuto=lift||!(+z.railH>0);
         if(!lift&&+z.railH>0&&Math.abs(zr.railY-want)>1)warns.push(`${lab}: the rail can't go at ${f0(want)} mm here — placed at ${f0(zr.railY)} mm (allowed ${f0(lo)}–${f0(hi)}).`);
-        const y1=zr.railY+70,spA=ref-y1,capA=spA>=ts+10?1+Math.max(0,Math.floor((spA-ts)/(240+ts))):0,na=Math.min(nTot,capA);let nb=nTot-na;
-        const spB=zr.railY-700-zb,capB=Math.max(0,Math.floor(spB/(200+ts)));if(nb>capB){warns.push(`${lab}: ${nb-capB} shelf${nb-capB>1?'ves':''} didn't fit above or below the rail and ${nb-capB>1?'were':'was'} left out — move the rail or use fewer shelves.`);nb=capB}
+        const y1=zr.railY+70,spA=ref-y1,capA=spA>=ts+10?1+Math.max(0,Math.floor((spA-ts)/(240+ts))):0,na=Math.min(man?Math.max(0,+z.railUp||0):nTot,capA);let nb=man?Math.max(0,+z.railDn||0):nTot-na;if(man&&(+z.railUp||0)>capA)warns.push(`${lab}: only ${capA} shel${capA===1?'f fits':'ves fit'} above the rail — lower the rail to make room for more.`);
+        const spB=(dbl?y2-850:zr.railY-700)-zb,capB=Math.max(0,Math.floor(spB/(200+ts)));if(nb>capB){warns.push(`${lab}: ${nb-capB} shelf${nb-capB>1?'ves':''} didn't fit above or below the rail and ${nb-capB>1?'were':'was'} left out — move the rail or use fewer shelves.`);nb=capB}
         zr.na=na;zr.nb=nb;
         if(na){ys.push(y1);const rest=na-1;if(rest>0){const span=ref-(y1+ts),sp=(span-rest*ts)/(rest+1);for(let j=0;j<rest;j++)ys.push(y1+ts+sp*(j+1)+ts*j)}}
         zr.hangFloor=zb;
         if(nb){const sp=(spB-nb*ts)/(nb+1);for(let j=0;j<nb;j++)ys.push(zb+sp*(j+1)+ts*j);zr.hangFloor=zb+sp*nb+ts*nb}
-        if(!lift&&zr.railY>RR.easy+5){warns.push(`${lab}: the clothes rail at ${f0(zr.railY)} mm is above easy reach (≈${f0(RR.easy)} mm for someone ${f0(RR.h)} mm tall) — lower it, or use a pull-down rail.`);result.railHigh=(result.railHigh||0)+1}
-        const drop=zr.railY-zr.hangFloor;if(drop<850)warns.push(`${lab}: ${f0(drop)} mm of hanging space under the rail — fine for shirts and folded trousers, too short for coats or dresses.`);
+        if(!lift&&zr.railY>RR.easy+(dbl?200:5)){warns.push(`${lab}: the clothes rail at ${f0(zr.railY)} mm is above easy reach (≈${f0(RR.easy)} mm for someone ${f0(RR.h)} mm tall) — lower it, or use a pull-down rail.`);result.railHigh=(result.railHigh||0)+1}
+        const drop=dbl?Math.min(zr.railY-y2-40,y2-zr.hangFloor):zr.railY-zr.hangFloor;if(drop<850)warns.push(`${lab}: ${f0(drop)} mm of hanging space under the rail — fine for shirts and folded trousers, too short for coats or dresses.`);
         if(zr.railY>zr.y0+200&&q.Dh<470)warns.push(`${lab}: a hanging rail needs about 550 mm of depth inside (a hanger is 420–450 mm wide plus sleeves); here there is ${f0(q.Dh)} mm, so clothes will stick out or the doors won't close. Use shelves here, or a pull-out rail that faces the front.`);
-        if(zr.railY>zr.y0+200){if(lift)zr.lift=1;else H.rails.push({sec:lab,L:f0(q.w-2)})}else zr.railY=null}
+        if(zr.railY>zr.y0+200){if(lift)zr.lift=1}else{zr.railY=null;zr.rail2Y=null}}
       else if(ns){const b_=zb===yz?yzV:zb,sy=shelfYs(b_,ref,ns,ts,z.space),sp=sy.min;sy.ys=sy.ys.map(y=>Math.max(y,zb));if(sp<140)warns.push(`${lab}: shelves in level ${zr.k+1} are only ${f0(sp)} mm apart${zr.fit?' above the '+FITS[zr.fit.kind].s.toLowerCase():''}.`);ys.push(...sy.ys)}
       const dren=z.type==='open'&&z.drench&&zr.inFin?zr.inFin:null;zr.drench=dren;
       let vd=vdA?vdA:(z.type==='open'||z.type==='closed')&&Array.isArray(z.vd)?(z.vdMode&&z.vd.length?vdPos(z.vd.length,z.vdMode,q.w,tc,zr.lined||0):z.vd.map(Number)).filter(v=>v>60&&v<q.w-60).sort((a,b)=>a-b):[];
@@ -1385,14 +1387,15 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
         items.push(wf(hzq(iv[0]+1,iv[1]-1,y,ts,sbk,q.Dh-(zr.insD||0),'shelf'),zr.inFin));if(ledge){H.ledges++;items.push(wf(fpq([[iv[0]+1,y+ts],[iv[1]-1,y+ts],[iv[1]-1,y+ts+30],[iv[0]+1,y+ts+30]],-sbk,12,'shelf','shelf'),zr.inFin))}else H.pins+=4;zr.shelvesY.push([y,iv[0]+1,iv[1]-1]);
         {const sg=sagOf(L,dep,ts,M.shelf.type,ledge?'light':(z.load||'normal'));if(!zr.sag||sg.r>zr.sag.r)zr.sag=Object.assign(sg,{L,dep});
           if(sg.r>1.3&&!q._sag){q._sag=1;warns.push(`${lab}: the ${f0(L)} mm shelves (${LOADS[z.load||'normal'].n.toLowerCase()}) will sag about ${sg.d.toFixed(1)} mm over the years — fine up to ≈ ${f0(sg.Lmax)} mm in ${ts} mm ${(MATS[M.shelf.type]?.short||'board').toLowerCase()}. Add a vertical divider, use thicker shelves, or glue a solid-wood strip under the front edge.`)}}};
+      zr.railComps=[];zr.railIdx=[];
       if(!vd.length)ys.forEach(y=>addShelf(y,q.xa,q.xb));
-      else{const widest=comps.reduce((b,c,ci)=>c[1]-c[0]>comps[b][1]-comps[b][0]?ci:b,0);
+      else{const widest=comps.reduce((b,c,ci)=>c[1]-c[0]>comps[b][1]-comps[b][0]?ci:b,0),rset=(Array.isArray(z.railCs)?z.railCs:[]).map((v,j)=>v&&j<comps.length?j:-1).filter(j=>j>=0),isRail=ci=>rset.length?rset.includes(ci):ci===widest;
         comps.forEach(([cl,cr],ci)=>{const zTop=zr.top?minUnder(q,cl,cr):zr.y0+zr.h;
-          if(zr.railY&&ci===widest){ys.forEach(y=>addShelf(y,cl,cr));zr.railComp=[cl,cr];return}
-          const own=(z.vsh||[])[ci];
-          if(own==null&&!z.rail&&ys.length){ys.filter(y=>y+ts<=zTop-100).forEach(y=>addShelf(y,cl,cr));return} // same shelf heights in every compartment, so the rows line up
-          const hz_=zTop-yz,cnt=Math.max(0,+(own??(z.rail?Math.max(0,Math.min(2,Math.floor(hz_/260)-1)):Math.min(ns,Math.max(0,Math.floor(hz_/(150+ts))))))||0),sy=shelfYs(yz,zTop,cnt,ts,z.space),sp=sy.min;
-          if(cnt&&sp<140)warns.push(`${lab}: compartment ${ci+1} has shelves only ${f0(sp)} mm apart.`);sy.ys.forEach(y=>addShelf(y,cl,cr))});
+          if(zr.railY&&isRail(ci)){ys.forEach(y=>addShelf(y,cl,cr));if(!zr.railComp)zr.railComp=[cl,cr];zr.railComps.push([cl,cr]);zr.railIdx.push(ci);return}
+          const own=(z.vsh||[])[ci],ownSp=(z.vsp||[])[ci],stg=!!(z.vst||[])[ci],lower=a=>{if(!stg||!a.length)return a;const g=(a[0]-yz)/2;return g>=60?a.map(y=>y-g):a}; // staggered: every shelf half a step lower than in the compartment next to it
+          if(own==null&&!ownSp&&!z.rail&&ys.length){lower(ys.filter(y=>y+ts<=zTop-100)).forEach(y=>addShelf(y,cl,cr));return} // same shelf heights in every compartment, so the rows line up
+          const hz_=zTop-yz,cnt=Math.max(0,+(own??(z.rail?Math.max(0,Math.min(2,Math.floor(hz_/260)-1)):Math.min(ns,Math.max(0,Math.floor(hz_/(150+ts))))))||0),sy=shelfYs(yz,zTop,cnt,ts,ownSp||z.space),sp=sy.min;
+          if(cnt&&sp<140)warns.push(`${lab}: compartment ${ci+1} has shelves only ${f0(sp)} mm apart.`);lower(sy.ys).forEach(y=>addShelf(y,cl,cr))});
         vd.forEach(v=>{const lb=zr.lined||0,x=q.xa+v-tc/2,yt=(zr.top?Math.min(underAt(q,x),underAt(q,x+tc)):zr.y0+zr.h)-lb;const y0v=zr.y0+lb;if(yt-y0v<100)return;
           addPanel({type:'Vertical divider',role:'carcass',fin:dren||undefined,sec:lab,poly:rect(q.Dh,yt-y0v),grain:'h',band:'front',bandLen:yt-y0v,notes:[`${f0(v)} mm from the inside left of ${lab}; fix with dowels top and bottom`].concat(vdA?['Needed here: the middle doors hinge on this upright']:[],zr.k>0||q.desk?['Screw the back panel to its rear edge every 150 mm: the back then carries it, so the board it stands on does not bend']:[],dren?[`Colour-drenched: ${FIN[dren].name}, like the inside of this level`]:[])});
           if(zr.k>0&&(q.s.back==='none')&&!q._vdNB){q._vdNB=1;warns.push(`${lab}: the upright divider stands on a board with nothing under it, and this column has no back panel to carry it — give the column a back, or put a divider in the same place in the level below.`)}
@@ -1403,7 +1406,7 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
         if(!zr.top){items.push(wf(hzq(q.xa,q.xb,zr.y0+zr.h-sk,sk,0,q.Dh,'shelf'),dren));area+=q.w*q.Dh}
         else{const t=sampleLine(x=>underAt(q,x),q.xa,q.xb);for(let j=1;j<t.length;j++){const [ax,ay]=t[j-1],[bx,by]=t[j];items.push({k:'prism',poly:[[ax,ay],[bx,by],[bx,by-sk],[ax,ay-sk]],toW:(u,v)=>[u,v,-q.z0],ext:[0,0,-q.Dh],role:'shelf',fin:dren});area+=Math.hypot(bx-ax,by-ay)*q.Dh}}
         (H.drench=H.drench||[]).push({fin:dren,area:area/1e6,sec:lab})}
-      if(zr.railY){const rc=zr.railComp||[q.xa,q.xb];items.push({k:'rail',xa:rc[0]+1,xb:rc[1]-1,y:zr.railY,z:q.z0+q.Dh/2})}
+      if(zr.railY){(zr.railComps.length?zr.railComps:[[q.xa,q.xb]]).forEach(rc=>[zr.railY,zr.rail2Y].filter(y=>y>0).forEach(y=>{items.push({k:'rail',xa:rc[0]+1,xb:rc[1]-1,y,z:q.z0+q.Dh/2});if(!zr.lift)H.rails.push({sec:lab,L:f0(rc[1]-rc[0]-2)})}))}
     });
     // fronts
     const frontPoly=(l,r,yb,yt)=>{const L=l+g/2,Rr=r-g/2,B=yb+g/2;if(yt!=null)return [[L,B],[Rr,B],[Rr,yt-g/2],[L,yt-g/2]];
@@ -1565,7 +1568,7 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
         fronts.push({z0:q.z0,kind:'door',poly,hinge,sec:i,zone:-1,idx:j,handle:hs,fabric:null,fin:null});items.push(Object.assign(fpq(poly,tf,tf,'front','front'),{sz:i+':-1'}))}}
     // styling props
     q.zones.forEach((zr,k)=>{const z=zr.z,seed=i*97+k*31+11;
-      if(zr.railY){const r=prng(seed+77),avail=zr.railY-(zr.hangFloor??zr.y0)-40,rc=zr.railComp||[q.xa,q.xb];let x=rc[0]+28;
+      if(zr.railY){const r=prng(seed+77),avail=zr.railY-(zr.rail2Y?zr.rail2Y+20:(zr.hangFloor??zr.y0))-40,rc=zr.railComp||[q.xa,q.xb];let x=rc[0]+28;
         while(x<rc[1]-36){const t=r();let L=t<0.35?720+r()*180:t<0.6?950+r()*200:t<0.8?1150+r()*250:560+r()*90;if(L>avail)L=Math.max(250,avail*(0.7+r()*0.25));
           const w=22+r()*30,dd=Math.min(q.Dh-40,400+r()*60);if(x+w>rc[1]-20)break;
           props.push({k:'garment',x,y:zr.railY-L-28,w,h:L,d:dd,z:q.Dh/2-dd/2+q.z0,rail:zr.railY,col:CLOTHC[(r()*CLOTHC.length)|0],sec:i,zone:k});x+=w+5+r()*20}}
@@ -1981,8 +1984,7 @@ function elevSVG(S,G,o={}){
     if(vis||(q.desk&&zr.k===0))(zr.cIns||[]).forEach(c=>{const f=FIN[c.fin]?c.fin:'ral9010';push(`<polygon points="${pp(c.poly)}" fill="${pvF(f)}"/>`+(c.kind==='peg'?`<polygon points="${pp(c.poly)}" fill="url(#peg)"/>`:c.kind==='mirror'?`<polygon points="${pp(c.poly)}" fill="url(#mirrg)" opacity=".9"/>`:''))});
     if(vis)zr.shelvesY.forEach(([y,l,r])=>push(`<rect x="${l}" y="${Y(y+G.ts)}" width="${r-l}" height="${G.ts}" fill="${phF(zr.inFin||M.shelf.fin)}" stroke="rgba(0,0,0,.25)" stroke-width="${sw*.5}"/>`));
     if(vis)(G.vdivs||[]).filter(d=>d.sec===q.i&&d.zone===zr.k).forEach(d=>push(`<rect x="${d.x}" y="${Y(d.y1)}" width="${G.tc}" height="${d.y1-d.y0}" fill="${d.fin?phF(d.fin):ph('carcass')}" stroke="rgba(0,0,0,.3)" stroke-width="${sw*.5}"/>`));
-    const rc_=zr.railComp||[q.xa,q.xb];
-    if(zr.railY&&(showIn||pk))push(`<line x1="${rc_[0]+20}" x2="${rc_[1]-20}" y1="${Y(zr.railY)}" y2="${Y(zr.railY)}" stroke="#9AA0A4" stroke-width="25" stroke-linecap="round"/>`);
+    if(zr.railY&&(showIn||pk))((zr.railComps&&zr.railComps.length)?zr.railComps:[[q.xa,q.xb]]).forEach(rc_=>[zr.railY,zr.rail2Y].filter(y=>y>0).forEach(y=>push(`<line x1="${rc_[0]+20}" x2="${rc_[1]-20}" y1="${Y(y)}" y2="${Y(y)}" stroke="#9AA0A4" stroke-width="25" stroke-linecap="round"/>`)));
     if(zr.fit&&(showIn||pk)){const f=zr.fit,a=q.xa+12,b=q.xb-12,st=`stroke="#8E959A" stroke-width="${n1(Math.max(6,sw*2.2))}" fill="none" stroke-linecap="round"`;
       if(f.kind==='lift'){if(zr.railY){const m=(a+b)/2;push(`<path d="M${n1(a+20)} ${n1(Y(zr.railY))}V${n1(Y(zr.railY-260))}M${n1(b-20)} ${n1(Y(zr.railY))}V${n1(Y(zr.railY-260))}M${n1(m)} ${n1(Y(zr.railY))}V${n1(Y(zr.railY-700))}" ${st}/><circle cx="${n1(m)}" cy="${n1(Y(zr.railY-725))}" r="24" ${st}/>`)}}
       else for(let j=0;j<f.n;j++){const y0=f.y0+j*f.h+10,y1=y0+f.h-22;
@@ -2421,7 +2423,7 @@ function zoneRow(i,k){
   const fabric=()=>`<div style="grid-column:1/-1;display:grid;gap:6px">${chk('Fabric fronts (frame wrapped in fabric)',p+'.fabric')}${z.fabric?fabSwatches(p+'.fabricCol'):''}</div>`;
   const frontDefault=`Same as fronts (${FIN[S.mat.front.fin].name})`;
   const vdUI=()=>{const vd=Array.isArray(z.vd)?z.vd:[],iw=zr?Math.round(zr.comps?zr.comps[zr.comps.length-1][1]-geo.secs[i].xa:geo.secs[i].w):900;
-    let o=`<div class="fld vdf" style="grid-column:1/-1"><span>Uprights — add more, or move one by one</span><div class="vdrow"><div class="step"><button type="button" data-act="vdN" data-a="${i}|${k}|-1" aria-label="Fewer uprights">−</button><b>${vd.length||'None'}</b><button type="button" data-act="vdN" data-a="${i}|${k}|1" aria-label="More uprights">+</button></div>`;
+    let o=`<div class="fld vdf" style="grid-column:1/-1"><span>Compartments and uprights</span><div class="vdrow"><div class="step"><button type="button" data-act="vdN" data-a="${i}|${k}|-1" aria-label="Fewer uprights">−</button><b>${vd.length||'None'}</b><button type="button" data-act="vdN" data-a="${i}|${k}|1" aria-label="More uprights">+</button></div>`;
     if(vd.length){const cur=String(z.vdMode||'').replace(/-r$/,'');o+=`<div class="tchips">${Object.entries(VD_MODES).filter(([m,M])=>M.ok(vd.length)).map(([m,M])=>`<button type="button" class="tchip ${cur===m?'on':''}" data-act="vdPreset" data-a="${i}|${k}|${m}" title="${M.r&&vd.length===1?'Tap again to swap sides':''}">${M.l}${cur===m&&M.r&&vd.length===1?' ⇄':''}</button>`).join('')}${z.vdMode?'':`<span class="hintp" style="margin:0;align-self:center">Own positions</span>`}</div>`}
     o+=`</div>`;
     if(zr&&zr.vdSag)o+=`<p class="hintp" style="margin:0">${zr.vdSag===1?'1 upright was':zr.vdSag+' uprights were'} added automatically, because shelves this wide would sag under clothes and boxes. Set your own uprights to replace ${zr.vdSag===1?'it':'them'}.</p>`;
@@ -2429,20 +2431,21 @@ function zoneRow(i,k){
     if(vd.length){const cw=(zr&&zr.comps)||[];const lb_=(zr&&zr.lined)||0,cwi=(c,ci)=>c[1]-c[0]-(ci===0?lb_:0)-(ci===cw.length-1?lb_:0);o+=`<div class="vdbar">${cw.map((c,ci)=>`<i style="flex:${Math.max(1,cwi(c,ci))}">${f0(cwi(c,ci))}</i>`).join('')}</div>`;
       o+=`<div class="vdlist">${vd.map((v,j)=>`<div class="vdi"><span>Upright ${j+1}</span><div class="step"><button type="button" data-act="vdMove" data-a="${i}|${k}|${j}|-50" aria-label="Move left">◀</button><b>${f0(v)}</b><button type="button" data-act="vdMove" data-a="${i}|${k}|${j}|50" aria-label="Move right">▶</button></div></div>`).join('')}</div>`;
       o+=`<p class="hintp" style="margin:0">Numbers are mm from the inside left. Each tap moves 50 mm.${z.type==='closed'&&!(+z.doors>0)?' Doors follow the compartments.':''}</p>`;
-      const nc=vd.length+1,railIn=z.type==='closed'&&z.rail&&zr&&zr.railComp?cw.findIndex(c=>c===zr.railComp):-1;
+      const nc=vd.length+1,railIdx=z.type==='closed'&&z.rail&&zr&&zr.railY&&zr.railIdx?zr.railIdx:[],anySt=(z.vst||[]).slice(0,nc).some(Boolean);
       o+=`<details class="pf"><summary>Colour per compartment</summary><div class="grid2">${Array.from({length:nc},(_,ci)=>finSelect(`Back colour · compartment ${ci+1}`,`${p}.cFin.${ci}`,'Same as inside')).join('')}</div></details>`;
-      o+=`<div class="vdsh">${Array.from({length:nc},(_,ci)=>ci===railIn?`<div class="fld"><span>Compartment ${ci+1}</span><b class="hintp" style="margin:0">Hanging rail</b></div>`:stepper(`Shelves · compartment ${ci+1}`,`${p}.vsh.${ci}`,0,10)).join('')}</div>`}
-    return isSheet()?mx('Move the uprights',o.replace('<span>Uprights — add more, or move one by one</span>','')+'</div>'):o+`</div>`};
+      o+=`<div class="fld" style="grid-column:1/-1"><span>Per compartment — shelves, spacing and stagger</span><div class="tchips"><button type="button" class="tchip ${anySt?'on':''}" data-act="stagAlt" data-a="${i}|${k}" aria-pressed="${anySt}">⇅ Stagger every other compartment</button></div></div><div class="ccs">${Array.from({length:nc},(_,ci)=>{const isR=railIdx.includes(ci),st=!!(z.vst||[])[ci];return `<div class="cc"><div class="cch"><b>Compartment ${ci+1}</b><span>${cw[ci]?f0(cwi(cw[ci],ci))+' mm':''}</span></div>${z.type==='closed'&&z.rail&&zr&&zr.railY?`<button type="button" class="tchip ${isR?'on':''}" data-act="railPick" data-a="${i}|${k}|${ci}" aria-pressed="${isR}">${isR?'●':'○'} Hanging rail here</button>`:''}${isR?'<p class="hintp" style="margin:0">Its shelves are set under “Hanging rail” above.</p>':stepper('Shelves',`${p}.vsh.${ci}`,0,10)+`<div class="fld"><span>Spacing</span><div class="tchips">${SPACINGS.map(([sk,sl])=>`<button type="button" class="tchip ${((z.vsp||[])[ci]||z.space||'even')===sk?'on':''}" data-act="setv" data-a="${p}.vsp.${ci}|${sk}|s">${sl}</button>`).join('')}</div></div><label class="chk"><input type="checkbox" data-act="setv" data-a="${p}.vst.${ci}|${st?'x':'1'}|${st?'x':'n'}" ${st?'checked':''}> Staggered — shelves half a step lower</label>`}</div>`}).join('')}</div>`}
+    return isSheet()?mx('Compartments and uprights',o.replace('<span>Compartments and uprights</span>','')+'</div>'):o+`</div>`};
   const faceUI=()=>`<div class="fld" style="grid-column:1/-1"><span>Front style</span><div class="tchips">${[['flat','Flat'],['fluted','Fluted'],['cane','Cane'],...(z.type==='closed'?[['glass','Fluted glass + light'],['curtain','Curtain']]:[])].map(([k_,l])=>`<button type="button" class="tchip ${(z.face||'flat')===k_?'on':''}" data-act="setv" data-a="${p}.face|${k_}|s"><i class="fdot f-${k_}"></i>${l}</button>`).join('')}</div></div>`
     +(z.face==='curtain'?`<div style="grid-column:1/-1">${fabSwatches(p+'.fabricCol')}</div>`:'')+(z.doorMode==='slide'||z.face==='curtain'?'':`<div class="fld" style="grid-column:1/-1"><span>How the fronts sit</span>${seg(p+'.inset',[['','Over the frame'],['1','Inset in the frame']],{dflt:''})}</div>`);
   h+=splitUI(i,k,z,zr);
   if(z.type==='seat'){h+=`<div class="fld"><span>Drawers under the seat</span>${seg(p+'.count',[[1,'1'],[2,'2'],[3,'3']],{num:true})}</div><div class="fld" style="grid-column:1/-1"><span>Cushion fabric</span>${fabSwatches(p+'.fabricCol')}</div><p class="hintp" style="grid-column:1/-1;margin:0">Set the level height so the seat board lands ≈ 420 mm; the cushion adds about 80 mm. Leave the level above open for the nook.</p>`;h+=handleRow('drawer')}
   if(z.type==='closed'){if(z.face!=='curtain')h+=`<div class="fld" style="grid-column:1/-1"><span>Doors</span>${seg(p+'.doorMode',[['hinged','Hinged'],['slide','Sliding'],['pocket','Pocket']],{dflt:'hinged'})}</div>`;
-    h+=stepper(z.vd&&z.vd.length?'Shelves (when not split)':'Shelves',p+'.shelves',0,10)+loadUI(p,z,zr)+(!z.rail&&(+z.shelves>0||(z.vsh||[]).some(v=>+v>0))?`<div class="fld" style="grid-column:1/-1"><span>Shelf spacing</span>${seg(p+'.space',SPACINGS,{dflt:'even'})}</div>`:'')+stepper('Doors',p+'.doors',z.doorMode==='slide'?2:0,6,z.doorMode!=='slide');
+    h+=(z.rail?'':stepper(z.vd&&z.vd.length?'Shelves (when not split)':'Shelves',p+'.shelves',0,10))+loadUI(p,z,zr)+(!z.rail&&(+z.shelves>0||(z.vsh||[]).some(v=>+v>0))?`<div class="fld" style="grid-column:1/-1"><span>Shelf spacing</span>${seg(p+'.space',SPACINGS,{dflt:'even'})}</div>`:'')+stepper('Doors',p+'.doors',z.doorMode==='slide'?2:0,6,z.doorMode!=='slide');
     if(+z.doors===1)h+=`<div class="fld"><span>Hinge side</span>${seg(p+'.hinge',[['L','Left'],['R','Right']])}</div>`;
     h+=`<div style="grid-column:1/-1">${chk('Hanging rail',p+'.rail')}</div>`;
     if(z.rail){h+=`<div class="fld" style="grid-column:1/-1"><span>Rail height ${zr&&zr.railAuto?'(suggested)':`<button type="button" class="autob" data-act="setv" data-a="${p}.railH||x">reset</button>`}</span><div class="step rail"><button type="button" data-act="railStep" data-a="${i}|${k}|-50" aria-label="Lower the rail 50 mm">▼ Lower</button><b>${zr&&zr.railY?f0(zr.railY):'—'} mm</b><button type="button" data-act="railStep" data-a="${i}|${k}|50" aria-label="Raise the rail 50 mm">▲ Higher</button></div></div>`
-      h+=`<p class="hintp" style="grid-column:1/-1;margin:0">${zr&&zr.railY?`${zr.na||zr.nb?`${zr.na} shelf${zr.na===1?'':'ves'} above, ${zr.nb} below the rail · `:''}${f0(zr.railY-(zr.hangFloor??zr.y0))} mm to hang. `:''}Each tap moves the rail 50 mm. Coats and dresses need ≈1500–1700 mm, shirts and jackets ≈1000 mm, children ≈800 mm. Shelves fill the space above the rail first; move the rail up to push them below.</p>`}
+      h+=`<p class="hintp" style="grid-column:1/-1;margin:0">${zr&&zr.railY?`${zr.na||zr.nb?`${zr.na} shelf${zr.na===1?'':'ves'} above, ${zr.nb} below the rail · `:''}${f0(zr.railY-(zr.hangFloor??zr.y0))} mm to hang. `:''}Each tap moves the rail 50 mm. Coats and dresses need ≈1500–1700 mm, shirts and jackets ≈1000 mm, children ≈800 mm. </p>`
+      h+=`<div class="fld"><span>Shelves above the rail</span><div class="step"><button type="button" data-act="railSh" data-a="${i}|${k}|up|-1" aria-label="Fewer">−</button><b>${zr?zr.na||0:0}</b><button type="button" data-act="railSh" data-a="${i}|${k}|up|1" aria-label="More">+</button></div></div><div class="fld"><span>Shelves below the clothes</span><div class="step"><button type="button" data-act="railSh" data-a="${i}|${k}|dn|-1" aria-label="Fewer">−</button><b>${zr?zr.nb||0:0}</b><button type="button" data-act="railSh" data-a="${i}|${k}|dn|1" aria-label="More">+</button></div></div><div style="grid-column:1/-1">${chk('Two rails, one above the other (double hanging for shirts)',p+'.rail2')}</div>${zr&&zr.rail2Y?`<p class="hintp" style="grid-column:1/-1;margin:0">Top rail at ${f0(zr.railY)} mm, lower rail at ${f0(zr.rail2Y)} mm — about ${f0(zr.railY-zr.rail2Y-40)} mm of hanging length each.</p>`:''}`}
     if(!z.dog){const F=FITS[z.fit],q_=geo.secs[i];h+=mx('Inside fittings',`<div class="fld" style="grid-column:1/-1"><span>Inside fittings — behind the doors</span><div class="tchips">${[['','None'],...Object.entries(FITS).map(([k_,v])=>[k_,v.s])].map(([k_,l])=>`<button type="button" class="tchip ${(z.fit||'')===k_?'on':''}" data-act="setv" data-a="${p}.fit|${k_}|s">${l}</button>`).join('')}</div></div>${F&&F.multi?stepper('How many',p+'.fitN',1,6):''}${F?`<p class="hintp" style="grid-column:1/-1;margin:0">${F.tip} Needs ${F.minW}–${F.maxW} mm inside width and ${F.minD} mm depth; this column has ${q_?f0(q_.w)+' × '+f0(q_.Dh):''} mm${zr&&zr.fit?' — it fits.':' — <b>it does not fit here, see the warning under the drawing.</b>'} Switch on “see inside” to see it in the drawing.</p>`:''}`,'fit')}
     if(!z.dog)h+=vdUI();h+=z.dog?'':mx('Front style',faceUI()+((!z.face||z.face==='flat')?fabric():''));
     h+=mx('Dog den',`<div class="fld" style="grid-column:1/-1"><span>Dog den (for a big dog)</span>${seg(p+'.dog',[['','Off'],...Object.entries(DOGS)],{dflt:''})}</div>${z.dog?`<p class="hintp" style="margin:0;grid-column:1/-1">The front is a fixed panel in the same finish as the doors beside it, with a doorway cut in so the dog can always walk in and out. Pick the doorway shape above. Inside now: ${zr?f0(geo.secs[i].w)+' × '+f0(zr.h):''} mm, ${f0(geo.secs[i]?.Dh||0)} deep. A big dog likes about 1100 × 760 mm or more — set the column width and this level’s height to suit.</p>`:''}`,'dog');
@@ -3909,7 +3912,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.20';
+const APP_VERSION='v0.21';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
@@ -4472,6 +4475,10 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'fpClose':document.getElementById('fpm').hidden=true;break;
     case 'loftAll':ui.loftAll=a==='1';dirty.loft=true;renderTab('loft');break;
     case 'bigView':ui.big=!ui.big;document.querySelector('.app').classList.toggle('big',ui.big);{const f=document.getElementById('bigfab');if(f){f.textContent=ui.big?'⤡':'⤢';f.setAttribute('aria-label',ui.big?'Smaller drawing':'Bigger drawing')}}renderBar();if(T3)T3.req();break;
+    case 'railSh':{const pa=a.split('|'),si=+pa[0],zk=+pa[1],z=(S.sections[si]||{zones:[]}).zones[zk],zr=geo.secs[si]&&geo.secs[si].zones[zk];if(!z||!zr)break;let up=z.railUp!=null?+z.railUp:(zr.na||0),dn=z.railDn!=null?+z.railDn:(zr.nb||0);const u0=up,d0=dn;if(pa[2]==='up')up=Math.max(0,Math.min(4,up+ +pa[3]));else dn=Math.max(0,Math.min(6,dn+ +pa[3]));z.railUp=up;z.railDn=dn;
+      {const g2=build(S),z2=g2.secs[si]&&g2.secs[si].zones[zk];if(z2&&((z2.na||0)<up||(z2.nb||0)<dn)){z.railUp=z2.na||0;z.railDn=z2.nb||0;toast(pa[2]==='up'?'No room for another shelf above the rail — lower the rail first':'No room for another shelf under the clothes — raise the rail first')}}z.shelves=(+z.railUp||0)+(+z.railDn||0);changed(true);break}
+    case 'railPick':{const pa=a.split('|').map(Number),z=(S.sections[pa[0]]||{zones:[]}).zones[pa[1]],zr=geo.secs[pa[0]]&&geo.secs[pa[0]].zones[pa[1]];if(!z||!zr)break;const n=(zr.comps||[]).length,cur=Array.from({length:n},(_,j)=>(zr.railIdx||[]).includes(j));cur[pa[2]]=!cur[pa[2]];if(!cur.some(Boolean)){toast('One compartment keeps the rail — tap another compartment first to move it');break}z.railCs=cur.map(v=>v?1:null);changed(true);break}
+    case 'stagAlt':{const pa=a.split('|').map(Number),z=(S.sections[pa[0]]||{zones:[]}).zones[pa[1]],zr=geo.secs[pa[0]]&&geo.secs[pa[0]].zones[pa[1]];if(!z||!zr)break;const n=(zr.comps||[]).length,any=(z.vst||[]).slice(0,n).some(Boolean);z.vst=Array.from({length:n},(_,j)=>!any&&j%2?1:null);changed(true);break}
     case 'railStep':{const[si,zk,d]=a.split('|').map(Number);const zr=geo.secs[si]&&geo.secs[si].zones[zk];if(!zr||!zr.railY)break;S.sections[si].zones[zk].railH=Math.round((zr.railY+d)/10)*10;changed(true);break}
     case 'pane':ui.pane=a;renderSide();document.getElementById('side').scrollTop=0;if(isSheet()){openSheetAt()}else if(innerWidth<=860){const sd=document.getElementById('side'),st=document.querySelector('.stage').offsetHeight,y=sd.getBoundingClientRect().top+scrollY-st;if(scrollY>y)scrollTo({top:y})}break;
     case 'peek':ui.peek=!ui.peek;dirty.elev=true;renderBar();if(ui.tab==='elev')renderTab('elev');applyFronts3D();break;
