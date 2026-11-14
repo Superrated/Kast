@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.22
+
+- Doors: "Join with the cupboard above" on a cupboard level makes one tall door that runs over this level and the one above it, in one piece and one colour. Switch it on in the next level too to run the door over three levels. Shelves and inside stay separate per level; the fixed board between the levels sits behind the door.
+- Joined doors get the right number of hinges for their height, and a design note when they are taller than about 2.3 m.
+
 ## v0.21
 
 Staggered shelves and a more flexible wardrobe.

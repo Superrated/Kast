@@ -734,14 +734,14 @@ details.mx{grid-column:1/-1}
 @media (prefers-reduced-motion:reduce){#splash{animation-duration:.01s}}
 </style>
 
-<div id="splash" role="status" aria-label="Kast v0.21 is loading"><b>Kast</b><span>v0.21</span></div>
+<div id="splash" role="status" aria-label="Kast v0.22 is loading"><b>Kast</b><span>v0.22</span></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
 
 <div class="app" data-tab="elev">
   <header class="top">
     <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-    <div class="brand" title="Kast v0.21">Kast<small>built-in furniture, drawn and cut · v0.21</small></div>
+    <div class="brand" title="Kast v0.22">Kast<small>built-in furniture, drawn and cut · v0.22</small></div>
     <nav class="tabs" id="tabs">
       <button data-act="tab" data-a="elev" class="on">Elevation</button>
       <button data-act="tab" data-a="3d">3D view</button>
@@ -1421,6 +1421,10 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
       const inPoly=(l,r,yb,yt)=>{const L=near(l,bL)?q.xa+gi:vdz.some(v=>near(v,l))?l+tc/2+gi:l+g/2,R=near(r,bR)?q.xb-gi:vdz.some(v=>near(v,r))?r-tc/2-gi:r-g/2;
         return yt!=null?[[L,yb],[R,yb],[R,yt],[L,yt]]:[[L,yb],[R,yb],...sampleLine(x=>underAt(q,x)-gi,L,R).reverse()]};
       const inB=zr.y0+gi,inT=zr.top?null:zr.divY-gi;
+      let jTop=zr.fb1,jN=0; // doors joined with the cupboard(s) above: one tall door over several levels
+      if(z.type==='closed'&&z.joinUp&&zr.joined==null&&q.zones[k+1]){const okJ=zz=>zz&&zz.type==='closed'&&!zz.dog&&!zz.inset&&zz.face!=='curtain'&&(zz.doorMode||'hinged')==='hinged';let n=k;
+        while(!recOff&&q.zones[n].z.joinUp&&q.zones[n+1]&&okJ(q.zones[n].z)&&okJ(q.zones[n+1].z)){n++;q.zones[n].joined=k}
+        if(n>k){const zt=q.zones[n];jTop=zt.top?null:zt.divY+zt.divT/2;jN=n-k;zr.joinN=jN}else warns.push(`${lab}: the doors of level ${k+1} can't join the cupboard above — both must be cupboards with plain hinged doors (not sliding, pocket, inset, curtain, dog den or a shallow cabinet above a desk).`)}
       if(face==='glass'){zr.glass=true;H.led.push({sec:lab,L:f0(q.w-20),why:'inside the glass cabinet'})}
       if(z.dog){const need=[1050,740];if(q.w<need[0]||zr.h<need[1])warns.push(`${lab}: the dog den is ${f0(q.w)} × ${f0(zr.h)} mm inside — a big dog (Labrador, shepherd) is comfortable from about 1100 × 760 mm.`);
         (H.dog=H.dog||[]).push({sec:lab,w:f0(q.w-30),d:f0(q.Dh-40),kind:z.dog})}
@@ -1468,13 +1472,13 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
           if(zr.top&&q.topPts.some(p=>p[0]>bL+1&&p[0]<bR-1)||(zr.top&&Math.abs(q.top(bL)-q.top(bR))>5))warns.push(`${lab}: sliding doors need a level top — the doors stop at the lowest point (${f0(yt)} mm); fill above with a fixed panel.`);
           const order=[...Array(n).keys()].sort((a,b)=>(a%2)-(b%2));order.forEach(j=>{const l=bL+j*(dw-ov),poly=frontPoly(l,l+dw,zr.fb0,yt),rearT=j%2===0;
             mkFront('door','Sliding door',poly,j===0?'R':'L',[`Top-hung sliding door, ${ov} mm overlap, ${rearT?'rear':'front'} track`],false,j,rearT?tf:2*tf+8)})}
-        else for(let j=0;j<nd;j++){const l=follow?edges[j]:bL+j*wd,r_=follow?edges[j+1]:bL+(j+1)*wd;if(follow&&r_-l-g>650)warns.push(`${lab}: door ${j+1} is ${f0(r_-l-g)} mm wide — add a divider or set the door count.`);const poly=ins?inPoly(l,r_,inB,inT):frontPoly(l,r_,zr.fb0,zr.fb1);
+        else if(zr.joined==null)for(let j=0;j<nd;j++){const l=follow?edges[j]:bL+j*wd,r_=follow?edges[j+1]:bL+(j+1)*wd;if(follow&&r_-l-g>650)warns.push(`${lab}: door ${j+1} is ${f0(r_-l-g)} mm wide — add a divider or set the door count.`);const poly=ins?inPoly(l,r_,inB,inT):frontPoly(l,r_,zr.fb0,jTop);
           let hinge=(follow&&hfix[j])?hfix[j]:nd===1?(z.hinge||'L'):(j===0?'L':(j===nd-1?'R':(j%2?'R':'L')));const swNote=[];
           if(!z.dog&&z.doorMode!=='slide'){const xs_=poly.map(p=>p[0]),xl=Math.min(...xs_),xr=Math.max(...xs_),wdr=xr-xl,swing=hg=>{let mn=Infinity;const xh=hg==='L'?xl:xr,dir=hg==='L'?1:-1;for(let a=10;a<=90;a+=10){const ca=Math.cos(a*Math.PI/180),sa=Math.sin(a*Math.PI/180);for(let u=0;u<=8;u++){const sd=wdr*u/8,t=polyTopAt(poly,Math.max(xl+0.01,Math.min(xr-0.01,xh+dir*sd)));if(!isFinite(t))continue;mn=Math.min(mn,ceilAt(xh+dir*sd*ca)+drop*(sd*sa+tf)/D-t)}}return mn};
             let cl=swing(hinge);if(cl<3&&(nd===1||(follow&&!hfix[j]))){const o=hinge==='L'?'R':'L',c2=swing(o);if(c2>=3){hinge=o;cl=c2;swNote.push('Hinged on its tall side so it clears the sloping ceiling when it opens')}}
             if(cl<3){zr.swingBad=true;warns.push(`${lab}: the ${nd>1?(j===0?'left ':j===nd-1?'right ':'middle '):''}door cannot open fully — its tall edge swings under the sloping ceiling and hits it (${f0(3-cl)} mm short). ${nd>1?'Add an upright divider between the doors (then each door hinges on its tall side), or use a sliding door or open shelves here.':'Make the top skirt taller, or use a sliding door or open shelves here.'}`)}}
-          const hh=Math.max(...poly.map(p=>p[1]))-Math.min(...poly.map(p=>p[1]));const hc=z.dog?0:hh<=900?2:hh<=1600?3:hh<=2000?4:5;H.hinges+=hc;H.hk=H.hk||{};{const hx_=hinge==='L'?l:r_,onDiv=vdz.some(v=>near(v,hx_)),nb_=secs[hinge==='L'?i-1:i+1],onShared=!boxes&&!onDiv&&near(hx_,hinge==='L'?bL:bR)&&nb_&&!nb_.panel&&!nb_.door&&!nb_.free&&!q.free&&nb_.z0===q.z0,hk_=ins?'inset':(onDiv||onShared)?'half':'std';H.hk[hk_]=(H.hk[hk_]||0)+hc;if(hk_==='half')swNote.push('Half-overlay hinges: this door shares its upright with the door next to it')}if(z.doorMode==='pocket')H.pocket++;
-          mkFront('door',z.doorMode==='pocket'?'Pocket door':'Door',poly,hinge,[`${hc} hinges · ${hinge==='L'?'left':'right'}-hand`].concat(swNote).concat(z.doorMode==='pocket'?['Pocket system: opens, then slides back into a 25 mm side pocket']:[]),false,j)}
+          const hh=Math.max(...poly.map(p=>p[1]))-Math.min(...poly.map(p=>p[1]));const hc=z.dog?0:hh<=900?2:hh<=1600?3:hh<=2000?4:5;if(jN&&hh>2300&&j===0)warns.push(`${lab}: the joined doors are ${f0(hh)} mm tall — doors over about 2.3 m are heavy and tend to warp. Use 19 mm or thicker board with a straightening fitting, or join fewer levels.`);H.hinges+=hc;H.hk=H.hk||{};{const hx_=hinge==='L'?l:r_,onDiv=vdz.some(v=>near(v,hx_)),nb_=secs[hinge==='L'?i-1:i+1],onShared=!boxes&&!onDiv&&near(hx_,hinge==='L'?bL:bR)&&nb_&&!nb_.panel&&!nb_.door&&!nb_.free&&!q.free&&nb_.z0===q.z0,hk_=ins?'inset':(onDiv||onShared)?'half':'std';H.hk[hk_]=(H.hk[hk_]||0)+hc;if(hk_==='half')swNote.push('Half-overlay hinges: this door shares its upright with the door next to it')}if(z.doorMode==='pocket')H.pocket++;
+          mkFront('door',z.doorMode==='pocket'?'Pocket door':'Door',poly,hinge,[`${hc} hinges · ${hinge==='L'?'left':'right'}-hand`].concat(jN?[`One tall door over ${jN+1} levels — the fixed board${jN>1?'s':''} between them stay${jN>1?'':'s'} behind the door`]:[]).concat(swNote).concat(z.doorMode==='pocket'?['Pocket system: opens, then slides back into a 25 mm side pocket']:[]),false,j)}
         if(z.doorMode==='pocket')warns.push(`${lab}: pocket doors need about 25 mm each side inside the cabinet for the pocket — inside width drops to ${f0(q.w-50)} mm.`)}
       if(z.type==='drawers'){const cnt=Math.max(1,+z.count||1),y1=zr.fb1??topMinFront();if(zr.top)warns.push(`${lab}: drawers in the top level use the lowest point of the ceiling.`);
         const hd=(y1-zr.fb0)/cnt;if(hd<90)warns.push(`${lab}: drawer fronts are only ${f0(hd)} mm tall.`);
@@ -2439,7 +2443,9 @@ function zoneRow(i,k){
     +(z.face==='curtain'?`<div style="grid-column:1/-1">${fabSwatches(p+'.fabricCol')}</div>`:'')+(z.doorMode==='slide'||z.face==='curtain'?'':`<div class="fld" style="grid-column:1/-1"><span>How the fronts sit</span>${seg(p+'.inset',[['','Over the frame'],['1','Inset in the frame']],{dflt:''})}</div>`);
   h+=splitUI(i,k,z,zr);
   if(z.type==='seat'){h+=`<div class="fld"><span>Drawers under the seat</span>${seg(p+'.count',[[1,'1'],[2,'2'],[3,'3']],{num:true})}</div><div class="fld" style="grid-column:1/-1"><span>Cushion fabric</span>${fabSwatches(p+'.fabricCol')}</div><p class="hintp" style="grid-column:1/-1;margin:0">Set the level height so the seat board lands ≈ 420 mm; the cushion adds about 80 mm. Leave the level above open for the nook.</p>`;h+=handleRow('drawer')}
-  if(z.type==='closed'){if(z.face!=='curtain')h+=`<div class="fld" style="grid-column:1/-1"><span>Doors</span>${seg(p+'.doorMode',[['hinged','Hinged'],['slide','Sliding'],['pocket','Pocket']],{dflt:'hinged'})}</div>`;
+  if(z.type==='closed'){if(zr&&zr.joined!=null)h+=`<p class="linked" style="grid-column:1/-1;margin:0">🔗 The doors of level ${zr.joined+1} below run up over this level, in one piece and one colour. Its shelves and inside are still set here. To give this level its own doors again, switch off “Join with the cupboard above” in level ${zr.joined+1}.</p>`;
+    if(!z.dog&&s.zones[k+1]&&s.zones[k+1].type==='closed')h+=`<div style="grid-column:1/-1">${chk('Join with the cupboard above — one tall door over both, in one colour',p+'.joinUp')}</div>`;
+    if(z.face!=='curtain')h+=`<div class="fld" style="grid-column:1/-1"><span>Doors</span>${seg(p+'.doorMode',[['hinged','Hinged'],['slide','Sliding'],['pocket','Pocket']],{dflt:'hinged'})}</div>`;
     h+=(z.rail?'':stepper(z.vd&&z.vd.length?'Shelves (when not split)':'Shelves',p+'.shelves',0,10))+loadUI(p,z,zr)+(!z.rail&&(+z.shelves>0||(z.vsh||[]).some(v=>+v>0))?`<div class="fld" style="grid-column:1/-1"><span>Shelf spacing</span>${seg(p+'.space',SPACINGS,{dflt:'even'})}</div>`:'')+stepper('Doors',p+'.doors',z.doorMode==='slide'?2:0,6,z.doorMode!=='slide');
     if(+z.doors===1)h+=`<div class="fld"><span>Hinge side</span>${seg(p+'.hinge',[['L','Left'],['R','Right']])}</div>`;
     h+=`<div style="grid-column:1/-1">${chk('Hanging rail',p+'.rail')}</div>`;
@@ -3912,7 +3918,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.21';
+const APP_VERSION='v0.22';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
