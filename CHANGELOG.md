@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.28
+
+- 3D view: making a piece see-through also hides the styling objects that stand on it, hang on it or lean against it (books and vases on a shelf, pegs and boxes on a peg wall). They come back when the piece is made solid again.
+
 ## v0.27
 
 - Arched tops: the shelves in an arched level now run right up to the front, so the front frame sits on them without a gap.

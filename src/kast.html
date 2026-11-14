@@ -3912,7 +3912,7 @@ function pick3D(e){if(!T3||!window.THREE||!THREE.Raycaster)return;if(ui.photoOn&
   const v=new THREE.Vector2(((e.clientX-r.left)/r.width)*2-1,-((e.clientY-r.top)/r.height)*2+1);if(!T3.rc)T3.rc=new THREE.Raycaster();T3.cam.updateMatrixWorld();T3.rc.setFromCamera(v,T3.cam);
   const shown=o=>{for(let p=o;p;p=p.parent)if(!p.visible)return false;return true},inFront=o=>{for(let p=o;p;p=p.parent)if(p===T3.frontG)return true;return false};
   const hit=T3.rc.intersectObjects([T3.frontG,T3.root],true).find(h=>{const o=h.object;return o.isMesh&&o.userData.pk!=null&&!o.userData.gap&&shown(o)&&!(ui.fm==='glass'&&inFront(o))});if(!hit)return;
-  if(!ui.see)ui.see=new Set();const k=hit.object.userData.pk,was=ui.see.has(k);if(was)ui.see.delete(k);else ui.see.add(k);applyFronts3D();renderBar();if(!was&&!ui.seeTold){ui.seeTold=1;toast('See-through. Tap it again to make it solid — or tap the next piece behind it.')}}
+  if(!ui.see)ui.see=new Set();const k=hit.object.userData.pk,was=ui.see.has(k);if(was)ui.see.delete(k);else ui.see.add(k);applyFronts3D();renderBar();if(!was&&!ui.seeTold){ui.seeTold=1;toast('See-through, and the things standing or hanging on it are hidden. Tap it again to bring it back.')}}
 function rebuild3D(){
   if(!init3D())return;const G=geo,{root,frontG,roomG}=T3;clearG(root);clearG(frontG);clearG(roomG);if(!T3.propG){T3.propG=new THREE.Group();T3.scene.add(T3.propG)}clearG(T3.propG);
   const M=S.mat,maxC=Math.max(...G.cps.map(p=>p.y),+S.room.H);
@@ -3939,7 +3939,7 @@ function rebuild3D(){
   G.claddings.forEach(c=>{if(!c.handle)return;const m=handle3D(c.handle,G.tf-(c.z0||0),metal);if(m)frontG.add(m)});
   G.holds.forEach(hd=>{const m=new THREE.Mesh(new THREE.SphereGeometry(hd.s/2,14,10),colMat(hd.col,.7));m.scale.set(1,hd.shape===0?0.66:0.85,0.45);m.rotation.z=hd.rot*Math.PI/180;m.position.set(hd.x,hd.y,G.tf-(hd.z0||0)+hd.s*0.12);m.castShadow=true;root.add(m)});
   G.secs.forEach(q=>q.zones.forEach(zr=>{if(zr.dj&&zr.led){const o=zr.open,m=new THREE.Mesh(new THREE.BoxGeometry(o.ix1-o.ix0-20,8,12),new THREE.MeshStandardMaterial({color:zr.ledCol,emissive:zr.ledCol,emissiveIntensity:1.2}));m.position.set((o.ix0+o.ix1)/2,o.iy1-8,-(q.z0+30));T3.propG.add(m)}}));
-  G.funs.forEach(f=>{const g=fun3D(f);if(g)root.add(g)});
+  G.funs.forEach(f=>{const g=fun3D(f);if(g){g.userData.deco=1;root.add(g)}});
   G.props.forEach(p=>T3.propG.add(prop3D(p)));T3.propG.visible=ui.props;
   const steel=colMat('#5f676d',.45,.55);
   if(G.ladder){const L_=G.ladder,wd=mat3((WOODS[(S.ladder||{}).wood||'oak']||WOODS.oak).fin,'solid'),stl=colMat('#7F858B',.3,.85),gL=new THREE.Group();
@@ -4000,7 +4000,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.27';
+const APP_VERSION='v0.28';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
@@ -4361,6 +4361,10 @@ function applyFronts3D(noReq){if(!T3)return;if(!T3.glass)T3.glass={};T3.frontG.v
     if(ui.fm==='glass'||peek||(ui.see&&ui.see.has(o.userData.pk))){const k=sm.uuid;if(!T3.glass[k]){const gm=sm.clone();gm.transparent=true;gm.opacity=.2;gm.depthWrite=false;T3.glass[k]=gm}o.material=T3.glass[k];o.castShadow=false}else{o.material=sm;o.castShadow=true}});
   if((ui.see&&ui.see.size)||T3.rootSee){T3.rootSee=!!(ui.see&&ui.see.size);T3.root.traverse(o=>{if(!o.isMesh||o.userData.pk==null||Array.isArray(o.material))return;const on=ui.see&&ui.see.has(o.userData.pk);if(!on&&!o.userData.solid)return;if(!o.userData.solid)o.userData.solid=o.material;const sm=o.userData.solid;
       if(on){const k=sm.uuid;if(!T3.glass[k]){const gm=sm.clone();gm.transparent=true;gm.opacity=.2;gm.depthWrite=false;T3.glass[k]=gm}o.material=T3.glass[k];o.castShadow=false}else{o.material=sm;o.castShadow=true}})}
+  /* styling objects that stand on, hang on or lean against a see-through piece disappear with it */
+  try{if((ui.see&&ui.see.size)||T3.decoHid){const bx=[];[T3.frontG,T3.root].forEach(g=>g.traverse(o=>{if(o.isMesh&&o.userData.pk!=null&&ui.see&&ui.see.has(o.userData.pk))bx.push(new THREE.Box3().setFromObject(o).expandByScalar(12))}));
+      const decos=[];if(T3.propG)T3.propG.children.forEach(o=>decos.push(o));T3.root.children.forEach(o=>{if(o.userData.deco)o.children.forEach(c=>decos.push(c))});
+      decos.forEach(o=>{const was=o.visible;o.visible=true;const b=new THREE.Box3().setFromObject(o);o.visible=!bx.some(x=>x.intersectsBox(b))});T3.decoHid=bx.length>0}}catch(e){}
   if(ui.iso||ui.exT)applyExplode(true);if(!noReq)T3.req()}
 function renderViews(){
   groupsCache=null;renderBar();
