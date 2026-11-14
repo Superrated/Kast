@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.03
+
+- Clothes rails sit at a comfortable height for the person set in Room → people (just under their own height; 1.75 m if none is set), instead of a fixed 1750 mm above the bottom of the zone.
+- A design note warns when a rail is above easy reach, and the shuffler avoids layouts with rails out of reach.
+- Shelf spacing per zone: Even, Tall bottom, Tall top or Tall middle. Works in compartments too.
+
 ## v0.02
 
 - The shuffle options in the Layout panel fold away (only the four shuffle buttons stay), so they no longer cover the column editing. The app remembers whether they are open.
