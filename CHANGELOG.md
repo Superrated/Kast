@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.16
+
+- New panel wall option "Faux doors": the shaft cover is cut as fixed door and drawer fronts that copy the cabinet next to it (same lines, colours, gaps and handles), with a plinth strip below, so the wall reads as one run of cabinets. With the access option on, one faux door hangs on push latches and comes off to reach the shaft.
+
 ## v0.15
 
 - Top skirt pieces under a steep slope are cut shorter so each fits the width of its board; a tall narrow filler piece gets its grain upright.
