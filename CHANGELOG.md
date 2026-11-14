@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.17
+
+Audit of the build guide and the PDF.
+
+- PDF cut list: notes were cut off after three lines, and long part names, materials and column lists after one. Everything is now printed in full.
+- PDF hardware and price lists: long item names wrap instead of being cut off; a hardware list that runs onto a new page no longer starts with an empty cut list header.
+- Price list: the centre support for a wardrobe rail and the paint for colour-drenched zones now have a typical price.
+- Faux drawer fronts have their grain running sideways, like real drawer fronts; a faux door for shaft access counts 4 push latches in the hardware list.
+
 ## v0.16
 
 - New panel wall option "Faux doors": the shaft cover is cut as fixed door and drawer fronts that copy the cabinet next to it (same lines, colours, gaps and handles), with a plinth strip below, so the wall reads as one run of cabinets. With the access option on, one faux door hangs on push latches and comes off to reach the shaft.
