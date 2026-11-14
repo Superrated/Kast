@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.10
+
+- Items under "Always include" now follow Left / Middle / Right: picking a side moves the item straight away, and a Contents shuffle no longer leaves it on the wrong side.
+
 ## v0.09
 
 Audit of the shuffler (360 shuffled designs in five room shapes, checked by script).
