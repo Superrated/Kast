@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.09
+
+Audit of the shuffler (360 shuffled designs in five room shapes, checked by script).
+
+- The TV column now shuffles too: what sits under the niche (drawers, doors, open shelf), the box lining, and what sits above it (doors, glass, open shelves, an open strip). The niche and TV size stay.
+- Shuffles and styles use colour-drench: one choice per design, so open shelves, niches and the TV niche share one accent colour.
+- Every shuffle is tidied for buildability: no door taller than 2300 mm (it gets a second door above, with the dividing line at the same height in every column), no empty space behind doors (shelves are added), drawer fronts between 140 and 400 mm high, no sliver zone under the ceiling, and columns taller than one board get a divider so they can be built as two stacked units.
+
 ## v0.08
 
 - Box lining now works on open shelves at the top of a column (for example above a TV niche), under a flat or a sloped top. Before, it was silently left out with only a design note.
