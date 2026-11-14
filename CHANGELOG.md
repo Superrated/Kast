@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.26
+
+- Narrower compartments: "Split side by side" now goes up to 6, and compartments can be as narrow as 100 mm (was 200 mm). The uprights stepper goes up to 7 uprights, and an upright can be moved to within 100 mm of the next one.
+- Shelves are now made for compartments from 70 mm wide.
+- A cupboard whose doors would follow compartments narrower than 150 mm gets one design note: too narrow for hinges and a handle.
+
 ## v0.25
 
 Two new units, and colour-drench on the outside.
