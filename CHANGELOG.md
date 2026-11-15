@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.35
+
+- Columns that share one wide opening (a TV niche or desk across several columns) are now built as two stacked units when they are taller than one board, like the other tall columns. The joint sits above the opening, at the same height in every column of the group. This was the last case where a side could come out bigger than its board.
+
 ## v0.34
 
 - "Install app" button: in the top bar on a computer and in the ☰ menu on a phone. It appears only where the browser can really install Kast (the GitHub site, in Chrome, Edge or Android), and disappears once Kast is installed. On iPhone and iPad it explains the Share → "Add to Home Screen" steps.

@@ -736,14 +736,14 @@ details.mx{grid-column:1/-1}
 @media (prefers-reduced-motion:reduce){#splash{animation-duration:.01s}}
 </style>
 
-<div id="splash" role="status" aria-label="Kast v0.34 is loading"><b>Kast</b><span>v0.34</span></div>
+<div id="splash" role="status" aria-label="Kast v0.35 is loading"><b>Kast</b><span>v0.35</span></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
 
 <div class="app" data-tab="elev">
   <header class="top">
     <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-    <div class="brand" title="Kast v0.34">Kast<small>built-in furniture, drawn and cut · v0.34</small></div>
+    <div class="brand" title="Kast v0.35">Kast<small>built-in furniture, drawn and cut · v0.35</small></div>
     <nav class="tabs" id="tabs">
       <button data-act="tab" data-a="elev" class="on">Elevation</button>
       <button data-act="tab" data-a="3d">3D view</button>
@@ -1301,12 +1301,12 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
     if(lead){q.zones=lead.zones.map(lz=>{const zr={k:lz.k,z:lz.z,y0:lz.y0,h:lz.h,top:lz.top,divY:lz.divY,divT:lz.divT};
       if(zr.top){zr.hMin=q.minU-zr.y0;zr.hMax=q.maxU-zr.y0;zr.h=zr.hMin;if(zr.hMin<120)warns.push(`${lab}: not enough height above the shared niche — the ceiling is too low here.`)}return zr})}
     else{
-      q.splitK=-1;const ySide=(q.desk||q.door)?0:q.Pq,hSide=q.maxU+tc-ySide;
-      if(!gp&&!q.door&&!q.panel&&hSide>MAXU&&nz>1){let fx0=0,au0=0;Z0.forEach(z=>{if(+z.h>0)fx0+=+z.h;else au0++});const sd0=(nz-1)*tc,aH0=au0?((q.minU-yB)-sd0-tc-fx0)/au0:0;let yy=yB;
-        for(let k=0;k<nz-1;k++){const h=+Z0[k].h>0?+Z0[k].h:aH0,dY=yy+h;const low=dY+2*tc-ySide,up=q.maxU+tc-(dY+tc);if(low<=MAXU&&up<=MAXU-2*tc&&Z0[k].type!=='opening'&&!(q.desk&&k===0))q.splitK=k;yy=dY+tc}}
+      q.splitK=-1;const ySide=(q.desk||q.door)?0:q.Pq,gU=gp?Math.max(...gp.members.map(m=>m.maxU)):q.maxU,gMn=gp?Math.min(...gp.members.map(m=>m.minU)):q.minU,hSide=gU+tc-ySide;
+      if(!q.door&&!q.panel&&hSide>MAXU&&nz>1){let fx0=0,au0=0;Z0.forEach(z=>{if(+z.h>0)fx0+=+z.h;else au0++});const sd0=(nz-1)*tc,aH0=au0?((gMn-yB)-sd0-tc-fx0)/au0:0;let yy=yB;
+        for(let k=0;k<nz-1;k++){const h=+Z0[k].h>0?+Z0[k].h:aH0,dY=yy+h;const low=dY+2*tc-ySide,up=gU+tc-(dY+tc);if(low<=MAXU&&up<=MAXU-2*tc&&Z0[k].type!=='opening'&&!(q.desk&&k===0)&&!(gp&&k<=gp.ko))q.splitK=k;yy=dY+tc}}
       if(boxes&&!q.free&&!q.door&&!q.panel&&q.splitK<0){const dg=Math.min(Math.hypot(hSide,q.D),Math.hypot(hSide,q.bR-q.bL)),rm=Math.max(...cps.map(p=>p.y));if(dg>rm-10){q.noTilt=Math.round(dg);warns.push(`${lab}: this box is ${f0(hSide)} mm tall and cannot be tilted upright after building it flat — its diagonal (${f0(dg)} mm) is more than the ${f0(rm)} mm ceiling. Build it standing in place (the guide says how), or split it into two stacked units in its settings.`)}}
-      if(hSide>MAXU&&!q.door&&!q.panel&&!gp&&q.splitK<0)warns.push(`${lab}: ${f0(hSide)} mm tall — more than the ${f0(MAXU)} mm your boards allow. Tap “Split into two units” in its settings.`);
-      const oSpan=gp?gp.members[gp.members.length-1].xb-gp.members[0].xa:q.w,visUp=k=>!!(Z0[k+1]&&(Z0[k+1].type==='open'||Z0[k+1].face==='glass'));
+      if(hSide>MAXU&&!q.door&&!q.panel&&!(gp&&q.follow!=null)&&q.splitK<0)warns.push(`${lab}: ${f0(hSide)} mm tall — more than the ${f0(MAXU)} mm your boards allow. Tap “Split into two units” in its settings.`);
+      if(q.follow!=null&&secs[q.follow]&&!(q.splitK>=0))q.splitK=secs[q.follow].splitK??-1;const oSpan=gp?gp.members[gp.members.length-1].xb-gp.members[0].xa:q.w,visUp=k=>!!(Z0[k+1]&&(Z0[k+1].type==='open'||Z0[k+1].face==='glass'));
       // structural: a header over a wide niche with open shelves above has no front rail to stiffen it, so it is made 3 layers thick; a doorway wider than 800 mm gets a double head
       const divT=k=>(Z0[k].type==='opening'&&Z0[k].header!==false)?(visUp(k)&&oSpan>900?3*tc:2*tc):(Z0[k].type==='passage'&&q.w>800)||k===q.splitK?2*tc:tc;
       let sumDiv=0;for(let k=0;k<nz-1;k++)sumDiv+=divT(k);
@@ -1329,6 +1329,7 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
       if(spanDiv)iv=gp.members.every(m=>{const v=okInterval(m.under,yt);return v&&v[1]-v[0]>=m.w-1})?[q.xa,gEnd]:null;
       else iv=okInterval(q.under,yt);
       if(!iv){warns.push(`${lab}: level ${zr.k+1} reaches above the ceiling.`);return}
+      if(q.follow!=null&&secs[q.follow]&&!(q.splitK>=0))q.splitK=secs[q.follow].splitK??-1;
       zr.divIv=iv;const L=iv[1]-iv[0],isHead=zr.divT>tc,short=!spanDiv&&L<q.w-1,dl=spanDiv?glab:lab;
       const isSplit=zr.k===q.splitK,nm=isSplit?'Top (lower unit)':zr.z.type==='seat'?'Seat board':zr.z.type==='passage'?'Door head (lining)':isHead?'Header layer':spanDiv?(zr.k===gp.ko?'Opening top':'Opening sill'):'Fixed divider';
       const dOff=recOff&&!spanDiv?recOff:0,dDep=(GRV&&!isSplit&&!q.door&&!q.noBack&&(q.s.back||'full')==='full')?q.Dh:q.Dc;
@@ -1710,6 +1711,7 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
   if(boxes)secs.forEach(q=>{if(q.panel)return;walls.push({x:q.lx,L:null,R:q,side:'left'});walls.push({x:q.rx,L:q,R:null,side:'right'})});
   else{walls.push({x:secs[0].lx,L:null,R:secs[0]});secs.forEach((q,i)=>walls.push({x:q.rx,L:q,R:secs[i+1]||null}))}
   for(let wi=walls.length-1;wi>=0;wi--)if(![walls[wi].L,walls[wi].R].filter(Boolean).some(q=>!q.panel))walls.splice(wi,1);
+  secs.forEach(q=>{if(q.follow!=null&&secs[q.follow]&&q.splitK==null)q.splitK=secs[q.follow].splitK}); // columns that follow a shared opening are stacked at the same joint as their lead
   walls.forEach((wl,wi)=>{const xL=wl.x,Lq=wl.L,Rq=wl.R,own=[Lq,Rq].filter(Boolean),zmn=Math.min(...own.map(q=>q.z0)),dW=Math.max(...own.map(q=>q.z0+q.D))-zmn;
     const hF=Math.max(...own.flatMap(q=>[q.top(xL),q.top(xL+tc)])),nearDesk=own.some(q=>q.desk||(q.panel&&!q.toe)||q.door),yb=nearDesk?0:Math.min(...own.map(q=>q.panel?P:(q.Pq??P)));
     let gIn=null;if(boxes){const q=own[0];if(q.grp&&((wl.side==='left'&&q.i>q.grp.lead)||(wl.side==='right'&&q.i<q.grp.last)))gIn=q.grp}else if(Lq&&Rq&&Lq.grp&&Lq.grp===Rq.grp)gIn=Lq.grp;if(gIn&&!((secs[gIn.lead].zones||[])[gIn.ko]&&(gIn.ko===0||secs[gIn.lead].zones[gIn.ko-1])))gIn=null;
@@ -1719,9 +1721,10 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
     const typ=boxes?'Box side':(wi===0||wi===walls.length-1?'End panel':'Partition');const dF=(()=>{const f=colDrench(own[0]);return f&&own.every(o=>colDrench(o)===f)?f:null})(); // not drenched when the wall is shared with a column in another colour
     const lab=boxes?`S${own[0].i+1} ${wl.side}`:(Lq?(Rq?`S${Lq.i+1}|S${Rq.i+1}`:'right end'):'left end');
     const spl=own.find(q=>q.splitK>=0),sY=spl?spl.zones[spl.splitK].divY+tc:null;
-    const pcs=[];if(spl&&!gIn){pcs.push({y0:yb,y1:sY,ft:'lowerU'});pcs.push({y0:sY,y1:null,ft:'upperU'})}else if(gIn){const LZ=secs[gIn.lead].zones,ko=gIn.ko;if(ko>0)pcs.push({y0:yb,y1:LZ[ko-1].divY,ft:'lower'});const uy=LZ[ko].divY+LZ[ko].divT;if(uy<hF-60)pcs.push({y0:uy,y1:null,ft:'upper'})}else pcs.push({y0:yb,y1:null});
+    const pcs=[];if(spl&&!gIn){pcs.push({y0:yb,y1:sY,ft:'lowerU'});pcs.push({y0:sY,y1:null,ft:'upperU'})}else if(gIn){const LZ=secs[gIn.lead].zones,ko=gIn.ko;if(ko>0)pcs.push({y0:yb,y1:LZ[ko-1].divY,ft:'lower'});const uy=LZ[ko].divY+LZ[ko].divT;if(uy<hF-60){if(spl&&sY>uy+60&&sY<hF-60){pcs.push({y0:uy,y1:sY,ft:'upper'});pcs.push({y0:sY,y1:null,ft:'upperU'})}else pcs.push({y0:uy,y1:null,ft:'upper'})}}else pcs.push({y0:yb,y1:null});
     pcs.forEach(pc=>{const tF=pc.y1??hF,tB=pc.y1??(hF-drop),poly=[[0,pc.y0],[dW,pc.y0],[dW,tB],[0,tF]];let notes=[...base];if(own.length===2&&Lq.z0!==Rq.z0)notes.push(`Front edge stands ${f0(Math.abs(Lq.z0-Rq.z0))} mm proud of the shallower column — band or cover the exposed face`);
       if(pc.ft==='lower')notes=notes.filter(t=>!t.includes('∠')).concat('Stops under the niche sill');
+      if(pc.ft==='upper'&&pc.y1!=null)notes=notes.filter(t=>!t.includes('∠')).concat('Lower unit — the upper unit stands on it');
       if(pc.ft==='upper')notes.push('Stands on the board above the niche; screw down through the header and into the rear rail');
       if(pc.ft==='lowerU')notes=notes.filter(t=>!t.includes('∠')).concat('Lower unit — the upper unit stands on it');if(pc.ft==='upperU')notes.push('Upper unit — screw down into the lower unit through the double panel');
       addPanel({type:typ+(pc.ft==='lowerU'?' (lower unit)':pc.ft==='upperU'?' (upper unit)':pc.ft?(pc.ft==='upper'?' above opening':' below opening'):''),role:'carcass',fin:dF||undefined,sec:lab,poly,grain:'h',band:'front',bandLen:tF-pc.y0,notes,angled:notes.some(t=>t.includes('∠'))});
@@ -2662,8 +2665,8 @@ function tidy(st){const linked=sc=>sc.link!=null&&sc.link!=='';
         z.h=cut;if(+z.railH>cut-90)z.railH=null;zs.splice(zr.k+1,0,up);ch=true;break}});
     if(!ch)break}
   // columns taller than one board: make sure there is a fixed divider where the box can be built as two stacked units
-  for(let pass=0;pass<3;pass++){const G0=build(st),q=G0.secs.find(q=>!q.panel&&!q.door&&!q.grp&&q.follow==null&&q.splitK<0&&q.maxU+G0.tc-(q.desk?0:q.Pq)>G0.maxUnit&&!linked(st.sections[q.i])&&!q._tried);if(!q)break;
-    const y0_=q.desk?0:q.Pq,hS=q.maxU+G0.tc-y0_,lo=hS-G0.maxUnit+3*G0.tc+10,hi=G0.maxUnit-3*G0.tc-10;if(lo>hi)break;const Hs=y0_+Math.max(lo,Math.min(hi,2180-y0_)),n0=JSON.stringify(st.sections[q.i].zones).length;
+  for(let pass=0;pass<3;pass++){const G0=build(st),gU_=q=>q.grp?Math.max(...q.grp.members.map(m=>m.maxU)):q.maxU,q=G0.secs.find(q=>!q.panel&&!q.door&&q.follow==null&&q.splitK<0&&gU_(q)+G0.tc-(q.desk?0:q.Pq)>G0.maxUnit&&!linked(st.sections[q.i])&&!q._tried);if(!q)break;
+    const y0_=q.desk?0:q.Pq,hS=gU_(q)+G0.tc-y0_,ko_=q.grp?q.zones[q.grp.ko]:null,lo=Math.max(hS-G0.maxUnit+3*G0.tc+10,ko_?ko_.divY+(ko_.divT||G0.tc)+300-y0_:0),hi=G0.maxUnit-3*G0.tc-10;if(lo>hi)break;const Hs=y0_+Math.max(lo,Math.min(hi,2180-y0_)),n0=JSON.stringify(st.sections[q.i].zones).length;
     st=splitZoneAt(st,q.i,Hs);if(JSON.stringify(st.sections[q.i].zones).length===n0)break}
   const G=build(st);G.secs.forEach(q=>{if(q.panel||q.door||q.follow!=null)return;const sc=st.sections[q.i];if(!sc||linked(sc))return;(q.zones||[]).forEach(zr=>{const z=(sc.zones||[])[zr.k],h=zr.top?zr.hMin:zr.h;if(!z)return;
     if(z.type==='closed'&&!z.rail&&!z.dog&&!z.fit&&!(q.desk&&zr.k===0)&&h>700){const want=Math.min(6,Math.max(1,Math.round(h/420)-1));if((+z.shelves||0)<want&&!(z.vsh||[]).some(v=>+v>0))z.shelves=want}
@@ -4063,7 +4066,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.34';
+const APP_VERSION='v0.35';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
