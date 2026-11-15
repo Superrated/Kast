@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.51
+
+- Storage boxes on open shelves: new setting "Grip on the boxes" with Hand slot (as before), One finger hole or Two finger holes. It shows in the drawing and the 3D view, and on the cut list as a note on the box front.
+
 ## v0.50
 
 Dots are now a handle, and every door can have its own handle.
