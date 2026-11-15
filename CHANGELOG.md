@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.38
+
+- "Split into two units" now also works by hand for columns that share one opening (a TV niche or desk across several columns). Tap it on any column of the group: the whole group gets the joint, above the opening.
+
 ## v0.37
 
 Five extras for the reading nook (Niche → Show in the niche → Reading nook).
