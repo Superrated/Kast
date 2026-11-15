@@ -57,6 +57,13 @@ aside.side{overflow:auto;border-right:1px solid var(--line);background:var(--sur
 .stage{display:flex;flex-direction:column;min-height:0;min-width:0;background:var(--stage)}
 .bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding-block:8px;padding-left:14px;padding-right:max(16px,env(safe-area-inset-right,0px));border-bottom:1px solid var(--line);background:var(--surface)}
 .bar .sp{flex:1}
+.viewsw{display:flex;gap:10px;align-items:center;padding:8px 0 2px;font-size:12px;color:var(--ink3)}.viewsw .seg{flex:none}.viewsw .seg button{padding:5px 14px;font-size:12.5px}
+details.more{margin-top:4px}details.more>summary{font-size:12.5px;font-weight:600;color:var(--accent);cursor:pointer;padding:6px 0}.moreb{margin-top:6px}.viewmore{margin:14px 0 0}.linkb{border:0;background:none;color:var(--accent);font:inherit;font-weight:600;cursor:pointer;padding:0;text-decoration:underline}
+.ztb{position:absolute;z-index:6;display:flex;gap:6px;align-items:center;flex-wrap:nowrap;background:var(--raised);border:1px solid var(--line);border-radius:14px;padding:5px 6px;box-shadow:0 6px 22px rgba(0,0,0,.18);font-size:12.5px;white-space:nowrap;max-width:calc(100% - 12px);overflow-x:auto}
+.ztb.dock{position:sticky;left:6px;right:6px;bottom:6px;margin:8px 0 0;width:max-content;max-width:calc(100% - 12px)}
+.ztg{display:inline-flex;align-items:center;gap:2px;padding:0 4px;border-right:1px solid var(--line)}.ztg:last-child{border-right:0}.ztg em{font-style:normal;color:var(--ink3);font-size:11.5px;margin-right:3px}.ztg b{min-width:18px;text-align:center;font-variant-numeric:tabular-nums}
+.ztg button{border:0;background:none;color:var(--ink);font:inherit;min-width:30px;height:30px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0 6px}.ztg button:hover{background:var(--accent-soft)}.ztg button.on{background:var(--ink);color:var(--bg)}.ztg svg{width:18px;height:18px}
+.fixb{border:1px solid var(--accent);background:var(--accent-soft);color:var(--accent);font:inherit;font-size:11.5px;font-weight:600;border-radius:999px;padding:2px 10px;cursor:pointer;margin-left:4px;white-space:nowrap}.fixall{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0 2px;color:var(--ink3)}
 .notes{font-size:12px}
 .notes summary{cursor:pointer;color:var(--warn);font-weight:600;list-style:none}
 .notes summary::-webkit-details-marker{display:none}
@@ -736,14 +743,14 @@ details.mx{grid-column:1/-1}
 @media (prefers-reduced-motion:reduce){#splash{animation-duration:.01s}}
 </style>
 
-<div id="splash" role="status" aria-label="Kast v0.35 is loading"><b>Kast</b><span>v0.35</span></div>
+<div id="splash" role="status" aria-label="Kast v0.36 is loading"><b>Kast</b><span>v0.36</span></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
 
 <div class="app" data-tab="elev">
   <header class="top">
     <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-    <div class="brand" title="Kast v0.35">Kast<small>built-in furniture, drawn and cut · v0.35</small></div>
+    <div class="brand" title="Kast v0.36">Kast<small>built-in furniture, drawn and cut · v0.36</small></div>
     <nav class="tabs" id="tabs">
       <button data-act="tab" data-a="elev" class="on">Elevation</button>
       <button data-act="tab" data-a="3d">3D view</button>
@@ -2254,6 +2261,18 @@ const openState={stk:true,lad:true,room:true,ceil:true,obs:true,secs:true,mat:tr
 const PANES_X=1;
 const PANES=[['room','Room','Wall, slopes and anything in the way.',['room','ceil','site','obs','ppl','scr']],['layout','Layout','The columns and what goes in them.',['secs']],['look','Look','Colours, boards, handles.',['mat','hd']],['build','Build','How it goes together.',['con','sk','lad']]];
 const PANE_ICON={room:'<svg viewBox="0 0 20 20"><path d="M3 17V8l7-5 7 5v9z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',layout:'<svg viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 3v14M13 3v14M8 10h5" stroke="currentColor" stroke-width="1.6"/></svg>',look:'<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="7.5" cy="8" r="1.3" fill="currentColor"/><circle cx="12.5" cy="8" r="1.3" fill="currentColor"/><circle cx="8.5" cy="12.6" r="1.3" fill="currentColor"/></svg>',build:'<svg viewBox="0 0 20 20"><path d="M4 16l6-6m2-2l1.5-1.5a2.5 2.5 0 013.5 3.5L15.5 11.5M10 10l-1.5 1.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M3 13l4 4" stroke="currentColor" stroke-width="1.6"/></svg>'};
+/* ===== Simple / Expert view =====
+   Simple shows the handful of controls most people touch; everything else is folded under "More options". Nothing is removed:
+   the panel is drawn in full and then tidied here, so every setting keeps working in both views. */
+const VIEW_KEY='kast-view';try{ui.simple=localStorage.getItem(VIEW_KEY)!=='x'}catch(e){ui.simple=true}
+const SIMPLE_KEEP=/^(Height|Split side by side|Shelves|Doors|Drawers|Hanging rail|Rail height|Shelves above|Shelves below|Front style|Door colour|Front colour|Inside colour|Show in the niche|TV size|Frame size|Cushion fabric|Mattress fabric|Slats run|Slat size|Storage boxes|Arched tops)/,SIMPLE_HIDE={site:1,ppl:1,scr:1,con:1,sk:1,lad:1};
+function simplifySide(el){const head=el.querySelector('.shead');if(head&&!el.querySelector('.viewsw'))head.insertAdjacentHTML('afterend',`<div class="viewsw"><div class="seg" role="group" aria-label="How much to show"><button type="button" class="${ui.simple?'on':''}" data-act="viewMode" data-a="s">Simple</button><button type="button" class="${ui.simple?'':'on'}" data-act="viewMode" data-a="x">Expert</button></div><span>${ui.simple?'The settings most people use':'Every setting'}</span></div>`);
+  if(!ui.simple)return;const open=ui.moreOpen||{},label=c=>((c.querySelector(':scope > span')||c).textContent||'').trim().replace(/\s+/g,' ');
+  const fold=(host,items,mk,after)=>{if(!items.length)return;const d=document.createElement('details');d.className='pf more';d.dataset.mk=mk;if(open[mk])d.open=true;d.innerHTML=`<summary>More options (${items.length})</summary><div class="grid2 moreb"></div>`;const box=d.lastElementChild;items.forEach(c=>box.appendChild(c));if(after)after.insertAdjacentElement('afterend',d);else host.appendChild(d)};
+  el.querySelectorAll('.zbody').forEach(zb=>{const g=zb.querySelector(':scope > .grid2');if(!g)return;const mv=[...g.children].filter(c=>c.tagName==='P'||!SIMPLE_KEEP.test(label(c)));fold(zb,mv,'z'+ui.sel+':'+ui.zsel,g)});
+  el.querySelectorAll('.card.sel').forEach(card=>{const mv=[...card.children].filter(c=>c.classList.contains('linkbox')||(c.classList.contains('addrow'))||(c.classList.contains('fld')&&/^Back panel/.test(label(c))));const zl=card.querySelector(':scope > .zlist');fold(card,mv,'c'+ui.sel,null)});
+  const hid=[];el.querySelectorAll('details.acc').forEach(d=>{if(SIMPLE_HIDE[d.dataset.k]){d.hidden=true;hid.push(d.querySelector('summary').textContent.trim())}});
+  if(hid.length)el.insertAdjacentHTML('beforeend',`<p class="hintp viewmore">${hid.length} more section${hid.length>1?'s':''} in Expert view: ${hid.map(esc).join(', ')}. <button type="button" class="linkb" data-act="viewMode" data-a="x">Show everything</button></p>`)}
 function renderSide(){
   const el=document.getElementById('side'),op=k=>(openState[k]||(k==='secs'&&isSheet()))?'open':'',R=S.room;const pane=PANES.find(x=>x[0]===(ui.pane||'layout'))||PANES[1];
   let h=`<details class="acc" data-k="room" ${op('room')}><summary>Wall</summary><div class="accb">
@@ -2353,7 +2372,7 @@ function renderSide(){
     </div></details>`;
   h+=`<details class="acc" data-k="secs" ${op('secs')}><summary>Columns</summary><div class="accb">${secEditor()}</div></details>`;
   const parts={};h.split('<details class="acc"').slice(1).forEach(c=>{const m=c.match(/data-k="(\w+)"/);if(m)parts[m[1]]='<details class="acc"'+c});
-  el.dataset.flow=pane[0]==='layout'?flowNow():'home';if(isSheet())setTimeout(renderBar,0);el.innerHTML=`<div class="shead"><div class="shandle" data-sgrab="1" aria-hidden="true"><i></i></div><div class="spane" role="tablist">${PANES.map(([k,l])=>`<button type="button" role="tab" aria-selected="${k===pane[0]}" class="${k===pane[0]?'on':''}" data-act="pane" data-a="${k}">${PANE_ICON[k]}<span>${l}</span></button>`).join('')}</div><div class="crumb">${pane[0]==='layout'?crumbHTML():''}</div></div><p class="panelede">${pane[2]}</p>`+pane[3].map(k=>parts[k]||'').join('');
+  el.dataset.flow=pane[0]==='layout'?flowNow():'home';if(isSheet())setTimeout(renderBar,0);el.innerHTML=`<div class="shead"><div class="shandle" data-sgrab="1" aria-hidden="true"><i></i></div><div class="spane" role="tablist">${PANES.map(([k,l])=>`<button type="button" role="tab" aria-selected="${k===pane[0]}" class="${k===pane[0]?'on':''}" data-act="pane" data-a="${k}">${PANE_ICON[k]}<span>${l}</span></button>`).join('')}</div><div class="crumb">${pane[0]==='layout'?crumbHTML():''}</div></div><p class="panelede">${pane[2]}</p>`+pane[3].map(k=>parts[k]||'').join('');try{simplifySide(el)}catch(e){}
 }
 const presetOpts=()=>Object.entries(PRESETS).map(([k,p])=>`<option value="${k}">${p.label}</option>`).join('');
 function secEditorFull(){
@@ -3337,6 +3356,31 @@ function priceRows(nest,sp,hw,mats,shopO){const shop=shopO||curShop();let fbN=0;
 function nearRal(fin){const f=FIN[fin];if(!f||f.ral)return f?fin:'ral9010';const h=x=>[1,3,5].map(i=>parseInt(x.slice(i,i+2),16)),a=h(f.base);let best='ral9010',bd=1e9;Object.entries(FIN).forEach(([k,v])=>{if(!v.ral||!/^#[0-9a-f]{6}$/i.test(v.base))return;const b=h(v.base),d=(a[0]-b[0])**2+(a[1]-b[1])**2+(a[2]-b[2])**2;if(d<bd){bd=d;best=k}});return best}
 /* Doors under a slope must hinge on their tall side. Where a pair of doors would hit the ceiling, put an upright between them so each door has a tall side to hinge on */
 const underAt_=(q,x)=>{const u=q.under;if(x<=u[0][0])return u[0][1];for(let k=1;k<u.length;k++)if(x<=u[k][0]){const a=u[k-1],b=u[k];return a[1]+(b[1]-a[1])*(x-a[0])/((b[0]-a[0])||1)}return u[u.length-1][1]};
+/* ===== One-tap fixes for design notes =====
+   Each rule recognises one note and changes the design the way the note itself advises. A fix is only kept when the note is gone
+   and the design has no more notes than before; anything else falls back to the general tidy-up (slopeFix). */
+const FIXS=[
+  [/^S(\d+)[^:]*: the narrowest door in level (\d+) is only/,(st,m)=>{const z=st.sections[m[1]-1].zones[m[2]-1];z.doors=Math.max(1,Math.ceil(((z.vd||[]).length+1)/2))}],
+  [/^S(\d+)[^:]*: the board under the reading nook/,(st,m,G)=>{const i=m[1]-1,sc=st.sections[i],k=sc.zones.findIndex(z=>z.type==='opening'&&z.look==='nook');if(k<1)return false;const zb=sc.zones[k-1],w=G.secs[i].w;if(zb.type==='drawers')zb.split=Math.max(2,+zb.split||1);else if(zb.type==='open'||zb.type==='closed'){zb.vd=[Math.round(w/2)];zb.vdMode='even';if(zb.type==='closed')zb.doors=0}else return false}],
+  [/^S(\d+)[^:]*: two rails above each other need/,(st,m)=>{st.sections[m[1]-1].zones.forEach(z=>{if(z.rail2)z.rail2=false})}],
+  [/^S(\d+)[^:]*: only (\d+) shel(?:f fits|ves fit) above the rail/,(st,m)=>{st.sections[m[1]-1].zones.forEach(z=>{if(z.rail&&+z.railUp>+m[2])z.railUp=+m[2]})}],
+  [/^S(\d+)[^:]*: a peg wall needs 18 mm plywood/,(st,m)=>{const sc=st.sections[m[1]-1];sc.panel=Object.assign({},PANEL_DEF,sc.panel||{},{mat:'ply',t:18});if(!finAllowed('ply',sc.panel.fin))sc.panel.fin='birch'}],
+  [/^S(\d+)[^:]*: an arch wider than about 900 mm/,(st,m,G)=>{const i=m[1]-1,w=G.secs[i].w;st.sections[i].zones.forEach(z=>{if(z.type==='open'&&z.arch){const n=Math.max(1,Math.ceil(w/800)-1);z.vd=Array.from({length:n},(_,j)=>Math.round(w*(j+1)/(n+1)));z.vdMode='even'}})}],
+  [/^S(\d+)[^:]*: the horizontal slats span more than 900/,(st,m)=>{st.sections[m[1]-1].zones.forEach(z=>{if(z.slat&&z.slatDir==='h')z.slatDir='v'})}],
+  [/^S(\d+)[^:]*: the vertical slats are over 1\.4 m long/,(st,m)=>{st.sections[m[1]-1].zones.forEach(z=>{if(z.type==='open'&&z.slat&&!(+z.shelves>0))z.shelves=1})}],
+  [/^S(\d+)[^:]*: the joined doors are/,(st,m)=>{const zs=st.sections[m[1]-1].zones;for(let k=zs.length-1;k>=0;k--)if(zs[k].joinUp){zs[k].joinUp=false;return}return false}],
+  [/^S(\d+)[^:]*: the doors of level (\d+) can't join/,(st,m)=>{st.sections[m[1]-1].zones[m[2]-1].joinUp=false}],
+  [/^S(\d+)[^:]*: no storage box fits in level (\d+)/,(st,m)=>{st.sections[m[1]-1].zones[m[2]-1].bask=''}],
+  [/^S(\d+)[^:]*: door \d+ is \d+ mm wide — add a divider or set the door count/,(st,m,G)=>{const i=m[1]-1,w=G.secs[i].w;st.sections[i].zones.forEach(z=>{if(z.type==='closed'&&!z.dog&&(z.vd||[]).length)z.doors=Math.max(2,Math.ceil(w/600))})}],
+  [/^S(\d+)[^:]*: the reading nook is (\d+) mm high inside/,(st,m)=>{const z=st.sections[m[1]-1].zones.find(z=>z.type==='opening'&&z.look==='nook');if(!z||!(+z.h>0))return false;z.h=+z.h+(880-+m[2])}]];
+function fixTry(w,fn){try{const st=JSON.parse(JSON.stringify(S)),G0=build(st),n0=new Set(G0.warns).size;if(fn(st,G0)===false)return null;const G1=build(st),s1=new Set(G1.warns);return !s1.has(w)&&s1.size<=n0-1?st:(!s1.has(w)&&s1.size<=n0?st:null)}catch(e){return null}}
+/* returns true when the design was changed */
+function fixOne(w){for(const [re,fn] of FIXS){const m=re.exec(w);if(!m)continue;const st=fixTry(w,(t,G)=>fn(t,m,G));if(st){S=st;geo=build(S);return true}}
+  const st=fixTry(w,t=>{const r=slopeFix(t);if(r&&r!==t)Object.assign(t,r)});if(st){S=st;geo=build(S);return true}return false}
+const fixKnown=w=>FIXS.some(([re])=>re.test(w));
+/* which notes the general tidy-up can clear: worked out in the background, once per set of notes */
+function fixScan(){const ws=[...new Set(geo.warns)],sig=ws.join('|');if(!ws.length||(ui.fixG&&ui.fixG.sig===sig))return;clearTimeout(ui.fixT);ui.fixT=setTimeout(()=>{try{const st=JSON.parse(JSON.stringify(S)),r=slopeFix(st)||st,s1=new Set(build(r).warns),ok=s1.size<ws.length?ws.filter(w=>!s1.has(w)):[];ui.fixG={sig,set:new Set(ok)};if(ok.length)renderBar()}catch(e){ui.fixG={sig,set:new Set()}}},350)}
+const fixBtn=(w,j)=>fixKnown(w)||(ui.fixG&&ui.fixG.set.has(w))?` <button type="button" class="fixb" data-act="fixW" data-a="${j}">Fix it</button>`:'';
 function slopeFix(st){try{{const G=build(st),m=G.warns.map(w=>/^Columns S(\d+)–S(\d+) add up to (\d+) mm but (\d+) mm is available/.exec(w)).find(Boolean);if(m){const a=+m[1]-1,b=+m[2],k=+m[4]/+m[3];for(let i=a;i<b;i++){const sc=st.sections[i];if(sc&&+sc.w>0){sc.w=Math.round(+sc.w*k);(sc.zones||[]).forEach(z=>{if(Array.isArray(z.vd))z.vd=z.vd.map(v=>Math.round(+v*k))})}}if(st.sections[b-1])st.sections[b-1].w=null}}
   for(let pass=0;pass<2;pass++){const G=build(st);let ch=false;G.warns.forEach(w=>{const m=/^(?:Door|Pocket door) \(S(\d+)\) is /.exec(w);if(!m)return;const i=+m[1]-1,sc=st.sections[i],q=G.secs[i];if(!sc||!q||q.follow!=null||(sc.link!=null&&sc.link!==''))return;const zs=sc.zones||[];let bk=-1,bh=0;q.zones.forEach(zr=>{const z=zs[zr.k],h=zr.top?(q.maxU-zr.y0):zr.h;if(z&&z.type==='closed'&&!z.dog&&h>bh){bh=h;bk=zr.k}});if(bk<0||bh<1400)return;
       const z=zs[bk],lowH=Math.round(bh*0.6),up=JSON.parse(JSON.stringify(z));up.id=(z.id||'z')+'u'+pass;up.rail=false;up.fit='';up.railH=null;up.shelves=1;z.shelves=Math.max(0,(+z.shelves||0)-1);up.h=+z.h>0?Math.max(200,Math.round(+z.h-lowH-18)):null;z.h=lowH;zs.splice(bk+1,0,up);ch=true});if(!ch)break}
@@ -4066,7 +4110,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.35';
+const APP_VERSION='v0.36';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
@@ -4399,11 +4443,11 @@ function renderBar(){
   if(ui.tab==='elev'||ui.tab==='3d')h+=`<span class="sp"></span><span class="note" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">Fronts ${finSel('front')} Carcass ${finSel('carcass')}</span>`;
   else h+='<span class="sp"></span>';
   if(ui.tab==='elev'||ui.tab==='3d')h+=`<button class="btn sm mobonly" data-act="bigView" aria-label="${ui.big?'Smaller drawing':'Bigger drawing'}">${ui.big?'⤡ Smaller':'⤢ Bigger'}</button>`;
-  const nt=w.length?`<details class="notes"><summary>${w.length} design note${w.length>1?'s':''} — tap to read</summary><ul>${[...new Set(w)].map(x=>`<li>${esc(x)}</li>`).join('')}</ul></details>`:'<span class="note" style="color:var(--ink2)">No design issues found</span>';
+  const nt=w.length?`<details class="notes"${ui.notesOpen?' open':''}><summary>${w.length} design note${w.length>1?'s':''} — tap to read</summary><div class="fixall"><button type="button" class="fixb" data-act="fixAll">Fix what Kast can</button><span>Each fix follows the advice in its note. Undo brings it back.</span></div><ul>${[...new Set(w)].map((x,j)=>`<li>${esc(x)}${fixBtn(x,j)}</li>`).join('')}</ul></details>`:'<span class="note" style="color:var(--ink2)">No design issues found</span>';
   if((ui.tab==='elev'||ui.tab==='3d')&&S.opts.screen&&S.opts.screen.on)h=`<button class="btn sm ${S.opts.screen.show==='down'?'on':''}" data-act="scrT" title="Pull the screen drawer out and roll the screen down, or put it away">${S.opts.screen.show==='down'?'Screen is down':'Pull screen down'}</button>`+(ui.tab==='3d'?`<button class="btn sm ${ui.cinema?'on':''}" data-act="cinema" title="Dim the room, switch the picture on and look from the sofa">Cinema view</button>`:'')+h;
   b.innerHTML=`<div class="tools">${h}</div><div class="bnotes">${nt}</div>`;
   {const mf=document.getElementById('mfloat');if(mf){const wn=[...new Set(w)];const fmN={solid:'Doors',glass:'See-through',off:'No doors'}[ui.fm]||'Doors';
-    mf.innerHTML=`${wn.length?`<button type="button" class="mfb warn" data-act="mnotes">⚠ ${wn.length}</button>`:''}<button type="button" class="mfb pchip" data-act="toPriceTab" aria-label="Estimated price">${pchipText()}</button><span class="sp"></span><button type="button" class="mfb" data-act="fmCycle" aria-label="Fronts: ${fmN}">${FM_ICON[ui.fm]||''}${fmN}</button><button type="button" class="mfb ${ui.props?'on':''}" data-act="props" aria-label="Styling props">🪴</button>${S.opts.screen&&S.opts.screen.on?`<button type="button" class="mfb ${S.opts.screen.show==='down'?'on':''}" data-act="scrT">Screen</button>`:''}${flowNow()!=='home'?`<button type="button" class="mfb" data-act="focusT">${ui.focus===false?'Zoom in':'Whole wall'}</button>`:''}`+(ui.mnotes&&wn.length?`<ul class="mnotes">${wn.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:'')}}
+    mf.innerHTML=`${wn.length?`<button type="button" class="mfb warn" data-act="mnotes">⚠ ${wn.length}</button>`:''}<button type="button" class="mfb pchip" data-act="toPriceTab" aria-label="Estimated price">${pchipText()}</button><span class="sp"></span><button type="button" class="mfb" data-act="fmCycle" aria-label="Fronts: ${fmN}">${FM_ICON[ui.fm]||''}${fmN}</button><button type="button" class="mfb ${ui.props?'on':''}" data-act="props" aria-label="Styling props">🪴</button>${S.opts.screen&&S.opts.screen.on?`<button type="button" class="mfb ${S.opts.screen.show==='down'?'on':''}" data-act="scrT">Screen</button>`:''}${flowNow()!=='home'?`<button type="button" class="mfb" data-act="focusT">${ui.focus===false?'Zoom in':'Whole wall'}</button>`:''}`+(ui.mnotes&&wn.length?`<ul class="mnotes"><li class="fixall" style="list-style:none;margin-left:-16px"><button type="button" class="fixb" data-act="fixAll">Fix what Kast can</button></li>${wn.map((x,j)=>`<li>${esc(x)}${fixBtn(x,j)}</li>`).join('')}</ul>`:'')}}try{fixScan()}catch(e){}
   placeFmode();renderStatus();
 }
 function renderStatus(){const el=document.getElementById('sbar');if(!el||!geo)return;const qs=geo.secs.filter(q=>!q.panel),wn=[...new Set(geo.warns)].length,tops=geo.cps.map(p=>p.y);
@@ -4438,9 +4482,26 @@ function renderViews(){
   renderTab(t);
 }
 function zoomWrap(){const w=document.getElementById('elevWrap');w.classList.toggle('fit',!(ui.zoom>1));w.style.width=(100*ui.zoom)+'%';w.style.height=isSheet()&&ui.zoom>1?(100*ui.zoom)+'%':''}
+/* ===== Toolbar on the drawing: the everyday changes for the selected part, right next to it ===== */
+function ztbRender(){const view=document.getElementById('v-elev');if(!view)return;let tb=document.getElementById('ztb');if(tb)tb.remove();const i=ui.sel,k=ui.zsel,sc=S.sections[i],z=sc&&k!=null&&sc.zones?sc.zones[k]:null;if(!z||ui.tab!=='elev')return;
+  const p=`sections.${i}.zones.${k}`,zr=geo.secs[i]&&geo.secs[i].zones[k],q=geo.secs[i],T=[['closed','Cupboard'],['open','Shelves'],['drawers','Drawers'],['opening','Niche']];
+  const canSplit=z.type==='open'||z.type==='drawers'||(z.type==='closed'&&!z.dog),vd=Array.isArray(z.vd)?z.vd:[],cur=z.type==='drawers'?Math.max(1,+z.split||1):(z.vdMode==='shift'?vd.length:vd.length+1);
+  const stp=(lab,path,mn,mx,val)=>`<span class="ztg"><em>${lab}</em><button type="button" data-act="step" data-a="${path}|-1|${mn}|${mx}" aria-label="Fewer ${lab}">−</button><b>${val}</b><button type="button" data-act="step" data-a="${path}|1|${mn}|${mx}" aria-label="More ${lab}">+</button></span>`;
+  let h=`<span class="ztg zty">${T.map(([t,l])=>`<button type="button" class="${z.type===t?'on':''}" data-act="setv" data-a="${p}.type|${t}|s" title="${l}" aria-label="${l}">${ZICON[t]||l}</button>`).join('')}</span>`;
+  if(canSplit&&q)h+=`<span class="ztg"><em>Split</em>${[1,2,3,4].map(n=>`<button type="button" class="${cur===n?'on':''}" data-act="splitN" data-a="${i}|${k}|${n}" aria-label="Split in ${n}">${n}</button>`).join('')}</span>`;
+  if(z.type==='open'||(z.type==='closed'&&!z.rail&&!z.dog))h+=stp('Shelves',p+'.shelves',0,10,+z.shelves||0);
+  if(z.type==='drawers')h+=stp('Drawers',p+'.count',1,8,+z.count||1);
+  h+=`<span class="ztg"><button type="button" data-act="ztbMore" title="All settings for this part">⋯ More</button><button type="button" data-act="delZone" data-a="${k}" title="Remove this part" aria-label="Remove this part">🗑</button><button type="button" data-act="ztbClose" title="Done" aria-label="Done">✕</button></span>`;
+  tb=document.createElement('div');tb.id='ztb';tb.className='ztb';tb.setAttribute('role','toolbar');tb.setAttribute('aria-label','Change the selected part');tb.innerHTML=h;view.appendChild(tb);ztbPlace()}
+function ztbPlace(){const tb=document.getElementById('ztb'),view=document.getElementById('v-elev');if(!tb||!view)return;if(isSheet()){tb.classList.add('dock');tb.style.left=tb.style.top='';return}tb.classList.remove('dock');
+  const pg=view.querySelector(`polygon[data-sec="${ui.sel}"][data-zone="${ui.zsel}"]`);if(!pg){tb.remove();return}const r=pg.getBoundingClientRect(),v=view.getBoundingClientRect(),w=tb.offsetWidth,hh=tb.offsetHeight;
+  let x=r.left-v.left+view.scrollLeft+r.width/2-w/2,y=r.top-v.top+view.scrollTop-hh-10;if(y<view.scrollTop+4)y=r.bottom-v.top+view.scrollTop+10;if(y+hh>view.scrollTop+view.clientHeight-4)y=Math.max(view.scrollTop+4,r.top-v.top+view.scrollTop+8);
+  x=Math.max(view.scrollLeft+6,Math.min(x,view.scrollLeft+view.clientWidth-w-6));tb.style.left=x+'px';tb.style.top=y+'px'}
+window.addEventListener('resize',()=>{try{ztbPlace()}catch(e){}});
 function renderTab(t){
   if(!dirty[t])return;dirty[t]=false;
   if(t==='elev'){const w=document.getElementById('elevWrap');zoomWrap();w.innerHTML=elevSVG(S,geo,{sel:ui.sel,zsel:ui.zsel,xray:ui.fm==='glass',hide:ui.fm==='off',props:ui.props,peek:ui.peek&&ui.zsel!=null?[ui.sel,ui.zsel]:null,focus:isSheet()&&ui.focus!==false&&flowNow()!=='home'?ui.sel:null})}
+  if(t==='elev'){try{ztbRender()}catch(e){}}
   if(t==='3d')rebuild3D();if(t==='cut')renderCut();if(t==='loft')renderLoft();if(t==='sheets')renderSheets();if(t==='guide')renderGuide();
 }
 function changed(side){geo=build(S);if(side)renderSide();renderViews();saveSoon();snap();priceSoon()}
@@ -4472,7 +4533,8 @@ document.addEventListener('change',e=>{const el=e.target;if(!el.dataset||!el.dat
   v.addEventListener('touchstart',e=>{if(e.touches.length===2){d0=dist(e.touches);z0=ui.zoom}},{passive:true});
   v.addEventListener('touchmove',e=>{if(e.touches.length===2&&d0){e.preventDefault();ui.zoom=Math.max(1,Math.min(5,z0*dist(e.touches)/d0));zoomWrap()}},{passive:false});
   v.addEventListener('touchend',()=>{d0=0},{passive:true})})();
-document.getElementById('side').addEventListener('toggle',e=>{const d=e.target;if(d.dataset&&d.dataset.k)openState[d.dataset.k]=d.open;if(d.dataset&&d.dataset.mx){if(d.open)openMx.add(d.dataset.mx);else openMx.delete(d.dataset.mx)}},true);
+document.getElementById('bar').addEventListener('toggle',e=>{const d=e.target;if(d.classList&&d.classList.contains('notes'))ui.notesOpen=d.open},true);
+document.getElementById('side').addEventListener('toggle',e=>{const d=e.target;if(d.dataset&&d.dataset.mk){(ui.moreOpen=ui.moreOpen||{})[d.dataset.mk]=d.open}if(d.dataset&&d.dataset.k)openState[d.dataset.k]=d.open;if(d.dataset&&d.dataset.mx){if(d.open)openMx.add(d.dataset.mx);else openMx.delete(d.dataset.mx)}},true);
 document.getElementById('elevWrap').addEventListener('click',e=>{const t=e.target.closest('[data-sec]');if(!t)return;ui.pane='layout';ui.sel=+t.dataset.sec;ui.zsel=t.dataset.zone!=null?+t.dataset.zone:null;if(isSheet())ui.flow=ui.zsel!=null?'zone':'col';applyFronts3D();openState.secs=true;renderSide();dirty.elev=true;renderTab('elev');
   if(isSheet()){document.getElementById('side').scrollTop=0;openSheetAt();return}
   const c=document.querySelector('.zrow.on')||document.querySelector('details[data-k="secs"] .card.sel')||document.querySelector('details[data-k="secs"]');if(!c)return;if(window.innerWidth>860){const sd=document.getElementById('side');sd.scrollLeft=0;sd.scrollTo({top:c.getBoundingClientRect().top-sd.getBoundingClientRect().top+sd.scrollTop-120,behavior:'smooth'})}else{const st=document.querySelector('.stage').offsetHeight+(document.querySelector('.spane')?.offsetHeight||0);window.scrollTo({top:c.getBoundingClientRect().top+scrollY-st-10,behavior:'smooth'})}});
@@ -4569,6 +4631,11 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'partNone':S.opts.part=Object.assign(S.opts.part||{},{secs:[]});changed(true);break;
     case 'partShared':S.opts.part=Object.assign(S.opts.part||{},{shared:!!b.checked});changed(true);break;
     case 'mnotes':ui.mnotes=!ui.mnotes;renderBar();break;
+    case 'viewMode':ui.simple=a!=='x';try{localStorage.setItem(VIEW_KEY,ui.simple?'s':'x')}catch(er){}renderSide();toast(ui.simple?'Simple view — the rest is under “More options”':'Expert view — every setting is shown');break;
+    case 'ztbClose':ui.zsel=null;renderSide();dirty.elev=true;if(ui.tab==='elev')renderTab('elev');try{applyFronts3D()}catch(er){}break;
+    case 'ztbMore':{if(ui.pane&&ui.pane!=='layout'){ui.pane='layout'}(ui.moreOpen=ui.moreOpen||{})['z'+ui.sel+':'+ui.zsel]=true;renderSide();if(isSheet()){try{openSheetAt()}catch(er){}}const zb=document.querySelector('#side .zbody');if(zb)zb.scrollIntoView({block:'center'});break}
+    case 'fixW':{const w=[...new Set(geo.warns)][+a];if(w==null)break;const r=fixOne(w);if(r){changed(true);toast(geo.warns.includes(w)?'Changed, but the note is still there — it needs your own choice':'Fixed. Undo brings it back.')}else toast('Kast cannot fix this one by itself — the note says what to change');break}
+    case 'fixAll':{const n0=[...new Set(geo.warns)].length;let guard=0,ch=false;while(guard++<8){const ws=[...new Set(geo.warns)];let did=false;for(const w of ws){if(fixOne(w)){did=ch=true;geo=build(S);break}}if(!did)break}changed(true);const n1=[...new Set(geo.warns)].length;toast(n1<n0?`Fixed ${n0-n1} of ${n0} design notes${n1?` — ${n1} need${n1===1?'s':''} your own choice`:''}. Undo brings them back.`:'Nothing Kast can fix by itself here — the notes say what to change');break}
     case 'fmCycle':setFm({solid:'glass',glass:'off',off:'solid'}[ui.fm]||'solid');break;
     case 'pcalNew':photoPick();break;
     case 'phSlot':{const i=+a,n=phCount();if(i>=n){if(n>=3)break;phUse(n,()=>{document.body.classList.remove('pfull');pcalOpen()})}else phUse(i,()=>{photoSave();if(PH.pose){setPhotoMode(true)}else{document.body.classList.remove('pfull');pcalOpen()}});break}

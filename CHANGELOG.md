@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.36
+
+Easier to use: less on screen, changes on the drawing, notes that fix themselves.
+
+- Simple and Expert view, switched at the top of the side panel. Simple is the default: each part shows only its size, split, shelves, doors or drawers, front style and colour; everything else is one tap away under "More options". The Room and Build tabs show only their main sections. Expert shows every setting, as before. Nothing was removed.
+- Toolbar on the drawing: tap a part and a small bar appears next to it with the everyday changes — cupboard / shelves / drawers / niche, split 1–4, shelves or drawers − / +, remove, and "More" to jump to all its settings. On a phone the bar sits along the bottom of the drawing.
+- Design notes with "Fix it": notes Kast can solve get a button that applies the advice in the note, and "Fix what Kast can" does them all in one go. A fix is only kept when the note is really gone and no new note appears; Undo brings everything back.
+
 ## v0.35
 
 - Columns that share one wide opening (a TV niche or desk across several columns) are now built as two stacked units when they are taller than one board, like the other tall columns. The joint sits above the opening, at the same height in every column of the group. This was the last case where a side could come out bigger than its board.
