@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.40
+
+- AI render: a new button in the 3D view (and in the ☰ menu on a phone). Kast makes the picture — the 3D cabinet on your room photo when there is one, otherwise the plain 3D view — and writes the instruction for a picture AI from your design: materials, colours, handles and what is in every column. You save the picture, copy the instruction, and give both to a picture AI you already use.
+- "Small changes" box: what you type is added to the instruction, and "Copy only the change" gives a short follow-up message for the same AI chat.
+- With several room photos you pick which one to hand over.
+
 ## v0.39
 
 - New "Never include" list in the shuffle options, next to "Always include": drawers, open shelves, glass doors, TV niche, speakers, desk, window seat, hanging rail. No shuffle puts these in. An item can be on only one of the two lists.

@@ -444,6 +444,7 @@ details.acc>summary::after{font-family:var(--f-b);font-weight:400;font-size:18px
 .fdot{width:14px;height:14px;border-radius:4px;display:inline-block;background:#d8d2c6;border:1px solid rgba(0,0,0,.15)}.fdot.f-slat{background:repeating-linear-gradient(90deg,#b9a98c 0 3px,#3a342c 3px 5px)}.fdot.f-fluted{background:repeating-linear-gradient(90deg,#cbbfa8 0 3px,#e6dccb 3px 6px)}.fdot.f-cane{background:#E3CFA3 radial-gradient(circle,#3B3024 25%,transparent 30%) 0 0/5px 5px}.fdot.f-glass{background:repeating-linear-gradient(90deg,#cfe0dc 0 3px,#f1f7f5 3px 6px)}
 .dsnow{display:grid;gap:2px;padding:10px 12px;border-radius:12px;background:var(--accent-soft);margin-bottom:10px}.dsnow b{font-size:14px}.dsnow span{font-size:12.5px;color:var(--ink2)}.dsnow.dirty{background:var(--warn-soft)}.dsnow.dirty span{color:var(--warn);font-weight:600}
 .dver{margin-top:2px}.dvrow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 0;font-size:12px;color:var(--ink2);border-top:1px solid var(--line)}#dsBtn{white-space:nowrap;display:inline-flex;align-items:center}.dsdot{display:inline-block;flex:none;width:8px;height:8px;border-radius:50%;background:var(--warn);margin-left:6px;vertical-align:middle}.dsnm{font-weight:500;color:var(--ink2)}
+.aishot{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--stage);display:grid;place-items:center;min-height:80px}.aishot img{display:block;max-width:100%;max-height:46vh}.aishot p{padding:14px}#aiText{width:100%;box-sizing:border-box;font:12.5px/1.45 var(--mono,ui-monospace,monospace);border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--surface);color:var(--ink);resize:vertical}.aisteps{margin:0;padding-left:20px;display:grid;gap:8px;font-size:13px;color:var(--ink2)}
 .dsave{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:end}.dbtns{display:flex;gap:6px}@media(max-width:520px){.dsave{grid-template-columns:minmax(0,1fr)}}
 .dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin:6px 0 12px}
 .dcard{display:grid;gap:6px;padding:8px;border-radius:12px;border:1px solid var(--line,rgba(0,0,0,.1));background:var(--card,#fff);min-width:0}.dcard.on{border-color:var(--accent,#3446D6);box-shadow:0 0 0 2px var(--accent-soft,rgba(52,70,214,.15))}
@@ -743,14 +744,14 @@ details.mx{grid-column:1/-1}
 @media (prefers-reduced-motion:reduce){#splash{animation-duration:.01s}}
 </style>
 
-<div id="splash" role="status" aria-label="Kast v0.39 is loading"><b>Kast</b><span>v0.39</span></div>
+<div id="splash" role="status" aria-label="Kast v0.40 is loading"><b>Kast</b><span>v0.40</span></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
 
 <div class="app" data-tab="elev">
   <header class="top">
     <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-    <div class="brand" title="Kast v0.39">Kast<small>built-in furniture, drawn and cut · v0.39</small></div>
+    <div class="brand" title="Kast v0.40">Kast<small>built-in furniture, drawn and cut · v0.40</small></div>
     <nav class="tabs" id="tabs">
       <button data-act="tab" data-a="elev" class="on">Elevation</button>
       <button data-act="tab" data-a="3d">3D view</button>
@@ -792,7 +793,7 @@ details.mx{grid-column:1/-1}
   
   <button data-act="tab" data-a="guide"><svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="9" cy="9" r="1.6" fill="currentColor"/><path d="M12 9h4M8 14h8M8 17.5h6" stroke="currentColor" stroke-width="1.6"/></svg><span>Guide</span></button>
 </nav>
-<div class="mmenu" id="mmenu" hidden><button type="button" data-act="io" id="dsBtnM">📁 My designs</button><button type="button" data-act="install" id="instBtnM" hidden>📲 Install app</button><button type="button" data-act="wizard">✨ Start with the wizard</button><button type="button" data-act="pdf">⬇ Download PDF</button></div>
+<div class="mmenu" id="mmenu" hidden><button type="button" data-act="io" id="dsBtnM">📁 My designs</button><button type="button" data-act="install" id="instBtnM" hidden>📲 Install app</button><button type="button" data-act="aiOpen">🪄 AI render (photo-real picture)</button><button type="button" data-act="wizard">✨ Start with the wizard</button><button type="button" data-act="pdf">⬇ Download PDF</button></div>
 <div class="pcal" id="pcal" hidden role="dialog" aria-label="Line up your room photo"><header><b>Line up your photo</b><span class="sp"></span><label class="btn sm" style="position:relative;overflow:hidden;cursor:pointer">Other photo<input type="file" accept="image/*" data-photoin style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0"></label><button type="button" class="btn sm" data-act="pcalClose">Cancel</button></header><div class="pstage" id="pstage"></div><footer id="pfoot"></footer></div>
 <input type="file" id="photoIn" accept="image/*" hidden>
 <div class="modal" id="wiz" hidden>
@@ -821,6 +822,20 @@ details.mx{grid-column:1/-1}
   </div>
 </div>
 
+<div class="modal" id="aim" hidden>
+  <div class="mbox">
+    <div class="mhead"><h2>AI render</h2></div>
+    <div class="mbody" style="display:grid;gap:12px">
+      <p class="hintp" style="margin:0">Kast makes the picture and the instruction; a picture AI you already use (ChatGPT, Gemini or another one) turns them into a photo. The result is a mood picture — the AI may shift small details, so the drawing and the cut list stay the truth.</p>
+      <div id="aiPick" class="tchips"></div>
+      <div class="aishot"><img id="aiImg" alt="The picture Kast hands to the picture AI"><p class="hintp" id="aiNone" hidden style="margin:0"></p></div>
+      <label class="fld"><span>Small changes — optional, in your own words</span><span class="inp"><input type="text" id="aiNote" placeholder="e.g. warmer evening light, no handles, darker floor" maxlength="300"></span></label>
+      <label class="fld"><span>Instruction for the picture AI</span><textarea id="aiText" rows="9" spellcheck="false"></textarea></label>
+      <ol class="aisteps"><li><button class="btn pri" data-act="aiSave">Save the picture</button></li><li><button class="btn pri" data-act="aiCopy">Copy the instruction</button></li><li>Open your picture AI, add the saved picture, paste the instruction and send.</li><li>Not quite right? Type a small change above and <button class="btn sm" data-act="aiCopyNote">Copy only the change</button> — paste that as your next message in the same chat.</li></ol>
+    </div>
+    <div class="mfoot"><button class="btn" data-act="aiClose">Close</button><div></div></div>
+  </div>
+</div>
 <div class="modal" id="fpm" hidden>
   <div class="mbox fpbox">
     <div class="mhead"><h2>Colour &amp; finish</h2><div class="fprow"><span class="inp" style="flex:1"><input type="search" id="fpSearch" placeholder="Search RAL number or name — e.g. 7016, sage, oak" aria-label="Search colours"></span><span class="fpcur" id="fpCur"></span></div></div>
@@ -4159,7 +4174,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.39';
+const APP_VERSION='v0.40';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
@@ -4180,6 +4195,37 @@ async function photoShots(){const out=[];if(!window.THREE)return out;try{if(!T3)
       const cv=document.createElement('canvas');cv.width=w;cv.height=h;const x=cv.getContext('2d');x.drawImage(PH.img,0,0,w,h);try{x.filter=T3.renderer.domElement.style.filter||'none'}catch(e){}x.drawImage(T3.renderer.domElement,0,0,w,h);x.filter='none';(PH.occ||[]).forEach(sh=>{if(sh.length<3)return;x.save();x.beginPath();sh.forEach((q,k)=>{const X=q[0]*w/PH.iw,Y=q[1]*h/PH.ih;k?x.lineTo(X,Y):x.moveTo(X,Y)});x.closePath();x.clip();x.drawImage(PH.img,0,0,w,h);x.restore()});out.push(cv)}catch(e){}}
   await new Promise(r=>phUse(cur0,r));ui.photoOn=on0;PH.adjust=adj0;try{setPhotoMode(on0)}catch(e){}return out}
 const photoActive=()=>!!(ui.photoOn&&PH.pose&&PH.img);
+/* ===== AI render hand-off: Kast supplies the picture and the instruction, an outside picture AI makes the photo ===== */
+const AI={shots:[],cur:0,plain:null};
+function aiPlainShot(){try{if(!T3)return null;const el=T3.renderer.domElement,w=el.width,h=el.height;if(!w||!h)return null;T3.renderer.render(T3.scene,T3.cam);const cv=document.createElement('canvas'),k=Math.min(1,1600/w);cv.width=Math.round(w*k);cv.height=Math.round(h*k);const x=cv.getContext('2d');x.fillStyle=getComputedStyle(document.body).getPropertyValue('--stage').trim()||'#E8EBE7';x.fillRect(0,0,cv.width,cv.height);x.drawImage(el,0,0,cv.width,cv.height);return cv}catch(e){return null}}
+function aiPrompt(note,onPhoto){const M=S.mat,fn=k=>(FIN[k]||{}).name||'',mn=t=>((MATS[t]||{}).name||t||'').toLowerCase(),hl=(HANDLES.find(h=>h[0]===S.opts.handle)||[])[1]||'',zn={closed:'cupboard doors',open:'open shelves',drawers:'drawers',opening:'open niche',seat:'window seat with cushion',speaker:'fabric speaker front',passage:'walk-through opening'};
+  const cols=geo.secs.map((q,i)=>{const sc=S.sections[i];if(!sc)return '';if(q.panel){const f=(Object.assign({},PANEL_DEF,sc.panel||{})).fun;return `${i+1}: wall panel${f==='peg'?' with a wooden peg board, pegs and small shelves':f==='slats'?' of vertical wooden slats':f==='climb'?' with climbing holds':''}`}if(q.door)return `${i+1}: doorway`;
+      const zs=(sc.zones||[]).map(z=>{let t=zn[z.type]||z.type;if(z.type==='opening'){t=z.look==='nook'?`reading nook with mattress and cushions${z.nookFront?' behind a front with '+({arch:'an arched',eyebrow:'a low arched',port:'a round porthole',house:'a house-shaped'}[z.nookFront])+' opening':''}${z.nookCurtain?' and a curtain':''}`:z.look==='art'?'niche with a framed picture':z.look==='dj'?'niche with DJ turntables':z.look==='none'?'empty niche':'niche with a TV'}
+          if(z.type==='closed'&&z.face==='slat')t='slatted doors';if(z.type==='closed'&&z.face==='glass')t='fluted glass doors';if(z.type==='closed'&&z.face==='cane')t='cane-webbing doors';if(z.type==='closed'&&z.face==='fluted')t='fluted doors';if(z.type==='closed'&&z.face==='curtain')t='fabric curtain';if(z.type==='open'&&z.arch)t='open shelves behind arched openings';if(z.type==='open'&&z.slat)t='shelves behind a fixed slatted screen';
+          const c=FIN[z.fin]?fn(z.fin):FIN[z.inFin]&&(z.type==='open'||z.type==='opening')?fn(z.inFin)+(z.drench?' (all surfaces)':' back'):'';return t+(c?' in '+c:'')}).reverse();return `${i+1}${q.desk?' (desk)':''}: ${zs.join(', ')}`}).filter(Boolean);
+  const lines=['Turn this picture into a photorealistic interior photograph.',
+    onPhoto?'It is a photo of a real room with a 3D model of a built-in cabinet wall placed in it.':'It is a 3D model of a built-in cabinet wall.',
+    'Keep exactly as shown: the camera angle and framing, '+(onPhoto?'the room, ':'')+'and the size, position and layout of the cabinet. Every door, drawer, shelf, niche and gap stays where it is; do not add, remove, move or resize any part, and do not add furniture or people.',
+    'Change only how it looks: real materials with fine edges and thin, even gaps between the fronts; natural light and soft shadows'+(onPhoto?' that match the room in the photo':'')+'; believable reflections; a calm, tidy styling.',
+    `Materials — fronts: ${fn(M.front.fin)} (${mn(M.front.type)}); cabinet body and inside: ${fn(M.carcass.fin)} (${mn(M.carcass.type)})${M.desk&&geo.secs.some(q=>q.desk)?`; desk top: ${fn(M.desk.fin)}`:''}; handles: ${hl.toLowerCase()||'none'}.`,
+    `From left to right, top to bottom — ${cols.join('; ')}.`,
+    'Result: one photo, same proportions as the picture, no text, no labels, no watermark.'];
+  if(note)lines.push('Also change: '+note.trim().replace(/\s+/g,' ')+'.');return lines.join('\n')}
+function aiShow(){const sh=AI.shots[AI.cur],im=document.getElementById('aiImg'),no=document.getElementById('aiNone'),pk=document.getElementById('aiPick');if(sh){im.hidden=false;im.src=sh.url;no.hidden=true}else{im.hidden=true;no.hidden=false;no.textContent='The picture could not be made here. Open the 3D view once and tap AI render again — the instruction below still works with a screenshot.'}
+  pk.innerHTML=AI.shots.length>1?AI.shots.map((s_,j)=>`<button type="button" class="tchip ${j===AI.cur?'on':''}" data-act="aiPick" data-a="${j}">${esc(s_.label)}</button>`).join(''):'';aiText()}
+function aiText(){const t=document.getElementById('aiText'),sh=AI.shots[AI.cur];t.value=aiPrompt(document.getElementById('aiNote').value,!!(sh&&sh.photo))}
+async function aiOpen(){const mm=document.getElementById('mmenu');if(mm)mm.hidden=true;if(ui.tab!=='3d'){const tb=document.querySelector('#tabs [data-a="3d"]')||document.querySelector('[data-act="tab"][data-a="3d"]');if(tb)tb.click();await new Promise(r=>setTimeout(r,600))}
+  toast('Making the picture…');await new Promise(r=>setTimeout(r,30));AI.shots=[];AI.cur=0;const mk=(cv,label,photo)=>{try{AI.shots.push({cv,label,photo,url:cv.toDataURL('image/jpeg',.9)})}catch(e){}};
+  try{if(PHS.some(o=>o&&o.img)){const cs=await photoShots();cs.forEach((cv,j)=>mk(cv,`Room photo ${j+1}`,true))}}catch(e){}
+  if(!(ui.photoOn&&AI.shots.length)){const cv=aiPlainShot();if(cv)AI.shots.unshift({cv,label:'3D view',photo:false,url:cv.toDataURL('image/jpeg',.9)})}
+  if(ui.photoOn&&AI.shots.length)AI.cur=Math.min(AI.shots.length-1,AI.shots.findIndex(s_=>s_.photo)+Math.max(0,phCur));if(AI.cur<0)AI.cur=0;
+  document.querySelectorAll('.toast').forEach(t=>t.remove());document.getElementById('aim').hidden=false;aiShow()}
+async function aiSave(){const sh=AI.shots[AI.cur];if(!sh){toast('There is no picture to save — take a screenshot of the 3D view instead');return}const blob=await new Promise(r=>sh.cv.toBlob(r,'image/jpeg',.92)),fn='kast-for-ai-render.jpg';if(!blob){toast('Could not make the picture file');return}
+  let dl=null;try{if(window.claude&&claude.use)dl=await claude.use('downloads')}catch(e){}
+  if(dl){try{await dl.save({filename:fn,data:blob});toast('Picture saved — now copy the instruction')}catch(e){toast(e&&e.code==='declined'?'Not saved':'Could not save here — press and hold the picture to save it')}return}
+  try{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fn;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);toast('Picture saved — now copy the instruction')}catch(e){toast('Press and hold the picture to save it')}}
+async function aiCopy(t,ok){try{await navigator.clipboard.writeText(t);toast(ok)}catch(e){const ta=document.getElementById('aiText');ta.value=t;ta.focus();ta.select();toast('Could not copy by itself — the text is selected, copy it by hand')}}
+document.addEventListener('input',e=>{if(e.target&&e.target.id==='aiNote')aiText()});
 function photoRefs(){const G=geo,W=G.W,r=[{x:0,y:0,t:'Floor, left',h:'Where the cabinet wall meets the floor on the left.'},{x:W,y:0,t:'Floor, right',h:'Where the cabinet wall meets the floor on the right.'},{x:W,y:G.ceilAt(W),t:'Top right corner',h:`Where the wall meets the ceiling on the right — ${f0(G.ceilAt(W))} mm up.`},{x:0,y:G.ceilAt(0),t:'Top left corner',h:`Where the wall meets the ceiling on the left — ${f0(G.ceilAt(0))} mm up.`}];
   G.cps.filter(p=>p.x>20&&p.x<W-20).forEach(p=>r.push({x:p.x,y:p.y,t:`Ceiling bend at ${f0(p.x)} mm`,h:`Optional — where the ceiling line bends, ${f0(p.x)} mm from the left wall, ${f0(p.y)} mm up. Makes the fit more exact.`,opt:true}));return r}
 function solvePhoto(){if(typeof geo==='undefined'||!geo)return false;const R=photoRefs(),src=[],dst=[],obs=[];R.forEach((r,i)=>{const p=PH.pts[i];if(p){src.push([r.x,r.y]);dst.push([p[0]-PH.iw/2,p[1]-PH.ih/2]);obs.push({X:r.x,Y:r.y,u:p[0],v:p[1]})}});
@@ -4488,7 +4534,7 @@ function camPreset(k){if(!T3)return;const maxC=Math.max(...geo.cps.map(p=>p.y),+
 function renderBar(){
   const b=document.getElementById('bar');const w=geo.warns;let h='';
   if(ui.tab==='elev')h+=`<button class="btn sm ${ui.props?'on':''}" data-act="props">Styling</button>${fmodeHTML()}<button class="btn sm" data-act="zoom" data-a="-1" aria-label="Zoom out">−</button><button class="btn sm" data-act="zoom" data-a="1" aria-label="Zoom in">+</button>`;
-  if(ui.tab==='3d')h+=`<button class="btn sm ${ui.photoOn?'on':''}" data-act="photo" title="Line the design up with a photo of your room">${ui.photoOn?'Photo on':PH.img?'Room photo':'+ Room photo'}</button><button class="btn sm" data-act="cam" data-a="front">Front</button><button class="btn sm" data-act="cam" data-a="angle">Right ¾</button><button class="btn sm" data-act="cam" data-a="left">Left ¾</button><button class="btn sm ${ui.props?'on':''}" data-act="props">Styling</button>${fmodeHTML()}<button class="btn sm ${ui.see&&ui.see.size?'on':''}" data-act="seeClear" title="Tap any door, panel or shelf in the 3D view to see through it">${ui.see&&ui.see.size?`Solid again (${ui.see.size})`:'Tap a piece to see through'}</button><button class="btn sm ${ui.room3D?'on':''}" data-act="room3D">Room</button><button class="btn sm ${ui.exOn?'on':''}" data-act="explode" title="Pull every column and every part apart">Exploded</button><button class="btn sm ${ui.iso?'on':''}" data-act="iso" title="Show one column on its own">${ui.iso?'Column '+(ui.sel+1):'One column'}</button>${ui.iso?`<button class="btn sm" data-act="isoSec" data-a="-1" aria-label="Previous column">◀</button><button class="btn sm" data-act="isoSec" data-a="1" aria-label="Next column">▶</button>`:''}`;
+  if(ui.tab==='3d')h+=`<button class="btn sm ${ui.photoOn?'on':''}" data-act="photo" title="Line the design up with a photo of your room">${ui.photoOn?'Photo on':PH.img?'Room photo':'+ Room photo'}</button><button class="btn sm" data-act="cam" data-a="front">Front</button><button class="btn sm" data-act="cam" data-a="angle">Right ¾</button><button class="btn sm" data-act="cam" data-a="left">Left ¾</button><button class="btn sm ${ui.props?'on':''}" data-act="props">Styling</button>${fmodeHTML()}<button class="btn sm" data-act="aiOpen" title="Hand this picture to a picture AI to make it look like a photo">🪄 AI render</button><button class="btn sm ${ui.see&&ui.see.size?'on':''}" data-act="seeClear" title="Tap any door, panel or shelf in the 3D view to see through it">${ui.see&&ui.see.size?`Solid again (${ui.see.size})`:'Tap a piece to see through'}</button><button class="btn sm ${ui.room3D?'on':''}" data-act="room3D">Room</button><button class="btn sm ${ui.exOn?'on':''}" data-act="explode" title="Pull every column and every part apart">Exploded</button><button class="btn sm ${ui.iso?'on':''}" data-act="iso" title="Show one column on its own">${ui.iso?'Column '+(ui.sel+1):'One column'}</button>${ui.iso?`<button class="btn sm" data-act="isoSec" data-a="-1" aria-label="Previous column">◀</button><button class="btn sm" data-act="isoSec" data-a="1" aria-label="Next column">▶</button>`:''}`;
   if(ui.tab==='elev'||ui.tab==='3d')h+=`<span class="sp"></span><span class="note" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">Fronts ${finSel('front')} Carcass ${finSel('carcass')}</span>`;
   else h+='<span class="sp"></span>';
   if(ui.tab==='elev'||ui.tab==='3d')h+=`<button class="btn sm mobonly" data-act="bigView" aria-label="${ui.big?'Smaller drawing':'Bigger drawing'}">${ui.big?'⤡ Smaller':'⤢ Bigger'}</button>`;
@@ -4725,6 +4771,12 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'dsBackDel':{const b=e.target.closest('button');if(b.dataset.armed){dsBackDel(a)}else{b.dataset.armed='1';b.textContent='Tap again to remove';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Remove'}},3000)}break}
     case 'dsDel':{const b=e.target.closest('button');if(b.dataset.armed){dsDelete(a)}else{b.dataset.armed='1';b.textContent='Tap again to delete';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Delete'}},3000)}break}
     case 'ioClose':document.getElementById('iom').hidden=true;break;
+    case 'aiOpen':aiOpen();break;
+    case 'aiClose':document.getElementById('aim').hidden=true;break;
+    case 'aiPick':AI.cur=+a;aiShow();break;
+    case 'aiSave':aiSave();break;
+    case 'aiCopy':aiCopy(document.getElementById('aiText').value,'Instruction copied — paste it next to the picture in your picture AI');break;
+    case 'aiCopyNote':{const n=document.getElementById('aiNote').value.trim();if(!n){toast('Type the small change first');break}aiCopy('Keep everything else exactly the same — same camera angle, same cabinet layout, same room. Change only this: '+n+'.','Change copied — paste it as your next message');break}
     case 'ioCopy':copy(document.getElementById('ioText').value);break;
     case 'ioLoad':try{const o=JSON.parse(document.getElementById('ioText').value);if(!o.sections||!o.room)throw 0;dsKeep();dsDetach(false);S=fixFins(o);ui.sel=0;ui.zsel=null;document.getElementById('iom').hidden=true;changed(true);toast('Design loaded')}catch(err){toast('That text is not a saved design')}break;
     case 'ioReset':{const kept=dsKeep();dsDetach(true);S=exampleState();ui.sel=0;document.getElementById('iom').hidden=true;changed(true);ui.savedSig=dsSig();saveSoon();toast('Example loaded'+(kept?'. Your unsaved work was kept under Designs → Recovered work.':''));break}
