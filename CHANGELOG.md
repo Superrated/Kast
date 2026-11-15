@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.48
+
+Five ideas from the inspiration photos.
+
+- Dotted fronts: new front style "Dots" for cupboards and drawers. Ø25 holes drilled through in a grid, in rows that line up from one door to the next, or scattered. Two of the dots sit where a handle would be and are the handle (or tick "Add a normal handle as well"). A strip next to the hinges stays free. The holes are on the cut list and lofting.
+- Round reading pod: new reading-nook front "Round pod". A tube of bent plywood runs from the round opening to the back, with a thick rim in front, a ribbed cushion inside and book ledges on the back. Its own colour; rim, back disc, ledges, plywood and cushion are on the lists.
+- Contrast cubbies: on open shelves, "Contrast cubbies" — Checkerboard, Steps or Random. Open cells get a frame and inside in the cubby colour, the others a flat cover in the door colour.
+- New handles: Coloured stick, Coloured cross and Coloured ring, in seven colours.
+- New handle: Wooden disc (60–120 mm), with "One disc across the seam of a door pair" — half a disc on each door.
+- Fix: the reading nook front no longer reports a wide front as too big for its board.
+
 ## v0.47
 
 - Reading nook front: new "Opening size" — Full width, Large, Medium or Small. A smaller opening leaves more closed front around it; the arch, low arch, porthole and house shapes all scale with it. With a smaller opening you also pick its position: left, middle or right. The curtain follows the opening.
