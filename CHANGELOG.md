@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.47
+
+- Reading nook front: new "Opening size" — Full width, Large, Medium or Small. A smaller opening leaves more closed front around it; the arch, low arch, porthole and house shapes all scale with it. With a smaller opening you also pick its position: left, middle or right. The curtain follows the opening.
+- A design note appears when the opening gets narrower than about 500 mm, too tight for a child to climb in.
+
 ## v0.46
 
 - 3D: storage boxes are now drawn as real open boxes — a front with a rounded hand slot you can see through, a back, two sides and a bottom, all 12 mm thick — instead of solid blocks.
