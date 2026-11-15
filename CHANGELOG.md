@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.37
+
+Five extras for the reading nook (Niche → Show in the niche → Reading nook).
+
+- Front of the nook: a front board with an arched, low-arched, round porthole or house-shaped opening, in its own colour or the drench colour. A wide house front also gets a small round window. On the cut list as one board with the opening drawn in.
+- Curtain: a rail under the top of the nook and two curtain panels in a fabric you pick.
+- Book ledges and cubby: up to three lipped ledges on the side wall for books with their covers showing, and a small open box on the back wall.
+- Padded back and sides in the mattress fabric.
+- Step box in front, sized to half the height of the nook floor, for nooks that sit higher up.
+- 3D: boards can now have real openings, so the nook front shows its cut-out.
+
 ## v0.36
 
 Easier to use: less on screen, changes on the drawing, notes that fix themselves.
