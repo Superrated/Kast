@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.41
+
+- AI render: the instruction now tells the picture AI to make the decoration photorealistic as well — books, vases, plants, frames, cushions, baskets, boxes and toys — each kept in its place, size and colour, with no flat or cartoon-like objects left.
+
 ## v0.40
 
 - AI render: a new button in the 3D view (and in the ☰ menu on a phone). Kast makes the picture — the 3D cabinet on your room photo when there is one, otherwise the plain 3D view — and writes the instruction for a picture AI from your design: materials, colours, handles and what is in every column. You save the picture, copy the instruction, and give both to a picture AI you already use.
