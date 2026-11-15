@@ -1538,7 +1538,14 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
           [...sy,zt].forEach((yt,j)=>{const w=cr-cl-8,h=Math.min(600,yt-yb-20),use=z.bask==='all'||(z.bask==='alt'?j%2===0:j===0);
             if(use&&w>=150&&h>=110){const x0=cl+4,x1=cr-4,b={x0,x1,y0:yb,y1:yb+h,fin:bF,sec:i,zone:k};baskets.push(b);nB++;
               [['Storage box — front / back',w,h,2,['Hand slot 100 × 30 mm, 40 mm under the top edge of the front']],['Storage box — side',dB-24,h,2,[]],['Storage box — bottom',w-24,dB-24,1,['Glue felt pads under it so it slides']]].forEach(([n_,a_,b_,q_,nt])=>{for(let m=0;m<q_;m++)addPanel({type:n_,role:'front',fin:bF,t:12,sec:lab,poly:rect(a_,b_),grain:'w',band:'none',notes:nt.concat(['12 mm board, glued and pinned; open at the top'])})});
-              items.push(wf(fpq([[x0,yb],[x1,yb],[x1,yb+h],[x0,yb+h]],-12,dB,'front'),bF))}
+              { // 3D: a real open box — 12 mm front with a rounded hand slot, back, two sides and a bottom
+                const R_=(a_,b_,c_,d_)=>[[a_,c_],[b_,c_],[b_,d_],[a_,d_]],bt=12,sw_=Math.min(100,(x1-x0)*0.45),sh_=Math.min(30,h*0.18),scx=(x0+x1)/2,scy=yb+h-Math.min(40,h*0.22)-sh_/2,rr=sh_/2,slot=[];
+                for(let m=0;m<=8;m++){const t_=-Math.PI/2+Math.PI*m/8;slot.push([scx+sw_/2-rr+Math.cos(t_)*rr,scy+Math.sin(t_)*rr])}for(let m=0;m<=8;m++){const t_=Math.PI/2+Math.PI*m/8;slot.push([scx-sw_/2+rr+Math.cos(t_)*rr,scy+Math.sin(t_)*rr])}
+                const sz_=i+':'+k,P_=it=>items.push(Object.assign(wf(it,bF),{sz:sz_}));
+                P_(Object.assign(fpq(R_(x0,x1,yb,yb+h),-12,bt,'front'),{holes:sh_>=12&&sw_>=40?[slot]:[]}));
+                P_(fpq(R_(x0,x1,yb,yb+h),-dB,bt,'front'));
+                P_(fpq(R_(x0,x0+bt,yb,yb+h),-12-bt,dB-2*bt,'front'));P_(fpq(R_(x1-bt,x1,yb,yb+h),-12-bt,dB-2*bt,'front'));
+                P_(fpq(R_(x0+bt,x1-bt,yb,yb+bt),-12-bt,dB-2*bt,'front'))}}
             yb=yt+ts})});
         zr.bask=nB;if(!nB)warns.push(`${lab}: no storage box fits in level ${k+1} — a box needs a compartment at least 160 mm wide and 130 mm high.`)}
       if(z.type==='open'&&z.slat&&!z.arch&&!(q.desk&&k===0)){const poly=frontPoly(bL,bR,zr.fb0,zr.fb1),sF=FIN[z.slatFin]?z.slatFin:M.front.fin,sl=slatsOf(poly,z.slatDir==='h'?'h':'v',z.slatSize,false);
@@ -4181,7 +4188,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.45';
+const APP_VERSION='v0.46';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;

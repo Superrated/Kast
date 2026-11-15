@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.46
+
+- 3D: storage boxes are now drawn as real open boxes — a front with a rounded hand slot you can see through, a back, two sides and a bottom, all 12 mm thick — instead of solid blocks.
+
 ## v0.45
 
 - Storage boxes on open shelves now reach up to 20 mm under the shelf above (they used to stop at most 320 mm high, often well below it). Boxes stay at most 600 mm high in very tall compartments.
