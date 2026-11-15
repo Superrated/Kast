@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.45
+
+- Storage boxes on open shelves now reach up to 20 mm under the shelf above (they used to stop at most 320 mm high, often well below it). Boxes stay at most 600 mm high in very tall compartments.
+
 ## v0.44
 
 - Notes: a "Notes" button in the top bar (and "📝 Notes" in the ☰ menu on a phone). Write text notes, or add photos — "Take a photo" opens the camera on a phone, "Choose a photo" picks one or more from the device, and pasting a picture works too.
