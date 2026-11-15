@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.43
+
+- Reading nook: the curtain now follows the opening of the front panel. With an arch, porthole or house front it hangs just behind that opening, at its sides and up to its top; before, it hung across the whole niche and showed up in the wrong places (inside the round window of the house front, cut off behind the arch).
+- A niche you make yourself — by switching a level to "Niche / TV" or adding one on top — now starts as a reading nook. Niches that already exist, TV niches from the shuffle and the "TV niche" ready-made column stay as they are.
+
 ## v0.42
 
 - Simple view no longer hides a section that is in use: the Book ladder, the Projector screen and "Floor, walls & things on the wall" stay visible while they are switched on, so you can switch them off again.
