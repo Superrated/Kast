@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.49
+
+Peg wall, after the new reference photos.
+
+- Holes: "Round, for pegs" (as before) or "Slots, for hook tabs" — 12 × 40 mm slots on the same 120 mm grid; every shelf, ledge and box then hangs on two hardwood tabs.
+- New accessories: book ledges (books shown with their covers to the front behind a rail), a drawing-paper roll on two brackets, and a hanging rail with S-hooks for bags and paint tubes. Set how many of each; "Rearrange" moves them around.
+- Their parts are on the cut list, the paper roll, dowels and tabs on the shopping list.
+
 ## v0.48
 
 Five ideas from the inspiration photos.
