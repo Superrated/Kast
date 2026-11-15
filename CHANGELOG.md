@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.39
+
+- New "Never include" list in the shuffle options, next to "Always include": drawers, open shelves, glass doors, TV niche, speakers, desk, window seat, hanging rail. No shuffle puts these in. An item can be on only one of the two lists.
+- A desk top wider than 1200 mm always gets a 30 mm top in shuffles and wizard proposals, in every price level, so it does not flex.
+
 ## v0.38
 
 - "Split into two units" now also works by hand for columns that share one opening (a TV niche or desk across several columns). Tap it on any column of the group: the whole group gets the joint, above the opening.
