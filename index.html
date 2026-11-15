@@ -445,6 +445,11 @@ details.acc>summary::after{font-family:var(--f-b);font-weight:400;font-size:18px
 .dsnow{display:grid;gap:2px;padding:10px 12px;border-radius:12px;background:var(--accent-soft);margin-bottom:10px}.dsnow b{font-size:14px}.dsnow span{font-size:12.5px;color:var(--ink2)}.dsnow.dirty{background:var(--warn-soft)}.dsnow.dirty span{color:var(--warn);font-weight:600}
 .dver{margin-top:2px}.dvrow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 0;font-size:12px;color:var(--ink2);border-top:1px solid var(--line)}#dsBtn{white-space:nowrap;display:inline-flex;align-items:center}.dsdot{display:inline-block;flex:none;width:8px;height:8px;border-radius:50%;background:var(--warn);margin-left:6px;vertical-align:middle}.dsnm{font-weight:500;color:var(--ink2)}
 .aishot{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--stage);display:grid;place-items:center;min-height:80px}.aishot img{display:block;max-width:100%;max-height:46vh}.aishot p{padding:14px}#aiText{width:100%;box-sizing:border-box;font:12.5px/1.45 var(--mono,ui-monospace,monospace);border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--surface);color:var(--ink);resize:vertical}.aisteps{margin:0;padding-left:20px;display:grid;gap:8px;font-size:13px;color:var(--ink2)}
+.ntadd{display:grid;gap:8px}.ntadd textarea,.ntcard textarea{width:100%;box-sizing:border-box;font:inherit;font-size:14px;line-height:1.45;border:1px solid var(--line);border-radius:10px;padding:9px 10px;background:var(--surface);color:var(--ink);resize:vertical}.ntbtns{display:flex;gap:8px;flex-wrap:wrap}
+.ntlist{display:grid;gap:10px}.ntcard{display:grid;gap:6px;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--surface)}.ntimg{border:0;padding:0;background:var(--stage);border-radius:8px;overflow:hidden;cursor:zoom-in;display:block}.ntimg img{display:block;width:100%;max-height:300px;object-fit:contain}
+.ntmeta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--ink3)}.ntmeta input{flex:1 1 160px;min-width:0;font:inherit;font-size:13px;border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--surface);color:var(--ink)}.ntmeta span{margin-right:auto}.ntcard .ntmeta input+span{margin-right:0}
+.ntwarn{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:8px 12px;border-radius:10px;background:var(--warn-soft);color:var(--warn);font-size:12.5px;font-weight:600}.ntwarn span{flex:1 1 200px}
+.ntview{position:fixed;inset:0;z-index:90;background:rgba(10,8,6,.92);display:grid;grid-template-rows:minmax(0,1fr) auto;gap:12px;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));justify-items:center}.ntview img{max-width:100%;max-height:100%;object-fit:contain;align-self:center}
 .dsave{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:end}.dbtns{display:flex;gap:6px}@media(max-width:520px){.dsave{grid-template-columns:minmax(0,1fr)}}
 .dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin:6px 0 12px}
 .dcard{display:grid;gap:6px;padding:8px;border-radius:12px;border:1px solid var(--line,rgba(0,0,0,.1));background:var(--card,#fff);min-width:0}.dcard.on{border-color:var(--accent,#3446D6);box-shadow:0 0 0 2px var(--accent-soft,rgba(52,70,214,.15))}
@@ -744,14 +749,14 @@ details.mx{grid-column:1/-1}
 @media (prefers-reduced-motion:reduce){#splash{animation-duration:.01s}}
 </style>
 
-<div id="splash" role="status" aria-label="Kast v0.43 is loading"><b>Kast</b><span>v0.43</span></div>
+<div id="splash" role="status" aria-label="Kast v0.44 is loading"><b>Kast</b><span>v0.44</span></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
 
 <div class="app" data-tab="elev">
   <header class="top">
     <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-    <div class="brand" title="Kast v0.43">Kast<small>built-in furniture, drawn and cut · v0.43</small></div>
+    <div class="brand" title="Kast v0.44">Kast<small>built-in furniture, drawn and cut · v0.44</small></div>
     <nav class="tabs" id="tabs">
       <button data-act="tab" data-a="elev" class="on">Elevation</button>
       <button data-act="tab" data-a="3d">3D view</button>
@@ -763,7 +768,7 @@ details.mx{grid-column:1/-1}
     <div class="acts">
       <button class="btn" data-act="undo" id="bUndo" aria-label="Undo" title="Undo (Ctrl+Z)" disabled>↶</button><button class="btn" data-act="redo" id="bRedo" aria-label="Redo" title="Redo" disabled>↷</button><button class="btn pri dsk" data-act="wizard">Wizard</button>
       <button class="btn dsk" data-act="pdf" title="Download a PDF with elevation, cut list and build guide">PDF</button>
-      <button class="btn dsk" data-act="install" id="instBtn" hidden title="Put Kast on this device as an app">Install app</button><button class="btn dsk" data-act="io" id="dsBtn">Designs</button><button class="btn phone" data-act="mmenu" aria-label="Menu" aria-expanded="false">☰</button>
+      <button class="btn dsk" data-act="install" id="instBtn" hidden title="Put Kast on this device as an app">Install app</button><button class="btn dsk" data-act="ntOpen" id="ntBtn">Notes</button><button class="btn dsk" data-act="io" id="dsBtn">Designs</button><button class="btn phone" data-act="mmenu" aria-label="Menu" aria-expanded="false">☰</button>
     </div>
   </header>
   <div class="main">
@@ -793,7 +798,7 @@ details.mx{grid-column:1/-1}
   
   <button data-act="tab" data-a="guide"><svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="9" cy="9" r="1.6" fill="currentColor"/><path d="M12 9h4M8 14h8M8 17.5h6" stroke="currentColor" stroke-width="1.6"/></svg><span>Guide</span></button>
 </nav>
-<div class="mmenu" id="mmenu" hidden><button type="button" data-act="io" id="dsBtnM">📁 My designs</button><button type="button" data-act="install" id="instBtnM" hidden>📲 Install app</button><button type="button" data-act="aiOpen">🪄 AI render (photo-real picture)</button><button type="button" data-act="wizard">✨ Start with the wizard</button><button type="button" data-act="pdf">⬇ Download PDF</button></div>
+<div class="mmenu" id="mmenu" hidden><button type="button" data-act="io" id="dsBtnM">📁 My designs</button><button type="button" data-act="ntOpen" id="ntBtnM">📝 Notes</button><button type="button" data-act="install" id="instBtnM" hidden>📲 Install app</button><button type="button" data-act="aiOpen">🪄 AI render (photo-real picture)</button><button type="button" data-act="wizard">✨ Start with the wizard</button><button type="button" data-act="pdf">⬇ Download PDF</button></div>
 <div class="pcal" id="pcal" hidden role="dialog" aria-label="Line up your room photo"><header><b>Line up your photo</b><span class="sp"></span><label class="btn sm" style="position:relative;overflow:hidden;cursor:pointer">Other photo<input type="file" accept="image/*" data-photoin style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0"></label><button type="button" class="btn sm" data-act="pcalClose">Cancel</button></header><div class="pstage" id="pstage"></div><footer id="pfoot"></footer></div>
 <input type="file" id="photoIn" accept="image/*" hidden>
 <div class="modal" id="wiz" hidden>
@@ -836,6 +841,21 @@ details.mx{grid-column:1/-1}
     <div class="mfoot"><button class="btn" data-act="aiClose">Close</button><div></div></div>
   </div>
 </div>
+<div class="modal" id="ntm" hidden>
+  <div class="mbox">
+    <div class="mhead"><h2>Notes</h2></div>
+    <div class="mbody" style="display:grid;gap:12px">
+      <p class="hintp" style="margin:0" id="ntFor"></p>
+      <div class="ntadd"><textarea id="ntText" rows="3" placeholder="Write a note — measurements, ideas, questions for the carpenter…"></textarea>
+        <div class="ntbtns"><button class="btn pri" data-act="ntAdd">Add note</button><label class="btn" style="position:relative;overflow:hidden;cursor:pointer">📷 Take a photo<input type="file" accept="image/*" capture="environment" data-ntin style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0"></label><label class="btn" style="position:relative;overflow:hidden;cursor:pointer">🖼 Choose a photo<input type="file" accept="image/*" multiple data-ntin style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0"></label></div>
+        <label class="chk"><input type="checkbox" id="ntClean" checked> Make hand-drawn notes easier to read (black and white, more contrast)</label></div>
+      <div id="ntSave"></div>
+      <div id="ntList" class="ntlist"></div>
+    </div>
+    <div class="mfoot"><button class="btn" data-act="ntClose">Close</button><div></div></div>
+  </div>
+</div>
+<div class="ntview" id="ntView" hidden><img id="ntViewImg" alt="Note photo"><button class="btn" data-act="ntViewClose">Close</button></div>
 <div class="modal" id="fpm" hidden>
   <div class="mbox fpbox">
     <div class="mhead"><h2>Colour &amp; finish</h2><div class="fprow"><span class="inp" style="flex:1"><input type="search" id="fpSearch" placeholder="Search RAL number or name — e.g. 7016, sage, oak" aria-label="Search colours"></span><span class="fpcur" id="fpCur"></span></div></div>
@@ -3087,7 +3107,7 @@ function dsAgo(ts){const m=Math.round((Date.now()-ts)/60000);return m<1?'just no
 function dsThumb(d){const k=d.id+':'+(d.updatedAt||d.savedAt);if(DS.thumbs[k]!=null)return DS.thumbs[k];let h='';try{const st=fixFins(JSON.parse(d.state));h=elevSVG(st,build(st),{mini:true})}catch(e){h=''}DS.thumbs[k]=h;return h}
 function dsBadge(){const c=dsCur(),dirty=dsDirty(),nm=c?(c.name||'Untitled design'):'',b=document.getElementById('dsBtn'),m=document.getElementById('dsBtnM');
   if(b){b.innerHTML=`Designs${nm?` · <span class="dsnm">${esc(nm.length>18?nm.slice(0,17)+'…':nm)}</span>`:''}${dirty&&(c||!ui.fresh||ui.savedSig==null||dsSig()!==ui.savedSig)?'<i class="dsdot" title="Changes not saved yet"></i>':''}`;b.title=c?(dirty?`“${nm}” has changes that are not saved yet`:`“${nm}” — all changes saved`):(dirty?'This design is not saved yet':'Saved designs')}
-  if(m)m.textContent='📁 My designs'+(dirty?' · not saved yet':'')}
+  if(m)m.textContent='📁 My designs'+(dirty?' · not saved yet':'');try{ntBadge()}catch(e){}}
 function renderDesigns(){const el=document.getElementById('dsList'),note=document.getElementById('dsNote');if(!el||document.getElementById('iom').hidden)return;
   const c=dsCur(),dirty=dsDirty(),now=document.getElementById('dsNow'),btns=document.getElementById('dsBtns'),help=document.getElementById('dsHelp'),nm=c?(c.name||'Untitled design'):'';
   now.className='dsnow'+(dirty?' dirty':'');
@@ -4175,7 +4195,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.43';
+const APP_VERSION='v0.44';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
@@ -4196,6 +4216,41 @@ async function photoShots(){const out=[];if(!window.THREE)return out;try{if(!T3)
       const cv=document.createElement('canvas');cv.width=w;cv.height=h;const x=cv.getContext('2d');x.drawImage(PH.img,0,0,w,h);try{x.filter=T3.renderer.domElement.style.filter||'none'}catch(e){}x.drawImage(T3.renderer.domElement,0,0,w,h);x.filter='none';(PH.occ||[]).forEach(sh=>{if(sh.length<3)return;x.save();x.beginPath();sh.forEach((q,k)=>{const X=q[0]*w/PH.iw,Y=q[1]*h/PH.ih;k?x.lineTo(X,Y):x.moveTo(X,Y)});x.closePath();x.clip();x.drawImage(PH.img,0,0,w,h);x.restore()});out.push(cv)}catch(e){}}
   await new Promise(r=>phUse(cur0,r));ui.photoOn=on0;PH.adjust=adj0;try{setPhotoMode(on0)}catch(e){}return out}
 const photoActive=()=>!!(ui.photoOn&&PH.pose&&PH.img);
+/* ===== Notes: text and photos (hand-drawn sketches) that belong to the design =====
+   The note list lives in the design itself (S.notes), so it is saved, undone and opened with it. A photo is too big for that:
+   the design keeps a small preview, the full photo goes to the app's shared store (or this device's storage outside claude.ai). */
+const NT_MAX=24;
+const ntList=()=>Array.isArray(S.notes)?S.notes:(S.notes=[]);
+function ntBadge(){const n=Array.isArray(S.notes)?S.notes.length:0,b=document.getElementById('ntBtn'),m=document.getElementById('ntBtnM');if(b)b.textContent=n?`Notes · ${n}`:'Notes';if(m)m.textContent='📝 Notes'+(n?` · ${n}`:'')}
+let ntIDB=null;function ntDB(){if(ntIDB)return ntIDB;ntIDB=new Promise((res,rej)=>{try{const r=indexedDB.open('kast-notes',1);r.onupgradeneeded=()=>r.result.createObjectStore('p');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}catch(e){rej(e)}});return ntIDB}
+async function ntPut(id,src){if(DS.db){await DS.db.doc('notephotos/'+id).set({src,at:Date.now()});return}const db=await ntDB();await new Promise((res,rej)=>{const t=db.transaction('p','readwrite');t.objectStore('p').put(src,id);t.oncomplete=res;t.onerror=()=>rej(t.error)})}
+async function ntGet(id){try{if(DS.db){const d=await DS.db.doc('notephotos/'+id).get();return d.exists?(d.data()||{}).src||null:null}const db=await ntDB();return await new Promise(res=>{const r=db.transaction('p').objectStore('p').get(id);r.onsuccess=()=>res(r.result||null);r.onerror=()=>res(null)})}catch(e){return null}}
+async function ntDel(id){try{if(DS.db){await DS.db.doc('notephotos/'+id).delete();return}const db=await ntDB();db.transaction('p','readwrite').objectStore('p').delete(id)}catch(e){}}
+const NT_CACHE={};
+function ntChanged(){saveSoon();snap();ntRender()}
+function ntRender(){const el=document.getElementById('ntList');if(!el||document.getElementById('ntm').hidden)return;const L=ntList(),c=dsCur();
+  document.getElementById('ntFor').textContent=c?`Notes for “${c.name||'Untitled design'}”. They are saved with the design.`:'Notes for this design. They are saved with the design — give it a name under Designs to keep them.';
+  const sv=document.getElementById('ntSave');sv.innerHTML=dsDirty()?`<div class="ntwarn"><span>${c?'These notes are not saved in “'+esc(c.name||'Untitled design')+'” yet.':'This design is not saved yet, so its notes are not either.'}</span><button class="btn sm pri" data-act="${c?'ntSaveNow':'ntToDesigns'}">${c?'Save changes':'Save the design'}</button></div>`:'';
+  el.innerHTML=L.length?L.slice().reverse().map(n=>{const when=new Date(n.at||0).toLocaleString(undefined,{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+    return n.t==='photo'?`<div class="ntcard"><button type="button" class="ntimg" data-act="ntView" data-a="${esc(n.id)}" aria-label="Open the photo large"><img src="${NT_CACHE[n.pid]||n.thumb||''}" alt="Note photo" data-ntpid="${esc(n.pid||'')}"></button><div class="ntmeta"><input type="text" data-ntcap="${esc(n.id)}" value="${esc(n.text||'')}" placeholder="Add a caption" maxlength="200"><span>${when}</span><button type="button" class="btn sm" data-act="ntDelete" data-a="${esc(n.id)}">Delete</button></div></div>`
+      :`<div class="ntcard txt"><textarea data-nttext="${esc(n.id)}" rows="${Math.min(8,Math.max(2,String(n.text||'').split('\\n').length+1))}">${esc(n.text||'')}</textarea><div class="ntmeta"><span>${when}</span><button type="button" class="btn sm" data-act="ntDelete" data-a="${esc(n.id)}">Delete</button></div></div>`}).join(''):'<p class="hintp" style="margin:0">No notes yet. Write one above, or take a photo of a sketch on paper.</p>';
+  el.querySelectorAll('img[data-ntpid]').forEach(im=>{const pid=im.dataset.ntpid;if(!pid||NT_CACHE[pid])return;ntGet(pid).then(src=>{if(src){NT_CACHE[pid]=src;if(im.isConnected)im.src=src}})})}
+function ntOpen(){const mm=document.getElementById('mmenu');if(mm)mm.hidden=true;document.getElementById('ntm').hidden=false;ntRender()}
+function ntAdd(){const ta=document.getElementById('ntText'),t=ta.value.trim();if(!t){toast('Write something first');ta.focus();return}ntList().push({id:'n'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),t:'text',text:t,at:Date.now()});ta.value='';ntChanged()}
+/* photo → smaller JPEG; for hand-drawn notes: grey, with the paper pushed to white and the ink to black */
+function ntPhoto(f,clean){return new Promise((res,rej)=>{const rd=new FileReader();rd.onerror=()=>rej('read');rd.onload=()=>{const im=new Image();im.onerror=()=>rej('format');im.onload=()=>{let mx=1500;const draw=sz=>{const k=Math.min(1,sz/Math.max(im.naturalWidth,im.naturalHeight)),cv=document.createElement('canvas');cv.width=Math.max(1,Math.round(im.naturalWidth*k));cv.height=Math.max(1,Math.round(im.naturalHeight*k));const x=cv.getContext('2d');x.drawImage(im,0,0,cv.width,cv.height);
+        if(clean){const d=x.getImageData(0,0,cv.width,cv.height),a=d.data,hist=new Uint32Array(256);for(let i=0;i<a.length;i+=4){const l=(a[i]*.3+a[i+1]*.59+a[i+2]*.11)|0;a[i]=l;hist[l]++}let n=0,lo=0,hi=255;const N=a.length/4;for(let v=0;v<256;v++){n+=hist[v];if(n>N*.02){lo=v;break}}n=0;for(let v=255;v>=0;v--){n+=hist[v];if(n>N*.35){hi=v;break}}const span=Math.max(30,hi-lo);
+          for(let i=0;i<a.length;i+=4){let v=(a[i]-lo)/span;v=v<0?0:v>1?1:v;v=Math.pow(v,1.6);const o=Math.round(v*255);a[i]=a[i+1]=a[i+2]=o}x.putImageData(d,0,0)}return cv};
+      let cv=draw(mx),src=cv.toDataURL('image/jpeg',.72);while(src.length>190000&&mx>500){mx=Math.round(mx*.82);cv=draw(mx);src=cv.toDataURL('image/jpeg',.68)}const th=draw(160).toDataURL('image/jpeg',.55);res({src,thumb:th})};im.src=rd.result};rd.readAsDataURL(f)})}
+async function ntFiles(files){const fs=[...files].filter(f=>/^image\//.test(f.type)||/\.(jpe?g|png|webp|gif|heic)$/i.test(f.name||''));if(!fs.length)return;const clean=document.getElementById('ntClean').checked;let ok=0;
+  for(const f of fs){if(ntList().filter(n=>n.t==='photo').length>=NT_MAX){toast(`A design can hold ${NT_MAX} note photos — delete one first`);break}toast('Adding the photo…');
+    try{const r=await ntPhoto(f,clean),pid='p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);await ntPut(pid,r.src);NT_CACHE[pid]=r.src;ntList().push({id:'n'+pid.slice(1),t:'photo',pid,thumb:r.thumb,text:'',at:Date.now()});ok++}
+    catch(e){toast(e==='format'?'This photo format can’t be opened here (HEIC from an iPhone, for example). Take a screenshot of it and pick that instead.':e&&(e.code==='quota_exceeded')?'The app’s storage is full — delete some note photos first':'That photo could not be added — try again')}}
+  if(ok){ntChanged();toast(ok>1?`${ok} photos added`:'Photo added')}}
+document.addEventListener('change',e=>{const t=e.target;if(!t)return;if(t.matches&&t.matches('[data-ntin]')){const f=t.files;if(f&&f.length)ntFiles(f);t.value='';return}
+  if(t.dataset&&t.dataset.nttext!=null){const n=ntList().find(x=>x.id===t.dataset.nttext);if(n){const v=t.value.trim();if(v){n.text=v;ntChanged()}else toast('A note can’t be empty — use Delete to remove it')}}
+  if(t.dataset&&t.dataset.ntcap!=null){const n=ntList().find(x=>x.id===t.dataset.ntcap);if(n){n.text=t.value.trim();ntChanged()}}});
+document.addEventListener('paste',e=>{const m=document.getElementById('ntm');if(!m||m.hidden)return;const fs=[...((e.clipboardData&&e.clipboardData.items)||[])].filter(i=>i.kind==='file'&&/^image\//.test(i.type)).map(i=>i.getAsFile());if(fs.length){e.preventDefault();ntFiles(fs)}});
 /* ===== AI render hand-off: Kast supplies the picture and the instruction, an outside picture AI makes the photo ===== */
 const AI={shots:[],cur:0,plain:null};
 function aiPlainShot(){try{if(!T3)return null;const el=T3.renderer.domElement,w=el.width,h=el.height;if(!w||!h)return null;T3.renderer.render(T3.scene,T3.cam);const cv=document.createElement('canvas'),k=Math.min(1,1600/w);cv.width=Math.round(w*k);cv.height=Math.round(h*k);const x=cv.getContext('2d');x.fillStyle=getComputedStyle(document.body).getPropertyValue('--stage').trim()||'#E8EBE7';x.fillRect(0,0,cv.width,cv.height);x.drawImage(el,0,0,cv.width,cv.height);return cv}catch(e){return null}}
@@ -4773,6 +4828,14 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'dsBackDel':{const b=e.target.closest('button');if(b.dataset.armed){dsBackDel(a)}else{b.dataset.armed='1';b.textContent='Tap again to remove';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Remove'}},3000)}break}
     case 'dsDel':{const b=e.target.closest('button');if(b.dataset.armed){dsDelete(a)}else{b.dataset.armed='1';b.textContent='Tap again to delete';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Delete'}},3000)}break}
     case 'ioClose':document.getElementById('iom').hidden=true;break;
+    case 'ntOpen':ntOpen();break;
+    case 'ntClose':document.getElementById('ntm').hidden=true;break;
+    case 'ntAdd':ntAdd();break;
+    case 'ntToDesigns':{document.getElementById('ntm').hidden=true;const b=document.createElement('button');b.dataset.act='io';document.body.append(b);b.click();b.remove();setTimeout(()=>{const n=document.getElementById('dsName');if(n)n.focus()},120);break}
+    case 'ntSaveNow':dsSave(false).then(()=>ntRender());break;
+    case 'ntDelete':{const b=e.target.closest('button');if(!b.dataset.armed){b.dataset.armed='1';b.textContent='Tap again to delete';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Delete'}},3000);break}const L=ntList(),j=L.findIndex(n=>n.id===a);if(j<0)break;const n=L.splice(j,1)[0];if(n.pid){ntDel(n.pid);delete NT_CACHE[n.pid]}ntChanged();toast('Note deleted');break}
+    case 'ntView':{const n=ntList().find(x=>x.id===a);if(!n)break;const v=document.getElementById('ntView'),im=document.getElementById('ntViewImg');im.src=NT_CACHE[n.pid]||n.thumb||'';v.hidden=false;if(!NT_CACHE[n.pid]&&n.pid)ntGet(n.pid).then(src=>{if(src){NT_CACHE[n.pid]=src;im.src=src}else toast('Only the small preview is on this device — the full photo was saved somewhere else')});break}
+    case 'ntViewClose':document.getElementById('ntView').hidden=true;break;
     case 'aiOpen':aiOpen();break;
     case 'aiClose':document.getElementById('aim').hidden=true;break;
     case 'aiPick':AI.cur=+a;aiShow();break;

@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.44
+
+- Notes: a "Notes" button in the top bar (and "📝 Notes" in the ☰ menu on a phone). Write text notes, or add photos — "Take a photo" opens the camera on a phone, "Choose a photo" picks one or more from the device, and pasting a picture works too.
+- "Make hand-drawn notes easier to read" (on by default) turns a photo of a sketch into clean black and white with more contrast, which also keeps the file small.
+- Notes belong to the design: they are saved, opened and undone with it. Photos are stored in the app's shared storage (or on the device outside claude.ai); the design keeps a small preview. Tap a photo to see it large, give it a caption, or delete it (tap twice).
+- The Notes window warns when the notes are not saved yet, with a button to save.
+
 ## v0.43
 
 - Reading nook: the curtain now follows the opening of the front panel. With an arch, porthole or house front it hangs just behind that opening, at its sides and up to its top; before, it hung across the whole niche and showed up in the wrong places (inside the round window of the house front, cut off behind the arch).
