@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.50
+
+Dots are now a handle, and every door can have its own handle.
+
+- "Dot pattern" is a handle type now (Look → Doors & handles), not a front style. Patterns: Grid, Rows, Dashes, Diagonal, Column (a line of dots along the opening edge) and Scattered. Dot size Small 16 / Medium 25 / Large 35 mm. The pattern runs on from one door to the next across the whole wall; "Shuffle the dots" gives a new arrangement.
+- Per level: "Handles in this level" picks a different handle for one level (or none, push to open).
+- Per door: open "Handle per door/drawer" to give a single door or drawer its own handle.
+- Older designs with dotted fronts keep their dots.
+
 ## v0.49
 
 Peg wall, after the new reference photos.
