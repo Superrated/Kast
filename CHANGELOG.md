@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.42
+
+- Simple view no longer hides a section that is in use: the Book ladder, the Projector screen and "Floor, walls & things on the wall" stay visible while they are switched on, so you can switch them off again.
+
 ## v0.41
 
 - AI render: the instruction now tells the picture AI to make the decoration photorealistic as well — books, vases, plants, frames, cushions, baskets, boxes and toys — each kept in its place, size and colour, with no flat or cartoon-like objects left.

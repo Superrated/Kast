@@ -2302,7 +2302,7 @@ function simplifySide(el){const head=el.querySelector('.shead');if(head&&!el.que
   const fold=(host,items,mk,after)=>{if(!items.length)return;const d=document.createElement('details');d.className='pf more';d.dataset.mk=mk;if(open[mk])d.open=true;d.innerHTML=`<summary>More options (${items.length})</summary><div class="grid2 moreb"></div>`;const box=d.lastElementChild;items.forEach(c=>box.appendChild(c));if(after)after.insertAdjacentElement('afterend',d);else host.appendChild(d)};
   el.querySelectorAll('.zbody').forEach(zb=>{const g=zb.querySelector(':scope > .grid2');if(!g)return;const mv=[...g.children].filter(c=>c.tagName==='P'||!SIMPLE_KEEP.test(label(c)));fold(zb,mv,'z'+ui.sel+':'+ui.zsel,g)});
   el.querySelectorAll('.card.sel').forEach(card=>{const mv=[...card.children].filter(c=>c.classList.contains('linkbox')||(c.classList.contains('addrow'))||(c.classList.contains('fld')&&/^Back panel/.test(label(c))));const zl=card.querySelector(':scope > .zlist');fold(card,mv,'c'+ui.sel,null)});
-  const hid=[];el.querySelectorAll('details.acc').forEach(d=>{if(SIMPLE_HIDE[d.dataset.k]){d.hidden=true;hid.push(d.querySelector('summary').textContent.trim())}});
+  const R_=S.room||{},used={lad:!!(S.ladder&&S.ladder.on),scr:!!(S.opts.screen&&S.opts.screen.on),site:!!((R_.lvl&&R_.lvl.on)||(R_.skb&&R_.skb.on)||(R_.wobs||[]).length)};const hid=[];el.querySelectorAll('details.acc').forEach(d=>{if(SIMPLE_HIDE[d.dataset.k]&&!used[d.dataset.k]){d.hidden=true;hid.push(d.querySelector('summary').textContent.trim())}});
   if(hid.length)el.insertAdjacentHTML('beforeend',`<p class="hintp viewmore">${hid.length} more section${hid.length>1?'s':''} in Expert view: ${hid.map(esc).join(', ')}. <button type="button" class="linkb" data-act="viewMode" data-a="x">Show everything</button></p>`)}
 function renderSide(){
   const el=document.getElementById('side'),op=k=>(openState[k]||(k==='secs'&&isSheet()))?'open':'',R=S.room;const pane=PANES.find(x=>x[0]===(ui.pane||'layout'))||PANES[1];
@@ -4160,7 +4160,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.41';
+const APP_VERSION='v0.42';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
