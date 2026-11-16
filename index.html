@@ -749,14 +749,14 @@ details.mx{grid-column:1/-1}
 @media (prefers-reduced-motion:reduce){#splash{animation-duration:.01s}}
 </style>
 
-<div id="splash" role="status" aria-label="Kast v0.56 is loading"><b>Kast</b><span>v0.56</span></div>
+<div id="splash" role="status" aria-label="Kast v0.57 is loading"><b>Kast</b><span>v0.57</span></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
 
 <div class="app" data-tab="elev">
   <header class="top">
     <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-    <div class="brand" title="Kast v0.56">Kast<small>built-in furniture, drawn and cut · v0.56</small></div>
+    <div class="brand" title="Kast v0.57">Kast<small>built-in furniture, drawn and cut · v0.57</small></div>
     <nav class="tabs" id="tabs">
       <button data-act="tab" data-a="elev" class="on">Elevation</button>
       <button data-act="tab" data-a="3d">3D view</button>
@@ -2546,6 +2546,24 @@ function renderSide(){
   el.dataset.flow=pane[0]==='layout'?flowNow():'home';if(isSheet())setTimeout(renderBar,0);el.innerHTML=`<div class="shead"><div class="shandle" data-sgrab="1" aria-hidden="true"><i></i></div><div class="spane" role="tablist">${PANES.map(([k,l])=>`<button type="button" role="tab" aria-selected="${k===pane[0]}" class="${k===pane[0]?'on':''}" data-act="pane" data-a="${k}">${PANE_ICON[k]}<span>${l}</span></button>`).join('')}</div><div class="crumb">${pane[0]==='layout'?crumbHTML():''}</div></div><p class="panelede">${pane[2]}</p>`+pane[3].map(k=>parts[k]||'').join('');try{simplifySide(el)}catch(e){}
 }
 const presetOpts=()=>Object.entries(PRESETS).map(([k,p])=>`<option value="${k}">${p.label}</option>`).join('');
+/* doors that are almost the same width: nudge the column widths so they become exactly the same */
+function doorGroups(G){G=G||geo;const reps=[];let run=0;
+  G.secs.forEach(q=>{if(q.pin!=null&&q.i>0)run++;if(q.panel||q.door||q.follow!=null||q.grp)return;const byZ={};G.fronts.forEach(f=>{if(f.sec!==q.i||f.kind!=='door'||f.leaf||f.rear||f.face==='curtain')return;(byZ[f.zone]=byZ[f.zone]||[]).push(f)});
+    const zs=Object.values(byZ).sort((a,b)=>b.length-a.length);if(!zs.length)return;const ds=zs[0],w=ds.map(f=>{const xs=f.poly.map(p=>p[0]);return Math.max(...xs)-Math.min(...xs)});reps.push({i:q.i,run,n:ds.length,d:w.reduce((a,b)=>a+b,0)/w.length,w:q.w})});
+  const groups=[];const byRun={};reps.forEach(r=>(byRun[r.run]=byRun[r.run]||[]).push(r));
+  Object.values(byRun).forEach(rs=>{rs.sort((a,b)=>a.d-b.d);let g=[];rs.forEach(r=>{if(g.length&&r.d-g[0].d>Math.max(12,g[0].d*0.05)){if(g.length>1)groups.push(g);g=[]}g.push(r)});if(g.length>1)groups.push(g)});
+  return groups.filter(g=>Math.max(...g.map(r=>r.d))-Math.min(...g.map(r=>r.d))>0.4)}
+function evenDoors(){const g0=doorGroups(geo);if(!g0.length){toast('The door widths are already even');return}
+  const mem=g0.map(g=>g.map(r=>r.i)),autos=S.sections.map((sc,i)=>!(+sc.w>0)?i:-1).filter(i=>i>=0),inG=new Set(mem.flat());let maxMove=0;const w0=geo.secs.map(q=>q.w);
+  for(let it=0;it<5;it++){const G=geo;const reps={};doorGroups(G);G.secs.forEach(q=>{const fr=G.fronts.filter(f=>f.sec===q.i&&f.kind==='door'&&!f.leaf&&!f.rear&&f.face!=='curtain'),byZ={};fr.forEach(f=>(byZ[f.zone]=byZ[f.zone]||[]).push(f));const zs=Object.values(byZ).sort((a,b)=>b.length-a.length);if(!zs.length)return;const w=zs[0].map(f=>{const xs=f.poly.map(p=>p[0]);return Math.max(...xs)-Math.min(...xs)});reps[q.i]={n:zs[0].length,d:w.reduce((a,b)=>a+b,0)/w.length}});
+    let worst=0;mem.forEach(ix=>{const rs=ix.map(i=>reps[i]).filter(Boolean);if(rs.length<2)return;const T=rs.reduce((a,r)=>a+r.n*r.d,0)/rs.reduce((a,r)=>a+r.n,0);ix.forEach(i=>{const r=reps[i];if(!r)return;worst=Math.max(worst,Math.abs(r.d-T));S.sections[i].w=Math.round((geo.secs[i].w+r.n*(T-r.d))*10)/10})});
+    autos.forEach(i=>{if(!inG.has(i)&&autos.some(j=>inG.has(j)))S.sections[i].w=null});
+    S.sections.forEach((sc,i)=>{if(!inG.has(i)&&!autos.includes(i)&&!(+sc.w>0))sc.w=null});
+    geo=build(S);if(worst<0.15)break}
+  geo.secs.forEach((q,i)=>{maxMove=Math.max(maxMove,Math.abs(q.w-(w0[i]||q.w)))});
+  changed(true);const left=doorGroups(geo);toast(left.length?'Most doors are even now; some could not be matched exactly':`Done: ${mem.map(ix=>ix.slice().sort((x,y)=>x-y).map(i=>'S'+(i+1)).join(', ')).join(' and ')} now have doors of the same width. Columns moved by up to ${Math.max(1,Math.round(maxMove))} mm.`)}
+function evenDoorsUI(){let g=[];try{g=doorGroups(geo)}catch(e){}if(!g.length)return '';const f1=v=>Math.round(v);
+  return `<div class="gwarn" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:12.5px;padding:8px 10px;border-radius:10px;background:var(--surface2,rgba(52,70,214,.06));border-color:transparent"><span style="flex:1 1 220px">${g.map(x=>`Doors in ${x.slice().sort((a,b)=>a.i-b.i).map(r=>'S'+(r.i+1)).join(', ')} are almost the same: ${x.slice().sort((a,b)=>a.i-b.i).map(r=>f1(r.d)).join(', ')} mm.`).join(' ')}</span><button type="button" class="btn sm" data-act="evenDoors">Make them the same</button></div>`}
 function secEditorFull(){
   const secs=S.sections;
   let h=isSheet()?'':shufBar();
@@ -2553,7 +2571,7 @@ function secEditorFull(){
   if(!secs.length)return h+`<div class="addrow"><span class="inp"><select id="addPreset">${presetOpts()}</select></span><button class="btn" data-act="addSec">Add</button></div>`;
   ui.sel=Math.max(0,Math.min(ui.sel,secs.length-1));const i=ui.sel,s=secs[i],q=geo.secs[i],p='sections.'+i;
   h+=`<div class="chips dskchips">${secs.map((x,j)=>`<button class="chip ${j===i?'on':''}" data-act="selSec" data-a="${j}">S${j+1}${x.base==='panel'?' ▦':''}<small>${geo.secs[j]?f0(geo.secs[j].w):''}</small></button>`).join('')}</div>
-  <div class="quickadd"><span>Add next to S${i+1}</span><div class="tchips">${[['cupboard','Cabinet'],['open','Open shelves'],['arch','Arched bookcase'],['door','Walk-through door / hallway'],['desk','Desk'],['seat','Window seat'],['dog','Dog den'],['panel','Panel wall']].map(([k,l])=>`<button type="button" class="tchip" data-act="addQuick" data-a="${k}">+ ${l}</button>`).join('')}</div></div>
+  ${evenDoorsUI()}<div class="quickadd"><span>Add next to S${i+1}</span><div class="tchips">${[['cupboard','Cabinet'],['open','Open shelves'],['arch','Arched bookcase'],['door','Walk-through door / hallway'],['desk','Desk'],['seat','Window seat'],['dog','Dog den'],['panel','Panel wall']].map(([k,l])=>`<button type="button" class="tchip" data-act="addQuick" data-a="${k}">+ ${l}</button>`).join('')}</div></div>
   <div class="addrow"><span class="inp"><select id="addPreset" aria-label="Column type to add">${presetOpts()}</select></span><button class="btn" data-act="addSec">Add column</button></div>`;
   const follower=q&&q.follow!=null;
   h+=`<div class="card sel"><div class="cardh"><h4>Column ${i+1} <span class="zinfo">${q?f0(q.w)+' mm inside':''}</span></h4><div class="tools">
@@ -3537,7 +3555,7 @@ function priceRows(nest,sp,hw,mats,shopO){const shop=shopO||curShop();let fbN=0;
     add('Sheets','s_'+g.fin+'_'+g.t+'_'+g.W,`${FIN[g.fin]?.name||''} ${g.t} mm pre-edged furniture panel, ${g.W} × ${L}`,g.bars.length,'board',Math.round(u*100)/100,shop!=='best'&&sf_!=null?SHOPS[shop]:HH,!white||Math.abs(w-g.W)>5||+g.t!==18||L!==2500,'White 18 mm furniture panels 2500 long: 200 € 9.35 · 300 € 12.29 · 400 € 15.34 · 500 € 18.59 · 600 € 21.54 · 800 € 26.74')});
   let band=-(sp.saved||0),paint=0,micro=0;Object.values(mats||{}).forEach(m=>{if(!m.paint&&!m.micro)band+=m.band||0;if(m.paint)paint+=(m.area||0)*2+(m.peri||0);if(m.micro)micro+=(m.mA||0)+(m.vis||0)});
   if(band>0.5)add('Finishing','edge','Edge banding (ABS 1 mm or veneer), incl. 10 % waste',Math.ceil(band*1.1),'m',0.95,'',1,'Not looked up — Hanssens Hout lists no edge band online');
-  if(micro>0.2)add('Finishing','micro','Microcement on the visible sides (front face + visible edges): primer, base coat, 2 finish coats, PU varnish, incl. 15 % waste',Math.ceil(micro*1.15),'m²',28,'Silk Plaster',0,'Silk Plaster microcement complete kit: € 688 for 25 m² (primer, base, finish, 2K PU varnish, trowel) = € 27.52 per m². Hornbach beton ciré ready mix: € 20.49 per kg at about 2–2.5 kg per m², plus primer and coating, ≈ € 45–55 per m². Looked up 16 Nov 2026');
+  if(micro>0.2)add('Finishing','micro','Microcement on the visible sides (front face + visible edges): primer, base coat, 2 finish coats, PU varnish, incl. 15 % waste',Math.ceil(micro*1.15),'m²',45,'your price',0,'€ 45 per m² as you set it. For comparison: Silk Plaster complete kit € 27.52 per m²; Hornbach beton ciré ready mix with primer and coating ≈ € 45–55 per m² (looked up 16 Nov 2026)');
   if(paint>0.5)add('Finishing','paint',false?'':'Primer + two coats of lacquer for the painted MDF',Math.ceil(paint),'m²',6.5,'',1,'Typical cost of MDF primer and acrylic lacquer');
   hw.forEach((r,i)=>{const nm=String(r[0]),q=r[1];if(/Finger (hole|slot|groove)|Speaker baffles|Back panel in groove|Open doorway|groove pull|Handleless/i.test(nm))return;let rule=PRICE_HW.find(x=>x[0].test(nm));if(!rule&&/handle|pull|knob|grip|cup|profile|bar/i.test(nm))rule=[null,isBudget()&&isWoodHandle(S.opts.handle)?1.2:6.5,1];
     let qty=typeof q==='number'?q:null,unitLbl='pc';if(qty==null){const sq=String(q),a=parseFloat(sq);if(/m²/.test(sq)){qty=a;unitLbl='m²'}else if(/mm/.test(sq)){qty=a/1000;unitLbl='m'}else if(isFinite(a))qty=a;else if(sq==='set')qty=1;else return}
@@ -3678,11 +3696,24 @@ function offcuts(nest){const out=[];nest.forEach(n=>{const L=n.sh.L,W=n.sh.W,ker
 function offcutHTML(nest){const o=offcuts(nest);if(!o.length)return '';const by={};o.forEach(c=>{(by[c.name]=by[c.name]||[]).push(c)});const m2=o.reduce((a,c)=>a+c.w*c.h,0)/1e6;
   return `<div class="pbud" style="align-items:flex-start"><span class="pbok">Leftovers</span><span>${m2.toFixed(1)} m² of reusable offcuts (pieces of at least 300 × 150 mm):<br>${Object.entries(by).map(([k,v])=>`<b>${esc(k)} mm</b> — ${v.slice(0,6).map(c=>`${c.w} × ${c.h}`).join(' · ')}${v.length>6?` · +${v.length-6} more`:''}`).join('<br>')}<br>Good for drawer boxes, rails, plinth blocks, shelf strips or a later column.</span></div>`}
 /* Sheet saver: the same design at other cabinet depths — which one needs the fewest boards? */
-function sheetSaver(){const D0=+S.room.D||600,cand=[...new Set([D0,...[600,580,560,550,540,520,500,480,450,420,400].filter(d=>d<=D0+0.5&&d>=D0-200)])],out=[];
-  cand.forEach(d=>{try{const t=JSON.parse(JSON.stringify(S));t.room.D=d;const G=build(t),gs=groupPanels(G),nest=nestAll(gs),sp=stockPlan(gs),pr=priceRows(nest,sp,[],{});out.push({d,sheets:nest.reduce((a,n)=>a+n.sheets.length+(n.over.length?1:0),0),boards:(sp.groups||[]).reduce((a,g)=>a+g.bars.length,0),cost:pr.tot.sheets,warns:G.warns.length,over:nest.reduce((a,n)=>a+n.over.length,0)})}catch(e){}});
-  const cur=out.find(o=>o.d===D0)||out[0];ui.saver={cur,rows:out.filter(o=>o!==cur).sort((a,b)=>a.cost-b.cost||b.d-a.d).slice(0,5),at:JSON.stringify(S).length}}
-function saverHTML(){const r=ui.saver;if(!r||!r.cur)return '';const row=(o,isCur)=>`<tr${isCur?' class="grp"':''}><td>${o.d} mm deep${isCur?' (now)':''}</td><td class="n">${o.sheets}${o.boards?' + '+o.boards+' panels':''}</td><td class="n">${eur(o.cost)}</td><td class="n">${isCur?'—':(o.cost<r.cur.cost-0.5?'saves '+eur(r.cur.cost-o.cost):o.cost>r.cur.cost+0.5?'costs '+eur(o.cost-r.cur.cost)+' more':'same')}</td><td class="note">${o.warns>r.cur.warns?`${o.warns-r.cur.warns} more design note${o.warns-r.cur.warns>1?'s':''}`:''}${isCur?'':` <button type="button" class="btn sm" data-act="saverUse" data-a="${o.d}">Use</button>`}</td></tr>`;
-  const best=r.rows[0];return `<div class="tw"><table class="cut" style="min-width:480px"><thead><tr><th>Cabinet depth</th><th>Sheets</th><th>Boards cost</th><th>Difference</th><th></th></tr></thead><tbody>${row(r.cur,true)}${r.rows.map(o=>row(o,false)).join('')}</tbody></table></div><p class="hintp" style="margin:0">${best&&best.cost<r.cur.cost-0.5?`The cheapest is ${best.d} mm deep: ${eur(r.cur.cost-best.cost)} less on boards.`:'Your current depth is already the cheapest of these.'} A shallower cabinet also means shorter drawer runners and less room for hangers (clothes on a rail need about 560 mm inside).</p>`}
+function sheetSaver(){const D0=+S.room.D||600,lo=Math.max(300,D0-100),hi=D0+20,sig=JSON.stringify(S),out=[];
+  const run=d=>{const t=JSON.parse(sig);t.room.D=d;const G=build(t),gs=groupPanels(G),nest=nestAll(gs),sp=stockPlan(gs);let used=0,tot=0;nest.forEach(n=>{const A=n.sh.L*n.sh.W;n.sheets.forEach(sh=>{tot+=A;used+=sh.pl.reduce((a,c)=>a+Math.abs(polyArea(c.p.poly)),0)})});
+    const rail=G.secs.some(q=>q.zones.some(zr=>zr.z&&zr.z.rail))?Math.min(...G.secs.filter(q=>q.zones.some(zr=>zr.z&&zr.z.rail)).map(q=>q.Dh)):null;
+    return {d,G,nest,sp,sheets:nest.reduce((a,n)=>a+n.sheets.length+(n.over.length?1:0),0),boards:(sp.groups||[]).reduce((a,g)=>a+g.bars.length,0),use:tot?used/tot:0,warns:G.warns.length,rail,slides:Object.keys(G.H.slides||{}).map(Number)}};
+  const all=[];for(let d=hi;d>=lo;d--){try{all.push(run(d))}catch(e){}}
+  const cur=all.find(o=>o.d===D0)||run(D0),key=o=>o.sheets*1000+o.boards;
+  // for every smaller sheet count: the deepest depth that gets there
+  const best={};all.forEach(o=>{if(o.d>D0)return;const k=key(o);if(k<key(cur)&&(!best[k]||o.d>best[k].d))best[k]=o});
+  const rows=Object.values(best).sort((a,b)=>b.d-a.d).slice(0,4);
+  const deeper=all.filter(o=>o.d>D0&&key(o)<=key(cur)).sort((a,b)=>b.d-a.d)[0]||null;
+  const cost=o=>{try{return priceRows(o.nest,o.sp,[],{}).tot.sheets}catch(e){return 0}};[cur,...rows,...(deeper?[deeper]:[])].forEach(o=>{o.cost=cost(o);delete o.G;delete o.nest;delete o.sp});
+  ui.saver={cur,rows,deeper,at:sig.length,sig}}
+function saverHTML(){const r=ui.saver;if(!r||!r.cur)return '';const c=r.cur,pc=v=>Math.round(v*100)+'%',sh=o=>`${o.sheets} sheet${o.sheets===1?'':'s'}${o.boards?' + '+o.boards+' panels':''}`;
+  const notes=o=>{const n=[];if(o.rail!=null&&o.rail<560&&!(c.rail!=null&&c.rail<560))n.push(`hanging space only ${Math.round(o.rail)} mm deep (clothes need 560)`);if(o.slides.length&&c.slides.length&&Math.max(...o.slides)<Math.max(...c.slides))n.push(`shorter drawer runners (${Math.max(...o.slides)} mm)`);if(o.warns>c.warns)n.push(`${o.warns-c.warns} more design note${o.warns-c.warns>1?'s':''}`);return n.join(' · ')};
+  const row=(o,isCur)=>`<tr${isCur?' class="grp"':''}><td>${o.d} mm${isCur?' (now)':o.d>c.d?' (deeper)':` (${c.d-o.d} less)`}</td><td class="n">${sh(o)}</td><td class="n">${pc(o.use)}</td><td class="n">${eur(o.cost)}</td><td class="n">${isCur?'—':(o.cost<c.cost-0.5?'saves '+eur(c.cost-o.cost):o.cost>c.cost+0.5?'+'+eur(o.cost-c.cost):'same')}</td><td class="note">${isCur?'':notes(o)} ${isCur?'':`<button type="button" class="btn sm" data-act="saverUse" data-a="${o.d}">Use</button>`}</td></tr>`;
+  const b=r.rows[0];
+  return `<div class="tw"><table class="cut" style="min-width:560px"><thead><tr><th>Cabinet depth</th><th>Sheets</th><th>Sheet used</th><th>Boards cost</th><th>Difference</th><th></th></tr></thead><tbody>${row(c,true)}${r.rows.map(o=>row(o,false)).join('')}${r.deeper?row(r.deeper,false):''}</tbody></table></div>
+  <p class="hintp" style="margin:0">${b?`Making the cabinets <b>${c.d-b.d} mm shallower (${b.d} mm)</b> needs ${c.sheets+c.boards-b.sheets-b.boards} sheet${c.sheets+c.boards-b.sheets-b.boards>1?'s':''} less. Every depth from ${c.d+20} down to ${Math.max(300,c.d-100)} mm was tried; each row is the deepest one that reaches that number of sheets.`:`No depth between ${Math.max(300,c.d-100)} and ${c.d} mm saves a whole sheet — ${c.d} mm is already a good depth.`}${r.deeper?` If there is room, you can even go to <b>${r.deeper.d} mm</b> on the same sheets.`:''} “Sheet used” is how much of the bought sheets ends up as parts.</p>`}
 const eur=v=>'€ '+(v>=100?Math.round(v).toLocaleString('en-GB'):v.toFixed(2));
 let lastPrice=null,lastAlt=null;const STK_ALL={carcass:true,shelf:true,skirt:true,desk:true,front:true};
 function setStockAll(on){S.opts.stock=Object.assign({},S.opts.stock||{},on?{on:true,roles:Object.assign({},STK_ALL)}:{on:false})}
@@ -3692,7 +3723,7 @@ function priceHTML(P){const t=P.tot;let last='';
   ${makerHTML(t)}
   ${P.shops?`<div class="pbud"><span class="pbok">Boards from</span><div class="seg" role="group">${P.shops.map(o=>`<button type="button" class="${t.shop===o.k?'on':''}" data-act="shop" data-a="${o.k}">${o.k==='best'?'Cheapest per board':SHOPS[o.k]} · ${eur(o.total)}</button>`).join('')}</div><span>${t.shop==='best'?'Each board is priced at the cheapest of the shops that list it. Buying from several shops means several deliveries.':t.fb?`${SHOPS[t.shop]} does not list ${t.fb} of these boards (or I did not find them), so those use the Hanssens Hout price.`:`All boards priced at ${SHOPS[t.shop]}.`}</span></div>`:''}
   <div id="budcard" class="bud">${budHTML()}</div>
-  <div class="pbud"><button type="button" class="btn" data-act="saver">${ui.saver?'Recalculate sheet saver':'Sheet saver'}</button><span>Tries the same design at shallower cabinet depths and shows which needs the fewest boards.</span></div>${ui.saver?saverHTML():''}${bgeo().partial?'':phasesHTML()}${P.nest?offcutHTML(P.nest):''}
+  <div class="pbud"><button type="button" class="btn" data-act="saver">${ui.saver?'Recalculate sheet saver':'Sheet saver'}</button><span>Tries every cabinet depth up to 100 mm shallower (and 20 mm deeper) and shows which ones need fewer sheets.</span></div>${ui.saver?saverHTML():''}${bgeo().partial?'':phasesHTML()}${P.nest?offcutHTML(P.nest):''}
   <p class="hintp" style="margin:0">Board prices were looked up at Hanssens Hout, Houtshop, Houtvakman and Platenshop, and the Blum hinge and mounting plate at Pierard, on ${PRICE_DATE}; the Source column shows which shop each board is priced at. Lines marked “typical” (${eur(t.est)} of the total) are normal trade prices that were not looked up — type your own price in any row to replace it.${t.none?` ${t.none} line${t.none>1?'s have':' has'} no price yet.`:''} Not included: delivery, sawing or edge-banding service, tools, TV, speakers and other equipment.</p></div>
   <div class="tw"><table class="cut price" style="min-width:560px"><thead><tr><th>Item</th><th>Qty</th><th>Price each</th><th>Total</th><th>Source</th></tr></thead><tbody>${P.rows.map(r=>`${r.grp!==last?(last=r.grp,`<tr class="grp"><td colspan="5">${r.grp}</td></tr>`):''}<tr><td title="${esc(r.ref||'')}">${esc(r.name)}</td><td class="n">${r.unitLbl==='pc'||r.unitLbl==='sheet'||r.unitLbl==='board'?r.qty:(+r.qty).toFixed(r.unitLbl==='m'?1:2)} ${r.unitLbl==='pc'?'':r.unitLbl}</td><td class="n"><span class="pin">€<input type="number" inputmode="decimal" step="0.01" min="0" data-price="${r.k}" value="${r.mine?r.unit:''}" placeholder="${r.dflt!=null?r.dflt.toFixed(2):'—'}" aria-label="Price each for ${esc(r.name)}"></span></td><td class="n">${r.total!=null?eur(r.total):'—'}</td><td class="note">${r.mine?'your price':r.est?'typical':esc(r.src)}</td></tr>`).join('')}</tbody></table></div>`}
 document.addEventListener('change',e=>{const el=e.target,k=el&&el.dataset&&el.dataset.price;if(!k)return;if(!S.opts.prices||typeof S.opts.prices!=='object')S.opts.prices={};const v=parseFloat(el.value);if(v>0)S.opts.prices[k]=v;else delete S.opts.prices[k];saveSoon();snap();dirty.cut=true;if(ui.tab==='cut'){const sc=document.getElementById('v-cut'),y=sc.scrollTop,py=window.scrollY;renderCut();sc.scrollTop=y;window.scrollTo(0,py)}toast(v>0?'Price updated':'Back to the guide price')});
@@ -4064,7 +4095,9 @@ function renderSheets(){
     sp.groups.forEach(g=>{const L=sp.cfg.L,used=g.bars.reduce((a,b)=>a+b.used,0)/(g.bars.length*L);hb+=`<h3 style="font-size:14px"><span class="sw" style="background:${FIN[g.fin]?.base}"></span> ${esc(FIN[g.fin]?.name||'')} ${g.t} mm · ${g.W}×${L} · ${g.bars.length} board${g.bars.length>1?'s':''} · ${(used*100).toFixed(0)}% used</h3><div class="bars">`+
       g.bars.map((b,i)=>`<div class="sbar" style="height:${Math.round(22+g.W/12)}px">${b.pl.map(c=>`<span class="spc" style="left:${(c.x/L*100).toFixed(2)}%;width:${(c.len/L*100).toFixed(2)}%;background:${FIN[c.p.fin].base};color:${lum(FIN[c.p.fin].base)<.45?'#fff':'#111'}"><i style="height:${(c.rip/g.W*100).toFixed(1)}%"></i><b>${c.p.id}</b><small>${f0(c.len)}${c.rip?` · rip ${c.rip}`:''}</small></span>`).join('')}<em>${Math.round(L-b.used)} mm left</em></div>`).join('')+`</div>`});
     hb+=`<p class="note">Blue lines are the factory edges. Hatched strips are ripped off the back edge and become offcuts.</p>`}
-  let h=`<h2>Sheets</h2>${hb}<p class="lede">A first-pass nesting estimate per material, allowing for saw kerf (${sawCfg().kerf} mm) and edge trim (${sawCfg().trim} mm). Wood finishes keep their grain along the sheet length. Use it to order material; your panel shop will optimise further.</p>`;
+  if(ui.saver&&ui.saver.sig!==JSON.stringify(S))ui.saver=null;
+  const sv=`<div class="pbud" style="margin:0 0 14px"><button type="button" class="btn" data-act="saverS">${ui.saver?'Check again':'Find a depth that wastes less'}</button><span>Slightly shallower (or deeper) cabinets can fit more parts on a sheet. This tries every depth and shows the ones that save a sheet.</span></div>${ui.saver?saverHTML():''}`;
+  let h=`<h2>Sheets</h2>${sv}${hb}<p class="lede">A first-pass nesting estimate per material, allowing for saw kerf (${sawCfg().kerf} mm) and edge trim (${sawCfg().trim} mm). Wood finishes keep their grain along the sheet length. Use it to order material; your panel shop will optimise further.</p>`;
   ns.forEach(n=>{const avg=n.sheets.length?n.sheets.reduce((a,s)=>a+s.used,0)/n.sheets.length:0;
     h+=`<h3><span class="sw" style="background:${FIN[n.fin]?.base}"></span> ${esc(n.name)} mm · ${n.sh.L}×${n.sh.W} · ${n.sheets.length} sheet${n.sheets.length===1?'':'s'}</h3>`;
     if(n.over.length)h+=`<p class="lede" style="color:var(--warn)">Too big for this sheet: ${[...new Set(n.over.map(p=>p.id+' '+p.type+' ('+f0(p.L)+'×'+f0(p.Wd)+')'))].join(', ')}. Pick a larger sheet or plan a joint.</p>`;
@@ -4310,7 +4343,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.56';
+const APP_VERSION='v0.57';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
@@ -4877,6 +4910,8 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'phaseUse':S.opts.part=Object.assign({},S.opts.part||{},{on:'1',secs:a.split(',').map(Number)});changed(true);toast('Showing only this phase — the cut list, sheets, guide and PDF follow. Choose “Everything” at the top to go back.');{const v=document.getElementById('v-cut');if(v)v.scrollTop=0;window.scrollTo(0,0)}break;
     case 'shop':S.opts.shop=a;ui.saver=null;changed(true);break;
     case 'saver':sheetSaver();dirty.cut=true;renderCut();{const t=document.getElementById('price');if(t)t.scrollIntoView({block:'start'})}break;
+    case 'evenDoors':evenDoors();break;
+    case 'saverS':sheetSaver();renderSheets();break;
     case 'saverUse':S.room.D=+a;ui.saver=null;changed(true);toast(`Cabinet depth is now ${a} mm`);break;
     case 'stkAll':setStockAll(a==='1');changed(true);toast(a==='1'?'Melamine parts now come from 250 cm furniture panels where they fit':'Melamine parts now come from full sheets');break;
     case 'toPrice':{const t=document.getElementById('price');if(t)t.scrollIntoView({behavior:'smooth',block:'start'});break}

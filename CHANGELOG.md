@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.57
+
+- **Even out door widths:** when doors in different columns are almost the same width (within about 5 %), Layout → Columns shows them with a "Make them the same" button. It nudges the column widths (the total stays the same) until those doors are exactly equal.
+- **Find a depth that wastes less** (Sheets tab, and Sheet saver under the price): tries every cabinet depth from 100 mm shallower to 20 mm deeper, and shows for each sheet count the deepest depth that reaches it, with how much of the sheets is used, the board cost, and warnings (less than 560 mm for clothes, shorter drawer runners). One tap uses that depth.
+- Microcement is now priced at € 45 per m² (visible sides only).
+
 ## v0.56
 
 Fixes from an audit of the cut list, lofting, sheets, build guide and measurements.
