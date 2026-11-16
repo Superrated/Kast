@@ -749,14 +749,14 @@ details.mx{grid-column:1/-1}
 @media (prefers-reduced-motion:reduce){#splash{animation-duration:.01s}}
 </style>
 
-<div id="splash" role="status" aria-label="Kast v0.57 is loading"><b>Kast</b><span>v0.57</span></div>
+<div id="splash" role="status" aria-label="Kast v0.58 is loading"><b>Kast</b><span>v0.58</span></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
 
 <div class="app" data-tab="elev">
   <header class="top">
     <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-    <div class="brand" title="Kast v0.57">Kast<small>built-in furniture, drawn and cut · v0.57</small></div>
+    <div class="brand" title="Kast v0.58">Kast<small>built-in furniture, drawn and cut · v0.58</small></div>
     <nav class="tabs" id="tabs">
       <button data-act="tab" data-a="elev" class="on">Elevation</button>
       <button data-act="tab" data-a="3d">3D view</button>
@@ -3157,7 +3157,7 @@ async function exportPdf(){
   // 3a price estimate
   if(sec.price&&lastPrice){const P=lastPrice;let pg=null,y=0,x=null;const C=[70,900,1060,1250,1420],head=first=>{pg=newPage();pageFrame(pg,'Estimated price',++pn+1,name);pages.push(pg);x=pg.x;y=120;
       if(first){x.fillStyle='#F6F5F1';x.fillRect(70,y-10,PDFW-140,136);x.fillStyle=PACC;x.fillRect(70,y-10,6,136);x.fillStyle=PINK;y+=6;x.font=PF(600,54);x.fillText(eur(P.tot.all),100,y);x.font=PF(400,18);x.fillStyle='#666';x.fillText('boards, finishing and hardware · incl. 21 % VAT · Belgium',100,y+66);x.font=PF(400,18);x.fillText(`${eur(P.tot.sheets)} boards   ·   ${eur(P.tot.fin)} edge band & paint   ·   ${eur(P.tot.hw)} hardware`,100,y+92);x.fillStyle='#1D1D1F';y+=150;
-        x.font=PF(400,15);x.fillStyle='#555';wrapText(x,`Board prices looked up at Hanssens Hout, Houtshop, Houtvakman and Platenshop (the Source column shows which shop each board is priced at); Blum hinge and mounting plate at Pierard. Looked up on ${PRICE_DATE}. Lines marked “typical” (${eur(P.tot.est)} of the total) are normal trade prices that were not looked up; lines marked “your price” were typed in by you. Not included: delivery, sawing or edge-banding service, tools, TV, speakers and other equipment.`,PDFW-140).forEach(l=>{x.fillText(l,70,y);y+=21});x.fillStyle='#1D1D1F';{const MK=makerEstimate();if(MK){y+=6;x.font=PF(600,16);x.fillText(`Cabinet maker, fitted: ${eurK(MK.lo)} – ${eurK(MK.hi)} incl. 21 % VAT`,70,y);y+=24;x.font=PF(400,14);x.fillStyle='#555';wrapText(x,`Rough guide, not a quote: ${MK.parts.join(' · ')}. From Belgian price guides for fitted made-to-measure cabinets (DM-Line, Bobex). Building it yourself is about ${eurK((MK.lo+MK.hi)/2-P.tot.all)} less than the middle of that range, before your own hours, tools and delivery.`,PDFW-140).forEach(l=>{x.fillText(l,70,y);y+=20});x.fillStyle='#1D1D1F'}}y+=16}
+        x.font=PF(400,15);x.fillStyle='#555';wrapText(x,`Board prices looked up at ${Object.values(SHOPS).join(' and ')} (the Source column shows which shop each board is priced at); hardware at Pierard, Hornbach, Gamma, Hubo and two Blum webshops. Looked up on ${PRICE_DATE}. Lines marked “typical” (${eur(P.tot.est)} of the total) are normal trade prices that were not looked up; lines marked “your price” were typed in by you. Not included: delivery, sawing or edge-banding service, tools, TV, speakers and other equipment.`,PDFW-140).forEach(l=>{x.fillText(l,70,y);y+=21});x.fillStyle='#1D1D1F';{const MK=makerEstimate();if(MK){y+=6;x.font=PF(600,16);x.fillText(`Cabinet maker, fitted: ${eurK(MK.lo)} – ${eurK(MK.hi)} incl. 21 % VAT`,70,y);y+=24;x.font=PF(400,14);x.fillStyle='#555';wrapText(x,`Rough guide, not a quote: ${MK.parts.join(' · ')}. From Belgian price guides for fitted made-to-measure cabinets (DM-Line, Bobex). Building it yourself is about ${eurK((MK.lo+MK.hi)/2-P.tot.all)} less than the middle of that range, before your own hours, tools and delivery.`,PDFW-140).forEach(l=>{x.fillText(l,70,y);y+=20});x.fillStyle='#1D1D1F'}}y+=16}
       x.fillStyle='#EFEEEA';x.fillRect(70,y-10,PDFW-140,34);x.fillStyle=PINK;x.font=PF(600,15);['ITEM','QTY','PRICE EACH','TOTAL','SOURCE'].forEach((t,i)=>x.fillText(t,C[i]+(i?0:10),y));y+=40};head(true);let last='';
     P.rows.forEach(r=>{if(y>PDFH-90)head(false);if(r.grp!==last){last=r.grp;y+=10;x.font=PF(600,13);x.fillStyle=PACC;x.fillText(r.grp.toUpperCase(),80,y);x.fillStyle=PINK;y+=26}
       x.font=PF(400,15);const nm_=wrapText(x,r.name,C[1]-C[0]-30);nm_.forEach((l,i)=>x.fillText(l,C[0]+10,y+i*18));const ex_=Math.max(0,nm_.length-1)*18;x.font=PM(14);x.fillText(`${r.unitLbl==='pc'||r.unitLbl==='sheet'||r.unitLbl==='board'?r.qty:(+r.qty).toFixed(r.unitLbl==='m'?1:2)}${r.unitLbl==='pc'?'':' '+r.unitLbl}`,C[1],y);x.fillText(r.unit!=null?'€ '+r.unit.toFixed(2):'—',C[2],y);x.fillText(r.total!=null?eur(r.total):'—',C[3],y);x.font=PF(400,14);x.fillStyle='#666';x.fillText(r.mine?'your price':r.est?'typical':r.src,C[4],y);x.fillStyle='#E5E5E5';x.fillRect(70,y+20+ex_,PDFW-140,1);x.fillStyle='#1D1D1F';y+=27+ex_})}
@@ -3530,20 +3530,94 @@ function renderCut(){
     +H.curtain.map(c=>`<tr><td><span class="sw" style="background:${FABRICS[c.col].c}"></span> Curtain, ${FABRICS[c.col].name} (2.2× fullness)</td><td class="n">${c.w} × ${c.h}</td><td class="note">${c.sec}</td></tr>`).join('')
     +H.cushion.map(c=>`<tr><td><span class="sw" style="background:${FABRICS[c.col].c}"></span> Seat cushion 80 mm foam, ${FABRICS[c.col].name} cover</td><td class="n">${c.w} × ${c.d}</td><td class="note">${c.sec}</td></tr>`).join('')+`</tbody></table></div>`}
   h+=`<h3>Hardware</h3><div class="tw"><table class="cut hwt" style="min-width:480px"><thead><tr><th>Item</th><th>Qty</th><th>Notes</th></tr></thead><tbody>${hw.map(r=>`<tr><td>${esc(r[0])}</td><td class="n">${r[1]}</td><td class="note">${esc(r[2])}</td></tr>`).join('')}</tbody></table></div>`;
-  lastPrice=priceRows(nest,sp,hw,mats);lastPrice.nest=nest;lastPrice.shops=['best','hh','hs','hv'].map(k=>{const t=k===lastPrice.tot.shop?lastPrice.tot:priceRows(nest,sp,hw,mats,k).tot;return {k,total:t.all,fb:t.fb}});lastAlt=null;
+  lastPrice=priceRows(nest,sp,hw,mats);lastPrice.nest=nest;lastPrice.shops=['best',...Object.keys(SHOPS)].map(k=>{const t=k===lastPrice.tot.shop?lastPrice.tot:priceRows(nest,sp,hw,mats,k).tot;return {k,total:t.all,fb:t.fb}});lastAlt=null;
   if(ROLES.some(([k])=>k!=='back'&&S.mat[k].type==='melamine')){const keep=S.opts.stock,was=!!(keep&&keep.on);try{setStockAll(!was);lastAlt={on:!was,total:priceRows(nestAll(gs),stockPlan(gs),hw,mats).tot.all}}catch(e){}S.opts.stock=keep;if(keep===undefined)delete S.opts.stock}
   h+=priceHTML(lastPrice);
   if(PRICING)return;
   el.innerHTML=partBar()+h;budSoon();{const pv=document.getElementById('pstatv');if(pv)pv.textContent=eur(lastPrice.tot.all)}
 }
 /* ===== Price guide — Belgium, incl. 21 % VAT. Board prices: Hanssens Hout webshop; Blum hinge + plate: Pierard. Checked 13 Nov 2026. est:1 = typical trade price, not looked up ===== */
-const PRICE_DATE='13 November 2026',HH='Hanssens Hout',PR='Pierard';
-const PRICE_M2={melamine:{p:8.66,t:18,src:HH,ref:'Krono melamine 18 mm, 2800×2070: € 50.21 a sheet'},mdfpaint:{p:13.14,t:18,src:HH,ref:'Unilin MDF 18 mm, 2440×1220: € 39.12 a sheet'},mdfmicro:{p:13.14,t:18,src:HH,ref:'Unilin MDF 18 mm, 2440×1220: € 39.12 a sheet (the microcement is priced under Finishing)'},veneer:{p:44.99,t:19,src:HH,ref:'Decospan oak-veneered MDF 19 mm, 2500×1240: € 139.46 a sheet'},ply:{p:51.67,t:18,src:HH,ref:'Birch plywood WBP B/BB 18 mm, 2500×1250: € 161.46 a sheet'},solid:{p:103.48,t:19,src:HH,ref:'Finger-jointed European oak panel 19 mm: € 103.48 per m²'},hdf:{p:13.18,t:8,src:HH,ref:'Unilin white melamine 8 mm: € 13.18 per m² (3 mm white hardboard: € 4.19 per m²)'},hpl:{p:75,t:19,est:1,ref:'HPL / Fenix on MDF — not looked up'}};
-const PRICE_STOCK={200:9.35,250:10.78,300:12.29,400:15.34,500:18.59,550:19.97,600:21.54,800:26.74}; // Hanssens Hout, white 18 mm furniture panels 2500 long
-const PRICE_HW=[[/Round pod: bendable plywood/,55,1],[/Round pod: ribbed cushion/,140,1],[/contrast cubbies/,14,1,'','m2'],[/Centre support for the wardrobe rail/,4.5,1],[/colour-drenched level/,14,1,'','m2'],[/Levelling shims/,8,1],[/Push-to-open latches/,3.5,1],[/library ladder/i,390,1],[/Heavy-duty full-extension runners/,42,1],[/cable chain/,14,1],[/Power socket inside/,16,1],[/trouser rack/,62,1],[/shoe rack/,48,1],[/wire basket/,34,1],[/wardrobe lift/,79,1],[/MODUL.*hinge/,2.4,1],[/MODUL mounting plate/,0.9,1],[/STANDARD 230M/,7.5,1],[/CLIP top BLUMOTION 110.*inset/,8.9,1],[/CLIP top 110° hinge, unsprung/,5.2,1],[/CLIP top BLUMOTION/,7.35,0,PR],[/155° zero-protrusion/,10.5,1],[/CLIP mounting plate/,1.26,0,PR],[/Clip-top hinges 110/,4.8,1],[/MOVENTO.*runners/,39,1],[/TANDEM.*runners/,27,1],[/locking devices/,3.4,1],[/TIP-ON/,6.5,1],[/Full-extension runners/,19,1],[/Minifix/,0.55,1],[/Chipboard screws/,0.04,1],[/Confirmat/,0.12,1],[/[Dd]owels/,0.04,1],[/Back nails/,0.02,1],[/Shelf supports/,0.12,1],[/Battens 45/,6,1],[/Magnetic push latches/,3.5,1],[/T-nuts/,0.35,1],[/climbing holds/,3.5,1],[/ladder rail/,48,1,'','m'],[/ladder,|Library ladder|ladder \(/,390,1],[/Chalkboard paint/,18,1,'','m2'],[/Magnetic primer/,36,1,'','m2'],[/Pegboard pegs/,15,1],[/Wardrobe rail/,9.5,1],[/plinth legs/,1.15,1],[/cabinet hangers/,6.5,1],[/connector bolts/,0.35,1],[/Steel angle/,14,1],[/grommet/,3.5,1],[/sliding door track/,85,1],[/Pocket door system/,165,1],[/Projector screen/,450,1],[/Dog cushion/,60,1],[/LED strip/,29,1],[/LED driver/,36,1],[/Furniture legs/,6.5,1],[/French cleat/,9,1],[/levelling feet/,1.5,1],[/Lip strip/,3,1],[/Curtain track/,26,1],[/Hidden door/,230,1],[/Wall fixing cleats/,3,1],[/Cork board/,22,1,'','m2'],[/acrylic mirror/,45,1],[/Busy board parts/,60,1],[/marbles/,8,1],[/mural/,14,1,'','m2'],[/Slat wall/,95,1,'','m2'],[/Picture frames/,12,1],[/planters/,14,1],[/baseplates/,8,1],[/Relief tiles/,3.5,1]];
-/* The same boards at other Belgian wood merchants (€/m², incl. VAT, looked up 13 Nov 2026) */
-const SHOPS={hh:'Hanssens Hout',hs:'Houtshop',hv:'Houtvakman',ps:'Platenshop'};
-const SHOP_M2={melamine:{hh:8.66,hs:16.20},mdfpaint:{hh:13.14,hs:15.05,hv:12.53,ps:15.52},mdfmicro:{hh:13.14,hs:15.05,hv:12.53,ps:15.52},veneer:{hh:44.99,hv:48.02},ply:{hh:51.67,hs:65.35},solid:{hh:103.48,hs:107.13},hdf3:{hh:4.19,hv:3.86}},SHOP_STOCK={hh:1,hs:1.137};
+/* ============================================================
+   Kast — all prices in one place.
+   Every price is in euro, INCLUDING 21 % Belgian VAT.
+   build.py copies this file into the app (index.html).
+   The "Update prices" button in the app starts a task that looks the
+   board prices up again at Hanssens Hout and Woodcenter and rewrites
+   the numbers in this file.
+   ============================================================ */
+
+// when the prices below were last looked up
+const PRICE_DATE='16 November 2026';
+
+// the shops boards can be priced at; 'best' means "cheapest of these per board"
+const SHOPS={hh:'Hanssens Hout',wc:'Woodcenter'};
+const PR='Pierard'; // hardware webshop for the Blum hinges and plates
+const HH=SHOPS.hh;
+
+/* Full sheets, € per m² per shop.
+   Keys are the board types of the app. hdf3 = 3 mm white hardboard. */
+const SHOP_M2={
+  melamine:{hh:8.66,wc:16.67},   // HH: Krono white 18 mm 2800×2070 · WC: Egger W1000 white 18 mm 2800×2070
+  mdfpaint:{hh:13.14,wc:13.31},  // raw MDF 18 mm (HH 2440×1220 · WC 1250×2500)
+  mdfmicro:{hh:13.14,wc:13.31},  // the same raw MDF; the microcement itself is under FINISH_PRICE
+  veneer:{hh:44.99,wc:46.04},    // oak-veneered MDF 19 mm (HH Decospan 2500×1240 · WC quarter-cut A/B 2800×2070)
+  ply:{hh:51.67},                // birch plywood WBP B/BB 18 mm — Woodcenter lists no birch plywood
+  solid:{hh:103.48},             // finger-jointed oak panel 19 mm — not at Woodcenter
+  hdf3:{hh:4.19,wc:3.68}         // white hardboard 3 mm (WC: Unalit wit 122×244)
+};
+
+/* Reference price per board type: used for thickness scaling and when no shop has it.
+   p = € per m², t = the thickness that price is for. */
+const PRICE_M2={
+  melamine:{p:8.66,t:18,src:HH,ref:'Krono melamine 18 mm, 2800×2070: € 50.21 a sheet (Hanssens Hout) · Egger W1000 18 mm: € 16.67 per m² (Woodcenter)'},
+  mdfpaint:{p:13.14,t:18,src:HH,ref:'MDF 18 mm: € 39.12 a 2440×1220 sheet (Hanssens Hout) · € 13.31 per m² (Woodcenter)'},
+  mdfmicro:{p:13.14,t:18,src:HH,ref:'MDF 18 mm, as painted MDF (the microcement is priced under Finishing)'},
+  veneer:{p:44.99,t:19,src:HH,ref:'Oak-veneered MDF 19 mm: € 139.46 a 2500×1240 sheet (Hanssens Hout) · € 266.87 a 2800×2070 sheet (Woodcenter)'},
+  ply:{p:51.67,t:18,src:HH,ref:'Birch plywood WBP B/BB 18 mm, 2500×1250: € 161.46 a sheet (Hanssens Hout)'},
+  solid:{p:103.48,t:19,src:HH,ref:'Finger-jointed European oak panel 19 mm: € 103.48 per m² (Hanssens Hout)'},
+  hdf:{p:13.18,t:8,src:HH,ref:'White melamine 8 mm: € 13.18 per m² (Hanssens Hout)'},
+  hpl:{p:75,t:19,est:1,ref:'HPL / Fenix on MDF — not looked up'}
+};
+
+/* Pre-edged white 18 mm furniture panels, 2500 mm long: € per panel, by width in mm */
+const STOCK_PRICES={
+  hh:{200:9.35,250:10.78,300:12.29,400:15.34,500:18.59,550:19.97,600:21.54,800:26.74},
+  wc:{250:12.33,300:13.65,350:15.43,400:16.64,500:20.69}
+};
+
+/* Finishing, € per unit */
+const FINISH_PRICE={
+  edge:{p:1.20,unit:'m',est:0,src:'Hubo',ref:'Iron-on edge band 22 mm, 5 m roll € 5.99 (Hubo, 16 Nov 2026)'},
+  paint:{p:6.5,unit:'m²',est:1,ref:'Typical cost of MDF primer and acrylic lacquer'},
+  micro:{p:45,unit:'m²',est:0,src:'your price',ref:'€ 45 per m² as you set it. For comparison: Silk Plaster complete kit € 27.52 per m²; Hornbach beton ciré ready mix with primer and coating ≈ € 45–55 per m² (looked up 16 Nov 2026)'}
+};
+
+/* Hardware: [pattern matched against the hardware list, € each (or per m / m²), 1 = typical price (not looked up), shop, unit]
+   Looked up 16 Nov 2026, incl. VAT:
+   Pierard — Blum CLIP top BLUMOTION 110° 71B3550 € 7.35, half overlay 71B3650 € 7.82, inset 71B3750 € 8.18, CLIP 71T3650 (no soft-close) € 4.40,
+             CLIP 155° 71T7550 € 10.78, cross mounting plate 173H7100 € 1.26, MOVENTO 500 pair € 71.52 (+ front couplings € 3.93 each),
+             TIP-ON (unit € 11.49 + holder € 2.29), Bosch beech dowels 8×40 150 pcs € 8.52, cabinet connector screw 6×31–38 € 0.80
+   keukenlade.nl — Blum TANDEM BLUMOTION 550 pair € 35.80 (without couplings) · hwt-pro.com — TANDEM locking couplings pair € 2.96
+   Hornbach — Hettich connecting screws 7×50, 50 pcs € 9.50 · Hettich plinth foot Euro 100 mm € 0.95 each
+   Gamma — HandsOn shelf supports with sleeve, 12 pcs € 6.19 · Suki adjustable cabinet hangers 150 kg, 2 pcs € 8.69 (rail extra) */
+const PRICE_HW=[[/Round pod: bendable plywood/,55,1],[/Round pod: ribbed cushion/,140,1],[/contrast cubbies/,14,1,'','m2'],[/Centre support for the wardrobe rail/,4.5,1],[/colour-drenched level/,14,1,'','m2'],[/Levelling shims/,8,1],[/Push-to-open latches/,3.5,1],[/library ladder/i,390,1],[/Heavy-duty full-extension runners/,42,1],[/cable chain/,14,1],[/Power socket inside/,16,1],[/trouser rack/,62,1],[/shoe rack/,48,1],[/wire basket/,34,1],[/wardrobe lift/,79,1],[/MODUL.*hinge/,2.4,1],[/MODUL mounting plate/,0.9,1],[/STANDARD 230M/,7.5,1],[/CLIP top BLUMOTION 110.*inset/,8.18,0,PR],[/CLIP top 110° hinge, unsprung/,4.40,0,PR],[/CLIP top BLUMOTION 110° hinge, half overlay/,7.82,0,PR],[/CLIP top BLUMOTION/,7.35,0,PR],[/155° zero-protrusion/,10.78,0,PR],[/CLIP mounting plate/,1.26,0,PR],[/Clip-top hinges 110/,4.8,1],[/MOVENTO.*runners/,71.52,0,PR],[/TANDEM.*runners/,35.80,0,'keukenlade.nl'],[/locking devices/,2.96,0,'hwt-pro.com'],[/TIP-ON/,13.78,0,PR],[/Full-extension runners/,19,1],[/Minifix/,0.55,1],[/Chipboard screws/,0.04,1],[/Confirmat/,0.19,0,'Hornbach'],[/[Dd]owels/,0.06,0,PR],[/Back nails/,0.02,1],[/Shelf supports/,0.52,0,'Gamma'],[/Battens 45/,6,1],[/Magnetic push latches/,3.5,1],[/T-nuts/,0.35,1],[/climbing holds/,3.5,1],[/ladder rail/,48,1,'','m'],[/ladder,|Library ladder|ladder \(/,390,1],[/Chalkboard paint/,18,1,'','m2'],[/Magnetic primer/,36,1,'','m2'],[/Pegboard pegs/,15,1],[/Wardrobe rail/,9.5,1],[/plinth legs/,0.95,0,'Hornbach'],[/cabinet hangers/,4.35,0,'Gamma'],[/connector bolts/,0.80,0,PR],[/Steel angle/,14,1],[/grommet/,3.5,1],[/sliding door track/,85,1],[/Pocket door system/,165,1],[/Projector screen/,450,1],[/Dog cushion/,60,1],[/LED strip/,29,1],[/LED driver/,36,1],[/Furniture legs/,6.5,1],[/French cleat/,9,1],[/levelling feet/,1.5,1],[/Lip strip/,3,1],[/Curtain track/,26,1],[/Hidden door/,230,1],[/Wall fixing cleats/,3,1],[/Cork board/,22,1,'','m2'],[/acrylic mirror/,45,1],[/Busy board parts/,60,1],[/marbles/,8,1],[/mural/,14,1,'','m2'],[/Slat wall/,95,1,'','m2'],[/Picture frames/,12,1],[/planters/,14,1],[/baseplates/,8,1],[/Relief tiles/,3.5,1]];
+const HANDLE_PRICE={wood:1.2,other:6.5}; // handles without their own rule: cheap wooden ones in budget mode, otherwise this
+
+/* Cabinet maker, fitted: € per metre of cabinet EXCLUDING VAT, by front material (DM-Line and Bobex price guides) */
+const MAKER_PRICE={perMetre:{melamine:[1200,1600],mdfpaint:[1400,1750],mdfmicro:[1600,2100],hpl:[1400,1750],veneer:[1600,2200],ply:[1600,2200],solid:[1800,3500]},other:[1200,1750],drawer:[300,350],light:[200,400]};
+
+/* "Update prices" — starts the cloud task that looks the board prices up again at the shops in prices.js and republishes the app */
+const PRICE_TASK='trig_01PyPs4zoDR2bGAJ6uxmfCRX';let priceMcp=null;
+try{if(window.claude&&typeof window.claude.use==='function')window.claude.use('mcp').then(m=>{priceMcp=m||null;if(m&&ui.tab==='cut'){dirty.cut=true;try{renderCut()}catch(e){}}}).catch(()=>{})}catch(e){}
+function priceUpdHTML(){const st=ui.priceUpd||'',msg={busy:'Starting…',started:'The price check has started. It takes about 15–30 minutes; then the app is updated by itself — reload it to see the new prices.',reauth:'Claude Code needs to be connected again: open claude.ai → Settings → Connectors, then try again.',noconn:'This needs the Claude Code connector in your claude.ai account (Settings → Connectors).',approval:'Claude asks you to allow this the first time — tap the button again and choose Allow.',policy:'Your organisation does not allow this here.',fail:'The price check could not be started. Try again in a minute.',maybe:'Not sure the price check started — wait a few minutes before trying again.'}[st]||'';
+  if(!priceMcp)return `<div class="pbud"><span class="pbok">Prices</span><span>Last looked up on ${PRICE_DATE} at ${Object.values(SHOPS).join(' and ')}. To look them up again, open the app in Claude and use “Update prices”.</span></div>`;
+  return `<div class="pbud"><button type="button" class="btn" data-act="priceUpd" ${st==='busy'||st==='started'?'disabled':''}>Update prices</button><span>${msg||`Looks every board price up again at ${Object.values(SHOPS).join(' and ')} (last time: ${PRICE_DATE}), saves them in the price list and updates the app.`}</span></div>`}
+async function priceUpd(){if(!priceMcp||ui.priceUpd==='busy')return;ui.priceUpd='busy';dirty.cut=true;renderCut();
+  try{await priceMcp.callTool('Claude Code Remote','fire_trigger',{trigger_id:PRICE_TASK,text:'Started from the Update prices button in the app.'});ui.priceUpd='started'}
+  catch(e){const c=e&&e.code;ui.priceUpd=c==='needs_reauth'?'reauth':(c==='server_not_connected'||c==='server_not_found'||c==='not_in_manifest')?'noconn':(c==='approval_required'||c==='not_granted'||c==='consent_required'||c==='cancelled')?'approval':c==='blocked_by_policy'?'policy':(c==='server_unavailable'||c==='upstream_error')?'maybe':'fail'}
+  dirty.cut=true;if(ui.tab==='cut')renderCut()}
+function stockPrice(W,shop){const one=k=>{const t=STOCK_PRICES[k];if(!t)return null;const ws=Object.keys(t).map(Number),w=ws.reduce((a,b)=>Math.abs(b-W)<Math.abs(a-W)?b:a);return {u:t[w]*(W/w),w,src:SHOPS[k]}};
+  if(shop==='best'){const r=Object.keys(STOCK_PRICES).map(one).filter(Boolean).sort((a,b)=>a.u-b.u)[0];return Object.assign(r,{fb:false})}const r=one(shop);return r?Object.assign(r,{fb:false}):Object.assign(one('hh'),{fb:true})}
 function shopPrice(key,shop){const t=SHOP_M2[key];if(!t)return null;if(shop==='best'){const k=Object.keys(t).reduce((a,b)=>t[b]<t[a]?b:a);return {p:t[k],src:SHOPS[k],fb:false}}return t[shop]!=null?{p:t[shop],src:SHOPS[shop],fb:false}:{p:t.hh,src:SHOPS.hh,fb:true}}
 const curShop=()=>SHOPS[S.opts.shop]||S.opts.shop==='best'?S.opts.shop:'best';
 const pKey=k=>String(k).replace(/[^A-Za-z0-9]+/g,'_');
@@ -3551,13 +3625,13 @@ function priceRows(nest,sp,hw,mats,shopO){const shop=shopO||curShop();let fbN=0;
   const add=(grp,key,name,qty,unitLbl,unit,src,est,ref)=>{const k=pKey(key),o=+ov[k]>0?+ov[k]:null,u=o!=null?o:unit;rows.push({grp,k,name,qty,unitLbl,unit:u,dflt:unit,mine:o!=null,src:o!=null?'your price':(est?'typical':src),est:!!est&&o==null,ref,total:u!=null?u*qty:null})};
   nest.forEach(n=>{const P=PRICE_M2[n.mt]||PRICE_M2.melamine,sh=n.sh||{},area=(sh.L||2800)*(sh.W||2070)/1e6,f=FIN[n.fin]||{};const thin=n.mt==='hdf'&&+n.t<=4,sq=shopPrice(thin?'hdf3':n.mt==='hdf'?'':n.mt,shop);if(sq&&sq.fb)fbN++;let m2=(sq?sq.p:P.p)*(thin?1:(1+0.6*((+n.t||P.t)/P.t-1))),est=!thin&&(!!P.est||Math.abs((+n.t||P.t)-P.t)>1.5);if(n.mt==='veneer'&&n.fin!=='oak'){m2*=n.fin==='walnut'?1.35:1.15;est=true}
     const cnt=n.sheets.length+(n.over&&n.over.length?1:0);if(cnt)add('Sheets','m_'+n.mt+'_'+n.fin+'_'+n.t,`${n.name} mm sheet, ${n.sheet.replace('x',' × ')}`,cnt,'sheet',Math.round(m2*area*100)/100,sq?sq.src:P.src,est,P.ref)});
-  (sp.groups||[]).forEach(g=>{const white=(FIN[g.fin]||{}).ral&&lum((FIN[g.fin]||{}).base||'#fff')>0.8,L=(sp.cfg&&sp.cfg.L)||2500,ws=Object.keys(PRICE_STOCK).map(Number),w=ws.reduce((a,b)=>Math.abs(b-g.W)<Math.abs(a-g.W)?b:a);const sf_=SHOP_STOCK[shop];if(shop!=='best'&&sf_==null)fbN++;let u=PRICE_STOCK[w]*(g.W/w)*(L/2500)*(1+0.6*((+g.t||18)/18-1))*(shop==='best'?1:(sf_||1));if(!white)u*=2.1;
-    add('Sheets','s_'+g.fin+'_'+g.t+'_'+g.W,`${FIN[g.fin]?.name||''} ${g.t} mm pre-edged furniture panel, ${g.W} × ${L}`,g.bars.length,'board',Math.round(u*100)/100,shop!=='best'&&sf_!=null?SHOPS[shop]:HH,!white||Math.abs(w-g.W)>5||+g.t!==18||L!==2500,'White 18 mm furniture panels 2500 long: 200 € 9.35 · 300 € 12.29 · 400 € 15.34 · 500 € 18.59 · 600 € 21.54 · 800 € 26.74')});
+  (sp.groups||[]).forEach(g=>{const white=(FIN[g.fin]||{}).ral&&lum((FIN[g.fin]||{}).base||'#fff')>0.8,L=(sp.cfg&&sp.cfg.L)||2500,sq=stockPrice(g.W,shop);if(sq.fb)fbN++;const w=sq.w;let u=sq.u*(L/2500)*(1+0.6*((+g.t||18)/18-1));if(!white)u*=2.1;
+    add('Sheets','s_'+g.fin+'_'+g.t+'_'+g.W,`${FIN[g.fin]?.name||''} ${g.t} mm pre-edged furniture panel, ${g.W} × ${L}`,g.bars.length,'board',Math.round(u*100)/100,sq.src,!white||Math.abs(w-g.W)>5||+g.t!==18||L!==2500,'White 18 mm furniture panels 2500 long — '+Object.entries(STOCK_PRICES).map(([k,t])=>SHOPS[k]+': '+Object.entries(t).map(([a,b])=>a+' € '+b).join(' · ')).join(' | '))});
   let band=-(sp.saved||0),paint=0,micro=0;Object.values(mats||{}).forEach(m=>{if(!m.paint&&!m.micro)band+=m.band||0;if(m.paint)paint+=(m.area||0)*2+(m.peri||0);if(m.micro)micro+=(m.mA||0)+(m.vis||0)});
-  if(band>0.5)add('Finishing','edge','Edge banding (ABS 1 mm or veneer), incl. 10 % waste',Math.ceil(band*1.1),'m',0.95,'',1,'Not looked up — Hanssens Hout lists no edge band online');
-  if(micro>0.2)add('Finishing','micro','Microcement on the visible sides (front face + visible edges): primer, base coat, 2 finish coats, PU varnish, incl. 15 % waste',Math.ceil(micro*1.15),'m²',45,'your price',0,'€ 45 per m² as you set it. For comparison: Silk Plaster complete kit € 27.52 per m²; Hornbach beton ciré ready mix with primer and coating ≈ € 45–55 per m² (looked up 16 Nov 2026)');
-  if(paint>0.5)add('Finishing','paint',false?'':'Primer + two coats of lacquer for the painted MDF',Math.ceil(paint),'m²',6.5,'',1,'Typical cost of MDF primer and acrylic lacquer');
-  hw.forEach((r,i)=>{const nm=String(r[0]),q=r[1];if(/Finger (hole|slot|groove)|Speaker baffles|Back panel in groove|Open doorway|groove pull|Handleless/i.test(nm))return;let rule=PRICE_HW.find(x=>x[0].test(nm));if(!rule&&/handle|pull|knob|grip|cup|profile|bar/i.test(nm))rule=[null,isBudget()&&isWoodHandle(S.opts.handle)?1.2:6.5,1];
+  if(band>0.5)add('Finishing','edge','Edge banding (ABS 1 mm or veneer), incl. 10 % waste',Math.ceil(band*1.1),'m',FINISH_PRICE.edge.p,FINISH_PRICE.edge.src||'',FINISH_PRICE.edge.est,FINISH_PRICE.edge.ref);
+  if(micro>0.2)add('Finishing','micro','Microcement on the visible sides (front face + visible edges): primer, base coat, 2 finish coats, PU varnish, incl. 15 % waste',Math.ceil(micro*1.15),'m²',FINISH_PRICE.micro.p,FINISH_PRICE.micro.src||'',FINISH_PRICE.micro.est,FINISH_PRICE.micro.ref);
+  if(paint>0.5)add('Finishing','paint',false?'':'Primer + two coats of lacquer for the painted MDF',Math.ceil(paint),'m²',FINISH_PRICE.paint.p,FINISH_PRICE.paint.src||'',FINISH_PRICE.paint.est,FINISH_PRICE.paint.ref);
+  hw.forEach((r,i)=>{const nm=String(r[0]),q=r[1];if(/Finger (hole|slot|groove)|Speaker baffles|Back panel in groove|Open doorway|groove pull|Handleless/i.test(nm))return;let rule=PRICE_HW.find(x=>x[0].test(nm));if(!rule&&/handle|pull|knob|grip|cup|profile|bar/i.test(nm))rule=[null,isBudget()&&isWoodHandle(S.opts.handle)?HANDLE_PRICE.wood:HANDLE_PRICE.other,1];
     let qty=typeof q==='number'?q:null,unitLbl='pc';if(qty==null){const sq=String(q),a=parseFloat(sq);if(/m²/.test(sq)){qty=a;unitLbl='m²'}else if(/mm/.test(sq)){qty=a/1000;unitLbl='m'}else if(isFinite(a))qty=a;else if(sq==='set')qty=1;else return}
     if(rule&&rule[4]==='m'&&unitLbl!=='m'){unitLbl='pc'}if(!(qty>0))return;
     if(!rule){rows.push({grp:'Hardware',k:pKey('h_'+nm.slice(0,40)),name:nm,qty,unitLbl,unit:(+ov[pKey('h_'+nm.slice(0,40))]>0?+ov[pKey('h_'+nm.slice(0,40))]:null),dflt:null,mine:+ov[pKey('h_'+nm.slice(0,40))]>0,src:+ov[pKey('h_'+nm.slice(0,40))]>0?'your price':'not priced',est:false,total:+ov[pKey('h_'+nm.slice(0,40))]>0?+ov[pKey('h_'+nm.slice(0,40))]*qty:null});return}
@@ -3667,12 +3741,12 @@ const isBudget=()=>!!budgetKind();
    wall units in board material € 1,200–1,750 per running metre fitted, excl. VAT (open € 1,100, hinged doors € 1,600); veneer about € 1,600–2,200, solid wood € 1,800–3,500;
    drawers about € 350 each; LED € 200–400 per lit zone; sloped ceilings 20–40 % more */
 function makerEstimate(){const G=bgeo(),qs=G.secs.filter(q=>!q.panel);if(!qs.length)return null;const ps=partSet(),use=qs.filter(q=>!ps||ps.has(q.i)),m=use.reduce((a,q)=>a+(q.bR-q.bL),0)/1000;if(!(m>0.2))return null;
-  const ft=S.mat.front.type,R={melamine:[1200,1600],mdfpaint:[1400,1750],mdfmicro:[1600,2100],hpl:[1400,1750],veneer:[1600,2200],ply:[1600,2200],solid:[1800,3500]}[ft]||[1200,1750];
+  const ft=S.mat.front.type,R=MAKER_PRICE.perMetre[ft]||MAKER_PRICE.other;
   let tot=0,op=0;use.forEach(q=>(q.zones||[]).forEach(zr=>{const a=q.w*(zr.h||0),z=zr.z||{};tot+=a;if(z.type==='open'||z.type==='opening')op+=a}));const openSh=tot?op/tot:0,of=openSh>0.5?0.8:1;
   const tops=use.flatMap(q=>[q.top(q.bL),q.top(q.bR)]),slope=Math.max(...tops)-Math.min(...tops)>150,sf=slope?[1.2,1.4]:[1,1];
   const dr=G.fronts.filter(f=>f.kind==='drawer'&&(!ps||ps.has(f.sec))).length,led=(G.H.led||[]).length,parts=[];
   let lo=m*R[0]*of*sf[0],hi=m*R[1]*of*sf[1];parts.push(`${m.toFixed(1)} m of cabinet at € ${Math.round(R[0]*of).toLocaleString('en-GB')}–${Math.round(R[1]*of).toLocaleString('en-GB')} a metre${openSh>0.5?' (mostly open shelving)':''}`);if(slope)parts.push('sloped ceiling: 20–40 % more');
-  if(dr){lo+=dr*300;hi+=dr*350;parts.push(`${dr} drawer${dr>1?'s':''} at about € 300–350 each`)}if(led){lo+=led*200;hi+=led*400;parts.push(`${led} lit level${led>1?'s':''} at € 200–400`)}
+  if(dr){lo+=dr*MAKER_PRICE.drawer[0];hi+=dr*MAKER_PRICE.drawer[1];parts.push(`${dr} drawer${dr>1?'s':''} at about € ${MAKER_PRICE.drawer[0]}–${MAKER_PRICE.drawer[1]} each`)}if(led){lo+=led*MAKER_PRICE.light[0];hi+=led*MAKER_PRICE.light[1];parts.push(`${led} lit level${led>1?'s':''} at € ${MAKER_PRICE.light[0]}–${MAKER_PRICE.light[1]}`)}
   return {lo:lo*1.21,hi:hi*1.21,parts,m}}
 const eurK=v=>'€ '+(Math.round(v/100)*100).toLocaleString('en-GB');
 function makerHTML(t){const M=makerEstimate();if(!M)return '';const mid=(M.lo+M.hi)/2,w=Math.max(4,Math.min(100,t.all/M.hi*100));
@@ -3722,9 +3796,9 @@ function priceHTML(P){const t=P.tot;let last='';
   ${lastAlt?(()=>{const on=!lastAlt.on,a=on?t.all:lastAlt.total,b=on?lastAlt.total:t.all;return `<div class="pbud"><span>Buy the melamine as</span><div class="seg" role="group"><button type="button" class="${on?'':'on'}" data-act="stkAll" data-a="0">Full sheets · ${eur(b)}</button><button type="button" class="${on?'on':''}" data-act="stkAll" data-a="1">Furniture panels 250 cm · ${eur(a)}</button></div><span>${a<b-1?'Furniture panels are cheaper here and come with the long edges already banded.':b<a-1?'Full sheets are cheaper here; furniture panels save sawing and edge banding.':'About the same price.'}</span></div>`})():''}
   ${makerHTML(t)}
   ${P.shops?`<div class="pbud"><span class="pbok">Boards from</span><div class="seg" role="group">${P.shops.map(o=>`<button type="button" class="${t.shop===o.k?'on':''}" data-act="shop" data-a="${o.k}">${o.k==='best'?'Cheapest per board':SHOPS[o.k]} · ${eur(o.total)}</button>`).join('')}</div><span>${t.shop==='best'?'Each board is priced at the cheapest of the shops that list it. Buying from several shops means several deliveries.':t.fb?`${SHOPS[t.shop]} does not list ${t.fb} of these boards (or I did not find them), so those use the Hanssens Hout price.`:`All boards priced at ${SHOPS[t.shop]}.`}</span></div>`:''}
-  <div id="budcard" class="bud">${budHTML()}</div>
+  ${priceUpdHTML()}<div id="budcard" class="bud">${budHTML()}</div>
   <div class="pbud"><button type="button" class="btn" data-act="saver">${ui.saver?'Recalculate sheet saver':'Sheet saver'}</button><span>Tries every cabinet depth up to 100 mm shallower (and 20 mm deeper) and shows which ones need fewer sheets.</span></div>${ui.saver?saverHTML():''}${bgeo().partial?'':phasesHTML()}${P.nest?offcutHTML(P.nest):''}
-  <p class="hintp" style="margin:0">Board prices were looked up at Hanssens Hout, Houtshop, Houtvakman and Platenshop, and the Blum hinge and mounting plate at Pierard, on ${PRICE_DATE}; the Source column shows which shop each board is priced at. Lines marked “typical” (${eur(t.est)} of the total) are normal trade prices that were not looked up — type your own price in any row to replace it.${t.none?` ${t.none} line${t.none>1?'s have':' has'} no price yet.`:''} Not included: delivery, sawing or edge-banding service, tools, TV, speakers and other equipment.</p></div>
+  <p class="hintp" style="margin:0">Board prices were looked up at ${Object.values(SHOPS).join(' and ')}, and the hardware at Pierard, Hornbach, Gamma, Hubo and two Blum webshops, on ${PRICE_DATE}; the Source column shows the shop of each line. All prices are in src/prices.js. Lines marked “typical” (${eur(t.est)} of the total) are normal trade prices that were not looked up — type your own price in any row to replace it.${t.none?` ${t.none} line${t.none>1?'s have':' has'} no price yet.`:''} Not included: delivery, sawing or edge-banding service, tools, TV, speakers and other equipment.</p></div>
   <div class="tw"><table class="cut price" style="min-width:560px"><thead><tr><th>Item</th><th>Qty</th><th>Price each</th><th>Total</th><th>Source</th></tr></thead><tbody>${P.rows.map(r=>`${r.grp!==last?(last=r.grp,`<tr class="grp"><td colspan="5">${r.grp}</td></tr>`):''}<tr><td title="${esc(r.ref||'')}">${esc(r.name)}</td><td class="n">${r.unitLbl==='pc'||r.unitLbl==='sheet'||r.unitLbl==='board'?r.qty:(+r.qty).toFixed(r.unitLbl==='m'?1:2)} ${r.unitLbl==='pc'?'':r.unitLbl}</td><td class="n"><span class="pin">€<input type="number" inputmode="decimal" step="0.01" min="0" data-price="${r.k}" value="${r.mine?r.unit:''}" placeholder="${r.dflt!=null?r.dflt.toFixed(2):'—'}" aria-label="Price each for ${esc(r.name)}"></span></td><td class="n">${r.total!=null?eur(r.total):'—'}</td><td class="note">${r.mine?'your price':r.est?'typical':esc(r.src)}</td></tr>`).join('')}</tbody></table></div>`}
 document.addEventListener('change',e=>{const el=e.target,k=el&&el.dataset&&el.dataset.price;if(!k)return;if(!S.opts.prices||typeof S.opts.prices!=='object')S.opts.prices={};const v=parseFloat(el.value);if(v>0)S.opts.prices[k]=v;else delete S.opts.prices[k];saveSoon();snap();dirty.cut=true;if(ui.tab==='cut'){const sc=document.getElementById('v-cut'),y=sc.scrollTop,py=window.scrollY;renderCut();sc.scrollTop=y;window.scrollTo(0,py)}toast(v>0?'Price updated':'Back to the guide price')});
 function csv(){const gs=groupsCache||groupPanels(bgeo());const q=v=>`"${String(v).replace(/"/g,'""')}"`;
@@ -4343,7 +4417,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.57';
+const APP_VERSION='v0.58';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
@@ -4911,6 +4985,7 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'shop':S.opts.shop=a;ui.saver=null;changed(true);break;
     case 'saver':sheetSaver();dirty.cut=true;renderCut();{const t=document.getElementById('price');if(t)t.scrollIntoView({block:'start'})}break;
     case 'evenDoors':evenDoors();break;
+    case 'priceUpd':priceUpd();break;
     case 'saverS':sheetSaver();renderSheets();break;
     case 'saverUse':S.room.D=+a;ui.saver=null;changed(true);toast(`Cabinet depth is now ${a} mm`);break;
     case 'stkAll':setStockAll(a==='1');changed(true);toast(a==='1'?'Melamine parts now come from 250 cm furniture panels where they fit':'Melamine parts now come from full sheets');break;

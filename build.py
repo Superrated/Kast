@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Builds the standalone, installable Kast app (index.html) from src/kast.html.
 
-src/kast.html is the single source file of the app (page content without the
-<html>/<head>/<body> wrapper). Run:  python3 build.py
+src/kast.html is the source of the app (page content without the
+<html>/<head>/<body> wrapper); src/prices.js holds every price and is
+copied into it at the /*@PRICES@*/ marker. Run:  python3 build.py
 """
 import re, pathlib
 root = pathlib.Path(__file__).parent
@@ -10,6 +11,10 @@ src = (root / "src" / "kast.html").read_text(encoding="utf-8")
 version = re.search(r"const APP_VERSION='([^']+)'", src).group(1)
 # the version shown in the header and on the loading screen comes from APP_VERSION
 src = src.replace("__KAST_VERSION__", version)
+# all prices live in src/prices.js; they are copied into the app here
+prices = (root / "src" / "prices.js").read_text(encoding="utf-8")
+assert "/*@PRICES@*/" in src, "price marker missing in src/kast.html"
+src = src.replace("/*@PRICES@*/", prices)
 
 # the first lines of the source (title, meta, font links) belong in <head>
 head_lines, body_lines, in_head = [], [], True

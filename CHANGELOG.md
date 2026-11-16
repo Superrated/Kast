@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.58
+
+- **All prices are in one file now: `src/prices.js`.** Boards per shop, furniture panels, edge band, paint, microcement, every hardware item and the cabinet-maker estimate. `build.py` copies it into the app.
+- **Board prices from Hanssens Hout and Woodcenter.** The price table can show "Cheapest per board", only Hanssens Hout or only Woodcenter.
+- **Hardware looked up for real** (16 Nov 2026, incl. VAT): Blum hinges, plates, MOVENTO and TIP-ON at Pierard; TANDEM runners at keukenlade.nl (€ 35.80 a pair) and couplings at hwt-pro.com; Confirmat screws and plinth feet at Hornbach; shelf supports and cabinet hangers at Gamma; edge band at Hubo (€ 1.20 per m).
+- **Update prices button** (in the price section, when the app is opened in Claude): starts a task that looks every price up again at those shops, saves them in `src/prices.js`, pushes to GitHub and updates the app. Takes about 15–30 minutes.
+
 ## v0.57
 
 - **Even out door widths:** when doors in different columns are almost the same width (within about 5 %), Layout → Columns shows them with a "Make them the same" button. It nudges the column widths (the total stays the same) until those doors are exactly equal.

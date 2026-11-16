@@ -7,7 +7,7 @@
 - a hardware list and a price estimate (Belgian woodworking shops)
 - a step-by-step build guide, and a PDF with all of the above
 
-Version **v0.57**.
+Version **v0.58**.
 
 ## Use it
 
@@ -50,3 +50,5 @@ For a new version, change `APP_VERSION` near the photo code in `src/kast.html`, 
 - Prices are estimates, dated in the app. Check them with the shop before ordering.
 - Hardware sizes and type numbers come from general knowledge of the Blum range, not from a live catalogue. Check them before ordering.
 - Saving designs in this standalone version is local to the browser. Use *Designs → Copy as text* to move a design to another device.
+
+All prices live in `src/prices.js` (incl. 21 % VAT). Edit them there, or use the "Update prices" button in the app.
