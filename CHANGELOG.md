@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.55
+
+- Microcement now uses the same RAL colours as painted MDF: pick any RAL colour and order the microcement tinted to it. The eight separate microcement colours are gone; designs that used them get the nearest RAL colour.
+- Microcement is priced per m² on the visible sides only (front face + visible edges): € 28 per m² from the Silk Plaster complete kit (€ 688 for 25 m²). Fabric-wrapped frames and speaker baffles are left out. The backs are no longer priced.
+
 ## v0.54
 
 - New board finish: **Microcement on MDF** (Look → Materials → Board). Eight colours: chalk, sand, greige, stone, terracotta, sage, graphite and anthracite, with a soft cloudy trowelled look in the drawing and 3D.
