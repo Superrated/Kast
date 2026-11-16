@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.53
+
+- The dot pattern handle is removed. Designs that used it get a finger hole instead.
+
 ## v0.52
 
 - The dot pattern is now a real handle: a small group of drilled holes where a handle would be, not a pattern over the whole door. Choose Line of 4, Dots + finger hole (small dots ending in one bigger hole a finger fits in), Square, Diamond, Triangle or Arc. Dot sizes Small 32, Medium 38 and Large 45 mm (32 mm is the smallest, so a finger fits). Designs with the old whole-door patterns switch to Line of 4.
