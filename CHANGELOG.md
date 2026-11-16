@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.54
+
+- New board finish: **Microcement on MDF** (Look → Materials → Board). Eight colours: chalk, sand, greige, stone, terracotta, sage, graphite and anthracite, with a soft cloudy trowelled look in the drawing and 3D.
+- Doors and drawer fronts in microcement are cut 1 mm smaller all round, so the coating on the edges keeps the 3 mm gaps.
+- The price adds a microcement kit (primer, base coats, finish coats, sealer) for the face and edges, and primer for the backs. The build guide gets a "Microcement the panels" step.
+- Fix: painted MDF edges were also charged as edge band in the price, and listed in the edge-banding step. They no longer are.
+
 ## v0.53
 
 - The dot pattern handle is removed. Designs that used it get a finger hole instead.
