@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.56
+
+Fixes from an audit of the cut list, lofting, sheets, build guide and measurements.
+
+- Measurements: under the front view there is now a second chain of widths, the boxes (or side centres), that adds up exactly to the wall, next to the inside widths.
+- Cut list: each material is now one block (18 mm melamine was split in two). Materials are listed in build order: carcass board first, fronts and skirts last.
+- Cut list: picture ledges now include their 30 × 12 mm lip strip (it was in 3D but not on the list).
+- Cut list: drawer box parts say "top edge" instead of "front edge"; painted and microcement parts say "Paint" or "Microcement on" instead of "Edge band"; groove widths are written the same everywhere (8.5, not 9).
+- Lofting: storage box fronts are drawn with their hand slot or finger holes; cut-outs that are not for fabric are no longer labelled "fabric cut-out".
+- Sheets and build guide always use the same saw-blade and trim values, also when the field is left empty (4 mm and 10 mm).
+- Build guide: bigger numbered cutting diagrams, and a note on which sheets to cut first — carcass first, doors and drawer fronts last, after measuring the openings.
+
 ## v0.55
 
 - Microcement now uses the same RAL colours as painted MDF: pick any RAL colour and order the microcement tinted to it. The eight separate microcement colours are gone; designs that used them get the nearest RAL colour.
