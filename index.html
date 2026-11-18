@@ -749,14 +749,14 @@ details.mx{grid-column:1/-1}
 @media (prefers-reduced-motion:reduce){#splash{animation-duration:.01s}}
 </style>
 
-<div id="splash" role="status" aria-label="Kast v0.59 is loading"><b>Kast</b><span>v0.59</span></div>
+<div id="splash" role="status" aria-label="Kast v0.60 is loading"><b>Kast</b><span>v0.60</span></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
 
 <div class="app" data-tab="elev">
   <header class="top">
     <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-    <div class="brand" title="Kast v0.59">Kast<small>built-in furniture, drawn and cut · v0.59</small></div>
+    <div class="brand" title="Kast v0.60">Kast<small>built-in furniture, drawn and cut · v0.60</small></div>
     <nav class="tabs" id="tabs">
       <button data-act="tab" data-a="elev" class="on">Elevation</button>
       <button data-act="tab" data-a="3d">3D view</button>
@@ -1130,7 +1130,7 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
     const mx=Math.min(...poly.map(p=>p[0])),my=Math.min(...poly.map(p=>p[1]));
     poly=poly.map(p=>[r1(p[0]-mx),r1(p[1]-my)]);
     let w=Math.max(...poly.map(p=>p[0])),h=Math.max(...poly.map(p=>p[1]));
-    const holes=(o.holes||[]).map(q=>{const r={x:r1(q.x-mx),y:r1(q.y-my),d:q.d};if(q.len){r.len=q.len;r.dir=q.dir}if(q.poly)r.poly=q.poly.map(p=>[r1(p[0]-mx),r1(p[1]-my)]);return r});
+    const holes=(o.holes||[]).map(q=>{const r={x:r1(q.x-mx),y:r1(q.y-my),d:q.d};if(q.dp)r.dp=q.dp;if(q.len){r.len=q.len;r.dir=q.dir}if(q.poly)r.poly=q.poly.map(p=>[r1(p[0]-mx),r1(p[1]-my)]);return r});
     const role=M[o.role]||M.carcass;
     if((o.matType??role.type)==='mdfmicro'&&o.band==='all'&&poly.length>=3&&!MC_SKIP.test(o.type||'')){const ip=insetPoly(poly,1);if(ip&&ip.length>=3){const ax=Math.min(...ip.map(p=>p[0])),ay=Math.min(...ip.map(p=>p[1]));poly=ip.map(p=>[r1(p[0]-ax),r1(p[1]-ay)]);holes.forEach(q=>{q.x=r1(q.x-ax);q.y=r1(q.y-ay);if(q.poly)q.poly=q.poly.map(p=>[r1(p[0]-ax),r1(p[1]-ay)])});w=Math.max(...poly.map(p=>p[0]));h=Math.max(...poly.map(p=>p[1]));o=Object.assign({},o,{notes:(o.notes||[]).concat('Cut 1 mm smaller all round than the finished front: the microcement adds about 1 mm on every edge')})}}
     panels.push(Object.assign({notes:[],band:'none',bandLen:0},o,{poly,holes,w,h,t:o.t??+role.t,fin:o.fin??role.fin,sheet:o.sheet??role.sheet,matType:o.matType??role.type??'melamine'}));
@@ -1551,6 +1551,9 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
         extraNotes=[...extraNotes];if(rec)extraNotes.push(`Shallow cabinet above the desk: the front sits ${f0(recOff)} mm back, inside the sides, with a 2.5 mm reveal — use inset hinges`);else if(ins)extraNotes.push('Inset — sits inside the cabinet frame with a 2.5 mm reveal; use 0 mm overlay (inset) hinges or runners');
         if(face==='fluted'){extraNotes.push('Fluted / reeded face: 25 mm reeds, 6 mm deep — buy reeded MDF or rout after cutting');H.flute++}const htO=(z.hts||[])[idx]||z.hd||(face==='dots'?'hole':''),htU=htO&&HANDLES.some(h_=>h_[0]===htO)?htO:HT,hs=(z.nh||[])[idx]?{type:'none'}:handleSpec(kind,poly,hinge,htU),dotted=hs.type==='dots'&&!fab&&(kind==='door'||kind==='drawer')&&!z.dog,holes=handleHoles(hs);let dd=DOTSZ[O.dotSize]||38;
         if(hs.type==='dots'&&!dotted){hs.type='none'}
+        {const hcM=kind==='door'&&!/Sliding|Pocket/.test(type)&&(hinge==='L'||hinge==='R')?/(\d+) hinges/.exec(extraNotes.join(' ')):null,hc_=hcM?+hcM[1]:0;
+          if(hc_>0){const xs_=poly.map(p_=>p_[0]),xl=Math.min(...xs_),xr=Math.max(...xs_),cx=hinge==='L'?xl+21.5:xr-21.5,yb=Math.min(...poly.map(p_=>p_[1])),yt_=polyTopAt(poly,cx),yT=isFinite(yt_)?yt_:Math.max(...poly.map(p_=>p_[1])),mg=Math.max(35,Math.min(100,(yT-yb)/4)),a=yb+mg,b=yT-mg,ys_=hc_===1||b-a<40?[(yb+yT)/2]:Array.from({length:hc_},(_,m)=>a+(b-a)*m/(hc_-1));
+            ys_.forEach(y_=>holes.push({x:cx,y:y_,d:35,dp:13,cup:true}));extraNotes.push(`Hinge cups Ø35 × 13 mm deep in the back face, centre ${21.5} mm from the ${hinge==='L'?'left':'right'} edge, at ${ys_.map(y_=>f0(y_-yb)).join(', ')} mm from the bottom edge. Mounting plates on the cabinet side 37 mm from its front edge, at the same heights`)}}
         let dots=null;if(dotted){dots=dotsFor(poly,kind,hinge,O.dotPat||'grid',dd,(+O.dotSeed||0)*7919+i*131+k*17+idx*7,+O.dotSeed||0);dots.forEach(([x_,y_,d_])=>holes.push({x:x_,y:y_,d:d_||dd}));const nBig=dots.filter(p_=>p_[2]>dd).length;extraNotes.push(`${dots.length-nBig} holes Ø${dd}${nBig?` and ${nBig} finger hole Ø${dots.find(p_=>p_[2]>dd)[2]}`:''} drilled through as the handle — drill from the front with a sharp Forstner bit into a backing board, so the back does not splinter`)}let notes=[...extraNotes];const hn=handleNote(hs);if(hn)notes.push(hn);countHandle(hs);
         if(fab){const inner=insetPoly(poly,60);holes.push({poly:inner,x:inner[0][0],y:inner[0][1]});notes.push(`Fabric frame with 60 mm border; wrap in ${FABRICS[fcol].name.toLowerCase()} fabric`);addFabric(poly,fcol,lab)}
         let inner=null;if(!fab&&(face==='cane'||face==='glass')){const bw=face==='cane'?70:45;inner=insetPoly(poly,bw);holes.push({poly:inner,x:inner[0][0],y:inner[0][1]});const xs=inner.map(p=>p[0]),ys=inner.map(p=>p[1]),iw=Math.max(...xs)-Math.min(...xs),ih=Math.max(...ys)-Math.min(...ys);
@@ -1853,7 +1856,7 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
     const gi_=GRV?GRV_D-1:0;
     ranges.forEach(rg=>{if(rg.k!=null&&q.zones[rg.k].z.type==='passage')return;
       let lo=rg.lo,hi=rg.hi;if(GRV){if(rg.k==null||rg.k===0){if(!(q.desk||q.door))lo=q.Pq+tc-gi_}else{const pz=q.zones[rg.k-1];lo=pz.divY+pz.divT-gi_}if(hi!=null){const cz=q.zones[rg.hiK??rg.k];hi=cz.divY+gi_}}
-      const xA=q.xa-gi_,xB=q.xb+gi_,btop=hi==null?sampleLine(x=>q.top(Math.min(q.xb,Math.max(q.xa,x)))-(GRV?tc-gi_:0)-drop*q.Dh/D,xA,xB):[[xB,hi],[xA,hi]];
+      const xA=q.xa-gi_,xB=q.xb+gi_,tX=x=>x<q.xa?q.top(q.xa)+(q.top(q.xa)-q.top(q.xa+5))/5*(q.xa-x):x>q.xb?q.top(q.xb)+(q.top(q.xb)-q.top(q.xb-5))/5*(x-q.xb):q.top(x),btop=hi==null?sampleLine(x=>tX(x)-(GRV?tc-gi_:0)-drop*q.Dh/D,xA,xB):[[xB,hi],[xA,hi]];
       const bpoly=hi==null?[[xA,lo],[xB,lo],...btop.slice().reverse()]:[[xA,lo],[xB,lo],[xB,hi],[xA,hi]];
       const holes=grommets.filter(h=>h.x>q.xa&&h.x<q.xb&&h.y>rg.lo&&(rg.hi==null||h.y<rg.hi)),notes=[];
       const wch=wcuts.filter(c=>c.x1>q.xa+25&&c.x0<q.xb-25&&c.y1>rg.lo+25&&(rg.hi==null||c.y0<rg.hi-25)).map(c=>{const a=Math.max(c.x0,q.xa+15),b=Math.min(c.x1,q.xb-15),l_=Math.max(c.y0,rg.lo+15),h_=Math.min(c.y1,(rg.hi==null?(q.minU||1e5):rg.hi)-15);return b-a>30&&h_-l_>30?{poly:[[a,l_],[b,l_],[b,h_],[a,h_]],x:a,y:l_,nm:c.nm}:null}).filter(Boolean);
@@ -3817,18 +3820,19 @@ function priceHTML(P){const t=P.tot;let last='';
   <div class="tw"><table class="cut price" style="min-width:560px"><thead><tr><th>Item</th><th>Qty</th><th>Price each</th><th>Total</th><th>Source</th></tr></thead><tbody>${P.rows.map(r=>`${r.grp!==last?(last=r.grp,`<tr class="grp"><td colspan="5">${r.grp}</td></tr>`):''}<tr><td title="${esc(r.ref||'')}">${esc(r.name)}</td><td class="n">${r.unitLbl==='pc'||r.unitLbl==='sheet'||r.unitLbl==='board'?r.qty:(+r.qty).toFixed(r.unitLbl==='m'?1:2)} ${r.unitLbl==='pc'?'':r.unitLbl}</td><td class="n"><span class="pin">€<input type="number" inputmode="decimal" step="0.01" min="0" data-price="${r.k}" value="${r.mine?r.unit:''}" placeholder="${r.dflt!=null?r.dflt.toFixed(2):'—'}" aria-label="Price each for ${esc(r.name)}"></span></td><td class="n">${r.total!=null?eur(r.total):'—'}</td><td class="note">${r.mine?'your price':r.est?'typical':esc(r.src)}</td></tr>`).join('')}</tbody></table></div>`}
 document.addEventListener('change',e=>{const el=e.target,k=el&&el.dataset&&el.dataset.price;if(!k)return;if(!S.opts.prices||typeof S.opts.prices!=='object')S.opts.prices={};const v=parseFloat(el.value);if(v>0)S.opts.prices[k]=v;else delete S.opts.prices[k];saveSoon();snap();dirty.cut=true;if(ui.tab==='cut'){const sc=document.getElementById('v-cut'),y=sc.scrollTop,py=window.scrollY;renderCut();sc.scrollTop=y;window.scrollTo(0,py)}toast(v>0?'Price updated':'Back to the guide price')});
 function csv(){const gs=groupsCache||groupPanels(bgeo());const q=v=>`"${String(v).replace(/"/g,'""')}"`;
-  return ['id,part,qty,material,thickness_mm,length_mm,width_mm,shape,where,notes',...gs.map(p=>[p.id,q(p.type),p.qty,q(FIN[p.fin]?.name||p.fin),p.t,f0(p.L),f0(p.Wd),q(p.rect?'rect':'shaped '+p.poly.length+'pts'),q(p.secs.join(' ')),q(p.notes.join('; '))].join(','))].join('\n')}
-function txt(){const gs=groupsCache||groupPanels(bgeo());return gs.map(p=>`${p.id}  ${p.qty}×  ${p.type}  ${f0(p.L)} × ${f0(p.Wd)} × ${p.t}  ${FIN[p.fin]?.name||p.fin}${p.rect?'':'  (shaped)'}`).join('\n')}
+  return ['id,part,qty,board,colour,thickness_mm,length_mm,width_mm,shape,where,notes',...gs.map(p=>[p.id,q(p.type),p.qty,q(MATS[p.matType]?.name||''),q(FIN[p.fin]?.name||p.fin),p.t,f0(p.L),f0(p.Wd),q(p.rect?'rect':'shaped '+p.poly.length+'pts'),q(p.secs.join(' ')),q(p.notes.join('; '))].join(','))].join('\n')}
+function txt(){const gs=groupsCache||groupPanels(bgeo());return gs.map(p=>`${p.id}  ${p.qty}×  ${p.type}  ${f0(p.L)} × ${f0(p.Wd)} × ${p.t}  ${MATS[p.matType]?.short||''} ${FIN[p.fin]?.name||p.fin}${p.rect?'':'  (shaped)'}`).join('\n')}
 async function copy(t){try{await navigator.clipboard.writeText(t);toast('Copied')}catch(e){const ta=document.getElementById('ioText');document.getElementById('iom').hidden=false;ta.value=t;ta.select();toast('Select all and copy')}}
 
 function loftSVG(p){
   const w=p.w,h=p.h,pts=p.poly,big=Math.max(w,h,240),fs=Math.max(15,big/40),gp=fs*2.1,ar=polyArea(pts),lw=big/700;
   const uniq=a=>[...new Set(a.map(v=>r1(v)))].sort((m,n)=>m-n);
+  const stag=vals=>{let last=-1e9,lv=0;return vals.map(v=>{if(v-last<fs*1.15){lv=lv?0:1}else lv=0;last=v;return lv})};
   const xs=uniq(pts.map(q=>q[0])),ys=uniq(pts.map(q=>q[1]));
   const ordX=xs.length>2,ordY=ys.length>2,hs=p.holes.filter(o=>!o.poly),few=hs.length>0&&hs.length<=8;
   const hx=few?uniq(hs.map(o=>o.x)):[],hy=few?uniq(hs.map(o=>o.y)):[];
   const rowsB=1+(hx.length?1:0),rowsL=1+(hy.length?1:0);
-  const mL=gp*rowsL+fs*1.4,mB=gp*rowsB+fs*1.2,mT=(ordX?gp+fs*2.6:0)+fs*1.2,mR=(ordY?gp+fs*3.2:0)+fs*1.2;
+  const mL=gp*rowsL+fs*(hy.length?4.6:1.4),mB=gp*rowsB+fs*(hx.length?3.6:1.2),mT=(ordX?gp+fs*5.2:0)+fs*1.2,mR=(ordY?gp+fs*6.8:0)+fs*1.2;
   const Y=y=>h-y,X=x=>x;let s=`<svg viewBox="${-mL} ${-mT} ${w+mL+mR} ${h+mT+mB}" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace">`;
   const D='style="stroke:var(--accent)"',E='style="stroke:var(--ink3)"',T=(x,y,t,o='')=>`<text x="${n1(x)}" y="${n1(y)}" ${/font-size=/.test(o)?'':`font-size="${n1(fs)}"`} style="fill:var(--accent)" ${o}>${t}</text>`;
   const tick=(x,y)=>`<line x1="${n1(x-fs*.35)}" y1="${n1(y+fs*.35)}" x2="${n1(x+fs*.35)}" y2="${n1(y-fs*.35)}" ${D} stroke-width="${n1(lw*2)}"/>`;
@@ -3841,13 +3845,13 @@ function loftSVG(p){
   s+=`<line x1="${n1(xH)}" x2="${n1(xH)}" y1="${Y(0)}" y2="${Y(h)}" ${D} stroke-width="${n1(lw*1.2)}"/>${tick(xH,Y(0))}${tick(xH,Y(h))}${T(xH-fs*.35,Y(h/2),r1(h),`text-anchor="middle" font-weight="500" transform="rotate(-90 ${n1(xH-fs*.35)} ${n1(Y(h/2))})"`)}`;
   // ordinate X along top for shaped panels
   if(ordX){const yo=Y(h)-gp;s+=`<line x1="0" x2="${w}" y1="${n1(yo)}" y2="${n1(yo)}" ${D} stroke-width="${n1(lw)}"/>`;
-    xs.forEach(x=>{const vy=Math.max(...pts.filter(q=>Math.abs(q[0]-x)<0.11).map(q=>q[1]));s+=`<line x1="${x}" x2="${x}" y1="${n1(Y(vy)-fs*.4)}" y2="${n1(yo)}" ${E} stroke-width="${n1(lw*.8)}" stroke-dasharray="${n1(fs*.4)} ${n1(fs*.3)}"/>${tick(x,yo)}${T(x+fs*.3,yo-fs*.5,x,`transform="rotate(-90 ${n1(x+fs*.3)} ${n1(yo-fs*.5)})"`)}`})}
+    const sx=stag(xs);xs.forEach((x,j)=>{const vy=Math.max(...pts.filter(q=>Math.abs(q[0]-x)<0.11).map(q=>q[1])),ty=yo-fs*.5-sx[j]*fs*2.6;s+=`<line x1="${x}" x2="${x}" y1="${n1(Y(vy)-fs*.4)}" y2="${n1(yo)}" ${E} stroke-width="${n1(lw*.8)}" stroke-dasharray="${n1(fs*.4)} ${n1(fs*.3)}"/>${tick(x,yo)}${T(x+fs*.3,ty,x,`transform="rotate(-90 ${n1(x+fs*.3)} ${n1(ty)})"`)}`})}
   // ordinate Y along right
   if(ordY){const xo=w+gp;s+=`<line x1="${n1(xo)}" x2="${n1(xo)}" y1="${Y(0)}" y2="${Y(h)}" ${D} stroke-width="${n1(lw)}"/>`;
-    ys.forEach(y=>{const vx=Math.max(...pts.filter(q=>Math.abs(q[1]-y)<0.11).map(q=>q[0]));s+=`<line x1="${n1(vx+fs*.4)}" x2="${n1(xo)}" y1="${Y(y)}" y2="${Y(y)}" ${E} stroke-width="${n1(lw*.8)}" stroke-dasharray="${n1(fs*.4)} ${n1(fs*.3)}"/>${tick(xo,Y(y))}${T(xo+fs*.5,Y(y)+fs*.35,y)}`})}
+    const sy=stag(ys);ys.forEach((y,j)=>{const vx=Math.max(...pts.filter(q=>Math.abs(q[1]-y)<0.11).map(q=>q[0]));s+=`<line x1="${n1(vx+fs*.4)}" x2="${n1(xo)}" y1="${Y(y)}" y2="${Y(y)}" ${E} stroke-width="${n1(lw*.8)}" stroke-dasharray="${n1(fs*.4)} ${n1(fs*.3)}"/>${tick(xo,Y(y))}${T(xo+fs*.5+sy[j]*fs*3.6,Y(y)+fs*.35,y)}`})}
   // hole positions
-  if(hx.length){const yh=Y(0)+gp;s+=`<line x1="0" x2="${w}" y1="${n1(yh)}" y2="${n1(yh)}" ${D} stroke-width="${n1(lw*.8)}"/>`;hx.forEach(x=>{s+=`<line x1="${x}" x2="${x}" y1="${n1(Math.min(...hs.filter(o=>Math.abs(o.x-x)<0.11).map(o=>Y(o.y))))}" y2="${n1(yh)}" ${E} stroke-width="${n1(lw*.7)}" stroke-dasharray="${n1(fs*.25)} ${n1(fs*.25)}"/>${tick(x,yh)}${T(x+fs*.3,yh+fs*.4,x,`text-anchor="end" font-size="${n1(fs*.85)}" transform="rotate(-90 ${n1(x+fs*.3)} ${n1(yh+fs*.4)})"`)}`})}
-  if(hy.length){const xh=-gp;s+=`<line x1="${n1(xh)}" x2="${n1(xh)}" y1="${Y(0)}" y2="${Y(h)}" ${D} stroke-width="${n1(lw*.8)}"/>`;hy.forEach(y=>{s+=`<line x1="${n1(Math.min(...hs.filter(o=>Math.abs(o.y-y)<0.11).map(o=>o.x)))}" x2="${n1(xh)}" y1="${Y(y)}" y2="${Y(y)}" ${E} stroke-width="${n1(lw*.7)}" stroke-dasharray="${n1(fs*.25)} ${n1(fs*.25)}"/>${tick(xh,Y(y))}${T(xh-fs*.3,Y(y)-fs*.3,y,'text-anchor="end" font-size="'+n1(fs*.85)+'"')}`})}
+  if(hx.length){const yh=Y(0)+gp;s+=`<line x1="0" x2="${w}" y1="${n1(yh)}" y2="${n1(yh)}" ${D} stroke-width="${n1(lw*.8)}"/>`;const shx=stag(hx);hx.forEach((x,j)=>{const ty=yh+fs*.4+shx[j]*fs*2.4;s+=`<line x1="${x}" x2="${x}" y1="${n1(Math.min(...hs.filter(o=>Math.abs(o.x-x)<0.11).map(o=>Y(o.y))))}" y2="${n1(yh)}" ${E} stroke-width="${n1(lw*.7)}" stroke-dasharray="${n1(fs*.25)} ${n1(fs*.25)}"/>${tick(x,yh)}${T(x+fs*.3,ty,x,`text-anchor="end" font-size="${n1(fs*.85)}" transform="rotate(-90 ${n1(x+fs*.3)} ${n1(ty)})"`)}`})}
+  if(hy.length){const xh=-gp;s+=`<line x1="${n1(xh)}" x2="${n1(xh)}" y1="${Y(0)}" y2="${Y(h)}" ${D} stroke-width="${n1(lw*.8)}"/>`;const shy=stag(hy);hy.forEach((y,j)=>{s+=`<line x1="${n1(Math.min(...hs.filter(o=>Math.abs(o.y-y)<0.11).map(o=>o.x)))}" x2="${n1(xh)}" y1="${Y(y)}" y2="${Y(y)}" ${E} stroke-width="${n1(lw*.7)}" stroke-dasharray="${n1(fs*.25)} ${n1(fs*.25)}"/>${tick(xh,Y(y))}${T(xh-fs*.3-shy[j]*fs*3.4,Y(y)-fs*.3,y,'text-anchor="end" font-size="'+n1(fs*.85)+'"')}`})}
   // sloped edge lengths
   pts.forEach((a,i)=>{const b=pts[(i+1)%pts.length],L=Math.hypot(b[0]-a[0],b[1]-a[1]);if(L<big*0.03||Math.abs(a[0]-b[0])<0.2||Math.abs(a[1]-b[1])<0.2)return;
     let nx=(b[1]-a[1])/L,ny=-(b[0]-a[0])/L;if(ar<0){nx=-nx;ny=-ny}const mx=(a[0]+b[0])/2+nx*fs*1.2,my=(a[1]+b[1])/2+ny*fs*1.2,ang=-Math.atan2(b[1]-a[1],b[0]-a[0])*DEG;const ang2=ang>90?ang-180:ang<-90?ang+180:ang;
@@ -3862,7 +3866,7 @@ function loftSVG(p){
       o.poly.forEach((q,k)=>s+=`<text x="${n1(q[0])}" y="${n1(Y(q[1]))}" text-anchor="middle" dominant-baseline="middle" font-size="${n1(fs*.7)}" style="fill:var(--accent)">C${k+1}</text>`);return}
     hn++;if(o.len){const v=o.dir==='v',ww=v?o.d:o.len,hh=v?o.len:o.d;s+=`<rect x="${n1(o.x-ww/2)}" y="${n1(Y(o.y)-hh/2)}" width="${ww}" height="${hh}" rx="${o.d/2}" style="fill:var(--paper);stroke:var(--ink)" stroke-width="${n1(sw_)}"/>`}
     else s+=`<circle cx="${o.x}" cy="${Y(o.y)}" r="${Math.max(o.d/2,lw*3)}" style="fill:var(--paper);stroke:var(--ink)" stroke-width="${n1(sw_)}"/>`;
-    if(few){const e=Math.max(o.d,o.len||0)*.6+fs*.3;s+=`<line x1="${n1(o.x-e)}" x2="${n1(o.x+e)}" y1="${Y(o.y)}" y2="${Y(o.y)}" ${D} stroke-width="${n1(lw*.8)}"/><line x1="${o.x}" x2="${o.x}" y1="${n1(Y(o.y)-e)}" y2="${n1(Y(o.y)+e)}" ${D} stroke-width="${n1(lw*.8)}"/>${T(o.x+e*0.8,Y(o.y)-e*0.8,`H${hn} ${o.len?o.d+'×'+o.len:'Ø'+o.d}`,`font-size="${n1(fs*.8)}"`)}`}});
+    if(few){const e=Math.max(o.d,o.len||0)*.6+fs*.3;s+=`<line x1="${n1(o.x-e)}" x2="${n1(o.x+e)}" y1="${Y(o.y)}" y2="${Y(o.y)}" ${D} stroke-width="${n1(lw*.8)}"/><line x1="${o.x}" x2="${o.x}" y1="${n1(Y(o.y)-e)}" y2="${n1(Y(o.y)+e)}" ${D} stroke-width="${n1(lw*.8)}"/>${T(o.x+e*0.8,Y(o.y)-e*0.8,`H${hn} ${o.len?o.d+'×'+o.len:'Ø'+o.d+(o.dp?' × '+o.dp+' deep':'')}`,`font-size="${n1(fs*.8)}"`)}`}});
   pts.forEach((a,i)=>s+=`<circle cx="${a[0]}" cy="${Y(a[1])}" r="${n1(fs*.58)}" style="fill:var(--ink)"/><text x="${a[0]}" y="${Y(a[1])}" text-anchor="middle" dominant-baseline="central" font-size="${n1(fs*.7)}" style="fill:var(--paper)">${i+1}</text>`);
   s+=`<text x="${n1(w/2)}" y="${n1(Y(h/2))}" text-anchor="middle" dominant-baseline="middle" font-size="${n1(fs*1.05)}" style="fill:var(--ink2)" opacity=".55">${p.id} · ${p.t} mm</text>`;
   return s+'</svg>'}
@@ -3872,12 +3876,12 @@ function renderLoft(){
   const gs=groupsCache||groupPanels(bgeo());const sp=gs.filter(p=>ui.loftAll||!p.rect||p.holes.length||p.angled).sort((a,b)=>((a.rect&&!a.holes.length)?1:0)-((b.rect&&!b.holes.length)?1:0));const el=document.getElementById('v-loft');
   let h=`<h2>Lofting</h2><p class="lede">Shaped, drilled and angled panels, drawn full-size in numbers. Origin is the bottom-left corner of each panel's bounding box; X runs along the bottom edge, Y upward, all in mm. Mark the points, join them, cut. Blue lines are dimensions; dashed lines lead to the point they measure.</p><div class="seg" style="max-width:420px;margin-bottom:14px"><button type="button" class="${ui.loftAll?'':'on'}" data-act="loftAll" data-a="0">Shaped &amp; drilled parts</button><button type="button" class="${ui.loftAll?'on':''}" data-act="loftAll" data-a="1">Every panel</button></div>`;
   if(!sp.length)h+='<p class="lede">All panels are plain rectangles — see the cut list.</p>';
-  h+='<div class="lgrid">'+sp.map(p=>{const ar=polyArea(p.poly);return `<div class="lcard"><h4>${p.id} · ${esc(p.type)} <span>${p.qty}× · ${p.t} mm · ${esc(FIN[p.fin]?.name||'')}</span></h4>
+  h+='<div class="lgrid">'+sp.map(p=>{const ar=polyArea(p.poly);return `<div class="lcard"><h4>${p.id} · ${esc(p.type)} <span>${p.qty}× · ${esc(matName(p))}</span></h4>
     <div class="lsvg">${loftSVG(p)}</div>
     ${p.notes.length?`<div class="note">${esc(p.notes.join(' · '))}</div>`:''}
     <div class="note">${esc(p.secs.join(', '))} · bounding box ${f0(p.w)} × ${f0(p.h)}</div>
     ${p.rect&&!p.holes.length?'':`<table class="ord"><thead><tr><th>Pt</th><th>X</th><th>Y</th><th>Angle</th></tr></thead><tbody>${p.poly.map((q,i)=>`<tr><td>${i+1}</td><td>${q[0].toFixed(1)}</td><td>${q[1].toFixed(1)}</td><td>${vAngle(p.poly,i,ar).toFixed(1)}°</td></tr>`).join('')}</tbody></table>`}
-    ${p.manyHoles?`<p class="note">${p.holes.length} holes on a staggered 200 mm grid — positions shown in the drawing; first hole 100 mm from the left edge.</p>`:''}${!p.manyHoles&&p.holes.some(o=>!o.poly)?`<table class="ord"><thead><tr><th>Hole</th><th>X</th><th>Y</th><th>Size</th></tr></thead><tbody>${p.holes.filter(o=>!o.poly).map((o,i)=>`<tr><td>H${i+1}</td><td>${o.x.toFixed(1)}</td><td>${o.y.toFixed(1)}</td><td>${o.len?o.d+'×'+o.len+(o.dir==='v'?' ↕':' ↔'):'Ø'+o.d}</td></tr>`).join('')}</tbody></table>`:''}${p.holes.filter(o=>o.poly).map(o=>`<table class="ord"><thead><tr><th>Cut-out</th><th>X</th><th>Y</th><th></th></tr></thead><tbody>${o.poly.map((q,k)=>`<tr><td>C${k+1}</td><td>${q[0].toFixed(1)}</td><td>${q[1].toFixed(1)}</td><td></td></tr>`).join('')}</tbody></table>`).join('')}
+    ${p.manyHoles?`<p class="note">${p.holes.length} holes on a staggered 200 mm grid — positions shown in the drawing; first hole 100 mm from the left edge.</p>`:''}${!p.manyHoles&&p.holes.some(o=>!o.poly)?`<table class="ord"><thead><tr><th>Hole</th><th>X</th><th>Y</th><th>Size</th></tr></thead><tbody>${p.holes.filter(o=>!o.poly).map((o,i)=>`<tr><td>H${i+1}</td><td>${o.x.toFixed(1)}</td><td>${o.y.toFixed(1)}</td><td>${o.len?o.d+'×'+o.len+(o.dir==='v'?' ↕':' ↔'):'Ø'+o.d+(o.dp?' × '+o.dp+' deep':' through')}</td></tr>`).join('')}</tbody></table>`:''}${p.holes.filter(o=>o.poly).map(o=>`<table class="ord"><thead><tr><th>Cut-out</th><th>X</th><th>Y</th><th></th></tr></thead><tbody>${o.poly.map((q,k)=>`<tr><td>C${k+1}</td><td>${q[0].toFixed(1)}</td><td>${q[1].toFixed(1)}</td><td></td></tr>`).join('')}</tbody></table>`).join('')}
   </div>`}).join('')+'</div>';
   el.innerHTML=partBar()+h;
 }
@@ -4159,7 +4163,7 @@ function renderGuide(){
     step('Drawers',gScene(its),gs.filter(p=>/drawer (front|box|bottom)/i.test(p.type)).map(p=>chip(p,p.qty)).join(''),Object.entries(H.slides).map(([l,c])=>hwc('runner',c,`full-extension runners ${l} mm`)).join(''),(S.opts.hw||{}).brand==='blumeco'?'<b>Build each drawer box:</b> glue and screw the inner front and the back between the two sides, check the diagonals are equal, then glue and nail or screw the bottom on underneath — it holds the box square. Screw the drawer part of each roller runner under the lower edge of the sides, flush with the front, and hook the box onto the cabinet runners (tilt it in, wheels behind wheels). <b>Fronts:</b> hold each show front in place with 3 mm spacers around it and screw it on from inside the box through the inner front with 4 screws; slotted holes let you adjust until all gaps are the same.':'<b>Build each drawer box:</b> glue and screw (or dowel) the inner front and the back between the two sides, slide the bottom into the grooves from the back, check the diagonals are equal and screw the bottom up into the back piece. Notch the back of the box and drill the hook holes exactly as the runner’s drilling sheet shows, screw the locking devices under the front corners, and push the box onto the runners until it clicks. <b>Fronts:</b> hold each show front in place with 3 mm spacers around it and screw it on from inside the box through the inner front with 4 screws; adjust until all gaps are the same.')}
   if(H.hinges||H.slide.length){const its=[...gSlab(0,450,0,900,0,18)];its.push({dot:1,r:6,pts:[obl(40,120,18)],fill:'#fff'},{dot:1,r:6,pts:[obl(40,780,18)],fill:'#fff'},gArrow([500,450,9],[600,450,9]),gArrow([225,950,9],[225,1060,9]),gArrow([500,700,9],[560,700,-90]));
     step('Doors',gScene(its),gs.filter(p=>/door/i.test(p.type)&&p.role==='front').map(p=>chip(p,p.qty)).join(''),hwc('hinge',H.hinges,(S.opts.hw||{}).brand==='generic'?'Clip-top 110° full overlay':(S.opts.hw||{}).brand==='blumeco'?'Blum MODUL slide-on hinges':'Blum CLIP top hinges')+H.slide.map(r=>hwc('runner',1,`sliding track ${r.L} mm`)).join(''),
-      `Drill the Ø35 × 13 mm hinge cups 4 mm in from the door edge (cup centre ≈ 21.5 mm), 100 mm from the top and bottom, press the hinges in and clip them onto the plates. Adjust with the three screws — sideways, up/down, in/out — until every gap is ${+S.opts.gap||3} mm.`)}
+      `Drill the Ø35 × 13 mm hinge cups 4 mm in from the door edge (cup centre ≈ 21.5 mm), about 100 mm from the top and bottom — every door's exact cup positions are in its Lofting drawing and cut-list note — press the hinges in and clip them onto the plates. Adjust with the three screws — sideways, up/down, in/out — until every gap is ${+S.opts.gap||3} mm.`)}
   const hc=Object.entries(H.handles).filter(([k])=>k!=='none').reduce((a,[,c])=>a+c,0);
   if(hc)step('Handles','','',hwc('drill',hc,'handles'),`Make a drilling template from scrap so every handle lands in the same place. ${['hole','slot','groove'].includes(S.opts.handle)?'Your handles are cut into the fronts: drill or rout them from the Lofting drawings before the fronts go on, from the face side into scrap held behind — there is no hardware to fit.':'Drill from the front into scrap held behind, to avoid break-out.'}${H.handles.none?` ${H.handles.none} front${H.handles.none>1?'s get':' gets'} a push-to-open latch instead.`:''}`);
   // ===== E. Finish
@@ -4432,7 +4436,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.59';
+const APP_VERSION='v0.60';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;

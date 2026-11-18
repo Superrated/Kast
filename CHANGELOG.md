@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.60
+
+Fixes from an audit of errors, the cut and material lists, and the technical drawings.
+
+- **Hinge cups are drawn and measured now.** Every door's Lofting drawing shows its Ø35 × 13 mm hinge cups, dimensioned like the other holes. The cut-list note gives the exact heights, and that the mounting plates go 37 mm from the front edge at the same heights. Short doors get their cups closer to the edges.
+- **Backs under a sloped ceiling** had a small 9 mm step in the top corner. The top edge is now one straight line.
+- **Lofting:** dimension numbers that were close together no longer print on top of each other. The hole table says "through" or "× 13 deep". Each drawing names the board ("Melamine chipboard · Pure white · 18 mm"), not only the colour.
+- **Copy as CSV / text:** now includes the board type (melamine, MDF…) next to the colour, so a panel shop knows what to cut from.
+- Checked with no other errors found: 40–60 random designs through every tab and the PDF export (no errors, no "NaN"); the cut list against the 3D model (no parts missing or overlapping); hinges, runners, drawer-box parts and sheet layouts all add up.
+
 ## v0.59
 
 - **Levels can stick out or sit further back.** Every level with doors, drawers or open shelves has a new setting, "Depth of this level": 100 or 50 mm back, flush, or 50, 100 or 150 mm out, or any exact number.
