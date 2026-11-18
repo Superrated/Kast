@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.59
+
+- **Levels can stick out or sit further back.** Every level with doors, drawers or open shelves has a new setting, "Depth of this level": 100 or 50 mm back, flush, or 50, 100 or 150 mm out, or any exact number.
+  - **Sticking out:** the level gets a sleeve in carcass board (two sides, a top and a bottom) in front of the carcass. Its shelves and drawers become that much deeper, so drawers may get longer runners. The sleeve boards are on the cut list.
+  - **Further back:** the doors fit inside the sides (inset hinges), and the shelves and drawers become that much shallower.
+- The front view marks these levels with a small "▲ 100 out" or "▼ 80 back" tag. The 3D view shows the real depth.
+- A level under the sloped ceiling can step back, but not stick out.
+
 ## v0.58
 
 - **All prices are in one file now: `src/prices.js`.** Boards per shop, furniture panels, edge band, paint, microcement, every hardware item and the cabinet-maker estimate. `build.py` copies it into the app.

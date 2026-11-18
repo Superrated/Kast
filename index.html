@@ -749,14 +749,14 @@ details.mx{grid-column:1/-1}
 @media (prefers-reduced-motion:reduce){#splash{animation-duration:.01s}}
 </style>
 
-<div id="splash" role="status" aria-label="Kast v0.58 is loading"><b>Kast</b><span>v0.58</span></div>
+<div id="splash" role="status" aria-label="Kast v0.59 is loading"><b>Kast</b><span>v0.59</span></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
 
 <div class="app" data-tab="elev">
   <header class="top">
     <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-    <div class="brand" title="Kast v0.58">Kast<small>built-in furniture, drawn and cut · v0.58</small></div>
+    <div class="brand" title="Kast v0.59">Kast<small>built-in furniture, drawn and cut · v0.59</small></div>
     <nav class="tabs" id="tabs">
       <button data-act="tab" data-a="elev" class="on">Elevation</button>
       <button data-act="tab" data-a="3d">3D view</button>
@@ -1323,6 +1323,8 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
   result.secs=secs;
   // openings spanning several sections
   const groups=result.groups;
+  // a level that sticks out (dz > 0) or steps back (dz < 0): its contents and fronts are built as if the column were that much deeper / shallower
+  const ZW=(q,fn)=>(zr,k,a)=>{const dz=zr.dzV||0;if(!dz)return fn(zr,k,a);const o=[q.z0,q.D,q.Dh,q.Dc];q.z0-=dz;q.D+=dz;q.Dh+=dz;q.Dc+=dz;try{return fn(zr,k,a)}finally{q.z0=o[0];q.D=o[1];q.Dh=o[2];q.Dc=o[3]}};
   secs.forEach((q,i)=>{if(q.follow!=null)return;const zs=q.s.zones||[],ko=q.desk?(zs[0]&&+zs[0].span>0?0:-1):zs.findIndex(z=>z.type==='opening'&&+z.span>0);if(ko<0)return;
     const want=+zs[ko].span;let last=i;
     for(let j=1;j<=want;j++){const f=secs[i+j];if(!f){warns.push(`S${i+1}: the niche is set to run over ${want} more column${want>1?'s':''}, but only ${n-1-i} ${n-1-i===1?'is':'are'} to its right.`);break}
@@ -1387,6 +1389,7 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
       Z0.forEach((z,k)=>{const h=+z.h>0?+z.h*kH:aH,top=k===nz-1,zr={k,z,y0:y,h,top};q.zones.push(zr);
         if(!top){zr.divY=y+h;zr.divT=divT(k);y=y+h+zr.divT}else{zr.hMin=q.minU-y;zr.hMax=q.maxU-y;zr.h=zr.hMin}});
     }
+    q.zones.forEach(zr=>{const v=Math.round(+zr.z.dz||0),okT=['closed','drawers','open'].includes(zr.z.type)&&!q.panel&&!q.door&&q.follow==null&&!(q.desk&&zr.k===0)&&!(+zr.z.span>0);zr.dzV=!okT||!v?0:v>0?Math.min(400,v):Math.max(-(q.Dh-150),v);if(v&&!okT)warns.push(`${lab}: level ${zr.k+1} can't stick out or step back (only doors, drawers and open shelves can).`)});
     q.upD=q.desk&&q.zones.length>1&&+s.upD>0?Math.max(200,Math.min(q.Dh-100,+s.upD)):0;const recOff=q.upD?q.Dh-q.upD:0;
     if(q.upD&&q.zones[0]&&q.zones[0].h<550)warns.push(`${lab}: the cabinet above the desk starts only ${f0(q.zones[0].h)} mm over the desk top — with a shallow cabinet 550–650 mm still feels comfortable.`);
     // dividers + headers
@@ -1417,7 +1420,16 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
       }
     });
     // open-zone box linings
-    q.zones.forEach(zr=>{const z=zr.z;zr.inFin=FIN[z.inFin]?z.inFin:null;if(z.type!=='open'||!z.box)return;
+    // levels that stick out get a sleeve: two sides + a top and a bottom in carcass board, in front of the carcass edges
+    q.zones.forEach((zr,k)=>{const dz=zr.dzV||0;if(dz<=0)return;
+      if(zr.top){const pts=sampleLine(x=>underAt(q,x),q.xa,q.xb).map(p_=>p_[1]);if(Math.max(...pts)-Math.min(...pts)>2){zr.dzV=0;warns.push(`${lab}: the top level is under the slope, so it can't stick out — only flat-topped levels can.`);return}}
+      const zs=q.zones,dzB=k>0?(zs[k-1].dzV||0):0,dzT=zr.top?0:(zs[k+1].dzV||0),fin=colDrench(q)||undefined,
+        yb=zr.y0-(k===0?tc:(zs[k-1].divT||tc)),yt=zr.y0+zr.h+(zr.top?tc:(zr.divT||tc)),x0=q.xa-tc,x1=q.xb+tc,nt=`Sleeve that makes level ${k+1} stick out ${f0(dz)} mm: glue and screw it to the front edges of the carcass`;
+      [[x0,q.xa],[q.xb,x1]].forEach(([a,b])=>{items.push(wf(fpq([[a,yb],[b,yb],[b,yt],[a,yt]],dz,dz,'carcass'),fin));addPanel({type:'Stick-out sleeve (side)',role:'carcass',fin,sec:lab,poly:rect(dz,yt-yb),grain:'h',band:'front',bandLen:yt-yb,notes:[nt]})});
+      const hb=(ya,d)=>{items.push(wf(fpq([[q.xa,ya],[q.xb,ya],[q.xb,ya+tc],[q.xa,ya+tc]],d,d,'carcass'),fin));addPanel({type:'Stick-out sleeve (top/bottom)',role:'carcass',fin,sec:lab,poly:rect(q.xb-q.xa,d),grain:'w',band:'front',bandLen:q.xb-q.xa,notes:[nt]})};
+      if(dz>dzB)hb(yb,dz);if(dz>=dzT)hb(yt-tc,dz);
+      H.sleeves=(H.sleeves||0)+1});
+    q.zones.forEach(ZW(q,zr=>{const z=zr.z;zr.inFin=FIN[z.inFin]?z.inFin:null;if(z.type!=='open'||!z.box)return;
       if(zr.top){const bt=+z.boxT>0?+z.boxT:tf,ext=boxExt(z),dep=q.Dh+ext,fin=boxFinOf(z),x0_=q.xa,x1_=q.xb,y0_=zr.y0,pts=sampleLine(x=>underAt(q,x),x0_,x1_),nt=`Projects ${ext} mm past the carcass ${Math.abs(ext-tf)<0.6?'so its front edge is flush with the doors':'(the doors are '+tf+' mm thick)'}`;
         const yL=underAt(q,x0_),yR=underAt(q,x1_);if(Math.min(yL,yR)-y0_<2*bt+60){warns.push(`${lab}: the open level is too low under the slope for a box lining.`);return}
         addPanel({type:'Open box (bottom)',role:'front',fin,t:bt,sec:lab,poly:rect(x1_-x0_,dep),grain:'w',band:'front',bandLen:x1_-x0_,notes:[nt]});items.push(wf(hzq(x0_,x1_,y0_,bt,-ext,q.Dh,'front'),fin));
@@ -1432,9 +1444,9 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
       for(let l=0;l<2;l++)addPanel({type:'Open box (side)',role:'front',fin,t:bt,sec:lab,poly:rect(zr.h-2*bt,dep),grain:'h',band:'front',bandLen:zr.h-2*bt,notes:[nt]});
       items.push(wf(hzq(x0_,x1_,y0_,bt,-ext,q.Dh,'front'),fin));items.push(wf(hzq(x0_,x1_,y1_-bt,bt,-ext,q.Dh,'front'),fin));
       [x0_,x1_-bt].forEach(x=>items.push({k:'prism',poly:[[-ext,y0_+bt],[q.Dh,y0_+bt],[q.Dh,y1_-bt],[-ext,y1_-bt]],toW:(u,v)=>[x,v,-u-q.z0],ext:[bt,0,0],role:'front',fin}));
-      zr.lined=bt;linings.push({x0:x0_,x1:x1_,y0:y0_,y1:y1_,bt,fin})});
+      zr.lined=bt;linings.push({x0:x0_,x1:x1_,y0:y0_,y1:y1_,bt,fin})}));
     // shelves + rail
-    q.zones.forEach(zr=>{const z=zr.z;zr.shelvesY=[];
+    q.zones.forEach(ZW(q,zr=>{const z=zr.z;zr.shelvesY=[];
       const ns=(z.type==='open'||z.type==='closed')?Math.max(0,+z.shelves||0):0;
       const gmm=gp&&zr.top?[Math.min(...gp.members.map(m=>m.minU)),Math.max(...gp.members.map(m=>m.maxU))]:[q.minU,q.maxU],ref=(zr.top?((z.rail||z.fit==='lift')?q.minU:(gmm[0]+gmm[1])/2):zr.y0+zr.h)-(zr.top&&zr.lined?zr.lined:0); // columns under one shared opening share shelf heights
       const vdA=autoVd(z,q.bL,q.bR,q.xa);zr.vdAuto=!!vdA;
@@ -1511,23 +1523,23 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
         else{const t=sampleLine(x=>underAt(q,x),q.xa,q.xb);for(let j=1;j<t.length;j++){const [ax,ay]=t[j-1],[bx,by]=t[j];items.push({k:'prism',poly:[[ax,ay],[bx,by],[bx,by-sk],[ax,ay-sk]],toW:(u,v)=>[u,v,-q.z0],ext:[0,0,-q.Dh],role:'shelf',fin:dren});area+=Math.hypot(bx-ax,by-ay)*q.Dh}}
         (H.drench=H.drench||[]).push({fin:dren,area:area/1e6,sec:lab})}
       if(zr.railY){(zr.railComps.length?zr.railComps:[[q.xa,q.xb]]).forEach(rc=>[zr.railY,zr.rail2Y].filter(y=>y>0).forEach(y=>{items.push({k:'rail',xa:rc[0]+1,xb:rc[1]-1,y,z:q.z0+q.Dh/2});if(!zr.lift)H.rails.push({sec:lab,L:f0(rc[1]-rc[0]-2)})}))}
-    });
+    }));
     // fronts
     const frontPoly=(l,r,yb,yt)=>{const L=l+g/2,Rr=r-g/2,B=yb+g/2;if(yt!=null)return [[L,B],[Rr,B],[Rr,yt-g/2],[L,yt-g/2]];
       return [[L,B],[Rr,B],...sampleLine(x=>q.top(x)-g/2,L,Rr).reverse()]};
     const topMinFront=()=>Math.min(...sampleLine(q.top,q.bL,q.bR).map(p=>p[1]));
     const countHandle=hs=>{H.handles[hs.type]=(H.handles[hs.type]||0)+1};
-    q.zones.forEach((zr,k)=>{const z=zr.z;
+    q.zones.forEach(ZW(q,(zr,k)=>{const z=zr.z;
       zr.fb0=k===0?((q.desk||q.door)?yB:q.Pq):(q.zones[k-1].divY+q.zones[k-1].divT/2);
       zr.fb1=zr.top?null:zr.divY+zr.divT/2;
       const bL=q.bL,bR=q.bR,fab=!!z.fabric&&!(z.face&&z.face!=='flat'),fcol=FABRICS[z.fabricCol]?z.fabricCol:'charcoal';
-      const rec=!!(recOff&&k>0),cz=z.type==='closed'||z.type==='drawers',ins=cz&&(!!z.inset||rec),face=cz?(z.face||'flat'):'flat',gi=2.5,vdz=zr.vdx||[],near=(a,b)=>Math.abs(a-b)<1;
+      const rec=!!(recOff&&k>0),cz=z.type==='closed'||z.type==='drawers',ins=cz&&(!!z.inset||rec||zr.dzV<0),face=cz?(z.face||'flat'):'flat',gi=2.5,vdz=zr.vdx||[],near=(a,b)=>Math.abs(a-b)<1;
       const inPoly=(l,r,yb,yt)=>{const L=near(l,bL)?q.xa+gi:vdz.some(v=>near(v,l))?l+tc/2+gi:l+g/2,R=near(r,bR)?q.xb-gi:vdz.some(v=>near(v,r))?r-tc/2-gi:r-g/2;
         return yt!=null?[[L,yb],[R,yb],[R,yt],[L,yt]]:[[L,yb],[R,yb],...sampleLine(x=>underAt(q,x)-gi,L,R).reverse()]};
       const inB=zr.y0+gi,inT=zr.top?null:zr.divY-gi;
       let jTop=zr.fb1,jN=0; // doors joined with the cupboard(s) above: one tall door over several levels
       if(z.type==='closed'&&z.joinUp&&zr.joined==null&&q.zones[k+1]){const okJ=zz=>zz&&zz.type==='closed'&&!zz.dog&&!zz.inset&&zz.face!=='curtain'&&(zz.doorMode||'hinged')==='hinged';let n=k;
-        while(!recOff&&q.zones[n].z.joinUp&&q.zones[n+1]&&okJ(q.zones[n].z)&&okJ(q.zones[n+1].z)){n++;q.zones[n].joined=k}
+        while(!recOff&&q.zones[n].z.joinUp&&q.zones[n+1]&&okJ(q.zones[n].z)&&okJ(q.zones[n+1].z)&&(q.zones[n].dzV||0)===(q.zones[n+1].dzV||0)){n++;q.zones[n].joined=k}
         if(n>k){const zt=q.zones[n];jTop=zt.top?null:zt.divY+zt.divT/2;jN=n-k;zr.joinN=jN}else warns.push(`${lab}: the doors of level ${k+1} can't join the cupboard above — both must be cupboards with plain hinged doors (not sliding, pocket, inset, curtain, dog den or a shallow cabinet above a desk).`)}
       if(face==='glass'){zr.glass=true;H.led.push({sec:lab,L:f0(q.w-20),why:'inside the glass cabinet'})}
       if(z.dog){const need=[1050,740];if(q.w<need[0]||zr.h<need[1])warns.push(`${lab}: the dog den is ${f0(q.w)} × ${f0(zr.h)} mm inside — a big dog (Labrador, shepherd) is comfortable from about 1100 × 760 mm.`);
@@ -1762,7 +1774,7 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
         if(z.grommet!==false&&look!=='nook'){let gx=(gx0+gx1)/2;const mem=isG?gp.members:[q];if(!mem.find(m=>gx>m.xa+60&&gx<m.xb-60)){const nm=mem.reduce((a,m)=>Math.abs((m.xa+m.xb)/2-gx)<Math.abs((a.xa+a.xb)/2-gx)?m:a);gx=(nm.xa+nm.xb)/2}
           grommets.push({x:gx,y:iy0+Math.min(160,(iy1-iy0)*.25),d:80});H.grommets++}
         if(zr.k===nz-1)warns.push(`${ol}: the niche is the top level, so there is nothing above it to support.`)}
-    });
+    }));
     // desk drawer + hideaway doors
     let kA=q.xa,kB=q.dgEnd||q.xb;const dX1=q.dgEnd||q.xb,dWk=dX1-q.xa;
     if(q.desk&&!q.dF&&(s.deskPed==='L'||s.deskPed==='R')){const L_=s.deskPed==='L',pw=Math.max(300,Math.min(450,dWk*0.4)),px0=L_?q.xa:dX1-pw,px1=L_?q.xa+pw:dX1,sx=L_?px1:px0-tc,yTop=+s.deskH-td-(s.deskDrawer?0:0),nDr=Math.max(2,Math.min(4,+s.pedN||3));
@@ -1786,7 +1798,7 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
         addPanel({type:hid?'Desk door (hidden)':'Desk door',role:'front',sec:lab,poly,holes:handleHoles(hs),grain:'h',band:'all',notes:[`${hc} hinges · ${hinge==='L'?'left':'right'}-hand · use 155° wide-angle hinges so the door folds back flat while working`,`Bottom lines up with the plinths of the cabinets beside it; the ${f0(P)} mm gap under it stays open so the chair rolls in`,hid?'No handle — push-to-open latch; matches the surrounding fronts':handleNote(hs)].filter(Boolean)});
         fronts.push({z0:q.z0,kind:'door',poly,hinge,sec:i,zone:-1,idx:j,handle:hs,fabric:null,fin:null});items.push(Object.assign(fpq(poly,tf,tf,'front','front'),{sz:i+':-1'}))}}
     // styling props
-    q.zones.forEach((zr,k)=>{const z=zr.z,seed=i*97+k*31+11;
+    q.zones.forEach(ZW(q,(zr,k)=>{const z=zr.z,seed=i*97+k*31+11;
       if(zr.railY){const r=prng(seed+77),avail=zr.railY-(zr.rail2Y?zr.rail2Y+20:(zr.hangFloor??zr.y0))-40,rc=zr.railComp||[q.xa,q.xb];let x=rc[0]+28;
         while(x<rc[1]-36){const t=r();let L=t<0.35?720+r()*180:t<0.6?950+r()*200:t<0.8?1150+r()*250:560+r()*90;if(L>avail)L=Math.max(250,avail*(0.7+r()*0.25));
           const w=22+r()*30,dd=Math.min(q.Dh-40,400+r()*60);if(x+w>rc[1]-20)break;
@@ -1813,7 +1825,7 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
         else if(zr.tv){const gL=zr.tv.x-o.ix0-40,gR=o.ix1-(zr.tv.x+zr.tv.w)-40;if(gL>170)fillSurface(o.ix0,o.ix0+gL,o.iy0,hA,0,q.Dh,seed+3,'shelf').forEach(p=>props.push(Object.assign(p,{sec:i,zone:k,z:p.z+q.z0})));
           if(gR>170)fillSurface(o.ix1-gR,o.ix1,o.iy0,hA,0,q.Dh,seed+5,'shelf').forEach(p=>props.push(Object.assign(p,{sec:i,zone:k,z:p.z+q.z0})))}
         else fillSurface(o.ix0,o.ix1,o.iy0,hA,0,q.Dh,seed+9,'shelf').forEach(p=>props.push(Object.assign(p,{sec:i,zone:k,z:p.z+q.z0})))}
-    });
+    }));
   });
   // backs
    _hs.push(JSON.stringify(H));result.Hsnap=_hs;
@@ -2358,6 +2370,7 @@ function elevSVG(S,G,o={}){
     G.secs.forEach(q=>{if(q.D<G.D)push(`<text x="${(q.xa+q.xb)/2}" y="${Y(-fs*4)+fs*0.95}" text-anchor="middle" font-size="${fs*.55}" style="fill:var(--ink2)">${f0(q.D)} deep${q.z0?'':' · flush'}</text>`)});
     {const pts=[0,W];G.secs.forEach(q=>{if(isFinite(q.bL))pts.push(q.bL);if(isFinite(q.bR))pts.push(q.bR)});const u=pts.sort((a,b)=>a-b).filter((v,i,a)=>v>=-0.5&&v<=W+0.5&&(i===0||v-a[i-1]>1));if(u[u.length-1]<W-1)u.push(W);for(let i=0;i<u.length-1;i++){const a=u[i],b=u[i+1];if(b-a>1)dim(a,b,-fs*5.6,f0(b-a),true)}
       push(`<text x="${n1(-fs*.6)}" y="${n1(Y(-fs*2.4)+fs*.25)}" text-anchor="end" font-size="${fs*.55}" style="fill:var(--ink2)">inside</text><text x="${n1(-fs*.6)}" y="${n1(Y(-fs*5.6)+fs*.25)}" text-anchor="end" font-size="${fs*.55}" style="fill:var(--ink2)">${G.boxes?'boxes':'centres'}</text>`)}
+    G.secs.forEach(q=>(q.zones||[]).forEach(zr=>{if(!zr.dzV)return;const t=zr.dzV>0?`▲ ${f0(zr.dzV)} out`:`▼ ${f0(-zr.dzV)} back`;push(`<g><rect x="${n1(q.xa+12)}" y="${n1(Y(zr.y0+zr.h-12))}" width="${n1(fs*4.4)}" height="${n1(fs*0.95)}" rx="${n1(fs*0.3)}" fill="rgba(20,20,20,.62)"/><text x="${n1(q.xa+12+fs*0.3)}" y="${n1(Y(zr.y0+zr.h-12)+fs*0.68)}" font-size="${n1(fs*0.6)}" fill="#fff">${t}</text></g>`)}));
     dim(0,W,-fs*7.2,`${f0(W)} wall`);
     G.secs.forEach(q=>{if(q.pin==null)return;dim(0,q.lx,-fs*8.8,`📌 ${f0(q.lx)}`);push(`<line x1="${q.lx}" x2="${q.lx}" y1="${Y(0)}" y2="${Y(-fs*8.8)}" style="stroke:var(--accent)" stroke-width="${sw}" stroke-dasharray="${sw*5} ${sw*4}"/>`)});
     if(q){const x=W+fs*1.2;const segs=[[0,q.desk?+q.s.deskH:q.Pq+tc,q.desk?'desk':q.free?(q.mount==='wall'?'float':q.mount==='legs'?'legs':'base'):'base']];q.zones.forEach(zr=>segs.push([zr.y0,zr.y0+zr.h,f0(zr.h)+(zr.top&&zr.hMax-zr.hMin>2?'–'+f0(zr.hMax):'')]));segs.forEach(([a,b,l])=>dimV(a,b,x,l))}
@@ -2433,7 +2446,7 @@ const PANE_ICON={room:'<svg viewBox="0 0 20 20"><path d="M3 17V8l7-5 7 5v9z" fil
    Simple shows the handful of controls most people touch; everything else is folded under "More options". Nothing is removed:
    the panel is drawn in full and then tidied here, so every setting keeps working in both views. */
 const VIEW_KEY='kast-view';try{ui.simple=localStorage.getItem(VIEW_KEY)!=='x'}catch(e){ui.simple=true}
-const SIMPLE_KEEP=/^(Height|Split side by side|Shelves|Doors|Drawers|Hanging rail|Rail height|Shelves above|Shelves below|Front style|Door colour|Front colour|Inside colour|Show in the niche|TV size|Frame size|Cushion fabric|Mattress fabric|Slats run|Slat size|Storage boxes|Grip on the boxes|Arched tops|Front of the nook|Opening size|Opening position|Pod colour|Handles in this level|Contrast cubbies|Cubby colour|Cover colour|Curtain|Book ledges|Padded back|Step box)/,SIMPLE_HIDE={site:1,ppl:1,scr:1,con:1,sk:1,lad:1};
+const SIMPLE_KEEP=/^(Height|Depth of this level|Split side by side|Shelves|Doors|Drawers|Hanging rail|Rail height|Shelves above|Shelves below|Front style|Door colour|Front colour|Inside colour|Show in the niche|TV size|Frame size|Cushion fabric|Mattress fabric|Slats run|Slat size|Storage boxes|Grip on the boxes|Arched tops|Front of the nook|Opening size|Opening position|Pod colour|Handles in this level|Contrast cubbies|Cubby colour|Cover colour|Curtain|Book ledges|Padded back|Step box)/,SIMPLE_HIDE={site:1,ppl:1,scr:1,con:1,sk:1,lad:1};
 function simplifySide(el){const head=el.querySelector('.shead');if(head&&!el.querySelector('.viewsw'))head.insertAdjacentHTML('afterend',`<div class="viewsw"><div class="seg" role="group" aria-label="How much to show"><button type="button" class="${ui.simple?'on':''}" data-act="viewMode" data-a="s">Simple</button><button type="button" class="${ui.simple?'':'on'}" data-act="viewMode" data-a="x">Expert</button></div><span>${ui.simple?'The settings most people use':'Every setting'}</span></div>`);
   if(!ui.simple)return;const open=ui.moreOpen||{},label=c=>((c.querySelector(':scope > span')||c).textContent||'').trim().replace(/\s+/g,' ');
   const fold=(host,items,mk,after)=>{if(!items.length)return;const d=document.createElement('details');d.className='pf more';d.dataset.mk=mk;if(open[mk])d.open=true;d.innerHTML=`<summary>More options (${items.length})</summary><div class="grid2 moreb"></div>`;const box=d.lastElementChild;items.forEach(c=>box.appendChild(c));if(after)after.insertAdjacentElement('afterend',d);else host.appendChild(d)};
@@ -2739,6 +2752,8 @@ function zoneRow(i,k){
   if(!on)return h+'</div>';
   h+=`<div class="zbody"><div class="tchips">${ZTYPES.map(([t,l])=>`<button type="button" class="tchip ${z.type===t?'on':''}" data-act="setv" data-a="${p}.type|${t}|s">${ZICON[t]}${l}</button>`).join('')}</div>`;
   h+=`<div class="grid2">${fld('Height',p+'.h',{ph:top?'to ceiling':'auto · '+(zr?f0(zr.h):''),auto:true})}`;
+  {const q_=geo.secs[i],okD=['closed','drawers','open'].includes(z.type)&&q_&&!q_.panel&&!q_.door&&q_.follow==null&&!(q_.desk&&k===0)&&!(+z.span>0);
+   if(okD){const v=+z.dz||0;h+=`<div class="fld" style="grid-column:1/-1"><span>Depth of this level</span>${seg(p+'.dz',[['-100','100 back'],['-50','50 back'],['0','Flush'],['50','50 out'],['100','100 out'],['150','150 out']],{num:true,dflt:0})}</div>${fld('Or exactly (mm, minus = further back)',p+'.dz',{ph:'0'})}${v?`<p class="hintp" style="grid-column:1/-1;margin:0">${v>0?`This level sticks out ${f0(zr&&zr.dzV||v)} mm: it gets a sleeve (two sides, top and bottom) in front of the carcass, and its shelves and drawers are that much deeper.`:`This level sits ${f0(-(zr&&zr.dzV||v))} mm further back: its doors fit inside the sides (inset hinges) and its shelves and drawers are that much shallower.`}</p>`:''}`}}
   const nFronts=geo.fronts.filter(f=>f.sec===i&&f.zone===k).length;
   const handleRow=lbl=>mx('Handles',handleRow0(lbl));const handleRow0=lbl=>{if(!nFronts)return '';const L1=lbl[0].toUpperCase()+lbl.slice(1),opts=(cur,first)=>`<option value="">${first}</option>`+HANDLES.filter(h_=>h_[0]!=='none').map(([k_,l_])=>`<option value="${k_}" ${cur===k_?'selected':''}>${l_}</option>`).join('')+`<option value="none" ${cur==='none'?'selected':''}>No handle (push to open)</option>`,gName=(HANDLES.find(h_=>h_[0]===S.opts.handle)||[])[1]||'';
     return `<div class="fld" style="grid-column:1/-1"><span>Handles in this level</span><select data-hd="${i}|${k}">${opts(z.hd||((z.nh||[]).length>=nFronts&&(z.nh||[]).slice(0,nFronts).every(Boolean)?'none':''),`Same as the whole cabinet (${gName})`)}</select></div>${nFronts>1?`<details class="pf"${(z.hts||[]).some(Boolean)||(z.nh||[]).some(Boolean)?' open':''}><summary>Handle per ${lbl}</summary><div class="grid2">${Array.from({length:nFronts},(_,j)=>`<label class="fld"><span>${L1} ${j+1}</span><select data-hts="${i}|${k}|${j}">${opts((z.nh||[])[j]?'none':((z.hts||[])[j]||''),'Same as the level')}</select></label>`).join('')}</div></details>`:''}`};
@@ -4417,7 +4432,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.58';
+const APP_VERSION='v0.59';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
