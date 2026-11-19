@@ -768,6 +768,9 @@ details.mx{grid-column:1/-1}
 
 #v-cut .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}.stat b small{font-family:var(--f-b);font-size:12px;color:var(--ink2);font-weight:500}
 .bybr{font-family:var(--f-b);font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--ink2);margin-left:6px;align-self:center}
+.fbk{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}.fbkb{display:grid;justify-items:center;gap:4px;padding:12px 8px;border:1px solid var(--line);border-radius:12px;background:var(--raised);font:inherit;font-weight:600;cursor:pointer;color:inherit}.fbkb span{font-size:24px}.fbkb.on{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+#fbText{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--raised);color:inherit;font:inherit;resize:vertical}.fbbtns{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.fbdone,.fbcoffee{display:grid;gap:10px;justify-items:start;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--raised)}.fbdone p,.fbcoffee p{margin:0}.fbcup{font-size:40px}
+.fblist{display:grid;gap:8px;margin-top:8px}.fbmsg{position:relative;border:1px solid var(--line);border-radius:10px;padding:10px 36px 10px 12px;background:var(--raised)}.fbmsg p{margin:6px 0 0;white-space:pre-wrap}.fbmsg small{display:block;margin-top:6px;color:var(--ink3);font-size:11px}.fbmh{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}.fbmsg .rowbtn{position:absolute;top:6px;right:6px}
 /* bigger tap targets for small text buttons */
 .fixb{min-height:32px;padding:4px 12px}.linkb{min-height:28px;padding:4px 2px}
 /* ===== one look for "selected" everywhere: dark fill. Blue (accent) is kept for actions. ===== */
@@ -777,14 +780,14 @@ input[type=checkbox],input[type=radio]{accent-color:var(--ink)}
 .chk{min-height:32px}
 </style>
 
-<div id="splash" role="status" aria-label="Fitted by BRUIS v0.70 is loading"><b>Fitted</b><span>v0.70</span></div>
+<div id="splash" role="status" aria-label="Fitted by BRUIS v0.71 is loading"><b>Fitted</b><span>v0.71</span></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
 
 <div class="app" data-tab="elev">
   <header class="top">
     <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-    <div class="brand" title="Fitted by BRUIS v0.70">Fitted<span class="bybr">by BRUIS</span><small>built-in wardrobes & cabinets, drawn and cut · v0.70</small></div>
+    <div class="brand" title="Fitted by BRUIS v0.71">Fitted<span class="bybr">by BRUIS</span><small>built-in wardrobes & cabinets, drawn and cut · v0.71</small></div>
     <nav class="tabs" id="tabs">
       <button data-act="tab" data-a="elev" class="on">Drawing</button>
       <button data-act="tab" data-a="3d">3D</button>
@@ -825,7 +828,7 @@ input[type=checkbox],input[type=radio]{accent-color:var(--ink)}
   
   <button data-act="tab" data-a="guide"><svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="9" cy="9" r="1.6" fill="currentColor"/><path d="M12 9h4M8 14h8M8 17.5h6" stroke="currentColor" stroke-width="1.6"/></svg><span>Guide</span></button>
 </nav>
-<div class="mmenu" id="mmenu" hidden><button type="button" data-act="io" id="dsBtnM">My designs</button><button type="button" data-act="wizard">New design (wizard)</button><button type="button" data-act="pdf">Download PDF</button><hr><button type="button" data-act="ntOpen" id="ntBtnM">Notes</button><button type="button" class="cmtb" data-act="cmt" hidden>Comment on the drawing</button><button type="button" data-act="aiOpen">AI render (photo-real picture)</button><hr><button type="button" data-act="gloss">Words explained</button><button type="button" data-act="lang" data-m="1" hidden></button><button type="button" data-act="install" id="instBtnM" hidden>Install app</button></div>
+<div class="mmenu" id="mmenu" hidden><button type="button" data-act="io" id="dsBtnM">My designs</button><button type="button" data-act="wizard">New design (wizard)</button><button type="button" data-act="pdf">Download PDF</button><hr><button type="button" data-act="ntOpen" id="ntBtnM">Notes</button><button type="button" class="cmtb" data-act="cmt" hidden>Comment on the drawing</button><button type="button" data-act="aiOpen">AI render (photo-real picture)</button><hr><button type="button" data-act="fbOpen">Talk to BRUIS — thanks, bugs, ideas, coffee</button><button type="button" data-act="gloss">Words explained</button><button type="button" data-act="lang" data-m="1" hidden></button><button type="button" data-act="install" id="instBtnM" hidden>Install app</button></div>
 <div class="pcal" id="pcal" hidden role="dialog" aria-label="Line up your room photo"><header><b>Line up your photo</b><span class="sp"></span><label class="btn sm" style="position:relative;overflow:hidden;cursor:pointer">Other photo<input type="file" accept="image/*" data-photoin style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0"></label><button type="button" class="btn sm" data-act="pcalClose">Cancel</button></header><div class="pstage" id="pstage"></div><footer id="pfoot"></footer></div>
 <input type="file" id="photoIn" accept="image/*" hidden>
 <div class="modal" id="wiz" hidden>
@@ -2195,8 +2198,9 @@ function ceilEnd(st,right){try{const c=(st.room.ceil||[]).slice().sort((a,b)=>a.
 function pjSync(){const P=S.proj;if(!P)return;P.angles=P.angles||[];P.legs=P.legs||[];const ws=pjWalls(),cs=ws.slice(0,-1).map((w,k)=>pjCorner(ws,k,P));
   ws.forEach((w,k)=>{const eff=pjEff(ws,k,P),cor={};
     if(k>0){const c=cs[k-1],A=ws[k-1];cor.L={name:A.name,D:A.D,mode:c.mode,deg:c.deg,side:'L',strip:c.strip};
-      if(c.mode==='diag'&&A.st&&w.st){const g=c.g,poly=[[0,0],[-c.eA,0],[-c.eA,A.D],c.PB,g.P(c.sB,0)];cor.L.diag={poly,front:c.fw,legA:c.eA,legB:c.sB,DA:A.D,DB:w.D,h:Math.min(ceilEnd(A.st,true),ceilEnd(w.st,false)),names:A.name+' / '+w.name}}}
-    if(k<ws.length-1){const c=cs[k];cor.R={name:ws[k+1].name,D:ws[k+1].D,mode:c.mode,deg:c.deg,side:'R',sideN:ws[k+1].side,blk:c.blk}}
+      if(c.mode==='diag'&&A.st&&w.st){const g=c.g,poly=[[0,0],[-c.eA,0],[-c.eA,A.D],c.PB,g.P(c.sB,0)];cor.L.diag={poly,front:c.fw,legA:c.eA,legB:c.sB,DA:A.D,DB:w.D,h:Math.min(ceilEnd(A.st,true),ceilEnd(w.st,false)),names:A.name+' / '+w.name}}
+      if(c.mode==='diag'){const t=P_=>P_[0]*c.g.u[0]+P_[1]*c.g.u[1];cor.L.dproj={x0:t(c.PB)-c.sB,x1:t(c.PA)-c.sB,front:c.fw,h:Math.min(ceilEnd(A.st||S,true),ceilEnd(w.st||S,false))}}}
+    if(k<ws.length-1){const c=cs[k];cor.R={name:ws[k+1].name,D:ws[k+1].D,mode:c.mode,deg:c.deg,side:'R',sideN:ws[k+1].side,blk:c.blk};if(c.mode==='diag'&&w.st&&ws[k+1].st)cor.R.dproj={x0:c.PA[0]+c.eA,x1:c.PB[0]+c.eA,front:c.fw,h:Math.min(ceilEnd(w.st,true),ceilEnd(ws[k+1].st,false))}}
     const st=k===P.at?S:w.st,tp=st?pjTaper(ws,k,P,eff):null;if(st){const sk=st.room.skew;if(tp){if(!sk||!sk.on||sk.auto)st.room.skew={on:true,auto:true,dL:Math.max(150,tp.dL),dR:Math.max(150,tp.dR)};else cor.taperBlocked=true;cor.taper=tp}else if(sk&&sk.auto)delete st.room.skew}
     if(k===P.at){S.room.W=eff;S.room.corner=cor}else if(w.st){w.st.room.W=eff;w.st.room.corner=cor;w.st.proj=undefined;P.walls[k].state=JSON.stringify(w.st);P.walls[k].D=w.st.room.D}})}
 function pjStart(){if(S.proj)return;S.proj={walls:[{name:'Wall A',len:+S.room.W,D:+S.room.D,state:null}],at:0,modes:[],angles:[],legs:[]};pjSync();changed(true)}
@@ -2230,6 +2234,9 @@ function cornerCheck(G,St){const C=St.room&&St.room.corner;if(!C)return;const W=
     cornerPanel(G,St,'skirt','Corner cabinet — plinth',[[0,0],[d.front,0],[d.front,Math.max(40,Pl)],[0,Math.max(40,Pl)]],{sec,band:'front',bandLen:d.front});
     G.H.funParts.push({n:`Hinges for the corner cabinet door${nD>1?'s':''} (110°, with mounting plates)`,q:String(nD*(hb>1200?3:2)),sec:'corner'},{n:'Shelf supports for the corner cabinet',q:'8',sec:'corner'});
     if(d.front<350)G.warns.push(`The diagonal corner cabinet’s front is only ${f0(d.front)} mm wide — make its legs along the walls longer (Room → Walls in this room) so the door is at least 400 mm.`)}}
+function pjLayout(){const P=S.proj;if(!P)return null;const ws=pjWalls(),cs=ws.slice(0,-1).map((w,k)=>pjCorner(ws,k,P));let x=0,y=0,hd=0;const segs=[];
+  ws.forEach((w,k)=>{const d=[Math.cos(hd),Math.sin(hd)],n=[-Math.sin(hd),Math.cos(hd)],s0=k>0?cs[k-1].sB:0,s1=w.len-(k<ws.length-1?cs[k].eA:0);segs.push({k,w,o:[x,y],d,n,s0,s1});x+=d[0]*w.len;y+=d[1]*w.len;if(k<cs.length)hd+=(180-cs[k].deg)*Math.PI/180});
+  const fr=(g,X,Y_)=>{const C=[g.o[0]+g.d[0]*g.w.len,g.o[1]+g.d[1]*g.w.len];return [C[0]+X*g.d[0]+Y_*g.n[0],C[1]+X*g.d[1]+Y_*g.n[1]]};return {ws,cs,segs,fr}}
 function pjPlanSVG(){const P=S.proj;if(!P)return '';const ws=pjWalls(),cs=ws.slice(0,-1).map((w,k)=>pjCorner(ws,k,P));let x=0,y=0,hd=0;const segs=[];
   ws.forEach((w,k)=>{const d=[Math.cos(hd),Math.sin(hd)],n=[-Math.sin(hd),Math.cos(hd)],s0=k>0?cs[k-1].sB:0,s1=w.len-(k<ws.length-1?cs[k].eA:0);segs.push({k,w,o:[x,y],d,n,s0,s1});x+=d[0]*w.len;y+=d[1]*w.len;if(k<cs.length)hd+=(180-cs[k].deg)*Math.PI/180});
   const pts=[];segs.forEach(g=>{pts.push(g.o,[g.o[0]+g.d[0]*g.w.len,g.o[1]+g.d[1]*g.w.len],[g.o[0]+g.n[0]*g.w.D,g.o[1]+g.n[1]*g.w.D])});const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]),pad=500,x0=Math.min(...xs)-pad,y0=Math.min(...ys)-pad,W_=Math.max(...xs)-x0+pad,H_=Math.max(...ys)-y0+pad;
@@ -2519,7 +2526,7 @@ function elevSVG(S,G,o={}){
   const W=G.W,tc=G.tc,P=G.P,M=S.mat,mini=!!o.mini;
   const maxC=Math.max(...G.cps.map(p=>p.y),+S.room.H,...G.beams.map(b=>b.bottom+100));
   const T=maxC+(mini?50:150),Y=y=>T-y;
-  const hasPin=G.secs.some(q=>q.pin!=null),mx=mini?100:Math.max(260,W*0.07),fa=(W+2*mx)/68,mxR=mini?100:mx+fa*3,vb=-mx,vw=W+mx+mxR,vh=T+(mini?70:fa*(hasPin?11.2:9.1));
+  const hasPin=G.secs.some(q=>q.pin!=null),CRN=(S.room&&S.room.corner)||{},exL=CRN.L&&CRN.L.dproj?Math.max(0,-Math.min(CRN.L.dproj.x0,CRN.L.dproj.x1)):0,exR=CRN.R&&CRN.R.dproj?Math.max(0,Math.max(CRN.R.dproj.x0,CRN.R.dproj.x1)):0,mx=mini?100:Math.max(260,W*0.07),fa=(W+2*mx)/68,mxR=(mini?100:mx+fa*3)+exR,vb=-mx-exL,vw=W+mx+exL+mxR,vh=T+(mini?70:fa*(hasPin?11.2:9.1));
   const foc=!mini&&o.focus!=null&&G.secs[o.focus]?G.secs[o.focus]:null,fTop=foc?Math.max(foc.top(foc.bL),foc.top(foc.bR)):0,fPad=foc?Math.max(140,Math.min(320,(foc.bR-foc.bL)*0.22)):0,
     fbox=foc?{x:foc.bL-fPad,y:T-(fTop+170),w:foc.bR-foc.bL+2*fPad,h:fTop+170+150}:null,vwS=foc?Math.max(fbox.w,fbox.h*0.62)*1.15:vw;
   const sw=vwS/800,fs=Math.max(foc?26:30,vwS/68),out=[];const push=s=>out.push(s);
@@ -2640,6 +2647,9 @@ function elevSVG(S,G,o={}){
   if(!o.hide)G.secs.forEach(q=>{if(q.deskShut&&q.deskDoorB)push(`<rect x="${n1(q.xa)}" y="${n1(Y(q.deskDoorB))}" width="${n1(q.w)}" height="${n1(q.deskDoorB)}" fill="#2A2C2E" fill-opacity=".55"/>`)});
   G.sideW.forEach(p=>push(`<polygon points="${pp(p)}" fill="${pv('skirt')}" stroke="rgba(0,0,0,.35)" stroke-width="${sw*.7}"/>${M.skirt.type==='mdfmicro'?`<polygon points="${pp(p)}" fill="url(#microfx)"/>`:''}`));
   drawLadder();
+  ['L','R'].forEach(sd=>{const c=CRN[sd];if(!c||!c.dproj)return;const d=c.dproj,a0=sd==='L'?d.x0:W+d.x0,a1=sd==='L'?d.x1:W+d.x1,x0=Math.min(a0,a1),x1=Math.max(a0,a1),Pl=G.P||0,top=Math.max(Pl+300,Math.min(d.h-(+S.skirt.top||40),Pl+2400)),nD=d.front>650?2:1,fill=pv('front');
+    push(`<g opacity=".75"><rect x="${n1(x0)}" y="${n1(Y(top))}" width="${n1(x1-x0)}" height="${n1(top-Pl)}" fill="${fill}" stroke="rgba(0,0,0,.45)" stroke-width="${sw}" stroke-dasharray="${n1(fs*.5)} ${n1(fs*.3)}"/>${nD>1?`<path d="M${n1((x0+x1)/2)} ${n1(Y(top))}V${n1(Y(Pl))}" stroke="rgba(0,0,0,.45)" stroke-width="${sw}"/>`:''}<rect x="${n1(x0)}" y="${n1(Y(Pl))}" width="${n1(x1-x0)}" height="${n1(Pl)}" fill="${pv('skirt')}" opacity=".8"/></g>`);
+    if(!mini)push(`<text x="${n1((x0+x1)/2)}" y="${n1(Y(top)-fs*.5)}" text-anchor="middle" font-size="${fs*.62}" style="fill:var(--ink2)">corner cabinet · seen at an angle · front ${f0(d.front)}</text>`)});
   (G.bumps||[]).forEach(b=>{const top=b.h||Math.max(...G.cps.map(p_=>p_.y));push(`<rect x="${n1(b.x)}" y="${n1(Y(top))}" width="${n1(b.w)}" height="${n1(top)}" fill="none" stroke="#7A5C3E" stroke-width="${n1(Math.max(3,sw*1.4))}" stroke-dasharray="${n1(fs*.6)} ${n1(fs*.4)}"/>`);if(!mini)push(`<text x="${n1(b.x+b.w/2)}" y="${n1(Y(Math.min(top,1400)))}" text-anchor="middle" font-size="${fs*.62}" fill="#7A5C3E">${BUMPS[b.t].toLowerCase()} · ${f0(b.d)} deep</text>`)});
   if(!mini)(G.cobjs||[]).forEach(o=>{if(o.t==='dormer'){if(o.sill>0)push(`<path d="M${n1(o.x)} ${n1(Y(o.sill))}H${n1(o.x+o.w)}" stroke="#2F6FA8" stroke-width="${n1(Math.max(3,sw*1.4))}" stroke-dasharray="${n1(fs*.5)} ${n1(fs*.3)}"/><text x="${n1(o.x+o.w/2)}" y="${n1(Y(o.sill)-fs*.4)}" text-anchor="middle" font-size="${fs*.62}" fill="#2F6FA8">dormer sill ${f0(o.sill)}</text>`);return}
     const cx=o.t==='hatch'?o.x+o.w/2:o.x,cy=G.ceilAt(Math.max(0,Math.min(G.W,cx))),c=o.t==='smoke'?'#C2410C':'#2F6FA8',lb={light:'light',smoke:'smoke detector',hatch:'loft hatch'}[o.t];
@@ -2685,7 +2695,7 @@ function elevSVG(S,G,o={}){
     G.secs.forEach(q=>(q.zones||[]).forEach(zr=>{if(!zr.dzV)return;const t=zr.dzV>0?`▲ ${f0(zr.dzV)} out`:`▼ ${f0(-zr.dzV)} back`;push(`<g><rect x="${n1(q.xa+12)}" y="${n1(Y(zr.y0+zr.h-12))}" width="${n1(fs*4.4)}" height="${n1(fs*0.95)}" rx="${n1(fs*0.3)}" fill="rgba(20,20,20,.62)"/><text x="${n1(q.xa+12+fs*0.3)}" y="${n1(Y(zr.y0+zr.h-12)+fs*0.68)}" font-size="${n1(fs*0.6)}" fill="#fff">${t}</text></g>`)}));
     dim(0,W,-fs*7.2,`${f0(W)} wall`);
     G.secs.forEach(q=>{if(q.pin==null)return;dim(0,q.lx,-fs*8.8,`📌 ${f0(q.lx)}`);push(`<line x1="${q.lx}" x2="${q.lx}" y1="${Y(0)}" y2="${Y(-fs*8.8)}" style="stroke:var(--accent)" stroke-width="${sw}" stroke-dasharray="${sw*5} ${sw*4}"/>`)});
-    if(q){const x=W+fs*1.2;const segs=[[0,q.desk?+q.s.deskH:q.Pq+tc,q.desk?'desk':q.free?(q.mount==='wall'?'float':q.mount==='legs'?'legs':'base'):'base']];q.zones.forEach(zr=>segs.push([zr.y0,zr.y0+zr.h,f0(zr.h)+(zr.top&&zr.hMax-zr.hMin>2?'–'+f0(zr.hMax):'')]));segs.forEach(([a,b,l])=>dimV(a,b,x,l))}
+    if(q){const x=W+fs*1.2+exR;const segs=[[0,q.desk?+q.s.deskH:q.Pq+tc,q.desk?'desk':q.free?(q.mount==='wall'?'float':q.mount==='legs'?'legs':'base'):'base']];q.zones.forEach(zr=>segs.push([zr.y0,zr.y0+zr.h,f0(zr.h)+(zr.top&&zr.hMax-zr.hMin>2?'–'+f0(zr.hMax):'')]));segs.forEach(([a,b,l])=>dimV(a,b,x,l))}
     G.secs.forEach(q=>{const tl=G.sampleLine(q.top,q.bL,q.bR);push(`<polygon data-sec="${q.i}" points="${pp([[q.bL,0],[q.bR,0],...tl.reverse()])}" fill="transparent" style="cursor:pointer"/>`);
       q.zones.forEach(zr=>{const ztop=zr.fb1!=null?[[q.bR,zr.fb1],[q.bL,zr.fb1]]:G.sampleLine(q.top,q.bL,q.bR).reverse();push(`<polygon data-sec="${q.i}" data-zone="${zr.k}" points="${pp([[q.bL,zr.fb0],[q.bR,zr.fb0],...ztop])}" fill="transparent" style="cursor:pointer"/>`)})});
   }
@@ -2773,6 +2783,34 @@ function simplifySide(el){const head=el.querySelector('.shead');if(head&&!el.que
 const GLOSS=[['Column','One upright unit of the cabinet, counted from the left: S1, S2, S3… The drawing and the lists use these numbers.'],['Level','A part of a column above or below another: a drawer stack, a cupboard, an open niche.'],['Carcass','The box itself: sides, top, bottom and back — everything except the doors and drawer fronts.'],['Front','A door or a drawer front: the parts you see.'],['Closing strip','A strip that closes the gap between the cabinet and a wall or the ceiling. It is cut a little wider and trimmed to the wall on site.'],['Plinth','The strip along the floor under the cabinet, set back a little so your toes fit.'],['Scribe','Trimming a strip to follow a crooked wall or ceiling: hold it in place, draw the wall line on it with a pencil, cut to the line.'],['Part','One piece of board you cut: a side, a shelf, a door. The cut list lists every part.'],['Sheet','A big board you buy (for example 2800 × 2070 mm). Parts are cut out of sheets.'],['Shaped parts','Parts that are not plain rectangles — sloped tops, cut-outs, holes. They get their own drawing with every point measured.'],['Edge band','A thin strip ironed or glued onto the raw edge of a board so it looks finished.'],['Grain','The direction of the wood pattern. Long parts follow the grain of the sheet.'],['Kerf','The width of the saw cut, about 3–4 mm. It is lost between two parts.'],['Inside width','The free space between the sides of a column — what fits inside.']];
 function glossOpen(){let m=document.getElementById('glm');if(!m){m=document.createElement('div');m.id='glm';m.className='modal';document.body.appendChild(m);m.addEventListener('click',e=>{if(e.target===m)m.hidden=true})}
   m.innerHTML=`<div class="mbox" role="dialog" aria-modal="true" aria-label="Words explained"><div class="mhead"><h2>Words explained</h2></div><div class="mbody"><dl class="gloss">${GLOSS.map(([t,d])=>`<dt>${t}</dt><dd>${d}</dd>`).join('')}</dl></div><div class="mfoot"><button class="btn" data-act="glossClose">Close</button><div></div></div></div>`;m.hidden=false;const mm=document.getElementById('mmenu');if(mm)mm.hidden=true}
+/* ===== messages to BRUIS: thanks, bugs, ideas, coffee ===== */
+const SUPPORT={coffee:'',github:'https://github.com/Superrated/Kast'}; // coffee: your Buy Me a Coffee / Ko-fi link
+const FBK=[['thanks','💛','Say thanks','A kind word goes a long way.'],['bug','🐞','Report a bug','Something broken or wrong? Tell what you did and what happened.'],['idea','💡','Suggest a feature','An idea that would make Fitted better for you.'],['coffee','☕','Buy me a coffee','Help keep Fitted growing.']];
+const FB={kind:'thanks',sent:null,inbox:null};
+function fbOpen(kind){if(kind)FB.kind=kind;FB.sent=null;let m=document.getElementById('fbm');if(!m){m=document.createElement('div');m.id='fbm';m.className='modal';document.body.appendChild(m);m.addEventListener('click',e=>{if(e.target===m)m.hidden=true})}fbRender();m.hidden=false;const mm=document.getElementById('mmenu');if(mm)mm.hidden=true;fbInbox()}
+function fbText(){const t=document.getElementById('fbText');return t?t.value.trim():''}
+function fbTech(){const qs=(geo&&geo.secs||[]).filter(q=>!q.panel);return `Fitted ${APP_VERSION} · ${navigator.userAgent.replace(/\s+/g,' ').slice(0,160)} · screen ${innerWidth}×${innerHeight} · design "${ui.docName||'unsaved'}": wall ${f0(+S.room.W)}×${f0(+S.room.H)}×${f0(+S.room.D)} mm, ${qs.length} columns, ${[...new Set((geo&&geo.warns)||[])].length} design notes${S.proj?`, ${S.proj.walls.length} walls`:''}`}
+function fbRender(){const m=document.getElementById('fbm');if(!m)return;const K=FBK.find(k=>k[0]===FB.kind)||FBK[0],draft=(()=>{try{return localStorage.getItem('fit-fb-'+FB.kind)||''}catch(e){return ''}})();
+  const ph={thanks:'What do you like about Fitted?',bug:'What did you do, what did you expect, and what happened instead?',idea:'What would you like Fitted to do?'}[FB.kind];
+  let body='';if(FB.sent)body=`<div class="fbdone"><b>${FB.sent==='db'?'Sent — thank you!':'Almost there'}</b><p>${FB.sent==='db'?'Your message is with BRUIS. You can send another one any time.':'This view can’t send messages directly. Copy your message and send it as a GitHub issue (free account) — or copy it and send it any way you like.'}</p>${FB.sent!=='db'?`<div class="fbbtns"><a class="btn pri" target="_blank" rel="noopener" href="${esc(fbIssueUrl())}">Open a GitHub issue</a><button type="button" class="btn" data-act="fbCopy">Copy my message</button></div>`:''}</div>`;
+  else if(FB.kind==='coffee')body=`<div class="fbcoffee"><div class="fbcup" aria-hidden="true">☕</div><p>Fitted is made by <b>BRUIS</b> in Belgium. If it saved you time, money or a ruined sheet of oak, a coffee says thanks and helps build the next features.</p>${SUPPORT.coffee?`<a class="btn pri" target="_blank" rel="noopener" href="${esc(SUPPORT.coffee)}">Buy me a coffee</a>`:'<p class="hintp" style="margin:0">The coffee link is coming soon — until then, a thank-you message makes my day just as much.</p><button type="button" class="btn pri" data-act="fbKind" data-a="thanks">Say thanks instead</button>'}</div>`;
+  else body=`<p class="hintp" style="margin:0">${K[3]}</p><textarea id="fbText" rows="6" placeholder="${ph}">${esc(draft)}</textarea>
+    <div class="grid2"><label class="fld"><span>Your name (optional)</span><span class="inp"><input type="text" id="fbName" maxlength="60"></span></label><label class="fld"><span>Email, if you'd like an answer (optional)</span><span class="inp"><input type="email" id="fbMail" maxlength="100"></span></label></div>
+    ${FB.kind!=='thanks'?`<label class="chk"><input type="checkbox" id="fbTech" ${FB.kind==='bug'?'checked':''}> Add technical details (app version, browser, size of the design — no personal data)</label>`:''}
+    <div class="fbbtns"><button type="button" class="btn pri" data-act="fbSend">Send</button>${FB.kind!=='thanks'?`<a class="linkb" target="_blank" rel="noopener" href="${esc(SUPPORT.github+'/issues')}">or see what others reported on GitHub</a>`:''}</div>`;
+  m.innerHTML=`<div class="mbox" role="dialog" aria-modal="true" aria-label="Messages to BRUIS"><div class="mhead"><h2>Talk to BRUIS</h2></div><div class="mbody" style="display:grid;gap:12px">
+    <div class="fbk">${FBK.map(([k,ic,l])=>`<button type="button" class="fbkb ${FB.kind===k?'on':''}" data-act="fbKind" data-a="${k}"><span aria-hidden="true">${ic}</span>${l}</button>`).join('')}</div>${body}
+    <div id="fbInbox">${fbInboxHTML()}</div></div><div class="mfoot"><button class="btn" data-act="fbClose">Close</button><div></div></div></div>`}
+function fbIssueUrl(){const t=fbText()||FB.lastText||'',K=FBK.find(k=>k[0]===FB.kind)||FBK[0],title=`${K[2]}: ${t.split('\n')[0].slice(0,60)}`;return `${SUPPORT.github}/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(t+(FB.lastTech?'\n\n---\n'+FB.lastTech:''))}`}
+async function fbSend(){const t=fbText();if(t.length<3){toast('Write a few words first');return}const tech=(document.getElementById('fbTech')||{}).checked?fbTech():'';FB.lastText=t;FB.lastTech=tech;
+  const doc={kind:FB.kind,text:t.slice(0,4000),name:((document.getElementById('fbName')||{}).value||'').slice(0,60),contact:((document.getElementById('fbMail')||{}).value||'').slice(0,100),tech,at:Date.now(),ver:APP_VERSION};
+  let ok=false;try{const db=DS.db||(window.claude&&claude.use?await claude.use('db'):null),us=window.claude&&claude.use?await claude.use('user'):null,uid=us&&us.id?await us.id():null;
+    if(db&&uid){const ref=db.doc('feedback/'+uid);let cur=[];try{const sn=await ref.get();const d_=sn&&(typeof sn.data==='function'?sn.data():sn);if(d_&&Array.isArray(d_.msgs))cur=d_.msgs}catch(e){}cur.push(Object.assign({id:'m'+Date.now().toString(36)},doc));await ref.set({msgs:cur.slice(-50),at:doc.at});ok=true}}catch(e){ok=false}
+  try{localStorage.removeItem('fit-fb-'+FB.kind)}catch(e){}FB.sent=ok?'db':'copy';fbRender();if(ok)fbInbox()}
+async function fbInbox(){try{const db=DS.db;if(!db){FB.inbox=null;return}const snap=await db.collection('feedback').limit(200).get();FB.inbox=snap.docs.flatMap(d=>{const v=d.data()||{};return (v.msgs||[]).map(m=>Object.assign({},m,{uid:d.id}))}).sort((a,b)=>(+b.at||0)-(+a.at||0));}catch(e){FB.inbox=null}const el=document.getElementById('fbInbox');if(el)el.innerHTML=fbInboxHTML()}
+function fbInboxHTML(){const L=FB.inbox;if(!L||!L.length)return '';const IC=Object.fromEntries(FBK.map(k=>[k[0],k[1]]));
+  return `<details class="pf fbin"><summary>Messages received (${L.length}) — only you and your editors see these</summary><div class="fblist">${L.map(m=>`<div class="fbmsg"><div class="fbmh"><span>${IC[m.kind]||'✉️'} <b>${esc(m.name||'Someone')}</b>${m.contact?` · ${esc(m.contact)}`:''}</span><span class="note">${dsAgo(+m.at||0)}</span></div><p>${esc(m.text||'')}</p>${m.tech?`<small>${esc(m.tech)}</small>`:''}<button type="button" class="rowbtn" data-act="fbDel" data-a="${esc(m.uid+'|'+m.id)}" aria-label="Delete message">×</button></div>`).join('')}</div></details>`}
+document.addEventListener('input',e=>{if(e.target&&e.target.id==='fbText'){try{localStorage.setItem('fit-fb-'+FB.kind,e.target.value)}catch(_){}}});
 function renderSide(){
   const el=document.getElementById('side'),op=k=>(openState[k]||(k==='secs'&&isSheet()))?'open':'',R=S.room;const pane=PANES.find(x=>x[0]===(ui.pane||'layout'))||PANES[1];
   let h=`<details class="acc" data-k="room" ${op('room')}><summary>Wall</summary><div class="accb">
@@ -4824,6 +4862,19 @@ function floorTex(){const c=document.createElement('canvas');c.width=1024;c.heig
     for(let k=0;k<10;k++){x.strokeStyle='rgba(90,60,30,'+(0.05+r()*0.12)+')';x.lineWidth=1+r()*2;x.beginPath();const yy=row*128+r()*126;x.moveTo(px,yy);x.bezierCurveTo(px+len/3,yy+(r()-.5)*10,px+len*2/3,yy+(r()-.5)*10,px+len,yy);x.stroke()}
     x.fillStyle='rgba(40,25,10,.35)';x.fillRect(px+len-2,row*128,2,126);px+=len}x.fillStyle='rgba(40,25,10,.4)';x.fillRect(0,row*128+126,1024,2)}
   const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.encoding=THREE.sRGBEncoding;return t}
+/* the other walls of the room and the diagonal corner cabinets, placed around the open wall in 3D */
+function others3D(){if(!S.proj||!T3||ui.others3D===false)return;const L=pjLayout();if(!L)return;const a=L.segs[S.proj.at];if(!a)return;
+  const toW=Pp=>{const v=[Pp[0]-a.o[0],Pp[1]-a.o[1]];return [v[0]*a.d[0]+v[1]*a.d[1]-a.s0,v[0]*a.n[0]+v[1]*a.n[1]-a.w.D]};
+  const G0=new THREE.Group();G0.name='others';
+  L.segs.forEach(g=>{if(g.k===S.proj.at||!g.w.st)return;const st=g.w.st;let G;const S0=S;try{S=st;G=build(st)}catch(e){G=null}S=S0;if(!G)return;
+    const grp=new THREE.Group(),M=st.mat||{};G.items.forEach(it=>{if(it.k!=='prism')return;const ge=prismGeo(it.poly,it.toW,it.ext,it.grainU,it.holes);if(!ge)return;let mt;try{mt=it.role==='glass'||it.role==='led'||String(it.role).startsWith('fabric:')||it.role==='cane'?colMat('#d8dcd8',.6):mat3(it.fin||(M[it.role]||M.carcass).fin,it.mt||((M[it.role]||M.carcass).type))}catch(e){mt=colMat('#cccccc',.7)}const m=new THREE.Mesh(ge,mt);m.castShadow=true;m.receiveShadow=true;grp.add(m)});
+    const O=toW([g.o[0]+g.d[0]*g.s0+g.n[0]*g.w.D,g.o[1]+g.d[1]*g.s0+g.n[1]*g.w.D]),cs=g.d[0]*a.d[0]+g.d[1]*a.d[1],sn=g.n[0]*a.d[0]+g.n[1]*a.d[1];
+    grp.rotation.y=Math.atan2(sn,cs);grp.position.set(O[0],0,O[1]);G0.add(grp)});
+  L.cs.forEach((c,k)=>{if(c.mode!=='diag')return;const g=L.segs[k],A=L.ws[k],B=L.ws[k+1];if(!A.st||!B.st)return;const poly=[[0,0],[-c.eA,0],[-c.eA,A.D],c.PB,c.g.P(c.sB,0)].map(([X,Y_])=>toW(L.fr(g,X,Y_)));
+    const Pl=+(B.st.skirt||{}).plinth||90,hb=Math.max(600,Math.min(ceilEnd(A.st,true),ceilEnd(B.st,false))-(+(B.st.skirt||{}).top||40)-Pl);
+    const sh=new THREE.Shape(poly.map(([X,Z])=>new THREE.Vector2(X,-Z)));const ge=new THREE.ExtrudeGeometry(sh,{depth:hb,bevelEnabled:false});ge.rotateX(-Math.PI/2);ge.translate(0,Pl,0);
+    let mt;try{mt=mat3((B.st.mat.front||{}).fin,(B.st.mat.front||{}).type)}catch(e){mt=colMat('#d9c3a0',.6)}const m=new THREE.Mesh(ge,mt);m.castShadow=true;m.receiveShadow=true;G0.add(m)});
+  T3.root.add(G0);T3.req&&T3.req()}
 function prismGeo(poly,toW,ext,grainU,holes){
   const pts0=clean(poly);if(pts0.length<3)return null;const hs=(holes||[]).map(h=>clean(h)).filter(h=>h.length>=3),rings=[pts0,...hs],pts=[].concat(...rings);
   let tris=[];try{tris=THREE.ShapeUtils.triangulateShape(pts0.map(p=>new THREE.Vector2(p[0],p[1])),hs.map(h=>h.map(p=>new THREE.Vector2(p[0],p[1]))))}catch(e){}
@@ -5007,7 +5058,7 @@ function rebuild3D(){
   T3.fill.position.set(-W*.4,maxC*.6,2000);if(typeof photoActive==='function'){if(photoActive()){try{solvePhoto();photoLight();photoFit()}catch(e){}}else if(PH.keep&&PH.img&&!ui.photoOn&&ui.tab==='3d'&&!PH._auto1){PH._auto1=1;try{solvePhoto();if(PH.pose){PH.adjust=false;setPhotoMode(true)}}catch(e){}}}
   const bg=getComputedStyle(document.documentElement).getPropertyValue('--stage').trim()||'#dde1dc';T3.scene.background=photoActive()?null:new THREE.Color(bg);photoShadow();
   if(!T3.framed){camPreset('angle');T3.framed=true}
-  T3.req()}
+  T3.req();try{others3D()}catch(e){console.warn(e)}}
 
 /* ===== exploded view: every column pulled apart, every part pulled off its box ===== */
 
@@ -5042,7 +5093,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.70';
+const APP_VERSION='v0.71';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
@@ -5462,7 +5513,7 @@ function camPreset(k){if(!T3)return;const maxC=Math.max(...geo.cps.map(p=>p.y),+
 function renderBar(){
   const b=document.getElementById('bar');const w=geo.warns;let h='';
   if(ui.tab==='elev')h+=`<button class="btn sm ${ui.props?'on':''}" data-act="props" title="Show books, clothes, boxes and decoration at real size">Show items</button>${fmodeHTML()}<button class="btn sm" data-act="zoom" data-a="-1" aria-label="Zoom out">−</button><button class="btn sm" data-act="zoom" data-a="1" aria-label="Zoom in">+</button>`;
-  if(ui.tab==='3d')h+=`<button class="btn sm ${ui.photoOn?'on':''}" data-act="photo" title="Line the design up with a photo of your room">${ui.photoOn?'Photo on':PH.img?'Room photo':'+ Room photo'}</button><button class="btn sm" data-act="light3d" title="Change the light: daylight, morning, evening, lamps">Light: ${(LIGHTS[ui.light||'']||LIGHTS[''])[1]}</button><button class="btn sm" data-act="cam" data-a="front">Front</button><button class="btn sm" data-act="cam" data-a="angle">Right ¾</button><button class="btn sm" data-act="cam" data-a="left">Left ¾</button><button class="btn sm ${ui.props?'on':''}" data-act="props" title="Show books, clothes, boxes and decoration at real size">Show items</button>${fmodeHTML()}<button class="btn sm" data-act="aiOpen" title="Hand this picture to a picture AI to make it look like a photo">🪄 AI render</button><button class="btn sm ${ui.see&&ui.see.size?'on':''}" data-act="seeClear" title="Tap any door, panel or shelf in the 3D view to see through it">${ui.see&&ui.see.size?`Solid again (${ui.see.size})`:'Tap a piece to see through'}</button><button class="btn sm ${ui.room3D?'on':''}" data-act="room3D">Room</button><button class="btn sm ${ui.exOn?'on':''}" data-act="explode" title="Pull every column and every part apart">Exploded</button><button class="btn sm ${ui.iso?'on':''}" data-act="iso" title="Show one column on its own">${ui.iso?'Column '+(ui.sel+1):'One column'}</button>${ui.iso?`<button class="btn sm" data-act="isoSec" data-a="-1" aria-label="Previous column">◀</button><button class="btn sm" data-act="isoSec" data-a="1" aria-label="Next column">▶</button>`:''}`;
+  if(ui.tab==='3d')h+=`<button class="btn sm ${ui.photoOn?'on':''}" data-act="photo" title="Line the design up with a photo of your room">${ui.photoOn?'Photo on':PH.img?'Room photo':'+ Room photo'}</button>${S.proj?`<button class="btn sm ${ui.others3D===false?'':'on'}" data-act="others3D" title="Show the other walls of the room around this one">Other walls</button>`:''}<button class="btn sm" data-act="light3d" title="Change the light: daylight, morning, evening, lamps">Light: ${(LIGHTS[ui.light||'']||LIGHTS[''])[1]}</button><button class="btn sm" data-act="cam" data-a="front">Front</button><button class="btn sm" data-act="cam" data-a="angle">Right ¾</button><button class="btn sm" data-act="cam" data-a="left">Left ¾</button><button class="btn sm ${ui.props?'on':''}" data-act="props" title="Show books, clothes, boxes and decoration at real size">Show items</button>${fmodeHTML()}<button class="btn sm" data-act="aiOpen" title="Hand this picture to a picture AI to make it look like a photo">🪄 AI render</button><button class="btn sm ${ui.see&&ui.see.size?'on':''}" data-act="seeClear" title="Tap any door, panel or shelf in the 3D view to see through it">${ui.see&&ui.see.size?`Solid again (${ui.see.size})`:'Tap a piece to see through'}</button><button class="btn sm ${ui.room3D?'on':''}" data-act="room3D">Room</button><button class="btn sm ${ui.exOn?'on':''}" data-act="explode" title="Pull every column and every part apart">Exploded</button><button class="btn sm ${ui.iso?'on':''}" data-act="iso" title="Show one column on its own">${ui.iso?'Column '+(ui.sel+1):'One column'}</button>${ui.iso?`<button class="btn sm" data-act="isoSec" data-a="-1" aria-label="Previous column">◀</button><button class="btn sm" data-act="isoSec" data-a="1" aria-label="Next column">▶</button>`:''}`;
   if(ui.tab==='elev'||ui.tab==='3d')h+=`<span class="sp"></span><span class="note" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">Fronts ${finSel('front')} Carcass ${finSel('carcass')}</span>`;
   else h+='<span class="sp"></span>';
   if(ui.tab==='elev'||ui.tab==='3d')h+=`<button class="btn sm mobonly" data-act="bigView" aria-label="${ui.big?'Smaller drawing':'Bigger drawing'}">${ui.big?'⤡ Smaller':'⤢ Bigger'}</button>`;
@@ -5474,7 +5525,7 @@ function renderBar(){
   placeFmode();renderStatus();
 }
 function renderStatus(){const el=document.getElementById('sbar');if(!el||!geo)return;const qs=geo.secs.filter(q=>!q.panel),wn=[...new Set(geo.warns)].length,tops=geo.cps.map(p=>p.y);
-  el.innerHTML=`<span><b>${f0(geo.W)}</b> mm wall</span><span><b>${f0(Math.max(...tops,+S.room.H||0))}</b> mm high</span><span><b>${f0(+S.room.D)}</b> mm deep</span><span><b>${qs.length}</b> column${qs.length===1?'':'s'}</span><span><b>${geo.panels.length}</b> parts</span><span class="sp"></span>${budgetKind()?'<span class="sbadge">Budget build</span>':''}${S.opts.part&&S.opts.part.on&&partSet()?'<span class="sbadge">Partial build</span>':''}<button type="button" class="sbtn ${wn?'warn':''}" data-act="notesOpen">${wn?`⚠ ${wn} design note${wn>1?'s':''}`:'✓ No design issues'}</button><button type="button" class="sbtn pchip" data-act="toPriceTab" title="Estimated price — open the price list">${pchipText()}</button>`}
+  el.innerHTML=`<span><b>${f0(geo.W)}</b> mm wall</span><span><b>${f0(Math.max(...tops,+S.room.H||0))}</b> mm high</span><span><b>${f0(+S.room.D)}</b> mm deep</span><span><b>${qs.length}</b> column${qs.length===1?'':'s'}</span><span><b>${geo.panels.length}</b> parts</span><span class="sp"></span>${budgetKind()?'<span class="sbadge">Budget build</span>':''}${S.opts.part&&S.opts.part.on&&partSet()?'<span class="sbadge">Partial build</span>':''}<button type="button" class="sbtn ${wn?'warn':''}" data-act="notesOpen">${wn?`⚠ ${wn} design note${wn>1?'s':''}`:'✓ No design issues'}</button><button type="button" class="sbtn pchip" data-act="toPriceTab" title="Estimated price — open the price list">${pchipText()}</button><button type="button" class="sbtn" data-act="fbOpen" title="Say thanks, report a bug, suggest a feature or buy me a coffee">♥ Feedback</button>`}
 function skewPlan(){const G=geo,sk=G.skew;if(!sk)return '';const W=G.W,mx=Math.max(sk.dL,sk.dR),sc=300/W,H=mx*sc+46;let o=`<svg viewBox="-8 -8 316 ${n1(H)}" style="width:100%;max-width:380px;display:block" role="img" aria-label="Plan from above"><polygon points="0,0 300,0 300,${n1((mx-sk.dR)*sc)} 0,${n1((mx-sk.dL)*sc)}" fill="url(#hatch)" style="stroke:var(--ink3)" stroke-width="1"/><line x1="0" y1="${n1((mx-sk.dL)*sc)}" x2="300" y2="${n1((mx-sk.dR)*sc)}" style="stroke:var(--ink)" stroke-width="2"/>`;
   G.secs.forEach(q=>{if(q.panel)return;const x0=q.bL*sc,x1=q.bR*sc,y1=mx*sc,y0=y1-q.D*sc;o+=`<rect x="${n1(x0)}" y="${n1(y0)}" width="${n1(x1-x0)}" height="${n1(y1-y0)}" style="fill:var(--accent-soft);stroke:var(--accent)" stroke-width="1.2"/><text x="${n1((x0+x1)/2)}" y="${n1((y0+y1)/2+4)}" text-anchor="middle" font-size="10" style="fill:var(--ink)">${f0(q.D)}</text>`});
   return o+`<line x1="0" y1="${n1(mx*sc)}" x2="300" y2="${n1(mx*sc)}" style="stroke:var(--accent)" stroke-width="2.5"/><text x="150" y="${n1(mx*sc+16)}" text-anchor="middle" font-size="10" style="fill:var(--ink2)">cabinet front (straight) — seen from above, wall at the top</text></svg>`}
@@ -5730,7 +5781,14 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'dsOpen':dsOpen(a);break;
     case 'cmt':{const v=document.getElementById('v-'+(ui.tab||'elev'))||document.getElementById('v-elev');document.getElementById('mmenu').hidden=true;cmtOpen(v);break}
     case 'lang':{const ks=Object.keys(LANGS);setLang(ks[(ks.indexOf(LANG)+1)%ks.length]);const m_=document.getElementById('mmenu');if(m_)m_.hidden=true;break}
+    case 'others3D':ui.others3D=ui.others3D===false;if(T3)rebuild3D();renderBar();break;
     case 'gloss':glossOpen();break;
+    case 'fbOpen':fbOpen(a||'');break;
+    case 'fbKind':FB.kind=a;FB.sent=null;fbRender();break;
+    case 'fbSend':fbSend();break;
+    case 'fbClose':document.getElementById('fbm').hidden=true;break;
+    case 'fbCopy':{const t=(FB.lastText||'')+(FB.lastTech?'\n\n'+FB.lastTech:'');copy(t);break}
+    case 'fbDel':{const b_=e.target.closest('button');if(b_&&!b_.dataset.armed){b_.dataset.armed='1';b_.textContent='Delete?';break}(async()=>{try{const[u,id]=a.split('|'),ref=DS.db.doc('feedback/'+u),sn=await ref.get(),d_=sn&&(typeof sn.data==='function'?sn.data():sn),L=((d_&&d_.msgs)||[]).filter(m=>m.id!==id);if(L.length)await ref.set({msgs:L,at:Date.now()});else await ref.delete()}catch(_){}fbInbox()})();break}
     case 'glossClose':document.getElementById('glm').hidden=true;break;
     case 'cmtCol':cmtOpen(e.target.closest('.card'));break;
     case 'dsRestore':dsRestore(a);break;

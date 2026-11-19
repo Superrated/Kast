@@ -7,7 +7,7 @@
 - a hardware list and a price estimate (Belgian woodworking shops)
 - a step-by-step build guide, and a PDF with all of the above
 
-Version **v0.70**.
+Version **v0.71**.
 
 ## Use it
 
@@ -62,3 +62,8 @@ Fitted is in English. All translations live in `src/lang.js`:
 2. Under `words`, add `'English text as on screen': 'translation'` pairs. Texts with numbers go under `patterns`.
 3. The longer texts (the shop email, the brief for a cabinet maker) are templates starting with `@` in `LANG_EN`; copy any of them into the new language to translate it.
 4. Run `python3 build.py`. A language button appears in the header as soon as there are two languages. Anything without a translation stays in English.
+
+
+## Buy-me-a-coffee link
+
+Put your Buy Me a Coffee or Ko-fi address in `SUPPORT.coffee` near "messages to BRUIS" in `src/kast.html`, then run `python3 build.py`. Until then the coffee tab invites people to say thanks instead.

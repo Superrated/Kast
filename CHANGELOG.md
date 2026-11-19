@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.71
+
+- **Talk to BRUIS** (♥ Feedback in the bottom bar, and in the ☰ menu): say thanks, report a bug (with optional technical details), suggest a feature, or buy me a coffee.
+  - Messages are stored in the app; only the owner and editors can read them, under "Messages received".
+  - Where a viewer can't send, they get a ready-made GitHub issue and a "copy my message" button.
+  - Drafts are kept while you type.
+- **3D shows the whole room**: the other walls of the room and the diagonal corner cabinets stand around the open wall at their real angles (toggle "Other walls").
+- **Diagonal corner cabinet in the front drawing**: it shows at the end of both neighbouring walls, seen at an angle; the size lines move out of its way.
+
 ## v0.70
 
 - **Corners at any angle** (Room → Walls in this room): every corner has its real inside angle (45–179°; quick buttons for 90°, 95°, 120° and 135°).
