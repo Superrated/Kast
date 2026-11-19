@@ -777,14 +777,14 @@ input[type=checkbox],input[type=radio]{accent-color:var(--ink)}
 .chk{min-height:32px}
 </style>
 
-<div id="splash" role="status" aria-label="Fitted by BRUIS v0.69 is loading"><b>Fitted</b><span>v0.69</span></div>
+<div id="splash" role="status" aria-label="Fitted by BRUIS v0.70 is loading"><b>Fitted</b><span>v0.70</span></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
 
 <div class="app" data-tab="elev">
   <header class="top">
     <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-    <div class="brand" title="Fitted by BRUIS v0.69">Fitted<span class="bybr">by BRUIS</span><small>built-in wardrobes & cabinets, drawn and cut · v0.69</small></div>
+    <div class="brand" title="Fitted by BRUIS v0.70">Fitted<span class="bybr">by BRUIS</span><small>built-in wardrobes & cabinets, drawn and cut · v0.70</small></div>
     <nav class="tabs" id="tabs">
       <button data-act="tab" data-a="elev" class="on">Drawing</button>
       <button data-act="tab" data-a="3d">3D</button>
@@ -2168,39 +2168,97 @@ function planHTML(G){const P=planOf(G),r=h=>h<1?Math.round(h*60)+' min':(Math.ro
    'blind' corner: wall k runs into the corner and its last part sits behind wall k+1; 'dead': both stop and the corner square stays closed. */
 const PJ_MAX=4,PJ_NAMES=['A','B','C','D'];
 function pjWalls(){const P=S.proj;if(!P)return null;return P.walls.map((w,i)=>{const st=i===P.at?S:(()=>{try{return JSON.parse(w.state)}catch(e){return null}})();return {i,name:w.name,len:+w.len||0,D:st?+st.room.D:+w.D||600,st,side:st?+(st.skirt||{}).side||0:30}})}
-function pjEff(ws,k,P){const W=ws[k];let off=0;if(k>0)off+=ws[k-1].D;if(k<ws.length-1&&(P.modes[k]||'blind')==='dead')off+=ws[k+1].D;return Math.max(600,W.len-off)}
-function pjSync(){const P=S.proj;if(!P)return;const ws=pjWalls();ws.forEach((w,k)=>{const eff=pjEff(ws,k,P),cor={};if(k>0)cor.L={name:ws[k-1].name,D:ws[k-1].D,mode:P.modes[k-1]||'blind',side:'L'};if(k<ws.length-1)cor.R={name:ws[k+1].name,D:ws[k+1].D,mode:P.modes[k]||'blind',side:'R',sideN:ws[k+1].side};
-  if(k===P.at){S.room.W=eff;S.room.corner=cor}else if(w.st){w.st.room.W=eff;w.st.room.corner=cor;w.st.proj=undefined;P.walls[k].state=JSON.stringify(w.st);P.walls[k].D=w.st.room.D}})}
-function pjStart(){if(S.proj)return;S.proj={walls:[{name:'Wall A',len:+S.room.W,D:+S.room.D,state:null}],at:0,modes:[]};pjSync();changed(true)}
+/* ---- corner geometry. Corner at (0,0); wall k runs back along −x, the room is y>0; wall k+1 leaves the corner along u at the inside angle θ. ---- */
+function cgeo(Dk,Dn,deg){const th=Math.max(45,Math.min(179,+deg||90))*Math.PI/180,u=[-Math.cos(th),Math.sin(th)],N=[-Math.sin(th),-Math.cos(th)];
+  const tn=(x,y)=>[x*u[0]+y*u[1],x*N[0]+y*N[1]],inRoom=(x,y)=>y>=-0.5&&tn(x,y)[1]>=-0.5,inA=(x,y,e)=>y>=0.5&&y<=Dk-0.5&&x<=-e-0.5,inB=(x,y,s)=>{const[t,n]=tn(x,y);return n>=0.5&&n<=Dn-0.5&&t>=s+0.5};
+  const bs=(lo,hi,ok)=>{if(ok(lo))return lo;for(let i=0;i<22;i++){const m=(lo+hi)/2;if(ok(m))hi=m;else lo=m}return Math.ceil(hi)};
+  const steps=[0,2,5,10,20,35,50,75,100,140,200,280,400,550,750,1000,1300,1600],boxA=e=>{const out=[];for(let y=0;y<=Dk+1e-6;y+=Dk/24)steps.forEach(dx=>out.push([-e-dx,y]));return out};
+  const boxB=s=>{const out=[];for(let n=0;n<=Dn+1e-6;n+=Dn/24)steps.forEach(dt=>{const t=s+dt;out.push([t*u[0]+n*N[0],t*u[1]+n*N[1]])});return out};
+  const eBlind=bs(0,4000,e=>boxA(e).every(([x,y])=>inRoom(x,y))),eDead=bs(0,4000,e=>boxA(e).every(([x,y])=>inRoom(x,y)&&!inB(x,y,0)));
+  const sAfter=eA=>bs(0,4000,s=>boxB(s).every(([x,y])=>inRoom(x,y)&&!inA(x,y,eA))&&boxA(eA).every(([x,y])=>!inB(x,y,s)));
+  const P=(t,n)=>[t*u[0]+n*N[0],t*u[1]+n*N[1]];
+  return {th,deg:th*180/Math.PI,u,N,P,eBlind,eDead,sBlind:sAfter(eBlind),sDead:sAfter(0),
+    /* how far in front of wall k's fronts the next wall's cabinets reach back towards the corner: blocked length of wall k's front */
+    blocked:(s)=>{let mn=0;boxB(s).forEach(([x,y])=>{if(y>=Dk&&y<=Dk+450)mn=Math.min(mn,x)});return -mn}}}
+function pjCorner(ws,k,P){const A=ws[k],B=ws[k+1],deg=+(P.angles||[])[k]||90,sq=(P.square||[])[k]&&Math.abs(deg-90)>0.5&&Math.abs(deg-90)<=15?(P.square||[])[k]:'',g=cgeo(A.D,B.D,sq?90:deg),mode=P.modes[k]||'blind';
+  let eA,sB;if(mode==='diag'){const lg=(P.legs||[])[k]||{};eA=Math.max(g.eDead+150,+lg.a||g.eDead+350);sB=Math.max(g.sDead+150,+lg.b||g.sDead+350)}else if(mode==='dead'){eA=g.eDead;sB=g.sDead}else{eA=g.eBlind;sB=g.sBlind}
+  const PA=[-eA,A.D],PB=g.P(sB,B.D),fw=Math.hypot(PB[0]-PA[0],PB[1]-PA[1]),dA=[1,0],dF=fw?[(PB[0]-PA[0])/fw,(PB[1]-PA[1])/fw]:[1,0],ang=(a,b)=>Math.acos(Math.max(-1,Math.min(1,a[0]*b[0]+a[1]*b[1])))*180/Math.PI;
+  /* a front line that turns left (into the corner) means the next wall's fronts sit behind: then there is nothing to close */
+  const fwd=dA[0]*dF[0]+dA[1]*dF[1],strip=!sq&&mode!=='diag'&&Math.abs(deg-90)>2&&fw>8&&fwd>0.05?{w:Math.round(fw),a1:+ang(dA,dF).toFixed(1),a2:+ang(dF,g.u).toFixed(1)}:null;
+  return {deg,sq,mode,g,eA,sB,PA,PB,fw,strip,blk:mode==='blind'?Math.max(0,g.blocked(sB)-eA):0}}
+/* fronts made square in a crooked corner: the tapered wall's cabinets get gradually shallower (depth = room depth at the deepest point) */
+function pjTaper(ws,k,P,W){const w=ws[k],sqL=k>0&&(P.square||[])[k-1]==='B'?(+(P.angles||[])[k-1]||90)-90:0,sqR=k<ws.length-1&&(P.square||[])[k]==='A'?(+(P.angles||[])[k]||90)-90:0;
+  if((!sqL||Math.abs(sqL)>15)&&(!sqR||Math.abs(sqR)>15))return null;const tL=Math.abs(sqL)<=15?Math.tan(sqL*Math.PI/180):0,tR=Math.abs(sqR)<=15?Math.tan(sqR*Math.PI/180):0,v=x=>x*tL+(W-x)*tR,mx=Math.max(v(0),v(W));
+  return {dL:Math.round(w.D-(mx-v(0))),dR:Math.round(w.D-(mx-v(W)))}}
+function pjEff(ws,k,P){const W=ws[k];let off=0;if(k>0)off+=pjCorner(ws,k-1,P).sB;if(k<ws.length-1)off+=pjCorner(ws,k,P).eA;return Math.max(600,W.len-off)}
+function ceilEnd(st,right){try{const c=(st.room.ceil||[]).slice().sort((a,b)=>a.x-b.x);if(!c.length)return +st.room.H;return right?+c[c.length-1].y:+c[0].y}catch(e){return 2400}}
+function pjSync(){const P=S.proj;if(!P)return;P.angles=P.angles||[];P.legs=P.legs||[];const ws=pjWalls(),cs=ws.slice(0,-1).map((w,k)=>pjCorner(ws,k,P));
+  ws.forEach((w,k)=>{const eff=pjEff(ws,k,P),cor={};
+    if(k>0){const c=cs[k-1],A=ws[k-1];cor.L={name:A.name,D:A.D,mode:c.mode,deg:c.deg,side:'L',strip:c.strip};
+      if(c.mode==='diag'&&A.st&&w.st){const g=c.g,poly=[[0,0],[-c.eA,0],[-c.eA,A.D],c.PB,g.P(c.sB,0)];cor.L.diag={poly,front:c.fw,legA:c.eA,legB:c.sB,DA:A.D,DB:w.D,h:Math.min(ceilEnd(A.st,true),ceilEnd(w.st,false)),names:A.name+' / '+w.name}}}
+    if(k<ws.length-1){const c=cs[k];cor.R={name:ws[k+1].name,D:ws[k+1].D,mode:c.mode,deg:c.deg,side:'R',sideN:ws[k+1].side,blk:c.blk}}
+    const st=k===P.at?S:w.st,tp=st?pjTaper(ws,k,P,eff):null;if(st){const sk=st.room.skew;if(tp){if(!sk||!sk.on||sk.auto)st.room.skew={on:true,auto:true,dL:Math.max(150,tp.dL),dR:Math.max(150,tp.dR)};else cor.taperBlocked=true;cor.taper=tp}else if(sk&&sk.auto)delete st.room.skew}
+    if(k===P.at){S.room.W=eff;S.room.corner=cor}else if(w.st){w.st.room.W=eff;w.st.room.corner=cor;w.st.proj=undefined;P.walls[k].state=JSON.stringify(w.st);P.walls[k].D=w.st.room.D}})}
+function pjStart(){if(S.proj)return;S.proj={walls:[{name:'Wall A',len:+S.room.W,D:+S.room.D,state:null}],at:0,modes:[],angles:[],legs:[]};pjSync();changed(true)}
 function pjAdd(){const P=S.proj;if(!P||P.walls.length>=PJ_MAX)return;const cur=JSON.parse(JSON.stringify(S));delete cur.proj;cur.room.beams=[];cur.room.wobs=[];cur.room.objs=[];delete cur.room.corner;
   cur.room.ceil=[{x:0,y:+cur.room.H},{x:3000,y:+cur.room.H}];cur.sections=cur.sections.slice(0,Math.max(1,Math.min(3,cur.sections.length))).map(x=>Object.assign(x,{w:null,pinX:null}));
-  const k=P.walls.length;P.walls.push({name:'Wall '+PJ_NAMES[k],len:2400,D:+cur.room.D,state:JSON.stringify(cur)});P.modes[k-1]='blind';pjSync();pjOpen(k)}
+  const k=P.walls.length;P.walls.push({name:'Wall '+PJ_NAMES[k],len:2400,D:+cur.room.D,state:JSON.stringify(cur)});P.modes[k-1]='blind';(P.angles=P.angles||[])[k-1]=90;pjSync();pjOpen(k)}
 function pjOpen(k){const P=S.proj;if(!P||k===P.at||!P.walls[k])return;const me=JSON.parse(JSON.stringify(S));delete me.proj;P.walls[P.at].state=JSON.stringify(me);P.walls[P.at].D=+S.room.D;
   let nx;try{nx=fixFins(JSON.parse(P.walls[k].state))}catch(e){toast('That wall could not be opened');return}P.walls[k].state=null;P.at=k;nx.proj=P;S=nx;pjSync();ui.sel=0;ui.zsel=null;groupsCache=null;changed(true);toast(`Now designing ${P.walls[k].name}`)}
-function pjDel(k){const P=S.proj;if(!P||k===P.at||P.walls.length<2)return;P.walls.splice(k,1);P.modes.splice(Math.max(0,k-1),1);if(P.at>k)P.at--;P.walls.forEach((w,i)=>{if(/^Wall [A-D]$/.test(w.name))w.name='Wall '+PJ_NAMES[i]});if(P.walls.length===1){delete S.proj;delete S.room.corner;S.room.W=+P.walls[0].len||S.room.W}else pjSync();changed(true)}
-/* front-blocked parts at a blind corner, doors that hit each other */
+function pjDel(k){const P=S.proj;if(!P||k===P.at||P.walls.length<2)return;P.walls.splice(k,1);const j=Math.max(0,k-1);P.modes.splice(j,1);(P.angles||[]).splice(j,1);(P.legs||[]).splice(j,1);(P.square||[]).splice(j,1);if(P.at>k)P.at--;P.walls.forEach((w,i)=>{if(/^Wall [A-D]$/.test(w.name))w.name='Wall '+PJ_NAMES[i]});if(P.walls.length===1){delete S.proj;delete S.room.corner;S.room.W=+P.walls[0].len||S.room.W}else pjSync();changed(true)}
+/* corner checks, the angled closing strip and the diagonal corner cabinet (built with the wall to the right of the corner) */
+function cornerPanel(G,St,role,type,poly,o){const M=St.mat||{},m=M[role]||M.carcass,mx=Math.min(...poly.map(p=>p[0])),my=Math.min(...poly.map(p=>p[1])),pp=poly.map(p=>[r1(p[0]-mx),r1(p[1]-my)]);
+  G.panels.push(Object.assign({type,role,sec:o.sec||'corner',poly:pp,holes:[],w:Math.max(...pp.map(p=>p[0])),h:Math.max(...pp.map(p=>p[1])),t:+m.t,fin:m.fin,sheet:m.sheet,matType:m.type,notes:[],band:'none',bandLen:0,grain:'h'},o))}
 function cornerCheck(G,St){const C=St.room&&St.room.corner;if(!C)return;const W=G.W,fr=G.fronts.filter(f=>f.kind==='door'||f.kind==='drawer'),xr=f=>{const xs=f.poly.map(p=>p[0]);return [Math.min(...xs),Math.max(...xs)]};
-  if(C.R&&C.R.mode==='blind'){const lim=W-C.R.D-(C.R.sideN||30);const bad=fr.filter(f=>xr(f)[1]>lim+2);if(bad.length)G.warns.push(`Corner with ${C.R.name}: ${C.R.name}’s cabinets stand in front of the last ${f0(W-lim)} mm of this wall, so ${bad.length===1?'one front':bad.length+' fronts'} there can’t open. Make the last column a closed “blind” corner box (no door in that part), or switch the corner to “Both stop” in Room → Walls in this room.`);G.cornerLim=lim}
-  ['L','R'].forEach(sd=>{const c=C[sd];if(!c)return;const side=+(St.skirt||{}).side||0;if(side<50&&fr.some(f=>{const[a,b]=xr(f);return sd==='L'?a<side+700:b>W-side-700}))G.warns.push(`Corner with ${c.name}: the side strip is only ${f0(side)} mm — doors and handles in the corner can hit the other wall’s fronts. Make the side strips at least 50 mm (Build → Closing strips).`)})}
-function pjPlanSVG(){const P=S.proj;if(!P)return '';const ws=pjWalls();let x=0,y=0,dir=0;const segs=[];const dv=[[1,0],[0,1],[-1,0],[0,-1]],nv=[[0,1],[-1,0],[0,-1],[1,0]];
-  ws.forEach((w,k)=>{const d=dv[dir],n=nv[dir],s0=k>0?ws[k-1].D:0,s1=w.len-(k<ws.length-1&&(P.modes[k]||'blind')==='dead'?ws[k+1].D:0);segs.push({k,w,o:[x,y],d,n,s0,s1});x+=d[0]*w.len;y+=d[1]*w.len;dir=(dir+1)%4});
-  const pts=[];segs.forEach(g=>{pts.push(g.o,[g.o[0]+g.d[0]*g.w.len,g.o[1]+g.d[1]*g.w.len])});const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]),pad=500,x0=Math.min(...xs)-pad,y0=Math.min(...ys)-pad,W_=Math.max(...xs)-x0+pad,H_=Math.max(...ys)-y0+pad;
+  if(C.R&&C.R.mode==='blind'){const lim=W-(C.R.blk||0)-(C.R.sideN||30);const bad=fr.filter(f=>xr(f)[1]>lim+2);if(bad.length&&(C.R.blk||0)>0)G.warns.push(`Corner with ${C.R.name}: ${C.R.name}’s cabinets stand in front of the last ${f0(W-lim)} mm of this wall, so ${bad.length===1?'one front':bad.length+' fronts'} there can’t open. Make the last column a closed “blind” corner box (no door in that part), or switch the corner to “Both stop” or “Diagonal corner cabinet” in Room → Walls in this room.`);G.cornerLim=lim}
+  ['L','R'].forEach(sd=>{const c=C[sd];if(!c||c.mode==='diag')return;const side=+(St.skirt||{}).side||0;if(side<50&&(c.deg||90)<=95&&fr.some(f=>{const[a,b]=xr(f);return sd==='L'?a<side+700:b>W-side-700}))G.warns.push(`Corner with ${c.name}: the side strip is only ${f0(side)} mm — doors and handles in the corner can hit the other wall’s fronts. Make the side strips at least 50 mm (Build → Closing strips).`)});
+  if(C.R&&(C.R.deg||90)<85)G.warns.push(`The corner with ${C.R.name} is sharp (${f0(C.R.deg)}°): the last ${f0(C.R.D)} mm deep box can’t reach into it — the space behind it stays empty. A shallower last column uses more of it.`);
+  if(C.taper){const mn=Math.min(C.taper.dL,C.taper.dR);if(C.taperBlocked)G.warns.push('This wall’s cabinets should taper to make the corner fronts square, but you set “The back wall is not parallel” yourself (Room → Wall). Switch that off to let Fitted taper them.');else if(mn<300)G.warns.push(`To keep the corner fronts square, this wall’s cabinets taper down to ${f0(mn)} mm deep — that is very shallow. Taper the other wall instead, or let the fronts follow the walls.`)}
+  const L=C.L;if(!L)return;const hh=G.ceilAt?G.ceilAt(0):+St.room.H;
+  if(L.strip&&L.strip.w>8){cornerPanel(G,St,'skirt',`Corner closing strip (angled, ${f0(L.deg)}° corner)`,[[0,0],[L.strip.w,0],[L.strip.w,hh],[0,hh]],{sec:'corner '+L.name,grain:'h',band:'front',bandLen:hh,angled:true,
+      notes:[`Closes the corner between ${L.name} and this wall. It turns ${L.strip.a1}° away from ${L.name}’s front and ${L.strip.a2}° towards this wall’s front (the cabinet edges stay square): tilt the saw blade ${L.strip.a1.toFixed(1)}° on one long edge and ${L.strip.a2.toFixed(1)}° on the other so both edges sit flush. Cut it 10 mm wider and trim on site.`]});
+    G.H.funParts.push({n:`Corner closing strip: ${f0(L.strip.w)} mm wide, bevelled ${L.strip.a1.toFixed(1)}° and ${L.strip.a2.toFixed(1)}°`,q:'1',sec:'corner'})}
+  if(L.diag){const d=L.diag,tc=G.tc||18,Pl=G.P||0,top=+(St.skirt||{}).top||40,hb=Math.max(600,Math.min(d.h-top,2400)-Pl),sec='corner '+d.names,poly=d.poly;
+    const bb=[0,1,2].map(()=>0);cornerPanel(G,St,'carcass','Corner cabinet — bottom',poly,{sec,notes:[`Five-sided: legs ${f0(d.legA)} and ${f0(d.legB)} mm along the walls, front ${f0(d.front)} mm. The sides stand on it; the backs are nailed on behind.`],band:'front',bandLen:d.front});
+    cornerPanel(G,St,'carcass','Corner cabinet — top',poly,{sec,notes:['Same shape as the bottom.'],band:'front',bandLen:d.front});
+    cornerPanel(G,St,'carcass','Corner cabinet — side (towards '+d.names.split(' / ')[0]+')',[[0,0],[d.DA,0],[d.DA,hb],[0,hb]],{sec,band:'front',bandLen:hb});
+    cornerPanel(G,St,'carcass','Corner cabinet — side (towards '+d.names.split(' / ')[1]+')',[[0,0],[d.DB,0],[d.DB,hb],[0,hb]],{sec,band:'front',bandLen:hb});
+    cornerPanel(G,St,'back','Corner cabinet — back (along '+d.names.split(' / ')[0]+')',[[0,0],[d.legA,0],[d.legA,hb],[0,hb]],{sec});
+    cornerPanel(G,St,'back','Corner cabinet — back (along '+d.names.split(' / ')[1]+')',[[0,0],[d.legB,0],[d.legB,hb],[0,hb]],{sec});
+    const ins=poly.map(([x,y])=>[x,y]);for(let i=0;i<2;i++)cornerPanel(G,St,'shelf','Corner cabinet — shelf',ins,{sec,notes:['Same shape as the bottom, 20 mm smaller at the front edge; on shelf supports.'],band:'front',bandLen:d.front-20});
+    const nD=d.front>650?2:1,dw=(d.front-4-(nD-1)*3)/nD;for(let i=0;i<nD;i++)cornerPanel(G,St,'front','Corner cabinet — door',[[0,0],[dw,0],[dw,hb-4],[0,hb-4]],{sec,band:'all',notes:['Hangs on the corner cabinet’s sides; 110° hinges.']});
+    cornerPanel(G,St,'skirt','Corner cabinet — plinth',[[0,0],[d.front,0],[d.front,Math.max(40,Pl)],[0,Math.max(40,Pl)]],{sec,band:'front',bandLen:d.front});
+    G.H.funParts.push({n:`Hinges for the corner cabinet door${nD>1?'s':''} (110°, with mounting plates)`,q:String(nD*(hb>1200?3:2)),sec:'corner'},{n:'Shelf supports for the corner cabinet',q:'8',sec:'corner'});
+    if(d.front<350)G.warns.push(`The diagonal corner cabinet’s front is only ${f0(d.front)} mm wide — make its legs along the walls longer (Room → Walls in this room) so the door is at least 400 mm.`)}}
+function pjPlanSVG(){const P=S.proj;if(!P)return '';const ws=pjWalls(),cs=ws.slice(0,-1).map((w,k)=>pjCorner(ws,k,P));let x=0,y=0,hd=0;const segs=[];
+  ws.forEach((w,k)=>{const d=[Math.cos(hd),Math.sin(hd)],n=[-Math.sin(hd),Math.cos(hd)],s0=k>0?cs[k-1].sB:0,s1=w.len-(k<ws.length-1?cs[k].eA:0);segs.push({k,w,o:[x,y],d,n,s0,s1});x+=d[0]*w.len;y+=d[1]*w.len;if(k<cs.length)hd+=(180-cs[k].deg)*Math.PI/180});
+  const pts=[];segs.forEach(g=>{pts.push(g.o,[g.o[0]+g.d[0]*g.w.len,g.o[1]+g.d[1]*g.w.len],[g.o[0]+g.n[0]*g.w.D,g.o[1]+g.n[1]*g.w.D])});const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]),pad=500,x0=Math.min(...xs)-pad,y0=Math.min(...ys)-pad,W_=Math.max(...xs)-x0+pad,H_=Math.max(...ys)-y0+pad;
   const P_=(a,b)=>`${n1(a)},${n1(b)}`;let o=`<svg viewBox="${n1(x0)} ${n1(y0)} ${n1(W_)} ${n1(H_)}" class="pjplan" role="img" aria-label="Floor plan of the walls">`;
+  const fr=(g,X,Y_)=>{const C=[g.o[0]+g.d[0]*g.w.len,g.o[1]+g.d[1]*g.w.len];return [C[0]+X*g.d[0]+Y_*g.n[0],C[1]+X*g.d[1]+Y_*g.n[1]]};
   segs.forEach(g=>{const[ox,oy]=g.o,[dx,dy]=g.d,[nx,ny]=g.n,L=g.w.len,D=g.w.D,act=g.k===P.at;
     o+=`<line x1="${n1(ox)}" y1="${n1(oy)}" x2="${n1(ox+dx*L)}" y2="${n1(oy+dy*L)}" style="stroke:var(--ink)" stroke-width="60" stroke-linecap="square"/>`;
-    const q=[[g.s0,0],[g.s1,0],[g.s1,D],[g.s0,D]].map(([s,t])=>[ox+dx*s+nx*t,oy+dy*s+ny*t]);
+    const tp=pjTaper(ws,g.k,P,g.s1-g.s0),dL_=tp?tp.dL:D,dR_=tp?tp.dR:D,q=[[g.s0,0],[g.s1,0],[g.s1,dR_],[g.s0,dL_]].map(([s,t])=>[ox+dx*s+nx*t,oy+dy*s+ny*t]);
     o+=`<polygon points="${q.map(p=>P_(p[0],p[1])).join(' ')}" style="fill:${act?'var(--accent-soft)':'var(--raised)'};stroke:${act?'var(--accent)':'var(--ink2)'}" stroke-width="${act?24:14}" data-act="pjOpen" data-a="${g.k}" class="pjw"/>`;
     const c=[ox+dx*(g.s0+g.s1)/2+nx*D/2,oy+dy*(g.s0+g.s1)/2+ny*D/2];o+=`<text x="${n1(c[0])}" y="${n1(c[1]+90)}" text-anchor="middle" font-size="260" font-weight="700" style="fill:${act?'var(--accent)':'var(--ink2)'};pointer-events:none">${esc(g.w.name.replace(/^Wall /,''))}</text>`;
-    // doors: swing arcs, from each wall's own geometry
     let G_=null;try{G_=g.k===P.at?geo:build(g.w.st)}catch(e){}if(G_){G_.fronts.filter(f=>f.kind==='door').forEach(f=>{const xs_=f.poly.map(p=>p[0]),a=Math.min(...xs_)+g.s0,b=Math.max(...xs_)+g.s0,w_=b-a,hx=f.hinge==='R'?b:a,s_=f.hinge==='R'?-1:1,t=D+20;
       const H0=[ox+dx*hx+nx*t,oy+dy*hx+ny*t],E=[ox+dx*(hx+s_*w_)+nx*t,oy+dy*(hx+s_*w_)+ny*t],O=[H0[0]+nx*w_,H0[1]+ny*w_],sw=(s_>0)===((dx*ny-dy*nx)>0)?0:1;
       o+=`<path d="M${P_(...O)} A${n1(w_)} ${n1(w_)} 0 0 ${sw} ${P_(...E)}" fill="none" style="stroke:var(--ink3)" stroke-width="10" stroke-dasharray="40 30"/><line x1="${n1(H0[0])}" y1="${n1(H0[1])}" x2="${n1(O[0])}" y2="${n1(O[1])}" style="stroke:var(--ink3)" stroke-width="14"/>`})}
+    if(g.k<cs.length){const c=cs[g.k];
+      if(c.mode==='diag'){const poly=[[0,0],[-c.eA,0],[-c.eA,g.w.D],c.PB,c.g.P(c.sB,0)].map(([X,Y_])=>fr(g,X,Y_));o+=`<polygon points="${poly.map(p=>P_(p[0],p[1])).join(' ')}" style="fill:var(--raised);stroke:var(--accent)" stroke-width="14" stroke-dasharray="50 30"/>`}
+      if(c.strip){const a=fr(g,...c.PA),b=fr(g,...c.PB);o+=`<line x1="${n1(a[0])}" y1="${n1(a[1])}" x2="${n1(b[0])}" y2="${n1(b[1])}" style="stroke:var(--accent)" stroke-width="40"/>`}
+      if(Math.abs(c.deg-90)>0.5){const C=fr(g,0,0),lab=fr(g,-350,350);o+=`<text x="${n1(lab[0])}" y="${n1(lab[1])}" text-anchor="middle" font-size="150" style="fill:var(--accent)">${f0(c.deg)}°${c.sq?' → 90°':''}</text>`}}
     const m=[ox+dx*L/2-nx*260,oy+dy*L/2-ny*260];o+=`<text x="${n1(m[0])}" y="${n1(m[1]+50)}" text-anchor="middle" font-size="150" style="fill:var(--ink3)">${f0(L)}</text>`});
   return o+'</svg>'}
 function pjHTML(){const P=S.proj;if(!P)return `<p class="hintp">An L- or U-shaped room? Add the wall to the right of this one; Fitted keeps the corner right and adds up the whole room.</p><button type="button" class="btn sm" data-act="pjStart">+ Design more walls of this room</button>`;
   const ws=pjWalls();return `<div class="pjwrap">${pjPlanSVG()}</div><p class="hintp" style="margin:0">Seen from above. Tap a wall to design it. Dashed arcs show how the doors open.</p>
-  <div class="pjlist">${ws.map((w,k)=>`<div class="pjrow ${k===P.at?'on':''}"><b>${esc(w.name)}</b><label class="fld"><span>Wall length</span><span class="inp"><input type="number" inputmode="decimal" data-pj="${k}" value="${w.len}"><em>mm</em></span></label>
-    <span class="note">${f0(w.D)} deep · cabinets ${f0(pjEff(ws,k,P))} mm</span>${k===P.at?'<span class="tag">open now</span>':`<button type="button" class="btn sm" data-act="pjOpen" data-a="${k}">Open</button><button type="button" class="rowbtn" data-act="pjDel" data-a="${k}" aria-label="Remove ${esc(w.name)}">×</button>`}</div>${k<ws.length-1?`<div class="pjcor"><span>Corner ${esc(PJ_NAMES[k])}–${esc(PJ_NAMES[k+1])}</span><div class="seg">${[['blind',`${esc(w.name)} runs into the corner`],['dead','Both stop, corner closed']].map(([m,l])=>`<button type="button" class="${(P.modes[k]||'blind')===m?'on':''}" data-act="pjMode" data-a="${k}:${m}">${l}</button>`).join('')}</div></div>`:''}`).join('')}</div>
+  <div class="pjlist">${ws.map((w,k)=>{const c=k<ws.length-1?pjCorner(ws,k,P):null,lg=(P.legs||[])[k]||{};return `<div class="pjrow ${k===P.at?'on':''}"><b>${esc(w.name)}</b><label class="fld"><span>Wall length</span><span class="inp"><input type="number" inputmode="decimal" data-pj="${k}" value="${w.len}"><em>mm</em></span></label>
+    <span class="note">${f0(w.D)} deep · cabinets ${f0(pjEff(ws,k,P))} mm</span>${k===P.at?'<span class="tag">open now</span>':`<button type="button" class="btn sm" data-act="pjOpen" data-a="${k}">Open</button><button type="button" class="rowbtn" data-act="pjDel" data-a="${k}" aria-label="Remove ${esc(w.name)}">×</button>`}</div>${c?`<div class="pjcor"><span>Corner ${esc(PJ_NAMES[k])}–${esc(PJ_NAMES[k+1])}</span>
+      <label class="fld"><span>Angle inside the corner</span><span class="inp"><input type="number" inputmode="decimal" data-pja="${k}" value="${f0(c.deg)}" min="45" max="179"><em>°</em></span></label>
+      <div class="tchips">${[[90,'90° square'],[95,'95°'],[120,'120°'],[135,'135° bay']].map(([v,l])=>`<button type="button" class="tchip ${Math.round(c.deg)===v?'on':''}" data-act="pjAng" data-a="${k}:${v}">${l}</button>`).join('')}</div>
+      <div class="seg">${[['blind',`${esc(w.name)} runs into the corner`],['dead','Both stop, corner closed'],['diag','Diagonal corner cabinet']].map(([m,l])=>`<button type="button" class="${c.mode===m?'on':''}" data-act="pjMode" data-a="${k}:${m}">${l}</button>`).join('')}</div>
+      ${Math.abs(c.deg-90)>0.5?(Math.abs(c.deg-90)<=15?`<div class="fld"><span>Make the fronts meet square (90°)</span><div class="seg">${[['','No — follow the walls'],['A',`Taper ${esc(w.name)}`],['B',`Taper ${esc(ws[k+1].name)}`]].map(([v,l])=>`<button type="button" class="${((P.square||[])[k]||'')===v?'on':''}" data-act="pjSq" data-a="${k}:${v}">${l}</button>`).join('')}</div></div>${c.sq?(()=>{const j=c.sq==='A'?k:k+1,tp=pjTaper(ws,j,P,pjEff(ws,j,P));return tp?`<p class="hintp" style="margin:0">${esc(ws[j].name)}’s cabinets go from ${f0(tp.dL)} mm deep at the left to ${f0(tp.dR)} mm at the right, so all fronts are square to each other. The boxes are cut tapered (the shaped parts show them).</p>`:''})():''}`:`<p class="hintp" style="margin:0">At ${f0(c.deg)}° the corner is too far from square to taper the cabinets (up to 15° off works).</p>`):''}
+      ${c.mode==='diag'?`<div class="grid2"><label class="fld"><span>Along ${esc(w.name)}</span><span class="inp"><input type="number" inputmode="decimal" data-pjl="${k}:a" value="${f0(c.eA)}"><em>mm</em></span></label><label class="fld"><span>Along ${esc(ws[k+1].name)}</span><span class="inp"><input type="number" inputmode="decimal" data-pjl="${k}:b" value="${f0(c.sB)}"><em>mm</em></span></label></div><p class="hintp" style="margin:0">One cabinet across the corner with its door straight across: front ${f0(c.fw)} mm. Its parts are in ${esc(ws[k+1].name)}’s cut list.</p>`:''}
+      ${c.strip?`<p class="hintp" style="margin:0">Angled closing strip in the corner: ${f0(c.strip.w)} mm wide, edges bevelled ${c.strip.a1.toFixed(1)}° and ${c.strip.a2.toFixed(1)}° — in ${esc(ws[k+1].name)}’s cut list.</p>`:''}</div>`:''}`}).join('')}</div>
   ${ws.length<PJ_MAX?`<button type="button" class="btn sm" data-act="pjAdd">+ Add the next wall (to the right of ${esc(ws[ws.length-1].name)})</button>`:''}
   <div id="pjTot">${ui.pjTot&&ui.pjTot.sig===pjSig()?ui.pjTot.html:`<button type="button" class="btn sm" data-act="pjTotal">Add up the whole room</button>`}</div>`}
 function pjSig(){return JSON.stringify([S.proj,S])}
@@ -4984,7 +5042,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.69';
+const APP_VERSION='v0.70';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
@@ -5485,6 +5543,7 @@ function updateSideInfo(){const s=document.getElementById('side');const scr=s.sc
 /* ===== events ===== */
 document.addEventListener('keydown',e=>{const tg=e.target;if(!e.ctrlKey&&!e.metaKey&&!e.altKey&&(e.key==='f'||e.key==='F')&&!(tg&&(tg.tagName==='INPUT'||tg.tagName==='TEXTAREA'||tg.tagName==='SELECT'))&&(ui.tab==='elev'||ui.tab==='3d')){setFm({solid:'glass',glass:'off',off:'solid'}[ui.fm]);return}if(!(e.ctrlKey||e.metaKey))return;const t=e.target;if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'))return;const k=e.key.toLowerCase();if(k==='z'){e.preventDefault();undoRedo(e.shiftKey?1:-1)}else if(k==='y'){e.preventDefault();undoRedo(1)}});
 document.addEventListener('focusin',e=>{const el=e.target;if(el&&el.dataset&&el.dataset.p==='room.W')ui.prevW=+S.room.W});
+document.addEventListener('change',e=>{const el=e.target;if(!el||!el.dataset||!S.proj)return;if(el.dataset.pja!=null){const v=+el.value;if(v>=45&&v<=179){(S.proj.angles=S.proj.angles||[])[+el.dataset.pja]=v;pjSync();changed(true)}return}if(el.dataset.pjl!=null){const[k,f]=el.dataset.pjl.split(':'),v=+el.value;if(v>=200){const L=(S.proj.legs=S.proj.legs||[]);L[+k]=Object.assign({},L[+k]||{},{[f]:v});pjSync();changed(true)}return}});
 document.addEventListener('change',e=>{const el=e.target;if(!el||!el.dataset||el.dataset.pj==null||!S.proj)return;const k=+el.dataset.pj,v=+el.value;if(!(v>=600))return;S.proj.walls[k].len=v;pjSync();changed(true)});
 document.addEventListener('change',e=>{const el=e.target;if(!el||!el.dataset||el.dataset.p!=='room.W')return;const W=+S.room.W,W0=+ui.prevW;if(!(W>=600)||!(W0>=600)||Math.abs(W-W0)<1)return;
   const sd=+S.skirt.side||0,k=(W-2*sd)/Math.max(100,W0-2*sd);let n=0;(S.sections||[]).forEach(sc=>{if(+sc.w>0){sc.w=Math.max(150,Math.round(+sc.w*k));n++}if(sc.pinX!=null&&sc.pinX!==''&&isFinite(+sc.pinX))sc.pinX=Math.round(+sc.pinX*k)});
@@ -5594,6 +5653,8 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'pjOpen':pjOpen(+a);break;
     case 'pjDel':{const b_=e.target.closest('button');if(b_&&!b_.dataset.armed){b_.dataset.armed='1';b_.textContent='Sure?';break}pjDel(+a);break}
     case 'pjMode':{const[k,m]=a.split(':');S.proj.modes[+k]=m;pjSync();changed(true);break}
+    case 'pjSq':{const[k,v]=a.split(':');(S.proj.square=S.proj.square||[])[+k]=v;pjSync();changed(true);break}
+    case 'pjAng':{const[k,v]=a.split(':');(S.proj.angles=S.proj.angles||[])[+k]=+v;pjSync();changed(true);break}
     case 'pjTotal':{const el=document.getElementById('pjTot');if(el)el.innerHTML='<p class="hintp">Adding up…</p>';setTimeout(pjTotal,30);break}
     case 'offDel':offDel(a).then(()=>{groupsCache=null;renderCut()});break;
     case 'offKeep':{const n_=nestAll(groupsCache||groupPanels(bgeo())),items=n_.flatMap(offLeft);ui.offOpen=true;offAdd(items).then(()=>{toast(items.length+' offcuts kept');renderCut()});break}

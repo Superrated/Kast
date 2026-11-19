@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.70
+
+- **Corners at any angle** (Room → Walls in this room): every corner has its real inside angle (45–179°; quick buttons for 90°, 95°, 120° and 135°).
+  - Fitted works out where each wall's cabinets must stop or start so they don't hit each other at that angle.
+  - The plan from above turns each wall by the real angle.
+  - The blocked-front and closing-strip checks use the real angle.
+- **Angled corner closing strip**: when two fronts meet at an angle, a closing strip with its width and both bevel angles is added to the next wall's cut list.
+- **Diagonal corner cabinet**: a third corner choice, with one cabinet across the corner and its door straight across.
+  - You set its legs along each wall.
+  - Its five-sided bottom, top and shelves (drawn under Shaped parts), sides, backs, one or two doors, a plinth, hinges and shelf supports are added to the next wall's cut list and price.
+- **Make the fronts meet square (90°)**: in a slightly crooked corner (up to 15° off), choose which wall's cabinets taper. That wall gets gradually shallower, so all fronts meet at exactly 90°; it's shown in the plan, and the boxes are cut tapered.
+
 ## v0.69
 
 - **Space in front · hallway** (Room): enter the free floor in front of the cabinet, and tick "hallway" to keep a 900 mm walking path.
