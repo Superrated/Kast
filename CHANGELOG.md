@@ -1,5 +1,23 @@
 # Changelog
 
+## v0.106
+
+- **Technical drawings** (Share & files → Technical drawings, or ☰ → Technical drawings): true-scale vector PDF sheets in **A3 or A4** with a border and a title block (project, drawing, scale, paper, date, sheet number). Pick which sheets you want:
+  - **Front view**: all sizes, column widths and heights;
+  - **Setting out**: where each box goes, measured from the left wall, with a table of positions, widths, heights and depth;
+  - **Plan**: seen from above, cut through the cabinets, with door swings and depths;
+  - **Side sections**: a cut through every column, with the height of every board measured from the floor;
+  - **Details at 1:5**: plinth, top strip, side strip at the wall;
+  - **Exploded views**: every box pulled apart, with lettered parts and a parts list.
+- **DXF of the whole wall**: the front view, plan and every section at full size in one file, with layers (walls, carcass, fronts, shelves, backs, plinth/strips, dimensions, door swings), for AutoCAD, SketchUp, Fusion or LibreCAD.
+- **Part labels**:
+  - each label shows the part from above: a thick black bar on every edge that gets edge banding, and a thin dashed line on bare edges;
+  - a line in words such as "Edge band: 1 long edge (the front)";
+  - for wood, veneer and plywood, grain lines and "Grain runs along the 2367 side"; plain colours say "No grain — may be turned";
+  - a last page explains how to read the labels.
+- **Locked while building**: opening Workshop mode locks the design, so the parts you cut keep matching the drawings. Ticking cuts and steps as done still works. A banner at the top of the settings has an Unlock button (tap twice).
+- **Dark mode**: the Workshop mode card and some cards had a light background with light text; they now follow the dark colours.
+
 ## v0.105
 
 - **AI render on phones**:

@@ -101,7 +101,10 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'shop':S.opts.shop=a;ui.saver=null;changed(true);break;
     case 'saver':sheetSaver();dirty.cut=true;renderCut();{const t=document.getElementById('price');if(t)t.scrollIntoView({block:'start'})}break;
     case 'evenDoors':evenDoors();break;
-    case 'wsOpen':ui.ws={tab:'cuts'};wsRender();break;
+    case 'wsOpen':ui.ws={tab:'cuts'};lockOn();wsRender();break;
+    case 'lockOn':lockOn();break;
+    case 'lockInfo':lockT=0;lockToast();break;
+    case 'unlock':{const b=e.target.closest('button');if(b.dataset.armed){lockOff()}else{b.dataset.armed='1';b.textContent='Tap again — parts already cut may no longer fit';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Unlock to change the design'}},4000)}break}
     case 'wsClose':ui.ws=null;wsRender();break;
     case 'wsTab':ui.ws={tab:a};wsRender();break;
     case 'wsGo':ui.ws.i=+a;wsRender();break;
@@ -216,6 +219,11 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'fbSend':fbSend();break;
     case 'stOpen':stOpen();break;
     case 'stPick':stPick(a);break;
+    case 'tdOpen':tdOpen();break;
+    case 'tdClose':document.getElementById('tdm').hidden=true;break;
+    case 'tdPaper':TD.paper=a==='A4'?'A4':'A3';tdRender();break;
+    case 'tdPDF':tdExportPDF();break;
+    case 'tdDXF':try{tdDXF()}catch(err){console.error(err);toast('The DXF could not be made for this design')}break;
     case 'stInRoom':{ST.fit=true;if(!ST.roomId&&RM.list[0])ST.roomId=RM.list[0].id;stRender();const f=document.querySelector('#stm .stfit');if(f){f.scrollIntoView({block:'center'});const sel=document.getElementById('stRoom');if(sel)sel.focus()}break}
     case 'stClose':document.getElementById('stm').hidden=true;break;
     case 'stFit':ST.fit=!!(document.getElementById('stFit')||{}).checked;{const r=document.getElementById('stRoom');if(r)r.disabled=!ST.fit}break;

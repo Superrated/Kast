@@ -38,22 +38,40 @@ const fileBase=()=>(ui.docName||'Fitted').replace(/[^\w\- ]+/g,'').trim().replac
 // where each part comes from in the cutting plan: "18 mm Melamine #2 B"
 function partSources(gs){const out={},AZ='ABCDEFGHIJKLMNOPQRSTUVWXYZ';nestAll(gs).forEach(n=>n.sheets.forEach((sh,si)=>{const ys=[...new Set(sh.pl.map(c=>c.y))].sort((a,b)=>a-b);sh.pl.forEach(c=>{(out[c.p.id]=out[c.p.id]||[]).push(`${n.t} mm ${MATS[n.mt]?.short||''} sheet ${si+1} · strip ${AZ[ys.indexOf(c.y)%26]}`)})}));return out}
 /* part labels: 24 stickers of 70 × 37 mm on A4 (3 × 8), one per piece */
+/* does the wood grain matter for this part? (wood, plywood, wood-look melamine, veneer, solid wood) */
+function grainMatters(p){const f=FIN[p.fin]||{},m=MATS[p.matType]||{};return !!((f.kind&&f.kind!=='plain'&&!f.micro&&!m.paint)||(!f.kind&&/veneer|solid|ply/.test(p.matType||'')))}
+/* plain words for the edge banding of a part: [L1,L2,W1,W2] = the two long edges, the two short ends */
+function bandWords(p,bs){const m=MATS[p.matType]||{};if(m.paint)return 'Painted — no edge band';if(m.micro)return 'Microcement — no edge band';const nL=(bs[0]?1:0)+(bs[1]?1:0),nW=(bs[2]?1:0)+(bs[3]?1:0);
+  if(!nL&&!nW)return 'No edge band';if(nL===2&&nW===2)return 'Edge band all 4 edges';const a=[];if(nL)a.push(nL===2?'both long edges':p.band==='front'?'1 long edge (the front)':'1 long edge');if(nW)a.push(nW===2?'both ends':'1 end');return 'Edge band: '+a.join(' + ')}
 async function exportLabels(){const gs=groupsCache||(groupsCache=groupPanels(bgeo())),src=partSources(gs),LW=70*MMP,LH=297/8*MMP,pages=[];let pg=null,n=0;
   const items=[];gs.forEach(p=>{for(let i=0;i<p.qty;i++)items.push([p,i])});const used={};
-  items.forEach(([p,i])=>{if(n%24===0){pg=a4Page();pages.push(pg)}const c=n%24,X=(c%3)*LW,Y=Math.floor(c/3)*LH,x=pg.x,pad=4*MMP;n++;
-    x.strokeStyle='#E2E2E2';x.lineWidth=1;x.strokeRect(X+0.5,Y+0.5,LW-1,LH-1);
-    x.fillStyle='#1D1D1F';x.font=PF(700,64);x.fillText(p.id,X+pad,Y+pad-4);const idw=x.measureText(p.id).width;
-    x.font=PF(600,23);const tl=wrapText(x,p.type,LW-idw-pad*3).slice(0,2);tl.forEach((l,k)=>x.fillText(l,X+pad*2+idw,Y+pad+k*26));
-    x.font=PF(400,19);x.fillStyle='#555';x.fillText(`${p.secs.join(', ')}${p.qty>1?` · ${i+1} of ${p.qty}`:''}`,X+pad*2+idw,Y+pad+tl.length*26+2);
-    x.fillStyle='#1D1D1F';x.font=PM(28);x.fillText(`${f0(p.L)} × ${f0(p.Wd)} × ${p.t}`,X+pad,Y+pad+80);
-    const bw=84,bh=42,bx=X+LW-pad-bw,by=Y+LH-pad-bh-20;x.font=PF(400,16);x.fillStyle='#333';{let t=`${MATS[p.matType]?.short||''} · ${FIN[p.fin]?.name||''}`;while(t.length>8&&x.measureText(t).width>LW-pad*3-bw)t=t.slice(0,-2);x.fillText(t,X+pad,Y+pad+118)}
-    const sl=(src[p.id]||[]);const k_=used[p.id]=(used[p.id]||0);used[p.id]++;x.fillStyle='#777';x.font=PF(400,16);x.fillText(wrapText(x,sl[k_]||'',LW-pad*3-bw)[0]||'',X+pad,Y+LH-pad-18);
-    // edge-band diagram: thick line = edge band; L = long sides
-    const bs=bandSides(p);x.strokeStyle='#BBB';x.lineWidth=2;x.strokeRect(bx,by,bw,bh);x.strokeStyle='#1D1D1F';x.lineWidth=7;
-    if(bs[0]){x.beginPath();x.moveTo(bx,by+bh);x.lineTo(bx+bw,by+bh);x.stroke()}if(bs[1]){x.beginPath();x.moveTo(bx,by);x.lineTo(bx+bw,by);x.stroke()}if(bs[2]){x.beginPath();x.moveTo(bx,by);x.lineTo(bx,by+bh);x.stroke()}if(bs[3]){x.beginPath();x.moveTo(bx+bw,by);x.lineTo(bx+bw,by+bh);x.stroke()}
-    x.fillStyle='#777';x.font=PF(400,14);x.fillText(bs.some(Boolean)?'edge band':'no edge band',bx,by+bh+4);
-    if((p.holes||[]).some(h=>h.dp)){x.fillStyle='#3446D6';x.font=PF(600,15);x.fillText('hinge cups: see drawing',X+pad,Y+LH-pad-38)}});
+  items.forEach(([p,i])=>{if(n%24===0){pg=a4Page();pages.push(pg)}const c=n%24,X=(c%3)*LW,Y=Math.floor(c/3)*LH,x=pg.x,pad=3.5*MMP;n++;
+    const bs=bandSides(p),gr=grainMatters(p),DW=25*MMP,leftW=LW-DW-pad*3;
+    x.strokeStyle='#E2E2E2';x.lineWidth=1;x.strokeRect(X+0.5,Y+0.5,LW-1,LH-1);x.textBaseline='top';
+    // left: what the part is
+    x.fillStyle='#1D1D1F';x.font=PF(700,50);x.fillText(p.id,X+pad,Y+pad-2);const idw=x.measureText(p.id).width;
+    x.font=PF(600,19);const tl=wrapText(x,p.type,LW-idw-pad*3.2).slice(0,2);tl.forEach((l,k)=>x.fillText(l,X+pad*1.6+idw,Y+pad+k*21));
+    x.font=PF(400,15);x.fillStyle='#555';x.fillText(`${p.secs.join(', ')}${p.qty>1?` · ${i+1} of ${p.qty}`:''}`,X+pad*1.6+idw,Y+pad+tl.length*21+1);
+    x.fillStyle='#1D1D1F';x.font=PM(21);x.fillText(`${f0(p.L)} × ${f0(p.Wd)} × ${p.t}`,X+pad,Y+pad+62);
+    x.font=PF(600,14);x.fillStyle=gr?'#8A5A1C':'#666';x.fillText(gr?`Grain runs along the ${f0(p.L)} side`:'No grain — may be turned',X+pad,Y+pad+92);
+    x.font=PF(400,14);x.fillStyle='#333';{let t=`${MATS[p.matType]?.short||''} · ${FIN[p.fin]?.name||''}`;while(t.length>8&&x.measureText(t).width>leftW)t=t.slice(0,-2);x.fillText(t,X+pad,Y+pad+112)}
+    const sl=(src[p.id]||[]);const k_=used[p.id]=(used[p.id]||0);used[p.id]++;x.fillStyle='#777';x.font=PF(400,13);x.fillText(wrapText(x,sl[k_]||'',leftW)[0]||'',X+pad,Y+LH-pad-14);
+    if((p.holes||[]).some(h=>h.dp)){x.fillStyle='#3446D6';x.font=PF(600,13);x.fillText('Hinge cups: see drawing',X+pad,Y+LH-pad-31)}
+    // right: the part seen from above, long side across — thick black bar = edge band, thin dashed = bare edge, lines = grain
+    const ratio=Math.max(0.28,Math.min(0.6,(p.Wd||1)/(p.L||1))),rw=DW-18,rh=Math.min(11*MMP,rw*ratio),rx=X+LW-pad-DW+4,ry=Y+pad+64;
+    x.fillStyle=gr?'#EAD7B7':'#EEEEEC';x.fillRect(rx,ry,rw,rh);
+    if(gr){x.strokeStyle='rgba(138,90,28,.45)';x.lineWidth=1.4;for(let k=1;k<6;k++){const yy=ry+rh*k/6;x.beginPath();x.moveTo(rx+3,yy);for(let t=0;t<=8;t++)x.lineTo(rx+3+(rw-6)*t/8,yy+Math.sin(t*1.3+k)*1.6);x.stroke()}
+      x.fillStyle='#8A5A1C';x.font=PF(700,11);x.fillText('GRAIN →',rx+4,ry+rh/2-6)}
+    const E=[[rx,ry+rh,rx+rw,ry+rh,bs[0]],[rx,ry,rx+rw,ry,bs[1]],[rx,ry,rx,ry+rh,bs[2]],[rx+rw,ry,rx+rw,ry+rh,bs[3]]];
+    E.forEach(([a,b,c2,d,on])=>{x.beginPath();x.moveTo(a,b);x.lineTo(c2,d);if(on){x.setLineDash([]);x.strokeStyle='#1D1D1F';x.lineWidth=8}else{x.setLineDash([5,4]);x.strokeStyle='#9A9A9A';x.lineWidth=1.5}x.stroke()});x.setLineDash([]);
+    x.fillStyle='#333';x.font=PM(13);x.textAlign='center';x.fillText(f0(p.L),rx+rw/2,ry+rh+8);x.save();x.translate(rx+rw+9,ry+rh/2);x.rotate(Math.PI/2);x.fillText(f0(p.Wd),0,-6);x.restore();x.textAlign='left';
+    const bw_=bandWords(p,bs);x.font=PF(700,13);x.fillStyle=bs.some(Boolean)?'#1D1D1F':'#777';const bl=wrapText(x,bw_,DW).slice(0,3);bl.forEach((l,k)=>x.fillText(l,X+LW-pad-DW,ry+rh+24+k*15));
+    x.textBaseline='alphabetic'});
   if(!pages.length){toast('No parts to label');return}
+  // a key page at the end: how to read the labels
+  {const kp=a4Page(),x=kp.x,m=18*MMP;x.fillStyle='#1D1D1F';x.textBaseline='top';x.font=PF(700,40);x.fillText('How to read the labels',m,m);x.font=PF(400,22);
+    const rows=[['Thick black bar','that edge gets edge banding'],['Thin dashed line','bare edge — no edge banding'],['Wavy lines + GRAIN →','wood grain: the grain runs along the long side shown, which is the first size on the label'],['No grain — may be turned','plain colour: the part may be cut either way round'],['Sizes','length along the grain × width × thickness, in mm'+(+(S.opts.bandTh||0)>0.45?`; already ${S.opts.bandTh} mm smaller where edge banding goes on`:'')]];
+    rows.forEach(([a,b],k)=>{x.font=PF(700,22);x.fillText(a,m,m+90+k*78);x.font=PF(400,22);wrapText(x,b,A4W-2*m-360).forEach((l,j)=>x.fillText(l,m+360,m+90+k*78+j*26))});pages.push(kp)}
   await savePdfA4(pages,`${fileBase()}-labels.pdf`,'Labels');}
 /* full-size templates: only the A4 tiles that a sloped or curved edge crosses, at 1:1 */
 /* ===== DXF per part for CNC cutting and drilling ===== */

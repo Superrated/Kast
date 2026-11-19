@@ -4,7 +4,7 @@
 /* ===== drag level edges in the drawing ===== */
 (function(){const wrap=document.getElementById('elevWrap');let d=null;
   const svgY=e=>{const sv=wrap.querySelector('svg');const pt=sv.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const m=sv.getScreenCTM();return m?pt.matrixTransform(m.inverse()).y:0};
-  wrap.addEventListener('pointerdown',e=>{const g=e.target.closest('.zdrag');if(!g)return;const[i,k]=g.dataset.zd.split('|').map(Number);const q=geo.secs[i];if(!q)return;const zr=q.zones.find(z=>z.k===k);if(!zr)return;
+  wrap.addEventListener('pointerdown',e=>{const g=e.target.closest('.zdrag');if(!g)return;if(isLocked()){lockToast();return}const[i,k]=g.dataset.zd.split('|').map(Number);const q=geo.secs[i];if(!q)return;const zr=q.zones.find(z=>z.k===k);if(!zr)return;
     const snaps=[];geo.secs.forEach(o=>{if(o.i===i)return;o.zones.forEach(z=>{if(!z.top&&z.divY!=null)snaps.push(z.divY+z.divT/2)});if(o.desk)snaps.push(+o.s.deskH)});
     const nxt=q.zones.find(z=>z.k===k+1),src=(()=>{const j=q.s.link?S.sections.findIndex(y=>y.id===q.s.link):-1;return j>=0?j:i})();
     d={g,i,k,src,by:+g.dataset.by,y0:svgY(e),zr,nxt,snaps,id:e.pointerId,moved:false,nb:+g.dataset.by};
@@ -21,7 +21,7 @@
   wrap.addEventListener('pointerup',up);wrap.addEventListener('pointercancel',up)})();
 (function(){const wrap=document.getElementById('elevWrap');let d=null;
   const svgX=e=>{const sv=wrap.querySelector('svg');const pt=sv.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const m=sv.getScreenCTM();return m?pt.matrixTransform(m.inverse()).x:0};
-  wrap.addEventListener('pointerdown',e=>{const g=e.target.closest('.cdrag');if(!g)return;const [i,sd,j]=g.dataset.cd.split('|');const q=geo.secs[+i],nq=geo.secs[+j];if(!q||!nq)return;
+  wrap.addEventListener('pointerdown',e=>{const g=e.target.closest('.cdrag');if(!g)return;if(isLocked()){lockToast();return}const [i,sd,j]=g.dataset.cd.split('|');const q=geo.secs[+i],nq=geo.secs[+j];if(!q||!nq)return;
     d={g,i:+i,j:+j,sd,x0:svgX(e),bx:+g.dataset.bx,w0:q.w,w1:nq.w,id:e.pointerId,moved:false,dw:0};e.preventDefault();e.stopPropagation();try{wrap.setPointerCapture(e.pointerId)}catch(_){}g.classList.add('act')},true);
   wrap.addEventListener('pointermove',e=>{if(!d||e.pointerId!==d.id)return;let dx=svgX(e)-d.x0;if(!d.moved&&Math.abs(dx)<4)return;d.moved=true;
     let dw=Math.round((d.sd==='r'?dx:-dx)/10)*10;dw=Math.max(150-d.w0,Math.min(d.w1-150,dw));d.dw=dw;const off=d.sd==='r'?dw:-dw;

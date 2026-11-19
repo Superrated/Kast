@@ -51,3 +51,8 @@ The app has no test files in the repo. The checks used during development load t
 - `55-designs.js`: the My designs window. `ioOpen(tab)` opens it and `renderDesigns()` draws the tab. `dsSave(true)` adds a design (first save or a copy). `dsAutoSoon()`/`dsAuto()` save the open design a few seconds after `changed()`. `dsStatus()` feeds the header button (`dsBadge`).
 - `56-rooms-share.js`: rooms (`RM`, collection `rooms` or localStorage `fitted-rooms-v1`). `fitToRoom(st, room)` puts a design into a room. Files and text use `{app,kind:'design'|'room',version,name,design|room}`, and `ioImport(text)` opens either kind.
 - `snap()` resets the undo history when the open design changes (`ui.histDoc`), so an Undo can never write one design into another.
+
+## Technical drawings and the build lock (v0.106)
+
+- `52-techdraw.js`: `tdSolids(G)` turns `G.items` prisms into 3D solids. Views (`tdFront`, `tdPlan`, `tdSection`, `tdExploded`) are entity lists in mm. `tdSheets()` lays them out on A3/A4 at standard scales. `pdfVec()` writes a vector PDF (Helvetica, WinAnsi), and `tdDXF()` writes the whole wall at 1:1 with layers.
+- Build lock (`90-bar-views.js`): `S.lock={on,id,at}`. `lockGuard()` runs at the start of `changed()` and puts back any change except `S.done` (workshop progress). `lockOn()` is called by Workshop mode, and `lockOff()` is the Unlock button.

@@ -65,6 +65,8 @@ function shareHTML(){const nm=curName(),inList=!!dsCur();
   <section class="shcard"><h3>Send this design</h3><p class="hintp">“${esc(nm)}” as a file the other person opens in Fitted. Your own colours and boards go with it.</p>
     <div class="dbtns"><button type="button" class="btn pri" data-act="ioFile">Download design file</button>${canShareFile()?'<button type="button" class="btn" data-act="ioShare">Share…</button>':''}<button type="button" class="btn" data-act="ioCopyText">Copy as text</button></div>
     <p class="hintp" style="margin:0">“Copy as text” fits in an e-mail or chat message. ${DS.local?'':inList?'Anyone who opens this same Fitted page also finds it under My designs.':'Saved designs also show up for anyone who opens this same Fitted page.'}</p></section>
+  <section class="shcard"><h3>Technical drawings</h3><p class="hintp">Sheets in A3 or A4, true to scale: front view, setting out, plan, sections, details and exploded boxes — plus the whole wall as DXF for CAD.</p>
+    <div class="dbtns"><button type="button" class="btn pri" data-act="tdOpen">Technical drawings…</button></div></section>
   <section class="shcard"><h3>For the workshop</h3><p class="hintp">A PDF with the drawings, cut list and build guide — or the cut list files for the panel saw.</p>
     <div class="dbtns"><button type="button" class="btn" data-act="pdf">Download PDF</button><button type="button" class="btn" data-act="ioToCut">Cut list files</button></div></section>
   <section class="shcard"><h3>Send just the room</h3><p class="hintp">Only the measurements — wall, slopes, beams, sockets, doors — so someone can design for your room.</p>

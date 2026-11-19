@@ -159,9 +159,9 @@ table.ord th:first-child,table.ord td:first-child{text-align:left}
 .pdfl{display:grid;gap:2px}.pdfl label{display:flex;gap:10px;align-items:center;padding:9px 4px;border-bottom:1px solid var(--line);font-size:14px;cursor:pointer}.pdfl input{width:18px;height:18px;accent-color:var(--accent)}.pdfbtn{display:flex;gap:8px;justify-content:space-between}.pdfbtn .btn{padding:9px 18px}
 .pdfbar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}.pdfbar i{display:block;height:100%;width:0;background:var(--accent);border-radius:99px;transition:width .15s}
 .ws{position:fixed;inset:0;z-index:60;background:var(--bg,#fff);color:var(--ink,#1D1D1F);display:flex;flex-direction:column;padding:max(10px,env(safe-area-inset-top,0px)) max(14px,env(safe-area-inset-right,0px)) max(10px,env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-left,0px))}
-.ws .wsbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.ws .wsbar .seg{flex:1 1 auto}.ws .wscard{flex:1 1 auto;overflow:auto;margin:12px 0;padding:18px;border-radius:16px;background:var(--surface2,#F4F4F2)}
+.ws .wsbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.ws .wsbar .seg{flex:1 1 auto}.ws .wscard{flex:1 1 auto;overflow:auto;margin:12px 0;padding:18px;border-radius:16px;background:var(--raised);color:var(--ink)}
 .ws .wsset{font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent,var(--accent));font-weight:700}.ws .wsbig{font-size:clamp(26px,7vw,44px);line-height:1.15;font-weight:600;margin:8px 0 10px;text-wrap:balance}.ws .wsmid{font-size:clamp(17px,4.4vw,22px);line-height:1.45}
-.ws .wsnav{display:flex;gap:8px}.ws .wsnav .btn{flex:1;min-height:56px;font-size:18px}.ws .wsdone{background:var(--accent,var(--accent));color:#fff;border-color:transparent}.ws .wsprog{height:6px;border-radius:3px;background:var(--line,#ddd);overflow:hidden;margin-top:10px}.ws .wsprog>i{display:block;height:100%;background:var(--accent,var(--accent))}
+.ws .wsnav{display:flex;gap:8px}.ws .wsnav .btn{flex:1;min-height:56px;font-size:18px}.ws .wsdone{background:var(--accent);color:var(--accent-ink);border-color:transparent}.ws .wsprog{height:6px;border-radius:3px;background:var(--line,#ddd);overflow:hidden;margin-top:10px}.ws .wsprog>i{display:block;height:100%;background:var(--accent,var(--accent))}
 .ws .wslist{font-size:14px;margin-top:14px;columns:1}.ws .wslist button{display:block;width:100%;text-align:left;border:0;background:none;padding:6px 0;color:inherit;font:inherit;border-bottom:1px solid var(--line,#e5e5e5)}.ws .wslist .ok{color:#7a7a7a;text-decoration:line-through}.ws .wsfig svg{max-width:100%;height:auto;max-height:42vh}
 .modal{position:fixed;inset:0;background:rgba(10,14,16,.5);display:flex;align-items:center;justify-content:center;z-index:50;padding:max(12px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
 .mbox{background:var(--surface);border-radius:12px;width:min(820px,100%);max-height:100%;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--line);box-shadow:0 20px 60px rgba(0,0,0,.3)}
@@ -467,6 +467,14 @@ details.pf .grid2{margin-top:6px}
 #aim #aiText{font:13px/1.45 var(--f-b),system-ui,sans-serif;margin-top:8px}
 @media (max-width:860px){#aim #aiText{font-size:16px}}
 .aitxt{width:100%;color:var(--ink2);font-size:13.5px}.ailinks a{text-decoration:none}
+/* technical drawings dialog */
+.tdk{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:8px}
+.tdkb{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;align-items:start;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--raised);cursor:pointer}
+.tdkb input{grid-row:1/3;margin-top:3px}.tdkb small{color:var(--ink2);line-height:1.35}.tdkb.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+/* locked while building */
+.lockban{display:grid;gap:6px;padding:12px;margin:4px 0 10px;border-radius:12px;border:1px solid var(--accent);background:var(--accent-soft)}
+.lockban b{font-size:14px}.lockban span{font-size:12.5px;color:var(--ink2);line-height:1.4}.lockban .btn{justify-self:start}
+aside.side.locked>*:not(.shead):not(.lockban):not(.viewsw){pointer-events:none;opacity:.45;user-select:none}
 /* ==== 10-look.css — The Fitted look: fonts, tokens for light and dark mode, cards, wizard, dialogs. */
 /* ===== Fitted visual refresh ===== */
 :root{--bg:#F3F3F0;--surface:#FAFAF8;--raised:#FFFFFF;--ink:#17191B;--ink2:#62676B;--ink3:#6A6F74;--line:#E4E5E1;--accent:#3446D6;--accent-ink:#FFFFFF;--accent-soft:rgba(52,70,214,.09);--warn:#B4541A;--warn-soft:rgba(180,84,26,.1);--wall:#E7E7E3;--hatch:#D3D5D1;--stage:#ECEDEA;--paper:#FFFFFF;--shade:rgba(20,22,24,.2);
@@ -571,13 +579,13 @@ details.acc>summary::after{font-family:var(--f-b);font-weight:400;font-size:18px
 .ntview{position:fixed;inset:0;z-index:90;background:rgba(10,8,6,.92);display:grid;grid-template-rows:minmax(0,1fr) auto;gap:12px;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));justify-items:center}.ntview img{max-width:100%;max-height:100%;object-fit:contain;align-self:center}
 .dsave{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:end}.dbtns{display:flex;gap:6px}@media(max-width:520px){.dsave{grid-template-columns:minmax(0,1fr)}}
 .dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin:6px 0 12px}
-.cmpsel{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0}.cmpsel select{min-width:0;max-width:100%;flex:1 1 140px;padding:6px 8px;border-radius:8px;border:1px solid var(--line,rgba(0,0,0,.15));background:var(--card,#fff);color:inherit;font:inherit}.cmpwrap{overflow-x:auto}.cmpt{border-collapse:collapse;width:100%;font-size:13px}.cmpt th,.cmpt td{padding:5px 8px;border-bottom:1px solid var(--line,rgba(0,0,0,.08));text-align:left;vertical-align:top}.cmpt thead th{font-weight:600}.cmpt tbody th{font-weight:500;opacity:.8;white-space:nowrap}.cmpt .cdif{font-weight:600}.cmpt .cgood{color:#2E7D4F}.cmpt .cdd{opacity:.7;white-space:nowrap}
-.dcard{display:grid;gap:6px;padding:8px;border-radius:12px;border:1px solid var(--line,rgba(0,0,0,.1));background:var(--card,#fff);min-width:0}.dcard.on{border-color:var(--accent,var(--accent));box-shadow:0 0 0 2px var(--accent-soft,rgba(52,70,214,.15))}
+.cmpsel{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0}.cmpsel select{min-width:0;max-width:100%;flex:1 1 140px;padding:6px 8px;border-radius:8px;border:1px solid var(--line,rgba(0,0,0,.15));background:var(--raised);color:inherit;font:inherit}.cmpwrap{overflow-x:auto}.cmpt{border-collapse:collapse;width:100%;font-size:13px}.cmpt th,.cmpt td{padding:5px 8px;border-bottom:1px solid var(--line,rgba(0,0,0,.08));text-align:left;vertical-align:top}.cmpt thead th{font-weight:600}.cmpt tbody th{font-weight:500;opacity:.8;white-space:nowrap}.cmpt .cdif{font-weight:600}.cmpt .cgood{color:#2E7D4F}.cmpt .cdd{opacity:.7;white-space:nowrap}
+.dcard{display:grid;gap:6px;padding:8px;border-radius:12px;border:1px solid var(--line,rgba(0,0,0,.1));background:var(--raised);min-width:0}.dcard.on{border-color:var(--accent,var(--accent));box-shadow:0 0 0 2px var(--accent-soft,rgba(52,70,214,.15))}
 .dthumb{border:0;padding:0;background:var(--wall,#eee);border-radius:8px;overflow:hidden;cursor:pointer;aspect-ratio:16/10;display:block;width:100%}.dthumb svg{width:100%;height:100%;display:block}
 .dmeta{display:grid;min-width:0}.dmeta b{font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dmeta span{font-size:11.5px;color:var(--ink2,#666)}.dact{display:flex;gap:6px;flex-wrap:wrap}
 .stylebox{display:grid;gap:8px;padding:12px;border-radius:14px;background:var(--panel2,rgba(0,0,0,.03));margin-bottom:10px}.sbh{display:grid;gap:2px}.sbh b{font-size:13px}.sbh span{font-size:11.5px;color:var(--ink2,#666);line-height:1.4}
 .sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:6px}
-.stile{display:grid;gap:3px;text-align:left;padding:9px 10px;border-radius:11px;border:1px solid var(--line,rgba(0,0,0,.1));background:var(--card,#fff);color:inherit;cursor:pointer;font:inherit;min-width:0}
+.stile{display:grid;gap:3px;text-align:left;padding:9px 10px;border-radius:11px;border:1px solid var(--line,rgba(0,0,0,.1));background:var(--raised);color:inherit;cursor:pointer;font:inherit;min-width:0}
 .stile:hover{border-color:var(--accent,var(--accent))}.stile.on{border-color:var(--accent,var(--accent));box-shadow:0 0 0 2px var(--accent-soft,rgba(52,70,214,.15))}
 .stile b{font-size:12.5px;font-weight:600}.stile small{font-size:11px;color:var(--ink2,#666);line-height:1.3}.ssw{display:flex;gap:3px}.ssw i{width:16px;height:16px;border-radius:50%;border:1px solid rgba(0,0,0,.12)}
 .guide{display:grid;gap:14px;max-width:980px}
@@ -886,14 +894,14 @@ input[type=checkbox],input[type=radio]{accent-color:var(--ink)}
 .chk{min-height:32px}
 </style>
 
-<div id="splash" role="status" aria-label="Fitted by BRUIS v0.105 is loading"><b>Fitted</b><span>v0.105</span></div>
+<div id="splash" role="status" aria-label="Fitted by BRUIS v0.106 is loading"><b>Fitted</b><span>v0.106</span></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
 
 <div class="app" data-tab="elev">
   <header class="top">
     <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-    <div class="brand" title="Fitted by BRUIS v0.105">Fitted<span class="bybr">by BRUIS</span><small>built-in wardrobes & cabinets, drawn and cut · v0.105</small></div>
+    <div class="brand" title="Fitted by BRUIS v0.106">Fitted<span class="bybr">by BRUIS</span><small>built-in wardrobes & cabinets, drawn and cut · v0.106</small></div>
     <nav class="tabs" id="tabs">
       <button data-act="tab" data-a="elev" class="on">Drawing</button>
       <button data-act="tab" data-a="3d">3D</button>
@@ -934,7 +942,7 @@ input[type=checkbox],input[type=radio]{accent-color:var(--ink)}
   
   <button data-act="tab" data-a="guide"><svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="9" cy="9" r="1.6" fill="currentColor"/><path d="M12 9h4M8 14h8M8 17.5h6" stroke="currentColor" stroke-width="1.6"/></svg><span>Guide</span></button>
 </nav>
-<div class="mmenu" id="mmenu" hidden><button type="button" data-act="io" id="dsBtnM">My designs</button><button type="button" data-act="ioRooms">My rooms</button><button type="button" data-act="ioShare1">Share &amp; files</button><button type="button" data-act="newHub">New design</button><button type="button" data-act="pdf">Download PDF</button><hr><button type="button" data-act="ntOpen" id="ntBtnM">Notes</button><button type="button" class="cmtb" data-act="cmt" hidden>Comment on the drawing</button><button type="button" data-act="aiOpen">AI render (photo-real picture)</button><hr><button type="button" data-act="fbOpen">Talk to BRUIS — thanks, bugs, ideas, coffee</button><button type="button" data-act="gloss">Words explained</button><button type="button" data-act="lang" data-m="1" hidden></button><button type="button" data-act="install" id="instBtnM" hidden>Install app</button></div>
+<div class="mmenu" id="mmenu" hidden><button type="button" data-act="io" id="dsBtnM">My designs</button><button type="button" data-act="ioRooms">My rooms</button><button type="button" data-act="ioShare1">Share &amp; files</button><button type="button" data-act="newHub">New design</button><button type="button" data-act="pdf">Download PDF</button><button type="button" data-act="tdOpen">Technical drawings (PDF, DXF)</button><hr><button type="button" data-act="ntOpen" id="ntBtnM">Notes</button><button type="button" class="cmtb" data-act="cmt" hidden>Comment on the drawing</button><button type="button" data-act="aiOpen">AI render (photo-real picture)</button><hr><button type="button" data-act="fbOpen">Talk to BRUIS — thanks, bugs, ideas, coffee</button><button type="button" data-act="gloss">Words explained</button><button type="button" data-act="lang" data-m="1" hidden></button><button type="button" data-act="install" id="instBtnM" hidden>Install app</button></div>
 <div class="pcal" id="pcal" hidden role="dialog" aria-label="Line up your room photo"><header><b>Line up your photo</b><span class="sp"></span><label class="btn sm" style="position:relative;overflow:hidden;cursor:pointer">Other photo<input type="file" accept="image/*" data-photoin style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0"></label><button type="button" class="btn sm" data-act="pcalClose">Cancel</button></header><div class="pstage" id="pstage"></div><footer id="pfoot"></footer></div>
 <input type="file" id="photoIn" accept="image/*" hidden>
 <div class="modal" id="wiz" hidden>
@@ -3089,7 +3097,7 @@ function renderSide(){
     ${custHTML()}</div></details>`;
   h+=`<details class="acc" data-k="secs" ${op('secs')}><summary>Columns</summary><div class="accb">${secEditor()}</div></details>`;
   const parts={};h.split('<details class="acc"').slice(1).forEach(c=>{const m=c.match(/data-k="(\w+)"/);if(m)parts[m[1]]='<details class="acc"'+c});
-  el.dataset.flow=pane[0]==='layout'?flowNow():'home';if(isSheet())setTimeout(renderBar,0);el.innerHTML=`<div class="shead"><div class="shandle" data-sgrab="1" aria-hidden="true"><i></i></div><div class="spane" role="tablist">${PANES.map(([k,l])=>`<button type="button" role="tab" aria-selected="${k===pane[0]}" class="${k===pane[0]?'on':''}" data-act="pane" data-a="${k}">${PANE_ICON[k]}<span>${l}</span></button>`).join('')}</div><div class="crumb">${pane[0]==='layout'?crumbHTML():''}</div></div><p class="panelede">${pane[2]} <button type="button" class="linkb" data-act="gloss">What do the words mean?</button></p>`+pane[3].map(k=>parts[k]||'').join('');try{simplifySide(el)}catch(e){}
+  el.dataset.flow=pane[0]==='layout'?flowNow():'home';if(isSheet())setTimeout(renderBar,0);el.innerHTML=`<div class="shead"><div class="shandle" data-sgrab="1" aria-hidden="true"><i></i></div><div class="spane" role="tablist">${PANES.map(([k,l])=>`<button type="button" role="tab" aria-selected="${k===pane[0]}" class="${k===pane[0]?'on':''}" data-act="pane" data-a="${k}">${PANE_ICON[k]}<span>${l}</span></button>`).join('')}</div><div class="crumb">${pane[0]==='layout'?crumbHTML():''}</div></div><p class="panelede">${pane[2]} <button type="button" class="linkb" data-act="gloss">What do the words mean?</button></p>`+lockBanner()+pane[3].map(k=>parts[k]||'').join('');el.classList.toggle('locked',isLocked());try{simplifySide(el)}catch(e){}
 }
 const presetOpts=()=>Object.entries(PRESETS).map(([k,p])=>`<option value="${k}">${p.label}</option>`).join('');
 /* doors that are almost the same width: nudge the column widths so they become exactly the same */
@@ -3735,22 +3743,40 @@ const fileBase=()=>(ui.docName||'Fitted').replace(/[^\w\- ]+/g,'').trim().replac
 // where each part comes from in the cutting plan: "18 mm Melamine #2 B"
 function partSources(gs){const out={},AZ='ABCDEFGHIJKLMNOPQRSTUVWXYZ';nestAll(gs).forEach(n=>n.sheets.forEach((sh,si)=>{const ys=[...new Set(sh.pl.map(c=>c.y))].sort((a,b)=>a-b);sh.pl.forEach(c=>{(out[c.p.id]=out[c.p.id]||[]).push(`${n.t} mm ${MATS[n.mt]?.short||''} sheet ${si+1} · strip ${AZ[ys.indexOf(c.y)%26]}`)})}));return out}
 /* part labels: 24 stickers of 70 × 37 mm on A4 (3 × 8), one per piece */
+/* does the wood grain matter for this part? (wood, plywood, wood-look melamine, veneer, solid wood) */
+function grainMatters(p){const f=FIN[p.fin]||{},m=MATS[p.matType]||{};return !!((f.kind&&f.kind!=='plain'&&!f.micro&&!m.paint)||(!f.kind&&/veneer|solid|ply/.test(p.matType||'')))}
+/* plain words for the edge banding of a part: [L1,L2,W1,W2] = the two long edges, the two short ends */
+function bandWords(p,bs){const m=MATS[p.matType]||{};if(m.paint)return 'Painted — no edge band';if(m.micro)return 'Microcement — no edge band';const nL=(bs[0]?1:0)+(bs[1]?1:0),nW=(bs[2]?1:0)+(bs[3]?1:0);
+  if(!nL&&!nW)return 'No edge band';if(nL===2&&nW===2)return 'Edge band all 4 edges';const a=[];if(nL)a.push(nL===2?'both long edges':p.band==='front'?'1 long edge (the front)':'1 long edge');if(nW)a.push(nW===2?'both ends':'1 end');return 'Edge band: '+a.join(' + ')}
 async function exportLabels(){const gs=groupsCache||(groupsCache=groupPanels(bgeo())),src=partSources(gs),LW=70*MMP,LH=297/8*MMP,pages=[];let pg=null,n=0;
   const items=[];gs.forEach(p=>{for(let i=0;i<p.qty;i++)items.push([p,i])});const used={};
-  items.forEach(([p,i])=>{if(n%24===0){pg=a4Page();pages.push(pg)}const c=n%24,X=(c%3)*LW,Y=Math.floor(c/3)*LH,x=pg.x,pad=4*MMP;n++;
-    x.strokeStyle='#E2E2E2';x.lineWidth=1;x.strokeRect(X+0.5,Y+0.5,LW-1,LH-1);
-    x.fillStyle='#1D1D1F';x.font=PF(700,64);x.fillText(p.id,X+pad,Y+pad-4);const idw=x.measureText(p.id).width;
-    x.font=PF(600,23);const tl=wrapText(x,p.type,LW-idw-pad*3).slice(0,2);tl.forEach((l,k)=>x.fillText(l,X+pad*2+idw,Y+pad+k*26));
-    x.font=PF(400,19);x.fillStyle='#555';x.fillText(`${p.secs.join(', ')}${p.qty>1?` · ${i+1} of ${p.qty}`:''}`,X+pad*2+idw,Y+pad+tl.length*26+2);
-    x.fillStyle='#1D1D1F';x.font=PM(28);x.fillText(`${f0(p.L)} × ${f0(p.Wd)} × ${p.t}`,X+pad,Y+pad+80);
-    const bw=84,bh=42,bx=X+LW-pad-bw,by=Y+LH-pad-bh-20;x.font=PF(400,16);x.fillStyle='#333';{let t=`${MATS[p.matType]?.short||''} · ${FIN[p.fin]?.name||''}`;while(t.length>8&&x.measureText(t).width>LW-pad*3-bw)t=t.slice(0,-2);x.fillText(t,X+pad,Y+pad+118)}
-    const sl=(src[p.id]||[]);const k_=used[p.id]=(used[p.id]||0);used[p.id]++;x.fillStyle='#777';x.font=PF(400,16);x.fillText(wrapText(x,sl[k_]||'',LW-pad*3-bw)[0]||'',X+pad,Y+LH-pad-18);
-    // edge-band diagram: thick line = edge band; L = long sides
-    const bs=bandSides(p);x.strokeStyle='#BBB';x.lineWidth=2;x.strokeRect(bx,by,bw,bh);x.strokeStyle='#1D1D1F';x.lineWidth=7;
-    if(bs[0]){x.beginPath();x.moveTo(bx,by+bh);x.lineTo(bx+bw,by+bh);x.stroke()}if(bs[1]){x.beginPath();x.moveTo(bx,by);x.lineTo(bx+bw,by);x.stroke()}if(bs[2]){x.beginPath();x.moveTo(bx,by);x.lineTo(bx,by+bh);x.stroke()}if(bs[3]){x.beginPath();x.moveTo(bx+bw,by);x.lineTo(bx+bw,by+bh);x.stroke()}
-    x.fillStyle='#777';x.font=PF(400,14);x.fillText(bs.some(Boolean)?'edge band':'no edge band',bx,by+bh+4);
-    if((p.holes||[]).some(h=>h.dp)){x.fillStyle='#3446D6';x.font=PF(600,15);x.fillText('hinge cups: see drawing',X+pad,Y+LH-pad-38)}});
+  items.forEach(([p,i])=>{if(n%24===0){pg=a4Page();pages.push(pg)}const c=n%24,X=(c%3)*LW,Y=Math.floor(c/3)*LH,x=pg.x,pad=3.5*MMP;n++;
+    const bs=bandSides(p),gr=grainMatters(p),DW=25*MMP,leftW=LW-DW-pad*3;
+    x.strokeStyle='#E2E2E2';x.lineWidth=1;x.strokeRect(X+0.5,Y+0.5,LW-1,LH-1);x.textBaseline='top';
+    // left: what the part is
+    x.fillStyle='#1D1D1F';x.font=PF(700,50);x.fillText(p.id,X+pad,Y+pad-2);const idw=x.measureText(p.id).width;
+    x.font=PF(600,19);const tl=wrapText(x,p.type,LW-idw-pad*3.2).slice(0,2);tl.forEach((l,k)=>x.fillText(l,X+pad*1.6+idw,Y+pad+k*21));
+    x.font=PF(400,15);x.fillStyle='#555';x.fillText(`${p.secs.join(', ')}${p.qty>1?` · ${i+1} of ${p.qty}`:''}`,X+pad*1.6+idw,Y+pad+tl.length*21+1);
+    x.fillStyle='#1D1D1F';x.font=PM(21);x.fillText(`${f0(p.L)} × ${f0(p.Wd)} × ${p.t}`,X+pad,Y+pad+62);
+    x.font=PF(600,14);x.fillStyle=gr?'#8A5A1C':'#666';x.fillText(gr?`Grain runs along the ${f0(p.L)} side`:'No grain — may be turned',X+pad,Y+pad+92);
+    x.font=PF(400,14);x.fillStyle='#333';{let t=`${MATS[p.matType]?.short||''} · ${FIN[p.fin]?.name||''}`;while(t.length>8&&x.measureText(t).width>leftW)t=t.slice(0,-2);x.fillText(t,X+pad,Y+pad+112)}
+    const sl=(src[p.id]||[]);const k_=used[p.id]=(used[p.id]||0);used[p.id]++;x.fillStyle='#777';x.font=PF(400,13);x.fillText(wrapText(x,sl[k_]||'',leftW)[0]||'',X+pad,Y+LH-pad-14);
+    if((p.holes||[]).some(h=>h.dp)){x.fillStyle='#3446D6';x.font=PF(600,13);x.fillText('Hinge cups: see drawing',X+pad,Y+LH-pad-31)}
+    // right: the part seen from above, long side across — thick black bar = edge band, thin dashed = bare edge, lines = grain
+    const ratio=Math.max(0.28,Math.min(0.6,(p.Wd||1)/(p.L||1))),rw=DW-18,rh=Math.min(11*MMP,rw*ratio),rx=X+LW-pad-DW+4,ry=Y+pad+64;
+    x.fillStyle=gr?'#EAD7B7':'#EEEEEC';x.fillRect(rx,ry,rw,rh);
+    if(gr){x.strokeStyle='rgba(138,90,28,.45)';x.lineWidth=1.4;for(let k=1;k<6;k++){const yy=ry+rh*k/6;x.beginPath();x.moveTo(rx+3,yy);for(let t=0;t<=8;t++)x.lineTo(rx+3+(rw-6)*t/8,yy+Math.sin(t*1.3+k)*1.6);x.stroke()}
+      x.fillStyle='#8A5A1C';x.font=PF(700,11);x.fillText('GRAIN →',rx+4,ry+rh/2-6)}
+    const E=[[rx,ry+rh,rx+rw,ry+rh,bs[0]],[rx,ry,rx+rw,ry,bs[1]],[rx,ry,rx,ry+rh,bs[2]],[rx+rw,ry,rx+rw,ry+rh,bs[3]]];
+    E.forEach(([a,b,c2,d,on])=>{x.beginPath();x.moveTo(a,b);x.lineTo(c2,d);if(on){x.setLineDash([]);x.strokeStyle='#1D1D1F';x.lineWidth=8}else{x.setLineDash([5,4]);x.strokeStyle='#9A9A9A';x.lineWidth=1.5}x.stroke()});x.setLineDash([]);
+    x.fillStyle='#333';x.font=PM(13);x.textAlign='center';x.fillText(f0(p.L),rx+rw/2,ry+rh+8);x.save();x.translate(rx+rw+9,ry+rh/2);x.rotate(Math.PI/2);x.fillText(f0(p.Wd),0,-6);x.restore();x.textAlign='left';
+    const bw_=bandWords(p,bs);x.font=PF(700,13);x.fillStyle=bs.some(Boolean)?'#1D1D1F':'#777';const bl=wrapText(x,bw_,DW).slice(0,3);bl.forEach((l,k)=>x.fillText(l,X+LW-pad-DW,ry+rh+24+k*15));
+    x.textBaseline='alphabetic'});
   if(!pages.length){toast('No parts to label');return}
+  // a key page at the end: how to read the labels
+  {const kp=a4Page(),x=kp.x,m=18*MMP;x.fillStyle='#1D1D1F';x.textBaseline='top';x.font=PF(700,40);x.fillText('How to read the labels',m,m);x.font=PF(400,22);
+    const rows=[['Thick black bar','that edge gets edge banding'],['Thin dashed line','bare edge — no edge banding'],['Wavy lines + GRAIN →','wood grain: the grain runs along the long side shown, which is the first size on the label'],['No grain — may be turned','plain colour: the part may be cut either way round'],['Sizes','length along the grain × width × thickness, in mm'+(+(S.opts.bandTh||0)>0.45?`; already ${S.opts.bandTh} mm smaller where edge banding goes on`:'')]];
+    rows.forEach(([a,b],k)=>{x.font=PF(700,22);x.fillText(a,m,m+90+k*78);x.font=PF(400,22);wrapText(x,b,A4W-2*m-360).forEach((l,j)=>x.fillText(l,m+360,m+90+k*78+j*26))});pages.push(kp)}
   await savePdfA4(pages,`${fileBase()}-labels.pdf`,'Labels');}
 /* full-size templates: only the A4 tiles that a sloped or curved edge crosses, at 1:1 */
 /* ===== DXF per part for CNC cutting and drilling ===== */
@@ -3930,6 +3956,222 @@ async function exportPdf(){
   if(!dl){if(!window.claude){try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([pdf],{type:'application/pdf'}));a.download=fn;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);toast(`Saved ${fn} · ${pages.length} pages`)}catch(e){toast('Could not save the PDF here')}return}toast('PDF ready — saving works in the published Fitted app');return}
   try{await dl.save({filename:fn,data:new Blob([pdf],{type:'application/pdf'})});toast(`Saved ${fn} · ${pages.length} pages`)}catch(e){toast(e&&e.code==='declined'?'Not saved':'Could not save the PDF here')}}
 
+/* ==== 52-techdraw.js ====
+   Technical drawings: a sheet set (vector PDF, A3 or A4, true to scale) and a DXF of the whole wall.
+
+   How it works
+   - Every board is already a 3D solid in build(): G.items of kind 'prism' (a 2D outline, a mapping to 3D
+     and a thickness vector). tdSolids() turns them into plain 3D corner lists.
+   - A view is a list of entities in millimetres (lines, polygons, arcs, text). Front view and the plan /
+     sections are made by projecting or cutting those solids; nearer parts are painted over farther ones.
+   - Sheets place views at a standard scale (1:5 … 1:100) inside a border with a title block.
+   - pdfVec() writes the sheets as a vector PDF (Helvetica, no libraries); tdDXF() writes the same
+     front view, plan and sections 1:1 in one DXF with layers.
+   Entity kinds: {t:'pg',p:[[x,y],…],c:closed,f:fill grey 0–1 or null,w:'thick'|'med'|'thin',d:dashed,ly:layer}
+                 {t:'tx',p:[x,y],s:text,h:paper mm,al:'l'|'c'|'r',r:90?,b:bold,ly}
+*/
+const TD={paper:'A3',sheets:{front:1,setout:1,plan:1,sec:1,det:1,expl:0}};
+const TD_PAPER={A3:[420,297],A4:[297,210]},TD_SCALES=[1,2,5,10,20,25,50,100,200],TD_LW={thick:.5,med:.3,thin:.15,xthin:.1};
+/* ---------- 3D solids ---------- */
+function tdSolids(G){const out=[];(G.items||[]).forEach((it,idx)=>{if(it.k!=='prism'||typeof it.toW!=='function'||!it.poly||it.poly.length<3)return;
+  const e=it.ext||[0,0,0],A=it.poly.map(([u,v])=>it.toW(u,v)),B=A.map(p=>[p[0]+e[0],p[1]+e[1],p[2]+e[2]]),all=A.concat(B);
+  if(all.some(p=>p.some(v=>!isFinite(v))))return;const bb=[0,1,2].map(i=>[Math.min(...all.map(p=>p[i])),Math.max(...all.map(p=>p[i]))]);
+  const ax=Math.abs(e[0])>Math.abs(e[1])?(Math.abs(e[0])>Math.abs(e[2])?0:2):(Math.abs(e[1])>Math.abs(e[2])?1:2);
+  out.push({A,B,e,bb,ax,t:Math.hypot(...e),role:String(it.role||''),tag:it.tag||'',sz:it.sz||'',idx})});return out}
+const tdLy=s=>/^fabric/.test(s.role)?'FRONTS':({carcass:'CARCASS',shelf:'SHELVES',back:'BACKS',front:'FRONTS',skirt:'STRIPS_PLINTH',desk:'DESK'})[s.role]||'OTHER';
+/* cut a solid with the plane coord[ax]=c; returns 3D section polygons */
+function tdCut(s,ax,c){const e=s.e;if(s.bb[ax][0]>c+1e-6||s.bb[ax][1]<c-1e-6)return [];
+  if(Math.abs(e[ax])>1e-6){const a0=s.A[0][ax];if(!s.A.every(p=>Math.abs(p[ax]-a0)<1e-6))return [];return [s.A.map(p=>{const q=p.slice();q[ax]=c;return q})]}
+  const A=s.A,pts=[];for(let i=0;i<A.length;i++){const p=A[i],q=A[(i+1)%A.length],dp=p[ax]-c,dq=q[ax]-c;if(Math.abs(dp)<1e-9)pts.push(p.slice());else if(dp*dq<0&&Math.abs(dq)>1e-9){const t=dp/(dp-dq);pts.push(p.map((v,k)=>v+(q[k]-v)*t))}}
+  if(pts.length<2)return [];const o=[0,1,2].filter(k=>k!==ax),vr=o.map(k=>Math.max(...pts.map(p=>p[k]))-Math.min(...pts.map(p=>p[k]))),k=vr[0]>=vr[1]?o[0]:o[1];pts.sort((a,b)=>a[k]-b[k]);
+  const out=[];for(let i=0;i+1<pts.length;i+=2){const a=pts[i],b=pts[i+1];if(Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2])<0.01)continue;out.push([a,b,b.map((x,j)=>x+e[j]),a.map((x,j)=>x+e[j])])}return out}
+function tdHull(P){const p=P.map(q=>q.slice()).sort((a,b)=>a[0]-b[0]||a[1]-b[1]);if(p.length<3)return p;const cr=(o,a,b)=>(a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]),lo=[],up=[];
+  for(const q of p){while(lo.length>=2&&cr(lo[lo.length-2],lo[lo.length-1],q)<=0)lo.pop();lo.push(q)}for(let i=p.length-1;i>=0;i--){const q=p[i];while(up.length>=2&&cr(up[up.length-2],up[up.length-1],q)<=0)up.pop();up.push(q)}up.pop();lo.pop();return lo.concat(up)}
+/* outline of a solid seen along an axis (0 x, 1 y, 2 z), mapped with pr(p3)→[x,y] */
+function tdOutline(s,viewAx,pr){const e=s.e,along=Math.abs(e[viewAx])>1e-6&&[0,1,2].every(k=>k===viewAx||Math.abs(e[k])<1e-6);return along?s.A.map(pr):tdHull(s.A.concat(s.B).map(pr))}
+/* ---------- small helpers for entities ---------- */
+const tdPg=(p,o)=>Object.assign({t:'pg',p,c:true,f:null,w:'med',ly:'OTHER'},o||{});
+const tdLn=(a,b,o)=>Object.assign({t:'pg',p:[a,b],c:false,f:null,w:'thin',ly:'OTHER'},o||{});
+const tdTx=(p,s,o)=>Object.assign({t:'tx',p,s:String(s),h:2.5,al:'c',ly:'TEXT'},o||{});
+function tdArc(c,r,a0,a1,o){const n=Math.max(8,Math.ceil(Math.abs(a1-a0)/6)),p=[];for(let i=0;i<=n;i++){const a=(a0+(a1-a0)*i/n)*Math.PI/180;p.push([c[0]+r*Math.cos(a),c[1]+r*Math.sin(a)])}return Object.assign({t:'pg',p,c:false,f:null,w:'thin',ly:'OTHER'},o||{})}
+/* linear dimension between a and b (model points) along 'h' or 'v', dimension line at 'at' (model coord); den = scale */
+function tdDim(E,a,b,dir,at,den,o){o=o||{};const L=dir==='h'?Math.abs(b[0]-a[0]):Math.abs(b[1]-a[1]);if(L<0.5)return;const tk=1.2*den,gap=1*den,ly='DIMENSIONS';
+  if(dir==='h'){const x0=Math.min(a[0],b[0]),x1=Math.max(a[0],b[0]),s=Math.sign(at-a[1])||1;
+    E.push(tdLn([a[0],a[1]+s*gap],[a[0],at+s*1.5*den],{ly,w:'xthin'}),tdLn([b[0],b[1]+s*gap],[b[0],at+s*1.5*den],{ly,w:'xthin'}),tdLn([x0-1.5*den,at],[x1+1.5*den,at],{ly,w:'xthin'}));
+    [x0,x1].forEach(x=>E.push(tdLn([x-tk/2,at-tk/2],[x+tk/2,at+tk/2],{ly,w:'thin'})));const txt=o.text||f0(L),tw=tdTW(txt,2.2)*den,fits=tw<x1-x0-1.5*den;
+    E.push(tdTx([fits?(x0+x1)/2:x1+1.5*den+tw/2,at+0.9*den],txt,{h:2.2,ly,al:'c'}))}
+  else{const y0=Math.min(a[1],b[1]),y1=Math.max(a[1],b[1]),s=Math.sign(at-a[0])||1;
+    E.push(tdLn([a[0]+s*gap,a[1]],[at+s*1.5*den,a[1]],{ly,w:'xthin'}),tdLn([b[0]+s*gap,b[1]],[at+s*1.5*den,b[1]],{ly,w:'xthin'}),tdLn([at,y0-1.5*den],[at,y1+1.5*den],{ly,w:'xthin'}));
+    [y0,y1].forEach(y=>E.push(tdLn([at-tk/2,y-tk/2],[at+tk/2,y+tk/2],{ly,w:'thin'})));const txt=o.text||f0(L),tw=tdTW(txt,2.2)*den,fits=tw<y1-y0-1.5*den;
+    E.push(tdTx([at-0.9*den,fits?(y0+y1)/2:y1+1.5*den+tw/2],txt,{h:2.2,ly,al:'c',r:90}))}}
+/* Helvetica widths (per 1000) for text width estimates */
+const TD_HW=(()=>{const w={};' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~'.split('').forEach((c,i)=>{w[c]=[278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584][i]});return w})();
+function tdTW(s,hmm){let u=0;for(const c of String(s))u+=TD_HW[c]||600;return u/1000*hmm/0.72}
+/* ---------- which solids belong to a column, and its box ---------- */
+function tdCol(sol,q){const xa=q.xa,xb=q.xb;return sol.filter(s=>{const[x0,x1]=s.bb[0];if(/^\d+:/.test(s.sz))return +s.sz.split(':')[0]===q.i;
+  if(s.role==='skirt')return x0>=xa-120&&x1<=xb+120;const ov=Math.min(x1,xb)-Math.max(x0,xa);if(ov>1)return true;return s.ax===0&&(Math.abs(x1-xa)<3||Math.abs(x0-xb)<3)})}
+function tdBox(cs){const c=cs.filter(s=>s.role==='carcass');const a=c.length?c:cs;if(!a.length)return null;return {x0:Math.min(...a.map(s=>s.bb[0][0])),x1:Math.max(...a.map(s=>s.bb[0][1])),y0:Math.min(...a.map(s=>s.bb[1][0])),y1:Math.max(...a.map(s=>s.bb[1][1])),z0:Math.min(...a.map(s=>s.bb[2][0])),z1:Math.max(...a.map(s=>s.bb[2][1]))}}
+function tdCols(G,sol){return G.secs.map(q=>{const cs=tdCol(sol,q),bx=tdBox(cs);return bx?{q,cs,bx,n:q.i+1}:null}).filter(Boolean)}
+function tdTopAt(cs,x){const a=cs.filter(s=>s.role==='carcass'&&s.bb[0][0]<=x+1&&s.bb[0][1]>=x-1);return a.length?Math.max(...a.map(s=>s.bb[1][1])):0}
+/* ---------- the room around the cabinets ---------- */
+const tdCeil=(G,x)=>{try{return G.ceilAt(x)}catch(e){return +S.room.H}};
+function tdWallZ(){return -(+S.room.D||600)}
+/* ---------- FRONT VIEW ---------- */
+function tdFront(G,sol,opt){opt=opt||{};const E=[],W=G.W,H=Math.max(...G.cps.map(p=>p.y),+S.room.H),wb=120;
+  E.push(tdPg([[-wb,0],[0,0],[0,tdCeil(G,0)],[-wb,tdCeil(G,0)]],{f:.86,w:'thin',ly:'WALL'}),tdPg([[W,0],[W+wb,0],[W+wb,tdCeil(G,W)],[W,tdCeil(G,W)]],{f:.86,w:'thin',ly:'WALL'}));
+  const cp=G.cps.map(p=>[p.x,p.y]);E.push(tdPg(cp.concat(cp.slice().reverse().map(p=>[p[0],p[1]+wb])),{f:.86,w:'thin',ly:'WALL'}),tdPg(cp,{c:false,w:'thick',ly:'WALL'}),tdLn([-wb-200,0],[W+wb+200,0],{w:'thick',ly:'WALL'}));
+  (G.beams||[]).forEach(b=>{const c=tdCeil(G,b.x+b.w/2);E.push(tdPg([[b.x,b.bottom],[b.x+b.w,b.bottom],[b.x+b.w,c],[b.x,c]],{f:.72,w:'med',ly:'WALL'}))});
+  if(!opt.boxesOnly){sol.slice().sort((a,b)=>a.bb[2][1]-b.bb[2][1]).forEach(s=>E.push(tdPg(tdOutline(s,2,p=>[p[0],p[1]]),{f:1,w:s.role==='front'||/^fabric/.test(s.role)?'med':'thin',ly:tdLy(s)})));
+    (G.items||[]).forEach(it=>{if(it.k==='tv'||it.k==='appl')E.push(tdPg([[it.x,it.y],[it.x+it.w,it.y],[it.x+it.w,it.y+it.h],[it.x,it.y+it.h]],{f:it.k==='tv'?.35:.93,w:'thin',ly:'OTHER'}))})}
+  else opt.cols.forEach(c=>E.push(tdPg([[c.bx.x0,c.bx.y0],[c.bx.x1,c.bx.y0],[c.bx.x1,tdTopAt(c.cs,c.bx.x1-2)],[c.bx.x0,tdTopAt(c.cs,c.bx.x0+2)]],{f:.97,w:'med',ly:'CARCASS'})));
+  return {E,bb:[[-wb,Math.min(0,...sol.map(s=>s.bb[1][0]))],[W+wb,H+wb]]}}
+function tdFrontDims(V,G,cols,den,ord){const E=V.E,W=G.W;const xs=[0,W];cols.forEach(c=>xs.push(c.bx.x0,c.bx.x1));const u=[...new Set(xs.map(v=>Math.round(v*10)/10))].sort((a,b)=>a-b).filter((v,i,a)=>i===0||v-a[i-1]>1);
+  cols.forEach(c=>{const cx=(c.bx.x0+c.bx.x1)/2,r=2.4*den;E.push(tdArc([cx,-5*den],r,0,360,{w:'thin',ly:'TEXT'}),tdTx([cx,-5*den-1.1*den],c.n,{h:2.6,b:1}))});
+  if(ord){let last=-1e9;u.forEach(x=>{const tx=Math.max(x+0.9*den,last+3*den);last=tx;E.push(tdLn([x,-1*den],[x,-9*den],{ly:'DIMENSIONS',w:'xthin'}),tdTx([tx,-10*den],f0(x),{h:2.2,r:90,al:'r',ly:'DIMENSIONS'}))});E.push(tdLn([0,-9*den],[W,-9*den],{ly:'DIMENSIONS',w:'xthin'}),tdTx([0,-24*den],'0 = left wall, measured at the floor',{h:2.2,al:'l'}));}
+  else{for(let i=0;i+1<u.length;i++)tdDim(E,[u[i],0],[u[i+1],0],'h',-12*den,den);tdDim(E,[0,0],[W,0],'h',-20*den,den)}
+  const tall=cols.reduce((a,c)=>Math.max(a,c.bx.y1),0),P=cols.reduce((a,c)=>Math.min(a,c.bx.y0),1e9),cW=tdCeil(G,W);const at=W+120+12*den;
+  if(P>1)tdDim(E,[W,0],[W,P],'v',at,den);tdDim(E,[W,P>1?P:0],[W,tdTopAt(cols[cols.length-1].cs,W-30)||tall],'v',at,den);tdDim(E,[W,0],[W,cW],'v',at+9*den,den);
+  V.bb=[[V.bb[0][0],-(ord?26:24)*den],[V.bb[1][0]+24*den,V.bb[1][1]]]}
+/* ---------- PLAN (cut at h) ---------- */
+function tdPlan(G,sol,h,den){const E=[],W=G.W,zW=tdWallZ(),wb=120,pr=p=>[p[0],-p[2]];const Dw=-zW;
+  E.push(tdPg([[-wb,Dw],[W+wb,Dw],[W+wb,Dw+wb],[-wb,Dw+wb]],{f:.62,w:'thin',ly:'WALL'}),tdPg([[-wb,-900],[0,-900],[0,Dw],[-wb,Dw]],{f:.62,w:'thin',ly:'WALL'}),tdPg([[W,-900],[W+wb,-900],[W+wb,Dw],[W,Dw]],{f:.62,w:'thin',ly:'WALL'}));
+  (G.beams||[]).forEach(b=>{const d=Math.min(Dw,+b.depth||Dw);E.push(tdPg([[b.x,Dw-d],[b.x+b.w,Dw-d],[b.x+b.w,Dw],[b.x,Dw]],{f:null,w:'thin',d:1,ly:'WALL'}))});
+  sol.filter(s=>s.bb[1][1]<h-1e-6).sort((a,b)=>a.bb[1][1]-b.bb[1][1]).forEach(s=>E.push(tdPg(tdOutline(s,1,pr),{f:1,w:'thin',ly:tdLy(s)})));
+  sol.forEach(s=>tdCut(s,1,h).forEach(poly=>E.push(tdPg(poly.map(pr),{f:.78,w:'thick',ly:tdLy(s)}))));
+  const fz=Math.max(0,...sol.filter(s=>s.role==='front').map(s=>s.bb[2][1]));
+  (G.fronts||[]).forEach(f=>{if(f.kind!=='door'||f.slide||(f.hinge!=='L'&&f.hinge!=='R'))return;const xs=f.poly.map(p=>p[0]),ys=f.poly.map(p=>p[1]),a=Math.min(...xs),b=Math.max(...xs),w=b-a;if(w<80)return;const on=Math.min(...ys)<=h&&Math.max(...ys)>=h;
+    const hx=f.hinge==='L'?a:b,Y=-fz;E.push(tdLn([hx,Y],[hx,Y-w],{w:'thin',d:on?0:1,ly:'DOOR_SWING'}),tdArc([hx,Y],w,f.hinge==='L'?270:180,f.hinge==='L'?360:270,{w:'xthin',d:1,ly:'DOOR_SWING'}))});
+  const sp=+(S.room.front&&S.room.front.on&&S.room.front.space)||0;if(sp>0)E.push(tdLn([0,-fz-sp],[W,-fz-sp],{d:1,w:'thin',ly:'WALL'}),tdTx([W/2,-fz-sp-3*den],`free floor in front: ${f0(sp)} mm`,{h:2.2}));
+  return {E,bb:[[-wb,-Math.max(fz+900,sp+fz+600)],[W+wb,Dw+wb]],Dw,fz}}
+function tdPlanDims(V,cols,den,W){const E=V.E,xs=[0,W];cols.forEach(c=>xs.push(c.bx.x0,c.bx.x1));const u=[...new Set(xs.map(v=>Math.round(v)))].sort((a,b)=>a-b).filter((v,i,a)=>i===0||v-a[i-1]>1);
+  const yb=V.bb[0][1]+2*den;for(let i=0;i+1<u.length;i++)tdDim(E,[u[i],-V.fz],[u[i+1],-V.fz],'h',yb+10*den,den);tdDim(E,[0,-V.fz],[W,-V.fz],'h',yb+2*den,den);
+  const c0=cols[0];if(c0){tdDim(E,[-120,V.Dw],[-120,-c0.bx.z1],'v',-120-10*den,den);tdDim(E,[-120,V.Dw],[-120,-V.fz],'v',-120-18*den,den)}
+  V.bb=[[V.bb[0][0]-22*den,V.bb[0][1]],[V.bb[1][0]+4*den,V.bb[1][1]]]}
+/* ---------- SECTION through a column ---------- */
+function tdSection(G,sol,c,den){const E=[],Dw=-tdWallZ(),pr=p=>[p[2]+Dw,p[1]],wb=120,bx=c.bx;let cx=(bx.x0+bx.x1)/2;
+  for(let k=0;k<6&&sol.some(s=>s.ax===0&&s.bb[0][0]<cx+1&&s.bb[0][1]>cx-1);k++)cx+=40;
+  const cH=tdCeil(G,cx),fz=Math.max(0,...c.cs.filter(s=>s.role==='front').map(s=>s.bb[2][1]));
+  E.push(tdPg([[-wb,-60],[0,-60],[0,cH],[-wb,cH]],{f:.62,w:'thin',ly:'WALL'}),tdPg([[-wb,cH],[Dw+fz+500,cH],[Dw+fz+500,cH+wb],[-wb,cH+wb]],{f:.86,w:'thin',ly:'WALL'}),tdLn([-wb,0],[Dw+fz+500,0],{w:'thick',ly:'WALL'}));
+  (G.beams||[]).forEach(b=>{if(cx<b.x||cx>b.x+b.w)return;const d=Math.min(Dw,+b.depth||Dw);E.push(tdPg([[0,b.bottom],[d,b.bottom],[d,cH],[0,cH]],{f:.62,w:'med',ly:'WALL'}))});
+  sol.filter(s=>s.bb[0][0]>=cx&&s.bb[0][0]<=bx.x1+2&&c.cs.includes(s)).sort((a,b)=>b.bb[0][0]-a.bb[0][0]).forEach(s=>E.push(tdPg(tdOutline(s,0,pr),{f:1,w:'thin',ly:tdLy(s)})));
+  const cut=[];sol.forEach(s=>tdCut(s,0,cx).forEach(poly=>{const p2=poly.map(pr);cut.push({s,p2});E.push(tdPg(p2,{f:.78,w:'thick',ly:tdLy(s)}))}));
+  (G.items||[]).forEach(it=>{if(it.k==='rail'&&cx>=it.xa&&cx<=it.xb)E.push(tdArc([Dw-it.z,it.y],12.5,0,360,{w:'med',ly:'OTHER'}))});
+  // heights of every horizontal board in this column, measured from the floor (to place them)
+  const hz=cut.filter(o=>o.s.ax===1&&c.cs.includes(o.s)).map(o=>Math.max(...o.p2.map(p=>p[1]))).sort((a,b)=>a-b),tops=[...new Set(hz.map(v=>Math.round(v)))];
+  const ox=Dw+fz+8*den;tops.forEach(y=>{E.push(tdLn([Dw+fz+1*den,y],[ox,y],{ly:'DIMENSIONS',w:'xthin'}),tdTx([ox+0.8*den,y-0.8*den],f0(y),{h:2.2,al:'l',ly:'DIMENSIONS'}))});
+  if(tops.length)E.push(tdLn([ox,0],[ox,tops[tops.length-1]],{ly:'DIMENSIONS',w:'xthin'}),tdTx([ox+0.8*den,-3*den],'heights from the floor',{h:2,al:'l',ly:'DIMENSIONS'}));
+  tdDim(E,[0,0],[Dw+fz,0],'h',-10*den,den);tdDim(E,[0,0],[Dw+bx.z1,0],'h',-5*den,den);
+  tdDim(E,[0,0],[0,cH],'v',-wb-8*den,den);
+  const topCut=Math.max(0,...cut.filter(o=>o.s.role==='carcass'&&c.cs.includes(o.s)).map(o=>Math.max(...o.p2.map(p=>p[1]))));
+  return {E,bb:[[-wb-14*den,-14*den],[Dw+fz+22*den,cH+wb]],cx,Dw,fz,cH,c,topCut}}
+/* ---------- EXPLODED VIEW of one box ---------- */
+function tdPartName(s,c){const ax=s.ax,bx=c.bx;if(s.role==='front'||/^fabric/.test(s.role))return s.bb[1][1]-s.bb[1][0]<450&&s.bb[0][1]-s.bb[0][0]>s.bb[1][1]-s.bb[1][0]?'Drawer front':'Door';
+  if(s.role==='back')return 'Back panel';if(s.role==='shelf')return 'Shelf';if(s.role==='skirt')return 'Plinth / strip';if(s.role==='desk')return 'Desk top';
+  if(s.role==='carcass'){if(ax===0)return Math.abs(s.bb[0][0]-bx.x0)<3||Math.abs(s.bb[0][1]-bx.x1)<3?'Side':'Divider';if(ax===1)return Math.abs(s.bb[1][1]-bx.y1)<3?'Top':Math.abs(s.bb[1][0]-bx.y0)<30?'Bottom':'Fixed shelf';return 'Rail / batten'}return 'Part'}
+function tdExploded(c){const bx=c.bx,cc=[(bx.x0+bx.x1)/2,(bx.y0+bx.y1)/2,(bx.z0+bx.z1)/2],EX=Math.max(180,Math.min(420,(bx.y1-bx.y0)*0.12));
+  const v=[0.95,0.75,1.25],vl=Math.hypot(...v),f=v.map(a=>-a/vl),up0=[0,1,0],cr=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],nm=a=>{const l=Math.hypot(...a);return a.map(x=>x/l)};
+  const rt=nm(cr(f,up0)),up=cr(rt,f),dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],P=p=>[dot(p,rt),dot(p,up)];
+  const parts=c.cs.filter(s=>s.role!=='skirt'||true).map(s=>{const m=[0,1,2].map(k=>(s.bb[k][0]+s.bb[k][1])/2);let o=[0,0,0];
+    if(s.role==='front'||/^fabric/.test(s.role))o=[0,0,EX*1.6];else if(s.role==='back')o=[0,0,-EX];else if(s.role==='shelf')o=[0,0,EX*0.8];else if(s.role==='skirt')o=[0,-EX*0.5,EX*0.9];
+    else if(s.ax===0)o=[Math.sign(m[0]-cc[0]||1)*EX*((Math.abs(s.bb[0][0]-bx.x0)<3||Math.abs(s.bb[0][1]-bx.x1)<3)?1:0.2),0,0];else if(s.ax===1)o=[0,Math.abs(s.bb[1][1]-bx.y1)<3?EX:Math.abs(s.bb[1][0]-bx.y0)<30?-EX*0.6:0,Math.abs(s.bb[1][1]-bx.y1)<3||Math.abs(s.bb[1][0]-bx.y0)<30?0:EX*0.5];
+    const mv=p=>[p[0]+o[0],p[1]+o[1],p[2]+o[2]];return {s,A:s.A.map(mv),B:s.B.map(mv),m:mv(m)}});
+  const faces=[];parts.forEach((pt,i)=>{const n=pt.A.length,fs=[pt.A.slice(),pt.B.slice().reverse()];for(let j=0;j<n;j++)fs.push([pt.A[j],pt.A[(j+1)%n],pt.B[(j+1)%n],pt.B[j]]);
+    fs.forEach(F=>{const a=F[0],b=F[1],c3=F[2];let nrm=nm(cr([b[0]-a[0],b[1]-a[1],b[2]-a[2]],[c3[0]-a[0],c3[1]-a[1],c3[2]-a[2]]));if(!nrm.every(isFinite))return;const ctr=[0,1,2].map(k=>F.reduce((s_,p)=>s_+p[k],0)/F.length);
+      if(dot(nrm,[ctr[0]-pt.m[0],ctr[1]-pt.m[1],ctr[2]-pt.m[2]])<0)nrm=nrm.map(x=>-x);if(dot(nrm,f)>=-1e-6)return;const sh=Math.abs(nrm[1])>0.7?.97:Math.abs(nrm[0])>0.7?.84:.91;faces.push({p:F.map(P),d:dot(ctr,f),g:pt.s.role==='front'||/^fabric/.test(pt.s.role)?sh-.06:sh,i})})});
+  faces.sort((a,b)=>b.d-a.d);const E=faces.map(F=>tdPg(F.p,{f:F.g,w:'thin',ly:'PARTS'}));
+  const list=parts.map((pt,i)=>{const s=pt.s,ex=[0,1,2].map(k=>s.bb[k][1]-s.bb[k][0]),t=s.t||Math.min(...ex),o=ex.filter((x,k)=>k!==s.ax).sort((a,b)=>b-a);return {no:i+1,name:tdPartName(s,c),L:o[0],W:o[1],t,role:s.role,lab:P(pt.m)}});
+  const grp={};list.forEach(r=>{const k=r.name+'|'+f0(r.L)+'|'+f0(r.W)+'|'+f0(r.t);(grp[k]=grp[k]||{...r,q:0,nos:[]}).q++;grp[k].nos.push(r.no)});
+  const rows=Object.values(grp).sort((a,b)=>a.nos[0]-b.nos[0]).map((r,j)=>Object.assign(r,{tag:String.fromCharCode(65+j)}));
+  rows.forEach(r=>list.filter(l=>r.nos.includes(l.no)).forEach(l=>{E.push(tdArc(l.lab,1,0,360,{w:'thin',ly:'TEXT',lab:r.tag}))}));
+  const all=E.flatMap(e=>e.p||[]);const bb=[[Math.min(...all.map(p=>p[0])),Math.min(...all.map(p=>p[1]))],[Math.max(...all.map(p=>p[0])),Math.max(...all.map(p=>p[1]))]];return {E,bb,rows}}
+/* ---------- sheets ---------- */
+function tdScaleFor(w,h,aw,ah,max){for(const d of TD_SCALES){if(max&&d<max)continue;if(w/d<=aw&&h/d<=ah)return d}return TD_SCALES[TD_SCALES.length-1]}
+function tdSheets(){const G=build(JSON.parse(JSON.stringify(S))),sol=tdSolids(G),cols=tdCols(G,sol).filter(c=>c.cs.length),[PW,PH]=TD_PAPER[TD.paper],M=10,TB=TD.paper==='A3'?20:16,aw=PW-2*M-6,ah=PH-2*M-TB-14,sheets=[],O=TD.sheets;
+  if(!cols.length)return {sheets,cols,G};
+  const one=(title,mk,o)=>{o=o||{};let V=mk(20),w=V.bb[1][0]-V.bb[0][0],h=V.bb[1][1]-V.bb[0][1],d=tdScaleFor(w,h,aw,ah-(o.under||0),o.min);V=mk(d);w=V.bb[1][0]-V.bb[0][0];h=V.bb[1][1]-V.bb[0][1];d=tdScaleFor(w,h,aw,ah-(o.under||0),o.min);V=mk(d);return {title,views:[{V,den:d,label:o.label||title}],extra:o.extra}};
+  if(O.front)sheets.push(one('Front view',d=>{const V=tdFront(G,sol);tdFrontDims(V,G,cols,d,false);return V},{label:'Front view — sizes in mm'}));
+  if(O.setout){const st=one('Setting out',d=>{const V=tdFront(G,sol,{boxesOnly:1,cols});tdFrontDims(V,G,cols,d,true);return V},{label:'Where each box goes — positions from the left wall',under:Math.min(110,22+cols.length*6.5)});st.table=tdSetoutTable(G,cols);sheets.push(st)}
+  if(O.plan){const h=Math.min(1000,Math.max(300,...cols.map(c=>c.bx.y1-150)));sheets.push(one('Plan',d=>{const V=tdPlan(G,sol,h,d);tdPlanDims(V,cols,d,G.W);return V},{label:`Plan — cut at ${f0(h)} mm above the floor, seen from above`}))}
+  if(O.sec){let d=20;const secs=cols.filter(c=>c.q&&!c.q.panel).map(c=>({c,mk:dd=>tdSection(G,sol,c,dd)}));const sz=x=>{const V=x.mk(d);return [V.bb[1][0]-V.bb[0][0],V.bb[1][1]-V.bb[0][1]]};
+    const tall=secs.length?0:0;if(secs.length){const tall=Math.max(...secs.map(x=>sz(x)[1]));while(tall/d>ah-10&&d<100)d=TD_SCALES[TD_SCALES.indexOf(d)+1];let cur=[],used=0;
+    const flush=()=>{if(cur.length)sheets.push({title:'Sections',views:cur.map(x=>({V:x.mk(d),den:d,label:`Section through column ${x.c.n}`}))});cur=[];used=0};
+    secs.forEach(x=>{const w=sz(x)[0]/d+8;if(used+w>aw&&cur.length)flush();cur.push(x);used+=w});flush()}}
+  if(O.det){const c=cols.find(c=>c.q&&!c.q.panel&&!c.q.desk)||cols[0];const SV=tdSection(G,sol,c,5),PV=tdPlan(G,sol,Math.min(1000,c.bx.y1-150),5),Dw=SV.Dw,fz=SV.fz,P=c.bx.y0,top=SV.topCut||tdTopAt(c.cs,SV.cx),cH=SV.cH;
+    const win=(V,x0,y0,x1,y1,lab,dims)=>{const E=V.E.slice();dims(E);return {V:{E,bb:[[x0,y0],[x1,y1]],clip:1},den:5,label:lab}};
+    const views=[win(SV,Dw-260,-60,Dw+fz+70,Math.max(P,90)+160,`Detail 1 — plinth (column ${c.n})`,E=>{if(P>1)tdDim(E,[Dw+fz+5,0],[Dw+fz+5,P],'v',Dw+fz+40,5)}),
+      win(SV,Dw-260,top-200,Dw+fz+70,cH+70,`Detail 2 — top strip (column ${c.n})`,E=>{if(cH-top>1)tdDim(E,[Dw+fz+5,top],[Dw+fz+5,cH],'v',Dw+fz+40,5)}),
+      win(PV,-70,-fz-110,260,Math.min(PV.Dw,300),'Detail 3 — side strip at the left wall',E=>{if(c.bx.x0>1&&cols[0])tdDim(E,[0,-fz],[cols[0].bx.x0,-fz],'h',-fz-60,5)})];
+    sheets.push({title:'Details',views})}
+  if(O.expl){cols.filter(c=>c.q&&!c.q.panel).forEach(c=>{const X=tdExploded(c),w=X.bb[1][0]-X.bb[0][0],h=X.bb[1][1]-X.bb[0][1],tw=TD.paper==='A3'?150:112,d=tdScaleFor(w,h,aw-tw-8,ah,10);sheets.push({title:`Exploded view — column ${c.n}`,views:[{V:X,den:d,label:`Box ${c.n}, pulled apart — letters match the parts list`}],parts:X.rows,c})})}
+  return {sheets,cols,G}}
+function tdSetoutTable(G,cols){return cols.map(c=>{const q=c.q,t=q.panel?'Panel wall':q.door?'Door':q.desk?'Desk':'Cabinet';return [String(c.n),t,f0(c.bx.x0),f0(c.bx.x1),f0(c.bx.x1-c.bx.x0),f0(tdTopAt(c.cs,c.bx.x0+2)),f0(tdTopAt(c.cs,c.bx.x1-2)),f0(c.bx.z1-c.bx.z0),f0(c.bx.y0)]})}
+/* ---------- vector PDF ---------- */
+const TD_WIN={0x20AC:0x80,0x201A:0x82,0x201E:0x84,0x2026:0x85,0x2018:0x91,0x2019:0x92,0x201C:0x93,0x201D:0x94,0x2022:0x95,0x2013:0x96,0x2014:0x97,0x2191:0x5E};
+function tdHex(s){let h='';for(const ch of String(s)){let c=ch.codePointAt(0);if(TD_WIN[c])c=TD_WIN[c];else if(c>255)c=63;h+=c.toString(16).padStart(2,'0')}return '<'+h+'>'}
+const TD_K=72/25.4,tdN=v=>(Math.round(v*100)/100).toString();
+function tdOps(){const o=[];return {o,
+  pg(pts,close,fill,lw,dash){if(pts.length<2)return;o.push(`${tdN(lw*TD_K)} w ${dash?'[2 1.5] 0 d':'[] 0 d'}`);if(fill!=null)o.push(`${tdN(fill)} g`);o.push(`${tdN(pts[0][0]*TD_K)} ${tdN(pts[0][1]*TD_K)} m`);for(let i=1;i<pts.length;i++)o.push(`${tdN(pts[i][0]*TD_K)} ${tdN(pts[i][1]*TD_K)} l`);o.push(close?(fill!=null?'b':'s'):'S')},
+  tx(x,y,s,hmm,al,rot,bold){const sz=hmm/0.72*TD_K,w=tdTW(s,hmm);let dx=al==='c'?-w/2:al==='r'?-w:0;const r=(rot||0)*Math.PI/180,c=Math.cos(r),sn=Math.sin(r);const X=x+dx*c,Y=y+dx*sn;o.push(`0 g BT /${bold?'F2':'F1'} ${tdN(sz)} Tf ${tdN(c)} ${tdN(sn)} ${tdN(-sn)} ${tdN(c)} ${tdN(X*TD_K)} ${tdN(Y*TD_K)} Tm ${tdHex(s)} Tj ET`)},
+  raw(s){o.push(s)}}}
+function tdRenderView(R,V,den,x0,y0){const bx=V.bb[0][0],by=V.bb[0][1],T=p=>[x0+(p[0]-bx)/den,y0+(p[1]-by)/den];
+  if(V.clip){const w=(V.bb[1][0]-bx)/den,h=(V.bb[1][1]-by)/den;R.raw(`q ${tdN(x0*TD_K)} ${tdN(y0*TD_K)} ${tdN(w*TD_K)} ${tdN(h*TD_K)} re W n`)}
+  V.E.forEach(e=>{if(e.t==='pg'){R.pg(e.p.map(T),e.c,e.f,TD_LW[e.w]||.15,e.d);if(e.lab){const p=T(e.p[0]);R.pg(tdArc([p[0]-1,p[1]],2.2,0,360).p,true,1,.15);R.tx(p[0]-1,p[1]-1.05,e.lab,2.2,'c',0,1)}}else if(e.t==='tx'){const p=T(e.p);R.tx(p[0],p[1],e.s,e.h,e.al,e.r,e.b)}});
+  if(V.clip){R.raw('Q');const w=(V.bb[1][0]-bx)/den,h=(V.bb[1][1]-by)/den;R.pg([[x0,y0],[x0+w,y0],[x0+w,y0+h],[x0,y0+h]],true,null,.3)}}
+function tdSheetOps(sh,no,tot,meta){const[PW,PH]=TD_PAPER[TD.paper],M=10,TB=TD.paper==='A3'?20:16,R=tdOps();R.raw('1 J 1 j 0 G');
+  R.pg([[M,M],[PW-M,M],[PW-M,PH-M],[M,PH-M]],true,null,.5);R.pg([[M,M+TB],[PW-M,M+TB]],false,null,.35);
+  // title block: Fitted by BRUIS | project | drawing | scale | paper | date | sheet
+  const cells=[[70,'Fitted by BRUIS','built-in cabinets · sizes in mm'],[PW-2*M-70-38-24-28-22,'Project: '+meta.name,sh.title],[38,'Scale',sh.views.length?[...new Set(sh.views.map(v=>'1:'+v.den))].join(', '):'—'],[24,'Paper',TD.paper],[28,'Date',meta.date],[22,'Sheet',`${no} / ${tot}`]];
+  let x=M;cells.forEach(([w,a,b],i)=>{if(i)R.pg([[x,M],[x,M+TB]],false,null,.25);R.tx(x+2.5,M+TB-5.2,a,i?2:3.2,'l',0,i===0);R.tx(x+2.5,M+4,b,i===1?3.4:2.6,'l',0,i===1);x+=w});
+  const aw=PW-2*M-6,ah=PH-2*M-TB-14,top=PH-M-4;
+  if(sh.parts){const v=sh.views[0],tw=TD.paper==='A3'?150:112,w=(v.V.bb[1][0]-v.V.bb[0][0])/v.den,h=(v.V.bb[1][1]-v.V.bb[0][1])/v.den,x0=M+3+(aw-tw-8-w)/2,y0=M+TB+10+(ah-h)/2;tdRenderView(R,v.V,v.den,x0,y0);R.tx(M+3+(aw-tw-8)/2,M+TB+4,`${v.label}  ·  1:${v.den}`,2.6,'c',0,1);tdPartsTable(R,sh,PW-M-3-tw,top-2,tw);return R.o.join('\n')}
+  const ws=sh.views.map(v=>(v.V.bb[1][0]-v.V.bb[0][0])/v.den),hs=sh.views.map(v=>(v.V.bb[1][1]-v.V.bb[0][1])/v.den),under=sh.table?Math.min(110,22+sh.table.length*6.5):0,gap=Math.max(4,(aw-ws.reduce((a,b)=>a+b,0))/(sh.views.length+1));
+  let cx=M+3+gap;sh.views.forEach((v,i)=>{const y0=M+TB+10+under+Math.max(0,(ah-under-hs[i])/2);tdRenderView(R,v.V,v.den,cx,y0);R.tx(cx+ws[i]/2,y0-6,`${v.label}  ·  1:${v.den}`,2.6,'c',0,1);cx+=ws[i]+gap});
+  if(sh.table)tdTable(R,M+3,M+TB+6+under-4,aw,['Box','Type','From left wall','To','Width','Height left','Height right','Depth','Bottom at'],sh.table,'Measure from the left wall at floor level. Heights include the plinth; the closing strips fill the gaps to the walls and the ceiling.');
+  return R.o.join('\n')}
+function tdTable(R,x,ytop,w,head,rows,note){const rh=6.2,cw=w/head.length;let y=ytop;R.pg([[x,y],[x+w,y]],false,null,.35);head.forEach((h,i)=>R.tx(x+i*cw+1.5,y-4.4,h,2.2,'l',0,1));y-=rh;R.pg([[x,y],[x+w,y]],false,null,.25);
+  rows.forEach(r=>{r.forEach((v,i)=>R.tx(x+i*cw+1.5,y-4.4,v,2.3,'l'));y-=rh;R.pg([[x,y],[x+w,y]],false,null,.1)});if(note)R.tx(x,y-5,note,2.1,'l')}
+function tdPartsTable(R,sh,x,ytop,w){const M=S.mat,mn=role=>{const k=/^fabric/.test(role)?'front':({front:'front',back:'back',shelf:'shelf',skirt:'skirt',desk:'desk'})[role]||'carcass',m=M[k];return m?((MATS[m.type]||{}).short||m.type):''};
+  R.tx(x,ytop-4,`Parts of box ${sh.c.n}`,3.2,'l',0,1);let y=ytop-9;const cols=[[0,'Part'],[10,'Name'],[42,'Qty'],[52,'Length'],[72,'Width'],[92,'Thick'],[106,'Board']],sc=w/150;
+  cols.forEach(([cx,h])=>R.tx(x+cx*sc,y-4,h,2.1,'l',0,1));y-=6;R.pg([[x,y],[x+w,y]],false,null,.3);
+  sh.parts.forEach(r=>{R.pg(tdArc([x+2.6,y-3.1],2.2,0,360).p,true,1,.15);R.tx(x+2.6,y-4.15,r.tag,2.1,'c',0,1);[[10,r.name],[42,String(r.q)],[52,f0(r.L)],[72,f0(r.W)],[92,f0(r.t)],[106,mn(r.role)]].forEach(([cx,v])=>R.tx(x+cx*sc,y-4.2,v,2.2,'l'));y-=6.2;R.pg([[x,y],[x+w,y]],false,null,.1)});
+  R.tx(x,y-5,'Exact sizes, edge banding and drilling: see the cut list.',2,'l')}
+function pdfVec(pages){const objs=[null,null,'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>','<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>'],kids=[];
+  pages.forEach(pg=>{objs.push(`<< /Length ${pg.ops.length} >>\nstream\n${pg.ops}\nendstream`);const cid=objs.length;objs.push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${tdN(pg.w)} ${tdN(pg.h)}] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents ${cid} 0 R >>`);kids.push(objs.length)});
+  objs[0]='<< /Type /Catalog /Pages 2 0 R >>';objs[1]=`<< /Type /Pages /Kids [${kids.map(k=>k+' 0 R').join(' ')}] /Count ${kids.length} >>`;
+  let out='%PDF-1.4\n',offs=[];objs.forEach((o,i)=>{offs.push(out.length);out+=`${i+1} 0 obj\n${o}\nendobj\n`});const xr=out.length;
+  out+=`xref\n0 ${objs.length+1}\n0000000000 65535 f \n`+offs.map(o=>String(o).padStart(10,'0')+' 00000 n \n').join('')+`trailer\n<< /Size ${objs.length+1} /Root 1 0 R >>\nstartxref\n${xr}\n%%EOF`;return new Blob([out],{type:'application/pdf'})}
+async function tdExportPDF(){toast('Drawing the sheets…');await new Promise(r=>setTimeout(r,30));let R;try{R=tdSheets()}catch(e){console.error(e);toast('The drawings could not be made for this design');return}
+  if(!R.sheets.length){toast('Pick at least one kind of sheet');return}const[PW,PH]=TD_PAPER[TD.paper],meta={name:curName(),date:new Date().toLocaleDateString(tr('@date'))};
+  const pages=R.sheets.map((sh,i)=>({w:PW*TD_K,h:PH*TD_K,ops:tdSheetOps(sh,i+1,R.sheets.length,meta)}));saveFile(`${slugOf(meta.name)}-drawings-${TD.paper}.pdf`,pdfVec(pages),'Technical drawings')}
+/* ---------- DXF of the whole wall: front view, plan below it, sections to the right — 1:1 in mm ---------- */
+function tdDXF(){const G=build(JSON.parse(JSON.stringify(S))),sol=tdSolids(G),cols=tdCols(G,sol).filter(c=>c.cs.length),den=20,W=G.W;
+  const parts=[];const F=tdFront(G,sol);tdFrontDims(F,G,cols,den,false);parts.push({E:F.E,dx:0,dy:0,title:'FRONT VIEW'});
+  const h=Math.min(1000,Math.max(300,...cols.map(c=>c.bx.y1-150))),Pv=tdPlan(G,sol,h,den);tdPlanDims(Pv,cols,den,W);parts.push({E:Pv.E,dx:0,dy:F.bb[0][1]-Pv.bb[1][1]-1500,title:`PLAN (cut at ${f0(h)} mm)`});
+  let x=W+2500;cols.filter(c=>c.q&&!c.q.panel).forEach(c=>{const V=tdSection(G,sol,c,den);parts.push({E:V.E,dx:x-V.bb[0][0],dy:0,title:`SECTION COLUMN ${c.n}`});x+=V.bb[1][0]-V.bb[0][0]+800});
+  const L=[],e=(c,v)=>L.push(String(c),String(v)),f=v=>(+v).toFixed(2),lays=new Set(['TEXT']);parts.forEach(p=>p.E.forEach(en=>lays.add(en.ly||'OTHER')));
+  const col={WALL:8,CARCASS:7,SHELVES:3,BACKS:9,FRONTS:5,STRIPS_PLINTH:6,DESK:30,DIMENSIONS:1,TEXT:7,DOOR_SWING:4,OTHER:2};
+  e(0,'SECTION');e(2,'HEADER');e(9,'$ACADVER');e(1,'AC1009');e(9,'$INSUNITS');e(70,4);e(0,'ENDSEC');e(0,'SECTION');e(2,'TABLES');
+  e(0,'TABLE');e(2,'LTYPE');e(70,2);e(0,'LTYPE');e(2,'CONTINUOUS');e(70,0);e(3,'Solid line');e(72,65);e(73,0);e(40,'0.0');e(0,'LTYPE');e(2,'DASHED');e(70,0);e(3,'Dashed');e(72,65);e(73,2);e(40,'60.0');e(49,'40.0');e(49,'-20.0');e(0,'ENDTAB');
+  e(0,'TABLE');e(2,'LAYER');e(70,lays.size);[...lays].forEach(n=>{e(0,'LAYER');e(2,n);e(70,0);e(62,col[n]||7);e(6,'CONTINUOUS')});e(0,'ENDTAB');e(0,'ENDSEC');
+  e(0,'SECTION');e(2,'ENTITIES');const txt=(x,y,s,hh,ly,rot,al)=>{const s2=String(s).replace(/[^\x20-\x7E]/g,c=>c==='×'?'x':c==='–'||c==='—'?'-':c==='↑'?'^':'');e(0,'TEXT');e(8,ly);e(10,f(x));e(20,f(y));e(30,'0.0');e(40,f(hh));e(1,s2);if(rot)e(50,f(rot));if(al){e(72,al==='c'?1:2);e(11,f(x));e(21,f(y));e(31,'0.0')}};
+  parts.forEach(p=>{const T=q=>[q[0]+p.dx,q[1]+p.dy];p.E.forEach(en=>{const ly=en.ly||'OTHER';if(en.t==='pg'){const pts=en.p.map(T);if(pts.length===2&&!en.c){e(0,'LINE');e(8,ly);if(en.d)e(6,'DASHED');e(10,f(pts[0][0]));e(20,f(pts[0][1]));e(30,'0.0');e(11,f(pts[1][0]));e(21,f(pts[1][1]));e(31,'0.0')}
+      else{e(0,'POLYLINE');e(8,ly);if(en.d)e(6,'DASHED');e(66,1);e(70,en.c?1:0);pts.forEach(([x_,y_])=>{e(0,'VERTEX');e(8,ly);e(10,f(x_));e(20,f(y_));e(30,'0.0')});e(0,'SEQEND');e(8,ly)}}
+      else if(en.t==='tx'){const q=T(en.p);txt(q[0],q[1],en.s,en.h*den,ly,en.r,en.al==='l'?'':en.al)}});
+    const xs=p.E.flatMap(en=>en.p&&en.p.length?(en.t==='tx'?[en.p]:en.p):[]).map(T),mx=Math.min(...xs.map(q=>q[0])),my=Math.max(...xs.map(q=>q[1]));txt(mx,my+400,p.title,120,'TEXT')});
+  e(0,'ENDSEC');e(0,'EOF');saveFile(`${slugOf(curName())}-wall.dxf`,new Blob([L.join('\r\n')+'\r\n'],{type:'application/dxf'}),'DXF of the wall')}
+/* ---------- the dialog ---------- */
+const TD_KINDS=[['front','Front view','The whole wall with all sizes'],['setout','Setting out','Where each box goes, measured from the left wall, with a table'],['plan','Plan','Seen from above, cut through the cabinets, with door swings'],['sec','Side sections','A cut through every column, with the height of every board'],['det','Details','Plinth, top strip and side strip at 1:5'],['expl','Exploded views','Each box pulled apart, with its parts list — one sheet per box']];
+function tdOpen(){let m=document.getElementById('tdm');if(!m){m=document.createElement('div');m.id='tdm';m.className='modal';document.body.appendChild(m);m.addEventListener('click',e=>{if(e.target===m)m.hidden=true})}
+  ['mmenu','iom','pdfm'].forEach(id=>{const x=document.getElementById(id);if(x)x.hidden=true});tdRender();m.hidden=false}
+function tdRender(){const m=document.getElementById('tdm');if(!m)return;
+  m.innerHTML=`<div class="mbox" role="dialog" aria-modal="true" aria-label="Technical drawings"><div class="mhead"><h2>Technical drawings</h2></div><div class="mbody" style="display:grid;gap:14px">
+    <p class="hintp" style="margin:0">Drawing sheets for a cabinet maker, a joiner or yourself: true to scale, crisp lines, sizes in millimetres, with a title block on every sheet.</p>
+    <div class="fld"><span>Paper</span><div class="seg">${['A3','A4'].map(p=>`<button type="button" class="${TD.paper===p?'on':''}" data-act="tdPaper" data-a="${p}">${p}${p==='A3'?' — usual for makers':' — easy to print at home'}</button>`).join('')}</div></div>
+    <div class="tdk">${TD_KINDS.map(([k,l,d])=>`<label class="tdkb ${TD.sheets[k]?'on':''}"><input type="checkbox" data-tdk="${k}" ${TD.sheets[k]?'checked':''}><b>${l}</b><small>${d}</small></label>`).join('')}</div>
+    <div class="dbtns"><button type="button" class="btn pri" data-act="tdPDF">Download drawings (PDF)</button><button type="button" class="btn" data-act="tdDXF">Download the whole wall (DXF)</button></div>
+    <p class="hintp" style="margin:0">The DXF has the front view, the plan and every section at full size (1 unit = 1 mm), with layers for walls, carcass, fronts, shelves, backs, plinth and dimensions — it opens in AutoCAD, SketchUp, Fusion, LibreCAD and most CAD programs. For CNC files of the separate parts, use the cut list.</p>
+  </div><div class="mfoot"><button type="button" class="btn" data-act="tdClose">Close</button><div></div></div></div>`}
+document.addEventListener('change',e=>{const k=e.target&&e.target.dataset&&e.target.dataset.tdk;if(!k)return;TD.sheets[k]=e.target.checked?1:0;const l=e.target.closest('.tdkb');if(l)l.classList.toggle('on',e.target.checked)});
 /* ==== 55-designs.js ====
    Saved designs (shared in the app through the db capability), backups, versions and "compare two designs".
 */
@@ -4127,6 +4369,8 @@ function shareHTML(){const nm=curName(),inList=!!dsCur();
   <section class="shcard"><h3>Send this design</h3><p class="hintp">“${esc(nm)}” as a file the other person opens in Fitted. Your own colours and boards go with it.</p>
     <div class="dbtns"><button type="button" class="btn pri" data-act="ioFile">Download design file</button>${canShareFile()?'<button type="button" class="btn" data-act="ioShare">Share…</button>':''}<button type="button" class="btn" data-act="ioCopyText">Copy as text</button></div>
     <p class="hintp" style="margin:0">“Copy as text” fits in an e-mail or chat message. ${DS.local?'':inList?'Anyone who opens this same Fitted page also finds it under My designs.':'Saved designs also show up for anyone who opens this same Fitted page.'}</p></section>
+  <section class="shcard"><h3>Technical drawings</h3><p class="hintp">Sheets in A3 or A4, true to scale: front view, setting out, plan, sections, details and exploded boxes — plus the whole wall as DXF for CAD.</p>
+    <div class="dbtns"><button type="button" class="btn pri" data-act="tdOpen">Technical drawings…</button></div></section>
   <section class="shcard"><h3>For the workshop</h3><p class="hintp">A PDF with the drawings, cut list and build guide — or the cut list files for the panel saw.</p>
     <div class="dbtns"><button type="button" class="btn" data-act="pdf">Download PDF</button><button type="button" class="btn" data-act="ioToCut">Cut list files</button></div></section>
   <section class="shcard"><h3>Send just the room</h3><p class="hintp">Only the measurements — wall, slopes, beams, sockets, doors — so someone can design for your room.</p>
@@ -5475,7 +5719,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
    Lining the design up with a photo of the room.
 */
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.105';
+const APP_VERSION='v0.106';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
@@ -5800,7 +6044,7 @@ function pcalRender(){if(!PH.img){pcalEmpty();return}if(PH.maskEdit){pcalMask();
 /* ===== drag level edges in the drawing ===== */
 (function(){const wrap=document.getElementById('elevWrap');let d=null;
   const svgY=e=>{const sv=wrap.querySelector('svg');const pt=sv.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const m=sv.getScreenCTM();return m?pt.matrixTransform(m.inverse()).y:0};
-  wrap.addEventListener('pointerdown',e=>{const g=e.target.closest('.zdrag');if(!g)return;const[i,k]=g.dataset.zd.split('|').map(Number);const q=geo.secs[i];if(!q)return;const zr=q.zones.find(z=>z.k===k);if(!zr)return;
+  wrap.addEventListener('pointerdown',e=>{const g=e.target.closest('.zdrag');if(!g)return;if(isLocked()){lockToast();return}const[i,k]=g.dataset.zd.split('|').map(Number);const q=geo.secs[i];if(!q)return;const zr=q.zones.find(z=>z.k===k);if(!zr)return;
     const snaps=[];geo.secs.forEach(o=>{if(o.i===i)return;o.zones.forEach(z=>{if(!z.top&&z.divY!=null)snaps.push(z.divY+z.divT/2)});if(o.desk)snaps.push(+o.s.deskH)});
     const nxt=q.zones.find(z=>z.k===k+1),src=(()=>{const j=q.s.link?S.sections.findIndex(y=>y.id===q.s.link):-1;return j>=0?j:i})();
     d={g,i,k,src,by:+g.dataset.by,y0:svgY(e),zr,nxt,snaps,id:e.pointerId,moved:false,nb:+g.dataset.by};
@@ -5817,7 +6061,7 @@ function pcalRender(){if(!PH.img){pcalEmpty();return}if(PH.maskEdit){pcalMask();
   wrap.addEventListener('pointerup',up);wrap.addEventListener('pointercancel',up)})();
 (function(){const wrap=document.getElementById('elevWrap');let d=null;
   const svgX=e=>{const sv=wrap.querySelector('svg');const pt=sv.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const m=sv.getScreenCTM();return m?pt.matrixTransform(m.inverse()).x:0};
-  wrap.addEventListener('pointerdown',e=>{const g=e.target.closest('.cdrag');if(!g)return;const [i,sd,j]=g.dataset.cd.split('|');const q=geo.secs[+i],nq=geo.secs[+j];if(!q||!nq)return;
+  wrap.addEventListener('pointerdown',e=>{const g=e.target.closest('.cdrag');if(!g)return;if(isLocked()){lockToast();return}const [i,sd,j]=g.dataset.cd.split('|');const q=geo.secs[+i],nq=geo.secs[+j];if(!q||!nq)return;
     d={g,i:+i,j:+j,sd,x0:svgX(e),bx:+g.dataset.bx,w0:q.w,w1:nq.w,id:e.pointerId,moved:false,dw:0};e.preventDefault();e.stopPropagation();try{wrap.setPointerCapture(e.pointerId)}catch(_){}g.classList.add('act')},true);
   wrap.addEventListener('pointermove',e=>{if(!d||e.pointerId!==d.id)return;let dx=svgX(e)-d.x0;if(!d.moved&&Math.abs(dx)<4)return;d.moved=true;
     let dw=Math.round((d.sd==='r'?dx:-dx)/10)*10;dw=Math.max(150-d.w0,Math.min(d.w1-150,dw));d.dw=dw;const off=d.sd==='r'?dw:-dw;
@@ -5929,11 +6173,11 @@ function renderBar(){
   if((ui.tab==='elev'||ui.tab==='3d')&&S.opts.screen&&S.opts.screen.on)h=`<button class="btn sm ${S.opts.screen.show==='down'?'on':''}" data-act="scrT" title="Pull the screen drawer out and roll the screen down, or put it away">${S.opts.screen.show==='down'?'Screen is down':'Pull screen down'}</button>`+(ui.tab==='3d'?`<button class="btn sm ${ui.cinema?'on':''}" data-act="cinema" title="Dim the room, switch the picture on and look from the sofa">Cinema view</button>`:'')+h;
   b.innerHTML=`<div class="tools">${h}</div><div class="bnotes">${nt}</div>`;
   {const mf=document.getElementById('mfloat');if(mf){const wn=[...new Set(w)];const fmN={solid:'Doors',glass:'See-through',off:'No doors'}[ui.fm]||'Doors';
-    mf.innerHTML=`${wn.length?`<button type="button" class="mfb warn" data-act="mnotes">⚠ ${wn.length}</button>`:''}<button type="button" class="mfb pchip" data-act="toPriceTab" aria-label="Estimated price">${pchipText()}</button><span class="sp"></span><button type="button" class="mfb" data-act="fmCycle" aria-label="Fronts: ${fmN}">${FM_ICON[ui.fm]||''}${fmN}</button><button type="button" class="mfb ${ui.props?'on':''}" data-act="props" aria-pressed="${!!ui.props}" title="Show books, clothes and boxes at real size">🪴 Items</button>${S.opts.screen&&S.opts.screen.on?`<button type="button" class="mfb ${S.opts.screen.show==='down'?'on':''}" data-act="scrT">Screen</button>`:''}${flowNow()!=='home'?`<button type="button" class="mfb" data-act="focusT">${ui.focus===false?'Zoom in':'Whole wall'}</button>`:''}`;mnotesPanel(wn)}}try{fixScan()}catch(e){}
+    mf.innerHTML=`${wn.length?`<button type="button" class="mfb warn" data-act="mnotes">⚠ ${wn.length}</button>`:''}<button type="button" class="mfb pchip" data-act="toPriceTab" aria-label="Estimated price">${pchipText()}</button><span class="sp"></span><button type="button" class="mfb" data-act="fmCycle" aria-label="Fronts: ${fmN}">${FM_ICON[ui.fm]||''}${fmN}</button>${isLocked()?'<button type="button" class="mfb" data-act="lockInfo" aria-label="Locked while you build">🔒</button>':''}<button type="button" class="mfb ${ui.props?'on':''}" data-act="props" aria-pressed="${!!ui.props}" title="Show books, clothes and boxes at real size">🪴 Items</button>${S.opts.screen&&S.opts.screen.on?`<button type="button" class="mfb ${S.opts.screen.show==='down'?'on':''}" data-act="scrT">Screen</button>`:''}${flowNow()!=='home'?`<button type="button" class="mfb" data-act="focusT">${ui.focus===false?'Zoom in':'Whole wall'}</button>`:''}`;mnotesPanel(wn)}}try{fixScan()}catch(e){}
   placeFmode();renderStatus();
 }
 function renderStatus(){const el=document.getElementById('sbar');if(!el||!geo)return;const qs=geo.secs.filter(q=>!q.panel),wn=[...new Set(geo.warns)].length,tops=geo.cps.map(p=>p.y);
-  el.innerHTML=`<span><b>${f0(geo.W)}</b> mm wall</span><span><b>${f0(Math.max(...tops,+S.room.H||0))}</b> mm high</span><span><b>${f0(+S.room.D)}</b> mm deep</span><span><b>${qs.length}</b> column${qs.length===1?'':'s'}</span><span><b>${geo.panels.length}</b> parts</span><span class="sp"></span>${budgetKind()?'<span class="sbadge">Budget build</span>':''}${S.opts.part&&S.opts.part.on&&partSet()?'<span class="sbadge">Partial build</span>':''}<button type="button" class="sbtn ${wn?'warn':''}" data-act="notesOpen">${wn?`⚠ ${wn} design note${wn>1?'s':''}`:'✓ No design issues'}</button><button type="button" class="sbtn pchip" data-act="toPriceTab" title="Estimated price — open the price list">${pchipText()}</button><button type="button" class="sbtn" data-act="fbOpen" title="Say thanks, report a bug, suggest a feature or buy me a coffee">♥ Feedback</button>`}
+  el.innerHTML=`<span><b>${f0(geo.W)}</b> mm wall</span><span><b>${f0(Math.max(...tops,+S.room.H||0))}</b> mm high</span><span><b>${f0(+S.room.D)}</b> mm deep</span><span><b>${qs.length}</b> column${qs.length===1?'':'s'}</span><span><b>${geo.panels.length}</b> parts</span><span class="sp"></span>${isLocked()?'<button type="button" class="sbtn" data-act="lockInfo" title="Locked while you build">🔒 Locked</button>':''}${budgetKind()?'<span class="sbadge">Budget build</span>':''}${S.opts.part&&S.opts.part.on&&partSet()?'<span class="sbadge">Partial build</span>':''}<button type="button" class="sbtn ${wn?'warn':''}" data-act="notesOpen">${wn?`⚠ ${wn} design note${wn>1?'s':''}`:'✓ No design issues'}</button><button type="button" class="sbtn pchip" data-act="toPriceTab" title="Estimated price — open the price list">${pchipText()}</button><button type="button" class="sbtn" data-act="fbOpen" title="Say thanks, report a bug, suggest a feature or buy me a coffee">♥ Feedback</button>`}
 function skewPlan(){const G=geo,sk=G.skew;if(!sk)return '';const W=G.W,mx=Math.max(sk.dL,sk.dR),sc=300/W,H=mx*sc+46;let o=`<svg viewBox="-8 -8 316 ${n1(H)}" style="width:100%;max-width:380px;display:block" role="img" aria-label="Plan from above"><polygon points="0,0 300,0 300,${n1((mx-sk.dR)*sc)} 0,${n1((mx-sk.dL)*sc)}" fill="url(#hatch)" style="stroke:var(--ink3)" stroke-width="1"/><line x1="0" y1="${n1((mx-sk.dL)*sc)}" x2="300" y2="${n1((mx-sk.dR)*sc)}" style="stroke:var(--ink)" stroke-width="2"/>`;
   G.secs.forEach(q=>{if(q.panel)return;const x0=q.bL*sc,x1=q.bR*sc,y1=mx*sc,y0=y1-q.D*sc;o+=`<rect x="${n1(x0)}" y="${n1(y0)}" width="${n1(x1-x0)}" height="${n1(y1-y0)}" style="fill:var(--accent-soft);stroke:var(--accent)" stroke-width="1.2"/><text x="${n1((x0+x1)/2)}" y="${n1((y0+y1)/2+4)}" text-anchor="middle" font-size="10" style="fill:var(--ink)">${f0(q.D)}</text>`});
   return o+`<line x1="0" y1="${n1(mx*sc)}" x2="300" y2="${n1(mx*sc)}" style="stroke:var(--accent)" stroke-width="2.5"/><text x="150" y="${n1(mx*sc+16)}" text-anchor="middle" font-size="10" style="fill:var(--ink2)">cabinet front (straight) — seen from above, wall at the top</text></svg>`}
@@ -5986,7 +6230,7 @@ function renderTab(t){
   if(t==='elev'){try{ztbRender()}catch(e){}}
   if(t==='3d')rebuild3D();if(t==='cut')renderCut();if(t==='loft')renderLoft();if(t==='sheets')renderSheets();if(t==='guide')renderGuide();
 }
-function changed(side){if(S.proj){try{pjSync()}catch(e){}}geo=build(S);if(side)renderSide();renderViews();saveSoon();snap();priceSoon();try{dsAutoSoon()}catch(e){}}
+function changed(side){if(lockGuard())side=true;if(S.proj){try{pjSync()}catch(e){}}geo=build(S);if(side)renderSide();renderViews();saveSoon();snap();priceSoon();try{dsAutoSoon()}catch(e){}}
 let prT=null;function pchipText(){if(!lastPrice)return '≈ € …';const d=ui.priceD||0;return `≈ ${eur(lastPrice.tot.all)}${Math.abs(d)>=1?` <small>${d<0?'▼':'▲'} ${eur(Math.abs(d)).replace('€ ','€')}</small>`:''}`}
 function priceSoon(){clearTimeout(prT);prT=setTimeout(()=>{try{const prev=ui.priceLast!=null?ui.priceLast:(lastPrice?lastPrice.tot.all:null);if(ui.tab!=='cut'){renderCut();dirty.cut=true}if(!lastPrice)return;ui.priceLast=lastPrice.tot.all;if(prev!=null&&Math.abs(lastPrice.tot.all-prev)>=1)ui.priceD=lastPrice.tot.all-prev;document.querySelectorAll('.pchip').forEach(el=>{el.innerHTML=pchipText()});budChips()}catch(e){}},220)}
 let hist=[],fut=[],lastSnap=null;
@@ -5994,7 +6238,7 @@ function snap(){const j=JSON.stringify(S);if(j===lastSnap)return;
   // a different design was opened: its undo history starts fresh, so Undo can never pour one saved design into another
   if((ui.histDoc||null)!==(ui.docId||null)){hist=[];fut=[];ui.histDoc=ui.docId||null}else if(lastSnap!=null){hist.push(lastSnap);if(hist.length>100)hist.shift();fut=[]}lastSnap=j;updUndo()}
 function updUndo(){const u=document.getElementById('bUndo'),r=document.getElementById('bRedo');if(u)u.disabled=!hist.length;if(r)r.disabled=!fut.length}
-function undoRedo(dir){const from=dir<0?hist:fut,to=dir<0?fut:hist;if(!from.length)return;to.push(lastSnap);lastSnap=from.pop();S=JSON.parse(lastSnap);geo=build(S);renderSide();renderViews();saveSoon();updUndo();try{dsAutoSoon()}catch(e){}toast(dir<0?'Undone':'Redone')}
+function undoRedo(dir){if(isLocked()){lockToast();return}const from=dir<0?hist:fut,to=dir<0?fut:hist;if(!from.length)return;to.push(lastSnap);lastSnap=from.pop();S=JSON.parse(lastSnap);geo=build(S);renderSide();renderViews();saveSoon();updUndo();try{dsAutoSoon()}catch(e){}toast(dir<0?'Undone':'Redone')}
 let chT=null;function changedSoon(){clearTimeout(chT);chT=setTimeout(()=>{geo=build(S);renderViews();updateSideInfo();saveSoon();snap();priceSoon()},160)}
 function updateSideInfo(){const s=document.getElementById('side');const scr=s.scrollTop,ae=document.activeElement,id=ae&&ae.id,ss=ae&&ae.selectionStart;
   // only placeholders/info depend on geometry; refresh section editor in place when not typing in it
@@ -6010,6 +6254,22 @@ function mnotesPanel(wn){let p=document.getElementById('mnp');const on=!!(ui.mno
   p.innerHTML=`<div class="mnpbox" role="dialog" aria-modal="true" aria-label="Design notes"><div class="mnph"><b>${wn.length} design note${wn.length>1?'s':''}</b><button type="button" class="btn sm" data-act="notesClose">Close</button></div>
     ${fixable?`<div class="mnpfix"><button type="button" class="btn pri" data-act="fixAll">Fix what Fitted can (${fixable})</button><span>Each fix follows the advice in its note. Undo brings it back.</span></div>`:''}
     <ol class="mnpl">${wn.map((x,j)=>`<li><p>${esc(x)}</p>${fixBtn(x,j)}</li>`).join('')}</ol></div>`;p.hidden=false}
+
+/* ===== locked while building =====
+   Workshop mode locks the design: the parts being cut must keep matching the drawings.
+   Ticking cuts and build steps as done (S.done) still works; every other change is undone with a short note. */
+const isLocked=()=>!!(S&&S.lock&&S.lock.on);
+function lockSig(st){const o=Object.assign({},st);delete o.done;delete o.lock;return JSON.stringify(o)}
+let lockT=0;function lockToast(){if(Date.now()-lockT<2500)return;lockT=Date.now();toast('This design is locked while you build. To change it, tap “Unlock” at the top of the settings.')}
+function lockOn(){if(isLocked())return;S.lock={on:true,id:uid(),at:Date.now()};ui.lockId=S.lock.id;ui.lockSnap=JSON.stringify(S);ui.lockSig=lockSig(S);changed(true);toast('Design locked while you build — the parts you cut keep matching the drawings')}
+function lockOff(){if(!isLocked())return;S.lock={on:false};ui.lockId=null;ui.lockSnap=null;ui.lockSig=null;changed(true);toast('Unlocked — changes now change the parts too. Parts already cut may no longer fit.')}
+/* returns true when it had to put the locked design back */
+function lockGuard(){if(!isLocked())return false;if(ui.lockId!==S.lock.id||!ui.lockSnap){let prev=null;try{prev=lastSnap&&JSON.parse(lastSnap)}catch(e){}
+    // the state before this change is the locked one when it carries the same lock (a reload, then an edit)
+    const base=prev&&prev.lock&&prev.lock.on&&prev.lock.id===S.lock.id?prev:S;ui.lockId=S.lock.id;ui.lockSnap=JSON.stringify(base);ui.lockSig=lockSig(base);if(base===S)return false}
+  if(lockSig(S)===ui.lockSig){ui.lockSnap=JSON.stringify(S);return false}const done=S.done;S=JSON.parse(ui.lockSnap);if(done)S.done=done;lockToast();return true}
+function lockBanner(){if(!isLocked())return '';let d='';try{d=new Date(S.lock.at||Date.now()).toLocaleDateString(undefined,{day:'numeric',month:'short'})}catch(e){}
+  return `<div class="lockban"><b>🔒 Locked for building</b><span>Since ${esc(d)}. Changes are switched off so the parts you cut keep matching the drawings. Ticking cuts and steps as done still works.</span><button type="button" class="btn sm" data-act="unlock">Unlock to change the design</button></div>`}
 /* ==== 92-events.js ====
    All clicks: one big switch on data-act="…". To add a button: give it data-act="myAction" and add a case here.
 */
@@ -6113,7 +6373,10 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'shop':S.opts.shop=a;ui.saver=null;changed(true);break;
     case 'saver':sheetSaver();dirty.cut=true;renderCut();{const t=document.getElementById('price');if(t)t.scrollIntoView({block:'start'})}break;
     case 'evenDoors':evenDoors();break;
-    case 'wsOpen':ui.ws={tab:'cuts'};wsRender();break;
+    case 'wsOpen':ui.ws={tab:'cuts'};lockOn();wsRender();break;
+    case 'lockOn':lockOn();break;
+    case 'lockInfo':lockT=0;lockToast();break;
+    case 'unlock':{const b=e.target.closest('button');if(b.dataset.armed){lockOff()}else{b.dataset.armed='1';b.textContent='Tap again — parts already cut may no longer fit';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Unlock to change the design'}},4000)}break}
     case 'wsClose':ui.ws=null;wsRender();break;
     case 'wsTab':ui.ws={tab:a};wsRender();break;
     case 'wsGo':ui.ws.i=+a;wsRender();break;
@@ -6228,6 +6491,11 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'fbSend':fbSend();break;
     case 'stOpen':stOpen();break;
     case 'stPick':stPick(a);break;
+    case 'tdOpen':tdOpen();break;
+    case 'tdClose':document.getElementById('tdm').hidden=true;break;
+    case 'tdPaper':TD.paper=a==='A4'?'A4':'A3';tdRender();break;
+    case 'tdPDF':tdExportPDF();break;
+    case 'tdDXF':try{tdDXF()}catch(err){console.error(err);toast('The DXF could not be made for this design')}break;
     case 'stInRoom':{ST.fit=true;if(!ST.roomId&&RM.list[0])ST.roomId=RM.list[0].id;stRender();const f=document.querySelector('#stm .stfit');if(f){f.scrollIntoView({block:'center'});const sel=document.getElementById('stRoom');if(sel)sel.focus()}break}
     case 'stClose':document.getElementById('stm').hidden=true;break;
     case 'stFit':ST.fit=!!(document.getElementById('stFit')||{}).checked;{const r=document.getElementById('stRoom');if(r)r.disabled=!ST.fit}break;
