@@ -35,6 +35,14 @@
     if (hidden) throw new Error(hidden + ' parts still hidden at the last step');
     wxMode('apart'); ui.ws = null; wsRender();
   });
+  await step('cut-outs in machining drawings', () => {
+    const gs = groupPanels(bgeo());
+    gs.filter(g => (g.holes || []).some(h => h.poly)).forEach(g => {
+      const rows = mdCutRows(g);
+      if (!rows.length || rows.some(r => !r.what || !r.where.length)) throw new Error(g.id + ' has cut-outs but no sizes');
+      if (!/Cut-out/.test(mdBlock(g, false))) throw new Error(g.id + ': no cut-out table in its drawing');
+    });
+  });
   await step('drawing sheets', () => { const r = tdSheets(); if (!r.sheets.length) throw new Error('no sheets') });
   await step('dxf', () => tdDXF());
   for (const shop of ['hh', 'wc'])

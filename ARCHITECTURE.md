@@ -112,3 +112,9 @@ The version is `APP_VERSION` in `src/js/81-room-photo.js`. Each update adds 0.00
 
 - `72-workshop-3d.js`: `WX.step` (null = slider "Pull apart"). `wxStepsBuild(R)` gives every part and hardware piece a step from `WX_STEPS` (by role and `tdPartName`), `wxK(step)` says how far apart and whether shown, `wxStepGo(i)` animates the step in (`WX.ap` 0→1), `WX.play` runs through. Parts whose explode offset is ~0 drop in from above (`p.fly`).
 - `tdOffset` (`52-techdraw.js`): side strips sideways, top strips up, plinth down; inner uprights forward.
+
+## Cut-outs and arched fronts (v0.123)
+
+- `mdCutInfo(poly)` / `mdCutRows(p)` (`53-machining.js`): a cut-out (`hole.poly`) as round / arch / shape with sizes; used on the drawing, the cut-out table and the shop Excel note.
+- Arched front frame (`10-build.js`, open level with `z.arch`): `z.archOpen` ('' | 'tall'), `z.archTop` ('' | 'flat' | 'square'), `z.archBorder` (mm). Cells become the board's cut-outs; the frame around them is built from pieces (`pieces`) for 3D and the technical drawings.
+- Porthole: `z.portD`, `z.portX`, `z.portY` (reading nook with `nookFront: 'port'`).

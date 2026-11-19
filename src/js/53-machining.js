@@ -49,6 +49,54 @@ function mdHoleText(k, h) {
     cut: 'Cut-out'
   }[k];
 }
+/* a cut-out (h.poly) in plain sizes: a round hole (porthole), an arch (straight sides, round top) or any other shape.
+   x0/y0 = its lowest-left point from the part's 0 corner; w × h its size. */
+function mdCutInfo(poly) {
+  const xs = poly.map(q => q[0]),
+    ys = poly.map(q => q[1]),
+    x0 = Math.min(...xs),
+    x1 = Math.max(...xs),
+    y0 = Math.min(...ys),
+    y1 = Math.max(...ys),
+    w = x1 - x0,
+    h = y1 - y0,
+    cx = (x0 + x1) / 2,
+    cy = (y0 + y1) / 2;
+  const rs = poly.map(q => Math.hypot(q[0] - cx, q[1] - cy)),
+    rm = rs.reduce((a, b) => a + b, 0) / rs.length;
+  if (poly.length >= 12 && Math.abs(w - h) < 2 && rs.every(r => Math.abs(r - rm) < 2))
+    return { kind: 'round', x0, y0, w, h, cx, cy, d: w, text: `Round Ø${mdFmt(w)} · centre ${mdFmt(cx)}, ${mdFmt(cy)}` };
+  // arch: the highest points at the left and right edges are where the round top starts
+  const atL = poly.filter(q => Math.abs(q[0] - x0) < 0.6).map(q => q[1]),
+    atR = poly.filter(q => Math.abs(q[0] - x1) < 0.6).map(q => q[1]);
+  if (poly.length > 6 && atL.length && atR.length) {
+    const ys_ = Math.min(Math.max(...atL), Math.max(...atR)),
+      ry = y1 - ys_;
+    if (ry > 10)
+      return {
+        kind: 'arch',
+        x0, y0, w, h, cx, ys: ys_, ry,
+        text: `Arch ${mdFmt(w)} wide × ${mdFmt(h)} high · straight sides ${mdFmt(ys_ - y0)} · round top ${mdFmt(ry)} high${Math.abs(ry - w / 2) < 1 ? ' (half circle R ' + mdFmt(w / 2) + ')' : ''}`
+      };
+  }
+  return { kind: 'shape', x0, y0, w, h, text: `Shape ${mdFmt(w)} × ${mdFmt(h)} — corners in the shaped-parts list` };
+}
+/* the cut-outs of a part, the same ones grouped: what, how many, where (lowest-left corner) */
+function mdCutRows(p) {
+  const g = {};
+  (p.holes || [])
+    .filter(h => h.poly && h.poly.length > 2)
+    .forEach(h => {
+      const c = mdCutInfo(h.poly),
+        key = c.text.replace(/ · centre .*/, '');
+      (g[key] = g[key] || { c, list: [] }).list.push(c);
+    });
+  return Object.values(g).map(o => ({
+    what: o.c.text.replace(/ · centre .*/, ''),
+    n: o.list.length,
+    where: o.list.map(c => (c.kind === 'round' ? `centre X ${mdFmt(c.cx)}, Y ${mdFmt(c.cy)}` : `from X ${mdFmt(c.x0)}, Y ${mdFmt(c.y0)}`))
+  }));
+}
 /* the hole table rows for a part */
 function mdHoleRows(p) {
   const g = {};
@@ -171,6 +219,28 @@ function mdPart(p, den) {
   (p.holes || []).forEach(h => {
     if (h.poly) {
       E.push(tdPg(h.poly, { f: 0.85, w: 'med', ly: 'CUT_INSIDE' }));
+      try {
+        const c = mdCutInfo(h.poly),
+          tx = c.kind === 'round' ? c.cx : c.x0 + c.w / 2,
+          ty = c.kind === 'round' ? c.cy : c.y0 + c.h * 0.45,
+          big = Math.min(c.w, c.h) > 14 * den;
+        if (big) {
+          E.push(tdTx([tx, ty + 1.5 * den], c.kind === 'round' ? `Ø${mdFmt(c.d)}` : `${mdFmt(c.w)} × ${mdFmt(c.h)}`, { h: 2.2, al: 'c', ly: 'DIMENSIONS' }));
+          E.push(
+            tdTx(
+              [tx, ty - 2 * den],
+              c.kind === 'round' ? `centre ${mdFmt(c.cx)}, ${mdFmt(c.cy)}` : c.kind === 'arch' ? `top R ${mdFmt(c.ry)} from ${mdFmt(c.ys - c.y0)}` : 'see corners',
+              { h: 1.8, al: 'c', ly: 'DIMENSIONS' }
+            )
+          );
+        }
+        if (c.kind !== 'round') {
+          E.push(Object.assign(tdArc([c.x0, c.y0], 0.6 * den, 0, 360, { w: 'thin', ly: 'DIMENSIONS' }), { c: true, f: 0 }));
+          if (big) E.push(tdTx([c.x0 + 1.2 * den, c.y0 + 1 * den], `${mdFmt(c.x0)}, ${mdFmt(c.y0)}`, { h: 1.8, al: 'l', ly: 'DIMENSIONS' }));
+        }
+      } catch (e) {
+        oops('machining: cut-out sizes', e);
+      }
       return;
     }
     const k = mdHoleKind(h),
@@ -305,6 +375,12 @@ function mdBlock(p, side) {
   return `<div class="mdblk"><div class="mdh"><b>${p.id} · ${esc(p.type)}</b><span>${f0(p.L)} × ${f0(p.Wd)} × ${p.t} mm · ${esc(M)} · ${esc(F_)}${p.qty > 1 ? ` · ${p.qty}×` : ''}</span></div>
     <div class="mdbody"><div class="mdpic">${mdSVG(V, den, side ? 260 : 420)}</div><div class="mdinfo">
     ${V.rows.length ? `<table class="mdt"><thead><tr><th></th><th>Hole</th><th>Where (mm from 0)</th></tr></thead><tbody>${V.rows.map(r => `<tr><td><b>${r.tag}</b></td><td>${esc(r.what)}<small>${r.n}× · ${esc(r.face)}</small></td><td>${r.where.map(esc).join('<br>')}</td></tr>`).join('')}</tbody></table>` : '<p class="hintp" style="margin:0">No holes in this part.</p>'}
+    ${(() => {
+      const cr = mdCutRows(p);
+      return cr.length
+        ? `<table class="mdt"><thead><tr><th>Cut-out</th><th>Where (mm from 0)</th></tr></thead><tbody>${cr.map(r => `<tr><td>${esc(r.what)}<small>${r.n}× · saw just inside the line, then sand or rout to it</small></td><td>${r.where.map(esc).join('<br>')}</td></tr>`).join('')}</tbody></table>`
+        : '';
+    })()}
     <p class="mdl"><b>Edges:</b> ${esc(bandWords(p, bandSides(p)))}${V.fe ? ` · front edge marked` : ''}${grainMatters(p) ? ` · grain along the ${f0(p.L)} side` : ''}${V.gv ? ` · groove ${V.gv.w} wide × ${V.gv.d} deep, ${V.gv.o} in from the back edge (blue)` : ''}</p>
     ${notes.length ? `<ul class="mdn">${notes.map(t => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}</div></div></div>`;
 }
@@ -384,6 +460,16 @@ async function mdExportPDF() {
           const parts = t.match(/.{1,110}(,|$)/g) || [t];
           parts.forEach(s => line('     ' + s.trim()));
         });
+      });
+    }
+    const cuts = mdCutRows(p);
+    if (cuts.length) {
+      line('');
+      line('Cut-outs (saw just inside the line, then sand or rout to it)', 1, 2.8);
+      cuts.forEach(r => {
+        line(`${r.what} · ${r.n}×`, 1);
+        const parts = r.where.join(' · ').match(/.{1,110}( · |$)/g) || [];
+        parts.forEach(s_ => line('     ' + s_.trim()));
       });
     }
     line('');

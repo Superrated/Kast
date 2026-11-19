@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.123
+
+- **Arched front, your openings** (an open level with "Arched tops"): the arched front is one board in front of the open cabinet; now you choose
+  - **Openings**: one per shelf space (as before) or **one tall arch** per compartment, with the shelves seen behind it,
+  - **Top of the openings**: half circle, flatter, or square,
+  - **Border around each opening** (0–150 mm of extra board around every opening).
+- **Cut-outs in the drawings, everywhere** (arched front frames, porthole and other nook fronts):
+  - **Machining drawings** (screen and PDF): every cut-out gets its size written in it (Ø and centre for a round one; width × height and the round top for an arch), its lowest-left corner marked with its position, and a **Cut-out** table: what, how many, where.
+  - **Full-size templates** now include plain boards with cut-outs (before: only shaped boards).
+  - **Shop Excel and the shop forms** mark these boards "cut-outs / shape: see drawing" with the part number.
+  - The DXF already had them.
+
 ## v0.122
 
 - **Reading nook height note**: the design note now says who the nook suits, measured above an 80 mm cushion — under 700 mm too low to sit upright; 700–800 mm fine for children up to about 7 (and how much taller it needs to be for children up to about 12). From 800 mm above the cushion there is no note.

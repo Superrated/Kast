@@ -605,13 +605,14 @@ async function exportDXF() {
   await saveFile(`${safe(ui.docName || 'Fitted') || 'Fitted'}-dxf.zip`, blob, 'DXF files');
 }
 async function exportTemplates() {
-  const gs = (groupsCache || (groupsCache = groupPanels(bgeo()))).filter(p => !p.rect),
+  // shaped parts, and plain boards with cut-outs (arched front frames, porthole fronts …)
+  const gs = (groupsCache || (groupsCache = groupPanels(bgeo()))).filter(p => !p.rect || (p.holes || []).some(h => h.poly)),
     pages = [],
     M = 10,
     TW = 190,
     TH = 277;
   if (!gs.length) {
-    toast('There are no shaped parts — every part is a rectangle');
+    toast('There are no shaped parts or cut-outs — every part is a plain rectangle');
     return;
   }
   {
@@ -1018,6 +1019,8 @@ function shopXlsx(shop) {
       opm = [];
     if (!p.rect)
       opm.push(tr('shape: cut the rectangle, the slope or shape we trim ourselves following drawing') + ' ' + p.id);
+    if ((p.holes || []).some(h => h.poly))
+      opm.push(tr('cut-outs: see drawing') + ' ' + p.id + ' (' + mdCutRows(p).map(r => r.n + '× ' + r.what.replace(/ ·.*/, '')).join(', ') + ')');
     if (p.angled) opm.push(tr('angled cut: see drawing'));
     if ((p.holes || []).some(h => h.dp)) opm.push(tr('Ø35 hinge cups (CNC if possible)'));
     return [

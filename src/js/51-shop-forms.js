@@ -122,7 +122,7 @@ function sfWork(p) {
   const faces = new Set(
     pins.map(h => (/left|links/i.test(h.face || '') ? 'L' : /right|rechts/i.test(h.face || '') ? 'R' : h.face || 'a'))
   );
-  return { cups, pins: pins.length, two: faces.size > 1, shape: !p.rect, angled: !!p.angled };
+  return { cups, pins: pins.length, two: faces.size > 1, shape: !p.rect || (p.holes || []).some(h => h.poly), angled: !!p.angled };
 }
 function sfParts() {
   const gs = groupsCache || (groupsCache = groupPanels(bgeo()));

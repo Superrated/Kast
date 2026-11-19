@@ -4326,59 +4326,63 @@ function build(S) {
             aF = FIN[z.archFin] ? z.archFin : FIN[zr.inFin] ? zr.inFin : M.front.fin,
             yTopF = x => (zr.fb1 != null ? zr.fb1 - g / 2 : q.top(x) - g / 2),
             yB = zr.fb0 + g / 2;
+          // your settings: archOpen 'shelf' (an opening per shelf space) or 'tall' (one opening per compartment,
+          // shelves seen behind it) · archTop 'half' | 'flat' | 'square' · archBorder = extra frame around each opening (mm)
+          const aTall = z.archOpen === 'tall',
+            aTop = ['flat', 'square'].includes(z.archTop) ? z.archTop : 'half',
+            aB = Math.max(0, Math.min(150, +z.archBorder || 0));
+          const rect_ = (x0, x1, y0, y1) => [
+            [x0, y0],
+            [x1, y0],
+            [x1, y1],
+            [x0, y1]
+          ];
           cm.forEach(([cl, cr], ci) => {
             if (ci === 0) cl += lb;
             if (ci === cm.length - 1) cr -= lb;
             if (cr - cl < 80) return;
-            const sy = (zr.shelvesY || [])
-                .filter(([y, l, r_]) => l < cr - 5 && r_ > cl + 5)
-                .map(a_ => a_[0])
-                .sort((a_, b_) => a_ - b_),
+            const sy = aTall
+                ? []
+                : (zr.shelvesY || [])
+                    .filter(([y, l, r_]) => l < cr - 5 && r_ > cl + 5)
+                    .map(a_ => a_[0])
+                    .sort((a_, b_) => a_ - b_),
               zt = (zr.top ? minUnder(q, cl, cr) : zr.y0 + zr.h) - lb;
             let yb = zr.y0 + lb;
-            if (yb - yB > 1)
-              pieces.push([
-                [cl, yB],
-                [cr, yB],
-                [cr, yb],
-                [cl, yb]
-              ]);
+            if (yb - yB > 1) pieces.push(rect_(cl, cr, yB, yb));
             [...sy, zt].forEach((yt, j, all) => {
-              if (yt - yb > 70) {
-                const w = cr - cl,
-                  cx = (cl + cr) / 2,
-                  ry = Math.max(0, Math.min(w / 2, yt - yb - 30)),
+              // the opening: inside the space [cl, cr] × [yb, yt], minus the border
+              const l = cl + aB,
+                r = cr - aB,
+                ob = yb + aB,
+                ot = yt - aB,
+                w = r - l,
+                cx = (l + r) / 2;
+              if (w > 60 && ot - ob > 70) {
+                const ryMax = Math.max(0, ot - ob - 30),
+                  ry = aTop === 'square' ? 0 : Math.min(aTop === 'flat' ? w * 0.22 : w / 2, ryMax),
                   arc = (a0, a1, n_) =>
                     Array.from({ length: n_ + 1 }, (_, m) => {
                       const t_ = a0 + ((a1 - a0) * m) / n_;
-                      return [cx + (Math.cos(t_) * w) / 2, yt - ry + Math.sin(t_) * ry];
+                      return [cx + (Math.cos(t_) * w) / 2, ot - ry + Math.sin(t_) * ry];
                     });
-                if (ry >= 30) {
-                  cells.push([[cl, yb], [cr, yb], ...arc(0, Math.PI, 16)]);
-                  pieces.push([[cr, yt - ry], [cr, yt], [cx, yt], ...arc(Math.PI / 2, 0, 8).slice(1)]);
-                  pieces.push([[cl, yt], [cl, yt - ry], ...arc(Math.PI, Math.PI / 2, 8).slice(1)]);
-                } else
-                  cells.push([
-                    [cl, yb],
-                    [cr, yb],
-                    [cr, yt],
-                    [cl, yt]
-                  ]);
-              } else
-                pieces.push([
-                  [cl, yb],
-                  [cr, yb],
-                  [cr, yt],
-                  [cl, yt]
-                ]);
+                if (ry >= 20) {
+                  cells.push([[l, ob], [r, ob], ...arc(0, Math.PI, 16)]);
+                  // frame above the round top, in two halves (each half is a simple shape)
+                  pieces.push([[r, ot - ry], [r, yt], [cx, yt], ...arc(Math.PI / 2, 0, 8).slice(1)]);
+                  pieces.push([[l, yt], [l, ot - ry], ...arc(Math.PI, Math.PI / 2, 8).slice(1)]);
+                } else {
+                  cells.push(rect_(l, r, ob, ot));
+                  if (yt - ot > 0.5) pieces.push(rect_(l, r, ot, yt));
+                }
+                if (aB > 0.5) {
+                  pieces.push(rect_(cl, l, yb, yt));
+                  pieces.push(rect_(r, cr, yb, yt));
+                  pieces.push(rect_(l, r, yb, ob));
+                }
+              } else pieces.push(rect_(cl, cr, yb, yt));
               const yn = j < all.length - 1 ? yt + ts : null;
-              if (yn != null)
-                pieces.push([
-                  [cl, yt],
-                  [cr, yt],
-                  [cr, yn],
-                  [cl, yn]
-                ]);
+              if (yn != null) pieces.push(rect_(cl, cr, yt, yn));
               else
                 pieces.push([
                   [cl, yt],
