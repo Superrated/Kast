@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.101
+
+- **Pantry column**: a tall larder pull-out — one frame with 4–6 baskets that slides straight out, with the door fixed to the frame (no hinges). Checks width (270–620 mm), depth, height (up to about 2 m) and the free floor in front. Also an inside fitting ("Larder pull-out") for any cupboard.
+- **Built-in fridge housing**: tick "Built-in fridge behind this door" on a cupboard level. Checks the niche (560–570 mm wide, 550 mm deep, standard heights 880–1945 mm), the air in at the bottom and out at the back, and fixes the door to the fridge door (door-on-door, no hinges).
+- **Built-in oven housing**: new niche looks "Oven" and "Compact oven / combi microwave". Checks the niche size, eye height (bottom at 700–950 mm), depth, air gap and power, and adds the parts to the shopping list. Drawn in the front view and in 3D.
+- All three in "Add a column" (new group "Food & appliances"), in the wizard and in "Surprise me"; appliance columns keep their exact 564 mm inside width.
+
 ## v0.1
 
 - New version numbering: this is **v0.1**, the first release under the Fitted by BRUIS name. From now on every update adds 0.001 (v0.101, v0.102, …). Earlier releases were numbered v0.01–v0.73.

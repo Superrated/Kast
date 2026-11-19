@@ -91,7 +91,7 @@ function budgetLean(st){if(!(st.opts&&st.opts.budget))return st;const secs=(st.s
   const mid=(secs.length-1)/2,order=secs.map((sc,i)=>i).sort((a,b)=>Math.abs(a-mid)-Math.abs(b-mid));let drawerCol=-1;for(const i of order){if((secs[i].zones||[]).some(z=>z.type==='drawers')){drawerCol=i;break}}
   secs.forEach((sc,i)=>{let kept=false;(sc.zones||[]).forEach((z,k)=>{if(sc.base==='desk'&&k===0)return;
       if(z.type==='drawers'){if(i===drawerCol&&!sc._drKept){sc._drKept=1;z.count=Math.min(2,Math.max(1,+z.count||2));return}z.type=kept?'open':'closed';z.shelves=Math.max(1,+z.shelves||0);z.doors=0;z.face='flat';if(z.type==='closed')kept=true;else{z.rail=false}return}
-      if(z.type!=='closed')return;if(z.dog||z.rail){kept=true;return}if(!kept){kept=true;if(z.face==='glass'||z.face==='cane'||z.face==='fluted'||z.face==='curtain')z.face='flat';return}
+      if(z.type!=='closed')return;if(z.dog||z.rail||z.fridge||z.fit==='larder'){kept=true;return}if(!kept){kept=true;if(z.face==='glass'||z.face==='cane'||z.face==='fluted'||z.face==='curtain')z.face='flat';return}
       z.type='open';z.shelves=Math.max(1,+z.shelves||0);z.doors=0;z.face='flat';z.box=false});if(+sc.w>650)(sc.zones||[]).forEach((z,k)=>{if((z.type==='open'||z.type==='closed')&&+z.shelves>0&&!(sc.base==='desk'&&k===0)&&!z.dog&&!z.rail&&!(z.vd&&z.vd.length)){z.vd=[Math.round(+sc.w/2)];z.vdMode='even';if(z.type==='closed')z.doors=0}});delete sc._drKept});
   return st}
 const BUD_H=/^wood|^edge$|^profile$|^hole$|^slot$|^groove$/;

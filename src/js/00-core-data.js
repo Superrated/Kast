@@ -171,6 +171,9 @@ const PRESETS={
   laundry:{label:'Laundry: washer + dryer',make:()=>Sec({w:660,zones:[Z('drawers',{h:300,count:1}),Z('opening',{h:1750,look:'stack',grommet:false}),Z('closed',{shelves:0,vent:true})]})},
   bed:{label:'Fold-down bed',make:()=>Sec({w:1000,zones:[Z('opening',{h:2120,look:'bed',grommet:false}),Z('closed',{shelves:0})]})},
   utility:{label:'Utility cupboard (vacuum, brooms)',make:()=>Sec({w:500,zones:[Z('closed',{shelves:1,util:true,vent:true})]})},
+  pantry:{label:'Pantry: tall pull-out with baskets',make:()=>Sec({w:564,zones:[Z('closed',{h:1900,shelves:0,doors:1,fit:'larder'}),Z('closed',{shelves:1})]})},
+  fridge:{label:'Built-in fridge housing',make:()=>Sec({w:564,zones:[Z('closed',{h:1780,shelves:0,doors:1,fridge:true}),Z('closed',{shelves:0})]})},
+  oven:{label:'Built-in oven housing',make:()=>Sec({w:564,zones:[Z('drawers',{h:800,count:2}),Z('opening',{h:595,look:'oven',grommet:false}),Z('closed',{shelves:1})]})},
 };
 
 function exampleState(){
@@ -217,8 +220,10 @@ const FITS={ties:{n:'Pull-out tie and belt rack',s:'Tie & belt rack',grp:'clothe
   shoe:{grp:'drawers',n:'Pull-out shoe rack',s:'Shoe rack',minW:450,maxW:1000,minD:400,h:200,multi:1,tip:'A sloping wire shelf on runners; about one pair per 220 mm of width.',hw:w=>'Pull-out shoe rack, side-mounted, width-adjustable',note:'screws to both cabinet sides'},
   basket:{grp:'drawers',n:'Pull-out wire basket',s:'Baskets',minW:400,maxW:1000,minD:450,h:220,multi:1,tip:'Wire or mesh baskets on runners for socks, scarves and bags.',hw:w=>'Pull-out wire basket on runners',note:'screws to both cabinet sides'},
   idrawer:{grp:'drawers',n:'Internal drawer',s:'Internal drawers',minW:300,maxW:1200,minD:300,h:170,multi:1,tip:'Low drawers hidden behind the doors. They run on packers so they clear the door and the hinges; the door must open a full 90°.',hw:w=>'',note:''},
+  larder:{grp:'extra',n:'Tall larder pull-out',s:'Larder pull-out',minW:270,maxW:620,minD:470,h:0,tip:'One tall frame with 4–6 baskets that slides straight out on heavy runners; the door is fixed to the front of the frame, so it pulls out with it. You see everything from both sides.',hw:w=>`Tall larder pull-out, full extension, 4–6 baskets, for a ${w<330?'300':w<430?'400':w<530?'500':'600'} mm cabinet (e.g. Kesseböhmer Dispensa, Hettich, Blum Space Tower)`,note:'the door is screwed to the frame, not hung on hinges'},
   lift:{grp:'clothes',n:'Pull-down clothes rail',s:'Pull-down rail',minW:450,maxW:1150,minD:480,h:0,tip:'A rail at the very top that swings down to you on a pull rod — it makes the space above head height usable. It replaces the ordinary rail.',hw:w=>`Pull-down wardrobe rail (wardrobe lift) for ${w<600?'450–600':w<830?'600–830':'830–1150'} mm, 10 kg`,note:'needs a clear swing path in front: no shelf or drawer front in its way'}};
 const WOB={socket:{n:'Socket',w:80,h:80,y:300},switch:{n:'Light switch',w:80,h:80,y:1050},radiator:{n:'Radiator',w:1000,h:600,y:150},pipe:{n:'Pipe',w:22,h:0,y:0},fuse:{n:'Fuse box',w:450,h:600,y:1500,keep:1},meter:{n:'Meter',w:350,h:450,y:1300,keep:1},boiler:{n:'Boiler',w:450,h:750,y:1600,keep:1},tap:{n:'Stopcock / tap',w:150,h:150,y:350,keep:1},access:{n:'Inspection hatch',w:400,h:400,y:600,keep:1}};
+const FRIDGE_PAD=0; /* level height above the fridge niche height, set after measuring */
 const BUMPS={chimney:'Chimney breast',pillar:'Pillar',pipes:'Boxed-in pipes',other:'Bump in the wall'};
 const COBJ={dormer:'Dormer window',light:'Ceiling light',smoke:'Smoke detector',hatch:'Loft hatch in the ceiling'};
 const DOGS={arch:'Arch',round:'Porthole',square:'Rounded square',house:'Little house',double:'Twin arches',bars:'Arch + air slots'};
