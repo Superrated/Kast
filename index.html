@@ -475,6 +475,7 @@ details.pf .grid2{margin-top:6px}
 .lockban{display:grid;gap:6px;padding:12px;margin:4px 0 10px;border-radius:12px;border:1px solid var(--accent);background:var(--accent-soft)}
 .lockban b{font-size:14px}.lockban span{font-size:12.5px;color:var(--ink2);line-height:1.4}.lockban .btn{justify-self:start}
 aside.side.locked>*:not(.shead):not(.lockban):not(.viewsw){pointer-events:none;opacity:.45;user-select:none}
+.dslock{font-size:12.5px;line-height:1.4;padding:8px 10px;border-radius:10px;background:var(--accent-soft);color:var(--ink)}
 /* ==== 10-look.css — The Fitted look: fonts, tokens for light and dark mode, cards, wizard, dialogs. */
 /* ===== Fitted visual refresh ===== */
 :root{--bg:#F3F3F0;--surface:#FAFAF8;--raised:#FFFFFF;--ink:#17191B;--ink2:#62676B;--ink3:#6A6F74;--line:#E4E5E1;--accent:#3446D6;--accent-ink:#FFFFFF;--accent-soft:rgba(52,70,214,.09);--warn:#B4541A;--warn-soft:rgba(180,84,26,.1);--wall:#E7E7E3;--hatch:#D3D5D1;--stage:#ECEDEA;--paper:#FFFFFF;--shade:rgba(20,22,24,.2);
@@ -894,14 +895,14 @@ input[type=checkbox],input[type=radio]{accent-color:var(--ink)}
 .chk{min-height:32px}
 </style>
 
-<div id="splash" role="status" aria-label="Fitted by BRUIS v0.106 is loading"><b>Fitted</b><span>v0.106</span></div>
+<div id="splash" role="status" aria-label="Fitted by BRUIS v0.107 is loading"><b>Fitted</b><span>v0.107</span></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
 
 <div class="app" data-tab="elev">
   <header class="top">
     <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-    <div class="brand" title="Fitted by BRUIS v0.106">Fitted<span class="bybr">by BRUIS</span><small>built-in wardrobes & cabinets, drawn and cut · v0.106</small></div>
+    <div class="brand" title="Fitted by BRUIS v0.107">Fitted<span class="bybr">by BRUIS</span><small>built-in wardrobes & cabinets, drawn and cut · v0.107</small></div>
     <nav class="tabs" id="tabs">
       <button data-act="tab" data-a="elev" class="on">Drawing</button>
       <button data-act="tab" data-a="3d">3D</button>
@@ -4254,12 +4255,13 @@ function designsHTML(){const c=dsCur(),st=dsStatus(),nm=c?(c.name||'Untitled des
   const now=`<div class="dsnow2 ${st.k}"><div class="dthumb" aria-hidden="true">${thumb}</div><div class="dsnowb">
     <label class="fld"><span>${c?'Open now — tap the name to rename it':'Give this design a name'}</span><span class="inp"><input type="text" id="dsName" maxlength="80" value="${esc(nm)}" placeholder="e.g. Attic, oak + sage" enterkeyhint="done"></span></label>
     <div class="dsst"><i aria-hidden="true"></i><span>${esc(st.t)}${c?' · every change saves by itself':''}</span></div>
-    <div class="dbtns">${c?`<button type="button" class="btn sm" data-act="dsSaveNew">Save a copy</button><button type="button" class="btn sm" data-act="ioTab" data-a="share">Share this design</button><button type="button" class="btn sm" data-act="newHub">New design</button>`:`<button type="button" class="btn pri" data-act="dsSaveNew">Save design</button><span class="hintp" style="margin:0">After this, changes save by themselves.</span>`}</div></div></div>`;
+    ${isLocked()?`<div class="dslock">🔒 <b>Locked for building</b> — it can't be changed by accident. Need changes? Edit a copy; this locked one stays as you cut it.</div>`:''}
+    <div class="dbtns">${c?(isLocked()?`<button type="button" class="btn sm pri" data-act="dsEditCopy">Edit a copy</button><button type="button" class="btn sm" data-act="ioTab" data-a="share">Share this design</button><button type="button" class="btn sm" data-act="newHub">New design</button>`:`<button type="button" class="btn sm" data-act="dsSaveNew">Save a copy</button><button type="button" class="btn sm" data-act="dsLockSave">🔒 Lock for building</button><button type="button" class="btn sm" data-act="ioTab" data-a="share">Share this design</button><button type="button" class="btn sm" data-act="newHub">New design</button>`):`<button type="button" class="btn pri" data-act="dsSaveNew">Save design</button><button type="button" class="btn" data-act="dsLockSave">🔒 Save and lock for building</button><span class="hintp" style="margin:0">After saving, changes save by themselves — unless it is locked.</span>`}</div></div></div>`;
   const vers=id=>DS.backs.filter(b=>b.kind==='version'&&b.of===id);
   const list=DS.list.filter(d=>!q||(d.name||'').toLowerCase().includes(q));
   const cards=list.map(d=>{const v=vers(d.id),on=d.id===ui.docId,more=ui.dsMore===d.id,ren=ui.dsRen===d.id;
     return `<div class="dcard${on?' on':''}"><button type="button" class="dthumb" data-act="dsOpen" data-a="${esc(d.id)}" aria-label="Open ${esc(d.name||'design')}">${dsThumb(d)}</button>
-      <div class="dmeta">${ren?`<span class="inp"><input type="text" id="dsRen" data-id="${esc(d.id)}" maxlength="80" value="${esc(d.name||'')}" enterkeyhint="done" aria-label="New name"></span>`:`<b>${esc(d.name||'Untitled design')}</b>`}<span>${on?'open now · ':''}${dsAgo(+d.updatedAt||0)}</span></div>
+      <div class="dmeta">${ren?`<span class="inp"><input type="text" id="dsRen" data-id="${esc(d.id)}" maxlength="80" value="${esc(d.name||'')}" enterkeyhint="done" aria-label="New name"></span>`:`<b>${/"lock":\{"on":true/.test(d.state||'')?'🔒 ':''}${esc(d.name||'Untitled design')}</b>`}<span>${on?'open now · ':''}${/"lock":\{"on":true/.test(d.state||'')?'locked for building · ':''}${dsAgo(+d.updatedAt||0)}</span></div>
       <div class="dact">${ren?`<button type="button" class="btn sm pri" data-act="dsRenOk" data-a="${esc(d.id)}">Save name</button><button type="button" class="btn sm" data-act="dsMore" data-a="">Cancel</button>`:`${on?'':`<button type="button" class="btn sm pri" data-act="dsOpen" data-a="${esc(d.id)}">Open</button>`}<button type="button" class="btn sm" data-act="dsMore" data-a="${more?'':esc(d.id)}" aria-expanded="${more}" aria-label="More for ${esc(d.name||'design')}">${more?'Less':'More…'}</button>`}</div>
       ${more&&!ren?`<div class="dmore"><button type="button" class="btn sm" data-act="dsRen" data-a="${esc(d.id)}">Rename</button><button type="button" class="btn sm" data-act="dsDup" data-a="${esc(d.id)}">Duplicate</button><button type="button" class="btn sm" data-act="dsFile" data-a="${esc(d.id)}">Download file</button><button type="button" class="btn sm warnb" data-act="dsDel" data-a="${esc(d.id)}">Delete</button></div>`:''}
       ${v.length?`<details class="pf dver"><summary>Earlier versions (${v.length})</summary>${v.map(b=>`<div class="dvrow"><span>${dsAgo(+b.savedAt||0)}${b.name&&b.name!==d.name?' · “'+esc(b.name)+'”':''}</span><button type="button" class="btn sm" data-act="dsRestore" data-a="${esc(b.id)}">Open this version</button></div>`).join('')}</details>`:''}</div>`}).join('');
@@ -4302,6 +4304,14 @@ async function dsBackDel(bid){try{if(DS.db)await DS.db.doc('backups/'+bid).delet
 async function dsDelete(id){const d=DS.list.find(x=>x.id===id);try{if(d){const ok=await dsBackup('deleted',d.name,d.state,d.id);if(!ok){toast('Could not keep a copy, so nothing was deleted');return}}
     if(DS.db)await DS.db.doc('designs/'+id).delete();else{const l=dsLocalGet().filter(d=>d.id!==id);dsLocalPut(l);DS.list=l}if(ui.docId===id){ui.docId=null;ui.savedSig=null}ui.dsBackOpen=1;toast('Deleted — a copy stays under “Recovered work and deleted designs”');renderDesigns();dsBadge()}catch(e){toast('Could not delete right now')}}
 
+
+/* save as a locked design: lock it (if it isn't yet) and make sure it is in the list */
+async function dsLockSave(){if(!isLocked())lockOn();if(!dsCur()){await dsSave(true)}else{await dsAuto()}renderDesigns();dsBadge();toast('Saved and locked for building. To change it later, use “Edit a copy”.')}
+/* keep the locked design as it is, and continue in an unlocked copy */
+async function dsEditCopy(){if(!dsCur()&&!ui.docId)await dsSave(true);const c=dsCur();if(c&&dsDirty())await dsAuto();const base=(c&&c.name)||ui.docName||S.name||'Design',name=base.replace(/ \(changes( \d+)?\)$/,'')+' (changes)';
+  const st=JSON.parse(JSON.stringify(S));st.lock={on:false};delete st.done;const state=JSON.stringify(st);
+  try{const id=await dsWrite(null,{name,state,updatedAt:Date.now()});S=st;ui.docId=id;ui.docName=name;ui.savedSig=dsHash(state);ui.fresh=0;ui.lockId=null;ui.lockSnap=null;ui.lockSig=null;ui.sel=0;ui.zsel=null;changed(true);saveSoon();renderDesigns();dsBadge();
+    toast(`Now editing “${name}”. The locked “${base}” is still in My designs, unchanged.`)}catch(e){toast('Could not make the copy: '+dsErrText(e))}}
 /* ==== 56-rooms-share.js ====
    Saved rooms and sharing.
    A room is the wall without the cabinets: size, slopes, beams, sockets, doors, closing strips.
@@ -5719,7 +5729,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
    Lining the design up with a photo of the room.
 */
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.106';
+const APP_VERSION='v0.107';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
@@ -6269,7 +6279,7 @@ function lockGuard(){if(!isLocked())return false;if(ui.lockId!==S.lock.id||!ui.l
     const base=prev&&prev.lock&&prev.lock.on&&prev.lock.id===S.lock.id?prev:S;ui.lockId=S.lock.id;ui.lockSnap=JSON.stringify(base);ui.lockSig=lockSig(base);if(base===S)return false}
   if(lockSig(S)===ui.lockSig){ui.lockSnap=JSON.stringify(S);return false}const done=S.done;S=JSON.parse(ui.lockSnap);if(done)S.done=done;lockToast();return true}
 function lockBanner(){if(!isLocked())return '';let d='';try{d=new Date(S.lock.at||Date.now()).toLocaleDateString(undefined,{day:'numeric',month:'short'})}catch(e){}
-  return `<div class="lockban"><b>🔒 Locked for building</b><span>Since ${esc(d)}. Changes are switched off so the parts you cut keep matching the drawings. Ticking cuts and steps as done still works.</span><button type="button" class="btn sm" data-act="unlock">Unlock to change the design</button></div>`}
+  return `<div class="lockban"><b>🔒 Locked for building</b><span>Since ${esc(d)}. Changes are switched off so the parts you cut keep matching the drawings. Ticking cuts and steps as done still works.</span><div class="dbtns"><button type="button" class="btn sm pri" data-act="dsEditCopy">Edit a copy</button><button type="button" class="btn sm" data-act="unlock">Unlock to change the design</button></div></div>`}
 /* ==== 92-events.js ====
    All clicks: one big switch on data-act="…". To add a button: give it data-act="myAction" and add a case here.
 */
@@ -6375,6 +6385,8 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'evenDoors':evenDoors();break;
     case 'wsOpen':ui.ws={tab:'cuts'};lockOn();wsRender();break;
     case 'lockOn':lockOn();break;
+    case 'dsLockSave':dsLockSave();break;
+    case 'dsEditCopy':dsEditCopy();break;
     case 'lockInfo':lockT=0;lockToast();break;
     case 'unlock':{const b=e.target.closest('button');if(b.dataset.armed){lockOff()}else{b.dataset.armed='1';b.textContent='Tap again — parts already cut may no longer fit';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Unlock to change the design'}},4000)}break}
     case 'wsClose':ui.ws=null;wsRender();break;

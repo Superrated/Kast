@@ -103,6 +103,8 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'evenDoors':evenDoors();break;
     case 'wsOpen':ui.ws={tab:'cuts'};lockOn();wsRender();break;
     case 'lockOn':lockOn();break;
+    case 'dsLockSave':dsLockSave();break;
+    case 'dsEditCopy':dsEditCopy();break;
     case 'lockInfo':lockT=0;lockToast();break;
     case 'unlock':{const b=e.target.closest('button');if(b.dataset.armed){lockOff()}else{b.dataset.armed='1';b.textContent='Tap again — parts already cut may no longer fit';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Unlock to change the design'}},4000)}break}
     case 'wsClose':ui.ws=null;wsRender();break;

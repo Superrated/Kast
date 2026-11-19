@@ -456,3 +456,4 @@ details.pf .grid2{margin-top:6px}
 .lockban{display:grid;gap:6px;padding:12px;margin:4px 0 10px;border-radius:12px;border:1px solid var(--accent);background:var(--accent-soft)}
 .lockban b{font-size:14px}.lockban span{font-size:12.5px;color:var(--ink2);line-height:1.4}.lockban .btn{justify-self:start}
 aside.side.locked>*:not(.shead):not(.lockban):not(.viewsw){pointer-events:none;opacity:.45;user-select:none}
+.dslock{font-size:12.5px;line-height:1.4;padding:8px 10px;border-radius:10px;background:var(--accent-soft);color:var(--ink)}

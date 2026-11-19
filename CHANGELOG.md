@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.107
+
+- **Save as a locked design**: under My designs, a new design has **Save and lock for building**, and a saved one has **Lock for building**. Locked designs show 🔒 in the list.
+- **Edit a copy**: in My designs or on the lock banner. It keeps the locked design exactly as you are cutting it and continues in an unlocked copy called "… (changes)".
+
 ## v0.106
 
 - **Technical drawings** (Share & files → Technical drawings, or ☰ → Technical drawings): true-scale vector PDF sheets in **A3 or A4** with a border and a title block (project, drawing, scale, paper, date, sheet number). Pick which sheets you want:
