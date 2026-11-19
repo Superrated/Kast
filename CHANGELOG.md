@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.66
+
+- Removed the Nederlands / English switch: the app stays in English.
+
 ## v0.65
 
 - **A friendlier wizard.** Two parts — *Your room* and *Your cabinet* — with a progress bar.

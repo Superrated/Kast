@@ -15,10 +15,6 @@ src = src.replace("__KAST_VERSION__", version)
 prices = (root / "src" / "prices.js").read_text(encoding="utf-8")
 assert "/*@PRICES@*/" in src, "price marker missing in src/kast.html"
 src = src.replace("/*@PRICES@*/", prices)
-# the Dutch screen texts live in src/nl.js
-nl = (root / "src" / "nl.js").read_text(encoding="utf-8")
-assert "/*@NL@*/" in src, "translation marker missing in src/kast.html"
-src = src.replace("/*@NL@*/", nl)
 
 # the first lines of the source (title, meta, font links) belong in <head>
 head_lines, body_lines, in_head = [], [], True
