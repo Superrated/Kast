@@ -2,6 +2,7 @@
 
 ## v0.113
 
+- **Prices updated on 19 November 2026 (second check):** boards and furniture panels at Hanssens Hout and Woodcenter unchanged; Blum hinges, plates and TANDEM runners unchanged. Hardware: Minifix connectors € 0.55 (typical) → € 1.25 (Hubo); full-extension runners € 19 (typical) → € 21.29 a pair (Hubo).
 - **Clearer exploded views** — on the exploded sheets (Drawings → Technical drawings) and in Workshop → Assemble (3D):
   - **Holes on every board**: hinge cups, mounting-plate holes, shelf-pin holes and connector-screw holes, on the face they are drilled in.
   - **Hardware in place, numbered**: ① hinges with their mounting plates, ② shelf pins, ③ connector screws, ④ drawer runners, ⑤ hanging rail with its sockets.
