@@ -25,6 +25,16 @@
     }
   });
   await step('workshop boxes', () => { wxOpen(); WX.t = 1; wxApplyT(); wxDraw(); ui.ws = null; wsRender() });
+  await step('assembly step by step', () => {
+    WX.col = 0; WX.step = null; wxOpen(); wxMode('steps');
+    if (!WX.r || WX.r.noGL) return; // no 3D in this browser
+    const n = WX.r.steps.length;
+    if (n < 3) throw new Error('only ' + n + ' steps');
+    for (let i = 0; i < n; i++) wxStepGo(i, true);
+    const hidden = WX.r.parts.filter(p => !p.grp.visible).length;
+    if (hidden) throw new Error(hidden + ' parts still hidden at the last step');
+    wxMode('apart'); ui.ws = null; wsRender();
+  });
   await step('drawing sheets', () => { const r = tdSheets(); if (!r.sheets.length) throw new Error('no sheets') });
   await step('dxf', () => tdDXF());
   for (const shop of ['hh', 'wc'])

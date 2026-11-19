@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.121
+
+- **Assemble 3D: step by step** (Workshop → Assemble, "Step by step"): the box builds up in building order — bottom · sides (with connector screws) · fixed shelves and uprights · top and rails · back (check the diagonals) · hardware inside · loose shelves · doors and drawer fronts (with hinges) · closing strips. Each step's parts fly into place with a short animation; earlier steps stay, later ones are hidden. ◀ ▶ go one step, **Play all** runs through by itself. Every step says what to do and lists its parts (letters) and hardware (numbers).
+- **Exploded views fixed** (Assemble 3D and the exploded sheets in the technical drawings):
+  - A tall closing strip at the side now moves sideways away from the box (it moved down through the floor); a top strip moves up; the plinth still moves down.
+  - Uprights inside a box now slide forward instead of sideways, so they no longer cut through the shelves next to them.
+
 ## v0.120
 
 - **One Design tab**: Drawing and 3D are now one tab, **Design**, with a **Front / 3D** switch at the start of the toolbar (on phones in the floating row). The Design tab opens whichever you used last. On phones the bottom bar is Design · Parts · Guide. The 3D camera button "Front" is now "Straight on".

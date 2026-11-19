@@ -981,7 +981,26 @@ document.addEventListener('click', e => {
     case 'wxCol':
       WX.col = +a;
       WX.sel = null;
+      if (WX.step != null) {
+        WX.step = 0;
+        WX.play = false;
+      }
       wsRender();
+      break;
+    case 'wxMode':
+      wxMode(a);
+      break;
+    case 'wxStep':
+      WX.play = false;
+      wxStepGo(WX.step + +a);
+      break;
+    case 'wxPlay':
+      WX.play = !WX.play;
+      if (WX.play) wxStepGo(WX.step >= ((WX.r && WX.r.steps) || []).length - 1 ? 0 : WX.step + (WX.ap >= 1 ? 1 : 0));
+      else {
+        clearTimeout(WX.playT);
+        wxStepUI();
+      }
       break;
     case 'wxDims':
       WX.dims = !WX.dims;

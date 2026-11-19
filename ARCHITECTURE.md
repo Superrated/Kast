@@ -107,3 +107,8 @@ The version is `APP_VERSION` in `src/js/81-room-photo.js`. Each update adds 0.00
 
 - Header/bottom bar have one `data-a="design"` tab; the 'tab' action turns it into `ui.dmode` ('elev' or '3d', set in `showTab`). `dswHTML()` (`90-bar-views.js`) draws the Front / 3D switch in the toolbar and in `#mfloat`. Internally the views are still `elev` and `3d`.
 - `32-sizes.js`: `sizeAt(x, y)` (mm) for the front view, `sz3D(e)` raycasts the 3D meshes (`userData.it`, set in `80-3d.js`, with `.pan` = linked cut-list part). `szWire()` handles mouse hover and touch-and-hold (450 ms). `ELEV_T` comes from `elevSVG`.
+
+## Assemble step by step (v0.121)
+
+- `72-workshop-3d.js`: `WX.step` (null = slider "Pull apart"). `wxStepsBuild(R)` gives every part and hardware piece a step from `WX_STEPS` (by role and `tdPartName`), `wxK(step)` says how far apart and whether shown, `wxStepGo(i)` animates the step in (`WX.ap` 0→1), `WX.play` runs through. Parts whose explode offset is ~0 drop in from above (`p.fly`).
+- `tdOffset` (`52-techdraw.js`): side strips sideways, top strips up, plinth down; inner uprights forward.

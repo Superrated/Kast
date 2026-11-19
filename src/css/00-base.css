@@ -4195,3 +4195,12 @@ aside.side.locked > *:not(.shead):not(.lockban):not(.viewsw) {
 .sztip{position:fixed;z-index:60;pointer-events:none;display:flex;flex-direction:column;gap:2px;padding:8px 11px;border-radius:10px;background:var(--ink);color:var(--raised);font-size:12.5px;line-height:1.35;box-shadow:0 6px 20px rgba(0,0,0,.22);max-width:260px}
 .sztip em{font-style:normal;font-size:11px;opacity:.75;letter-spacing:.02em}
 .sztip b{font-weight:700}
+/* Assemble 3D: step by step (72-workshop-3d.js) */
+.wxmode{margin-bottom:8px}
+.wxstep{display:grid;gap:8px}
+.wxsbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.wxsbar>span{flex:1;text-align:center;font-size:13px}
+.wxsprog{height:4px;border-radius:2px;background:var(--line);overflow:hidden}.wxsprog i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.wxsnow h4{margin:2px 0 4px;font-size:15px}.wxsnow p{margin:0 0 6px;font-size:13px;color:var(--ink2);line-height:1.45}
+.wxsparts{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center}
+.wxtagi{display:inline-grid;place-items:center;min-width:22px;height:22px;border-radius:50%;background:var(--raised);border:1px solid var(--ink3);font-size:11.5px;color:var(--ink)}
+.wxhwi{display:inline-grid;place-items:center;min-width:20px;height:20px;border-radius:5px;background:#8E8E8A;color:#fff;font-size:11.5px}

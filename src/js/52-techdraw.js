@@ -647,15 +647,18 @@ function tdOffset(s, c, EX) {
   }
   if (s.role === 'back') return [0, 0, -EX * 1.2];
   if (s.role === 'shelf') return [0, 0, EX * 0.8];
-  if (s.role === 'skirt') return [0, -EX * 0.5, EX * 0.9];
-  if (s.ax === 0)
-    return [
-      Math.sign(m[0] - cc[0] || 1) *
-        EX *
-        (Math.abs(s.bb[0][0] - bx.x0) < 3 || Math.abs(s.bb[0][1] - bx.x1) < 3 ? 1 : 0.2),
-      0,
-      0
-    ];
+  if (s.role === 'skirt') {
+    // closing strips: a tall one at the side moves sideways, one at the top moves up, the plinth moves down
+    const ex = [0, 1, 2].map(k => s.bb[k][1] - s.bb[k][0]);
+    if (ex[1] > 300 && ex[1] > 2 * ex[0]) return [Math.sign(m[0] - cc[0] || -1) * EX * 1.3, 0, EX * 0.3];
+    if (m[1] > cc[1]) return [0, EX * 0.8, EX * 0.5];
+    return [0, -EX * 0.5, EX * 0.9];
+  }
+  if (s.ax === 0) {
+    const side = Math.abs(s.bb[0][0] - bx.x0) < 3 || Math.abs(s.bb[0][1] - bx.x1) < 3;
+    // the sides move outward; uprights inside slide forward, so they never move into the shelves next to them
+    return side ? [Math.sign(m[0] - cc[0] || 1) * EX, 0, 0] : [0, 0, EX * 0.4];
+  }
   if (s.ax === 1) {
     const top = Math.abs(s.bb[1][1] - bx.y1) < 3,
       bot = Math.abs(s.bb[1][0] - bx.y0) < 30;

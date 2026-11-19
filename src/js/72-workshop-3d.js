@@ -97,11 +97,16 @@ function wxRender(m) {
     tabs +
     `<div class="wxchips">${cols.map((x, i) => `<button type="button" class="tchip ${i === WX.col ? 'on' : ''}" data-act="wxCol" data-a="${i}">Box ${x.n}<small>${f0(x.bx.x1 - x.bx.x0)} wide</small></button>`).join('')}</div>
   <div class="wxmain"><div class="wxstage" id="wxStage"><div class="wxlabs" id="wxLabs"></div><div class="wxcard" id="wxCard" hidden></div><div class="wxhint" id="wxHint">Drag to turn · pinch or scroll to zoom · tap a part</div></div>
-    <div class="wxside"><div class="wxctl"><label class="wxsl"><span>Closed</span><input type="range" id="wxT" min="0" max="1" step="0.01" value="${WX.t}" aria-label="Pull the box apart"><span>Apart</span></label>
+    <div class="wxside"><div class="wxctl"><div class="seg wxmode" role="group" aria-label="How to show the box"><button type="button" class="${WX.step == null ? 'on' : ''}" data-act="wxMode" data-a="apart">Pull apart</button><button type="button" class="${WX.step != null ? 'on' : ''}" data-act="wxMode" data-a="steps">Step by step</button></div>${
+      WX.step == null
+        ? `<label class="wxsl"><span>Closed</span><input type="range" id="wxT" min="0" max="1" step="0.01" value="${WX.t}" aria-label="Pull the box apart"><span>Apart</span></label>`
+        : `<div class="wxstep" id="wxStepBox"></div>`
+    }
       <div class="wxtg"><button type="button" class="tchip ${WX.dims ? 'on' : ''}" data-act="wxDims" aria-pressed="${WX.dims}">Measurements</button><button type="button" class="tchip ${WX.labels ? 'on' : ''}" data-act="wxLabs" aria-pressed="${WX.labels}">Letters</button><button type="button" class="tchip ${WX.hw ? 'on' : ''}" data-act="wxHw" aria-pressed="${WX.hw}">Hardware</button><button type="button" class="tchip ${WX.marks ? 'on' : ''}" data-act="wxMarks" aria-pressed="${WX.marks}">Holes &amp; marks</button><button type="button" class="tchip" data-act="wxReset">Reset view</button></div></div>
       <div class="wxlist" id="wxList"></div></div></div>`;
   wxScene(c);
   wxListRender();
+  if (WX.step != null) wxStepGo(Math.min(WX.step, (WX.r && WX.r.steps ? WX.r.steps.length : 1) - 1), true);
 }
 function wxDispose() {
   const R = WX.r;
@@ -408,31 +413,53 @@ function wxScene(c) {
   });
   el.style.touchAction = 'none';
 }
+/* how far a part is from its place (0 = in place, 1 = fully apart) and whether it shows.
+   Pull apart: every part follows the slider. Step by step: earlier steps are in place, later ones hidden,
+   the current step flies in (WX.ap = 0 → 1 while it animates). */
+const wxEase = t => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+function wxK(step) {
+  if (WX.step == null) return { k: wxEase(WX.t), on: true };
+  if (step < WX.step) return { k: 0, on: true };
+  if (step > WX.step) return { k: 1, on: false };
+  const a = WX.ap == null ? 1 : WX.ap;
+  return { k: 1 - (1 - Math.pow(1 - a, 3)), on: true };
+}
 function wxApplyT() {
   const R = WX.r;
   if (!R || R.noGL) return;
-  const t = WX.t,
-    e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+  const stepMode = WX.step != null;
+  if (stepMode && !R.steps) wxStepsBuild(R);
   R.parts.forEach(p => {
-    p.grp.position.set(p.off[0] * e, p.off[1] * e, p.off[2] * e);
+    const { k, on } = wxK(p.step),
+      o = stepMode ? p.fly : p.off;
+    p.k = k;
+    p.on = on;
+    p.grp.position.set(o[0] * k, o[1] * k, o[2] * k);
+    p.grp.visible = on;
     p.grp.children.forEach(ch => {
       if (ch.userData.marks) ch.visible = !!WX.marks;
     });
   });
-  R.dims.visible = !!WX.dims;
+  R.dims.visible = !!WX.dims && !stepMode;
   (R.hwParts || []).forEach(p => {
-    p.grp.position.set(p.off[0] * e, p.off[1] * e, p.off[2] * e);
-    p.grp.visible = !!WX.hw;
+    const { k, on } = wxK(p.step),
+      o = stepMode ? p.fly : p.off;
+    p.k = k;
+    p.grp.position.set(o[0] * k, o[1] * k, o[2] * k);
+    p.grp.visible = !!WX.hw && on;
+    p.on = on;
   });
+  const e = wxEase(WX.t);
   (R.hwLines || []).forEach(o => {
-    const a = V3.a(o.L.a, V3.m(o.oa, e)),
-      b = V3.a(o.L.b, V3.m(o.ob, e)),
+    const ka = stepMode ? (o.step === WX.step ? 1 - (WX.ap == null ? 1 : WX.ap) : 0) : e,
+      a = V3.a(o.L.a, V3.m(o.oa, ka)),
+      b = V3.a(o.L.b, V3.m(o.ob, stepMode ? 0 : e)),
       pos = o.ln.geometry.attributes.position;
     pos.setXYZ(0, ...a);
     pos.setXYZ(1, ...b);
     pos.needsUpdate = true;
     o.ln.computeLineDistances();
-    o.ln.visible = !!WX.hw && e > 0.15;
+    o.ln.visible = !!WX.hw && ka > 0.15 && (!stepMode || o.step === WX.step);
   });
 }
 function wxDraw() {
@@ -471,9 +498,11 @@ function wxLabels() {
   if (WX.labels) {
     const seen = {};
     R.parts.forEach(p => {
-      const t = WX.t < 0.5 ? 2 * WX.t * WX.t : 1 - Math.pow(-2 * WX.t + 2, 2) / 2;
+      if (p.on === false) return;
+      const t = p.k == null ? wxEase(WX.t) : p.k,
+        o = WX.step != null ? p.fly : p.off;
       at(
-        [p.mid.x + p.off[0] * t, p.mid.y + p.off[1] * t, p.mid.z + p.off[2] * t],
+        [p.mid.x + o[0] * t, p.mid.y + o[1] * t, p.mid.z + o[2] * t],
         'wxtag' + (WX.sel === p.row ? ' on' : ''),
         p.row.tag,
         p.row.tag
@@ -481,15 +510,16 @@ function wxLabels() {
     });
   }
   if (WX.hw && R.hwTypes) {
-    const t = WX.t < 0.5 ? 2 * WX.t * WX.t : 1 - Math.pow(-2 * WX.t + 2, 2) / 2;
     R.hwTypes.forEach(T => {
-      const ps = R.hwParts.filter(p => p.h.hw === T.k);
+      const ps = R.hwParts.filter(p => p.h.hw === T.k && p.on !== false);
       if (!ps.length) return;
-      const p = ps.reduce((a, b) => (b.mid[1] > a.mid[1] ? b : a));
-      at([p.mid[0] + p.off[0] * t, p.mid[1] + p.off[1] * t + 30, p.mid[2] + p.off[2] * t], 'wxhwn', String(T.no));
+      const p = ps.reduce((a, b) => (b.mid[1] > a.mid[1] ? b : a)),
+        t = p.k == null ? wxEase(WX.t) : p.k,
+        o = WX.step != null ? p.fly : p.off;
+      at([p.mid[0] + o[0] * t, p.mid[1] + o[1] * t + 30, p.mid[2] + o[2] * t], 'wxhwn', String(T.no));
     });
   }
-  if (WX.dims) R.dimLabs.forEach(d => at(d.p, 'wxdim' + (d.sm ? ' sm' : ''), d.t));
+  if (WX.dims && WX.step == null) R.dimLabs.forEach(d => at(d.p, 'wxdim' + (d.sm ? ' sm' : ''), d.t));
   box.innerHTML = o;
 }
 function wxPick(e) {
@@ -576,3 +606,124 @@ document.addEventListener('input', e => {
     wxDraw();
   }
 });
+
+/* ---------- step by step: the box builds up the way you build it ----------
+   wxStepsBuild() puts every part (and every piece of hardware) in a step, in building order.
+   A step's parts fly in from their pulled-apart place (or drop in from above when that is the same as
+   their place); earlier steps stay, later steps are hidden. Play goes through all steps by itself. */
+const WX_STEPS = [
+  ['bottom', 'Bottom', 'Lay the bottom on a flat floor, good side up and front edge towards you.'],
+  ['sides', 'Sides', 'Stand the sides on the bottom and screw them on. Pre-drill the board ends.'],
+  ['inside', 'Fixed shelves and uprights', 'Fit the fixed shelves, then the uprights between them. Keep the front edges flush.'],
+  ['top', 'Top and rails', 'Put the top on and screw it down; fit the rails or battens at the back.'],
+  ['back', 'Back', 'Measure both diagonals: when they are equal the box is square. Then fix the back.'],
+  ['hardware', 'Hardware inside', 'Hinge plates, drawer runners, shelf pins and the hanging rail go in now, while you can reach.'],
+  ['shelves', 'Loose shelves', 'Lay the loose shelves on their pins.'],
+  ['fronts', 'Doors and drawer fronts', 'Clip the doors onto the hinge plates and fix the drawer fronts. Adjust until the gaps are even.'],
+  ['strips', 'Closing strips', 'Last: scribe the closing strips and plinth to the wall and floor, and fix them.']
+];
+function wxStepOf(s, name, c) {
+  if (s.role === 'skirt') return 'strips';
+  if (s.role === 'front' || /^fabric/.test(s.role || '')) return 'fronts';
+  if (s.role === 'back') return 'back';
+  if (s.role === 'shelf') return 'shelves';
+  if (name === 'Bottom') return 'bottom';
+  if (name === 'Side') return 'sides';
+  if (name === 'Top' || name === 'Rail / batten') return 'top';
+  return 'inside';
+}
+function wxStepsBuild(R) {
+  const c = R.c,
+    EX = asEX(c),
+    keys = WX_STEPS.map(s => s[0]),
+    used = new Set();
+  R.parts.forEach(p => {
+    p.stepKey = wxStepOf(p.s, p.row && p.row.name, c);
+    used.add(p.stepKey);
+  });
+  (R.hwParts || []).forEach(p => {
+    const host = p.h.host,
+      onFront = host && (host.role === 'front' || /^fabric/.test(host.role || ''));
+    p.stepKey = p.h.hw === 'screw' ? 'sides' : onFront ? 'fronts' : 'hardware';
+    used.add(p.stepKey);
+  });
+  const steps = WX_STEPS.filter(s => used.has(s[0]));
+  const idx = k => steps.findIndex(s => s[0] === k);
+  const fly = o => (Math.hypot(o[0], o[1], o[2]) < 5 ? [0, EX * 0.9, EX * 0.3] : o);
+  R.parts.forEach(p => {
+    p.step = idx(p.stepKey);
+    p.fly = fly(p.off);
+  });
+  (R.hwParts || []).forEach(p => {
+    p.step = idx(p.stepKey);
+    p.fly = fly(p.off);
+  });
+  (R.hwLines || []).forEach(o => (o.step = idx('sides')));
+  R.steps = steps.map(([k, name, how]) => {
+    const tags = {};
+    R.parts.filter(p => p.stepKey === k).forEach(p => (tags[p.row.tag] = (tags[p.row.tag] || 0) + 1));
+    const hw = (R.hwTypes || []).filter(T => (R.hwParts || []).some(p => p.stepKey === k && p.h.hw === T.k));
+    return { k, name, how, tags, hw };
+  });
+  return R.steps;
+}
+function wxStepUI() {
+  const box = document.getElementById('wxStepBox'),
+    R = WX.r;
+  if (!box || !R || !R.steps) return;
+  const n = R.steps.length,
+    i = WX.step,
+    st = R.steps[i];
+  if (!st) return;
+  const parts = Object.entries(st.tags)
+    .map(([t, q]) => `<b class="wxtagi">${t}</b>${q > 1 ? `×${q}` : ''}`)
+    .join(' ');
+  const hw = st.hw.map(T => `<b class="wxhwi">${T.no}</b> ${esc(T.name)}`).join(' · ');
+  box.innerHTML = `<div class="wxsbar"><button type="button" class="btn sm" data-act="wxStep" data-a="-1" ${i ? '' : 'disabled'} aria-label="Previous step">◀</button><span><b>Step ${i + 1}</b> of ${n}</span><button type="button" class="btn sm" data-act="wxStep" data-a="1" ${i < n - 1 ? '' : 'disabled'} aria-label="Next step">▶</button><button type="button" class="btn sm ${WX.play ? 'on' : ''}" data-act="wxPlay">${WX.play ? '❚❚ Pause' : '▶ Play all'}</button></div>
+    <div class="wxsprog"><i style="width:${Math.round(((i + 1) / n) * 100)}%"></i></div>
+    <div class="wxsnow"><h4>${esc(st.name)}</h4><p>${esc(st.how)}</p>${parts ? `<p class="wxsparts">Parts: ${parts}</p>` : ''}${hw ? `<p class="wxsparts">Hardware: ${hw}</p>` : ''}</div>`;
+}
+function wxStepGo(i, instant) {
+  const R = WX.r;
+  if (!R || R.noGL) return;
+  if (!R.steps) wxStepsBuild(R);
+  const n = R.steps.length;
+  WX.step = Math.max(0, Math.min(n - 1, i));
+  cancelAnimationFrame(R.stepRaf);
+  clearTimeout(WX.playT);
+  wxStepUI();
+  if (instant) {
+    WX.ap = 1;
+    wxApplyT();
+    wxDraw();
+    return;
+  }
+  const t0 = performance.now(),
+    dur = 900;
+  const tick = () => {
+    WX.ap = Math.min(1, (performance.now() - t0) / dur);
+    wxApplyT();
+    wxDraw();
+    if (WX.ap < 1) R.stepRaf = requestAnimationFrame(tick);
+    else if (WX.play) {
+      if (WX.step < n - 1) WX.playT = setTimeout(() => WX.r === R && wxStepGo(WX.step + 1), 900);
+      else {
+        WX.play = false;
+        wxStepUI();
+      }
+    }
+  };
+  WX.ap = 0;
+  tick();
+}
+function wxMode(m) {
+  if (m === 'steps') {
+    WX.step = 0;
+    WX.play = false;
+  } else {
+    WX.step = null;
+    WX.play = false;
+    clearTimeout(WX.playT);
+  }
+  wsRender();
+}
