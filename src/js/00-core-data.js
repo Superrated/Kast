@@ -1592,6 +1592,24 @@ const VD_MODES = {
   wide: { l: 'Wide middle', ok: n => n === 2 || n === 4, r: n => (n === 2 ? [1, 2, 1] : [1, 1, 2, 1, 1]) },
   shift: { l: 'Shifted', ok: n => n >= 2, r: n => [1, ...Array(n - 1).fill(2), 1] }
 };
+/* the same presets for a level with doors in front of its uprights: here the DOORS get the proportions,
+   not the compartments behind them (the outer doors also cover the side panels, so "even compartments" would
+   give wider outer doors). span = from the left outer edge of the doors to the right one; returns upright
+   centres measured from that left edge. */
+function vdPosDoors(n, mode, span) {
+  const base = String(mode || 'even').replace(/-r$/, ''),
+    M = VD_MODES[base] || VD_MODES.even;
+  let r = M.ok(n) && M.r ? (typeof M.r === 'function' ? M.r(n) : M.r).slice() : Array(n + 1).fill(1);
+  if (/-r$/.test(mode)) r.reverse();
+  const sum = r.reduce((a, b) => a + b, 0),
+    out = [];
+  let x = 0;
+  for (let j = 0; j < n; j++) {
+    x += (span * r[j]) / sum;
+    out.push(x);
+  }
+  return out;
+}
 function vdPos(n, mode, w, tc, lb = 0) {
   const base = String(mode || 'even').replace(/-r$/, ''),
     M = VD_MODES[base] || VD_MODES.even;

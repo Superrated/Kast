@@ -498,6 +498,27 @@ function build(S) {
     const f = zs[0].inFin;
     return FIN[f] && zs.every(z => z.type === 'open' && z.drench && z.inFin === f) ? f : null;
   };
+  /* uprights spaced by the DOORS (vdPosDoors): for a level whose doors sit in front of its uprights
+     (closed, hinged, no door count of its own) with a spacing preset. Other levels of the same column with
+     the same number of uprights and the same preset get the same positions, so the uprights stay in line.
+     Returns positions from the inside left (like z.vd), or null to space by compartments as usual. */
+  const doorVdLead = z =>
+    z &&
+    z.type === 'closed' &&
+    !(+z.doors > 0) &&
+    Array.isArray(z.vd) &&
+    z.vd.length &&
+    z.vdMode &&
+    (!z.doorMode || z.doorMode === 'hinged') &&
+    z.face !== 'curtain' &&
+    !z.dog;
+  const doorVd = (q, z) => {
+    if (!q || !q.s || q.bL == null || q.bR == null) return null;
+    const mode = String(z.vdMode || '').replace(/-r$/, ''),
+      lead = (q.s.zones || []).find(z2 => doorVdLead(z2) && z2.vd.length === z.vd.length && String(z2.vdMode).replace(/-r$/, '') === mode);
+    if (!lead) return null;
+    return vdPosDoors(z.vd.length, lead.vdMode, q.bR - q.bL).map(x => x + q.bL - q.xa);
+  };
   const autoVd = (z, bL_, bR_, xa_) => {
     const nd = +z.doors || 0;
     if (
@@ -2933,7 +2954,7 @@ function build(S) {
         let vd = vdA
           ? vdA
           : (z.type === 'open' || z.type === 'closed') && Array.isArray(z.vd)
-            ? (z.vdMode && z.vd.length ? vdPos(z.vd.length, z.vdMode, q.w, tc, zr.lined || 0) : z.vd.map(Number))
+            ? (z.vdMode && z.vd.length ? doorVd(q, z) || vdPos(z.vd.length, z.vdMode, q.w, tc, zr.lined || 0) : z.vd.map(Number))
                 .filter(v => v > 60 && v < q.w - 60)
                 .sort((a, b) => a - b)
             : [];

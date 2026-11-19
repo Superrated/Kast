@@ -504,7 +504,7 @@
   },
   {
    "L": 1078,
-   "W": 523.3,
+   "W": 520.3,
    "band": "1111",
    "fin": "ral9010",
    "grain": "h",
@@ -512,7 +512,7 @@
     "21.5 100 35 13 ",
     "21.5 539 35 13 ",
     "21.5 978 35 13 ",
-    "475.3 80 40 0 "
+    "472.3 80 40 0 "
    ],
    "id": "P23",
    "mat": "melamine",
@@ -521,21 +521,21 @@
    "secs": [
     "S1"
    ],
-   "shape": "0,0 523.3,0 523.3,1078 0,1078",
+   "shape": "0,0 520.3,0 520.3,1078 0,1078",
    "t": 18,
    "type": "Door"
   },
   {
    "L": 1078,
-   "W": 514.3,
+   "W": 520.3,
    "band": "1111",
    "fin": "ral9010",
    "grain": "h",
    "holes": [
     "48 80 40 0 ",
-    "492.8 100 35 13 ",
-    "492.8 539 35 13 ",
-    "492.8 978 35 13 "
+    "498.8 100 35 13 ",
+    "498.8 539 35 13 ",
+    "498.8 978 35 13 "
    ],
    "id": "P24",
    "mat": "melamine",
@@ -544,21 +544,21 @@
    "secs": [
     "S1"
    ],
-   "shape": "0,0 514.3,0 514.3,1078 0,1078",
+   "shape": "0,0 520.3,0 520.3,1078 0,1078",
    "t": 18,
    "type": "Door"
   },
   {
    "L": 1078,
-   "W": 523.3,
+   "W": 520.3,
    "band": "1111",
    "fin": "ral9010",
    "grain": "h",
    "holes": [
     "48 80 40 0 ",
-    "501.8 100 35 13 ",
-    "501.8 539 35 13 ",
-    "501.8 978 35 13 "
+    "498.8 100 35 13 ",
+    "498.8 539 35 13 ",
+    "498.8 978 35 13 "
    ],
    "id": "P25",
    "mat": "melamine",
@@ -567,7 +567,7 @@
    "secs": [
     "S1"
    ],
-   "shape": "0,0 523.3,0 523.3,1078 0,1078",
+   "shape": "0,0 520.3,0 520.3,1078 0,1078",
    "t": 18,
    "type": "Door"
   },
@@ -798,7 +798,7 @@
    "type": "Arched front frame"
   },
   {
-   "L": 497.3,
+   "L": 494.3,
    "W": 409,
    "band": "1000",
    "fin": "ral3002",
@@ -811,7 +811,7 @@
    "secs": [
     "S1"
    ],
-   "shape": "0,0 497.3,0 497.3,409 0,409",
+   "shape": "0,0 494.3,0 494.3,409 0,409",
    "t": 18,
    "type": "Shelf"
   },
@@ -1016,7 +1016,7 @@
    "type": "Step box — top"
   },
   {
-   "L": 491.3,
+   "L": 497.3,
    "W": 450,
    "band": "0000",
    "fin": "ral9010",
@@ -1024,50 +1024,106 @@
    "holes": [],
    "id": "P49",
    "mat": "melamine",
-   "qty": 3,
+   "qty": 1,
    "role": "front",
    "secs": [
     "S1"
    ],
-   "shape": "0,0 491.3,0 491.3,450 0,450",
+   "shape": "0,0 497.3,0 497.3,450 0,450",
    "t": 12,
    "type": "Storage box — back"
   },
   {
-   "L": 467.3,
-   "W": 365,
+   "L": 488.3,
+   "W": 450,
    "band": "0000",
    "fin": "ral9010",
    "grain": "w",
    "holes": [],
    "id": "P50",
    "mat": "melamine",
-   "qty": 3,
+   "qty": 2,
    "role": "front",
    "secs": [
     "S1"
    ],
-   "shape": "0,0 467.3,0 467.3,365 0,365",
+   "shape": "0,0 488.3,0 488.3,450 0,450",
+   "t": 12,
+   "type": "Storage box — back"
+  },
+  {
+   "L": 473.3,
+   "W": 365,
+   "band": "0000",
+   "fin": "ral9010",
+   "grain": "w",
+   "holes": [],
+   "id": "P51",
+   "mat": "melamine",
+   "qty": 1,
+   "role": "front",
+   "secs": [
+    "S1"
+   ],
+   "shape": "0,0 473.3,0 473.3,365 0,365",
    "t": 12,
    "type": "Storage box — bottom"
   },
   {
-   "L": 491.3,
+   "L": 464.3,
+   "W": 365,
+   "band": "0000",
+   "fin": "ral9010",
+   "grain": "w",
+   "holes": [],
+   "id": "P52",
+   "mat": "melamine",
+   "qty": 2,
+   "role": "front",
+   "secs": [
+    "S1"
+   ],
+   "shape": "0,0 464.3,0 464.3,365 0,365",
+   "t": 12,
+   "type": "Storage box — bottom"
+  },
+  {
+   "L": 497.3,
    "W": 450,
    "band": "0000",
    "fin": "ral9010",
    "grain": "w",
    "holes": [
-    "245.7 395 30 0 "
+    "248.7 395 30 0 "
    ],
-   "id": "P51",
+   "id": "P53",
    "mat": "melamine",
-   "qty": 3,
+   "qty": 1,
    "role": "front",
    "secs": [
     "S1"
    ],
-   "shape": "0,0 491.3,0 491.3,450 0,450",
+   "shape": "0,0 497.3,0 497.3,450 0,450",
+   "t": 12,
+   "type": "Storage box — front"
+  },
+  {
+   "L": 488.3,
+   "W": 450,
+   "band": "0000",
+   "fin": "ral9010",
+   "grain": "w",
+   "holes": [
+    "244.2 395 30 0 "
+   ],
+   "id": "P54",
+   "mat": "melamine",
+   "qty": 2,
+   "role": "front",
+   "secs": [
+    "S1"
+   ],
+   "shape": "0,0 488.3,0 488.3,450 0,450",
    "t": 12,
    "type": "Storage box — front"
   },
@@ -1078,7 +1134,7 @@
    "fin": "ral9010",
    "grain": "w",
    "holes": [],
-   "id": "P52",
+   "id": "P55",
    "mat": "melamine",
    "qty": 6,
    "role": "front",
@@ -1205,7 +1261,7 @@
     "92 808.5 20 0 ",
     "92 928.5 20 0 "
    ],
-   "id": "P53",
+   "id": "P56",
    "mat": "ply",
    "qty": 1,
    "role": "front",
@@ -1223,7 +1279,7 @@
    "fin": "birch",
    "grain": "w",
    "holes": [],
-   "id": "P54",
+   "id": "P57",
    "mat": "ply",
    "qty": 1,
    "role": "front",
@@ -1241,7 +1297,7 @@
    "fin": "birch",
    "grain": "w",
    "holes": [],
-   "id": "P55",
+   "id": "P58",
    "mat": "ply",
    "qty": 1,
    "role": "front",
@@ -1259,7 +1315,7 @@
    "fin": "birch",
    "grain": "w",
    "holes": [],
-   "id": "P56",
+   "id": "P59",
    "mat": "ply",
    "qty": 1,
    "role": "front",
@@ -1277,7 +1333,7 @@
    "fin": "birch",
    "grain": "w",
    "holes": [],
-   "id": "P57",
+   "id": "P60",
    "mat": "ply",
    "qty": 2,
    "role": "front",
@@ -1295,7 +1351,7 @@
    "fin": "birch",
    "grain": "w",
    "holes": [],
-   "id": "P58",
+   "id": "P61",
    "mat": "ply",
    "qty": 1,
    "role": "front",
@@ -1313,7 +1369,7 @@
    "fin": "birch",
    "grain": "w",
    "holes": [],
-   "id": "P59",
+   "id": "P62",
    "mat": "ply",
    "qty": 1,
    "role": "front",
@@ -1331,7 +1387,7 @@
    "fin": "birch",
    "grain": "w",
    "holes": [],
-   "id": "P60",
+   "id": "P63",
    "mat": "ply",
    "qty": 2,
    "role": "front",
@@ -1349,7 +1405,7 @@
    "fin": "birch",
    "grain": "w",
    "holes": [],
-   "id": "P61",
+   "id": "P64",
    "mat": "ply",
    "qty": 2,
    "role": "front",
@@ -1367,7 +1423,7 @@
    "fin": "birch",
    "grain": "w",
    "holes": [],
-   "id": "P62",
+   "id": "P65",
    "mat": "ply",
    "qty": 4,
    "role": "front",
@@ -1385,7 +1441,7 @@
    "fin": "birch",
    "grain": "w",
    "holes": [],
-   "id": "P63",
+   "id": "P66",
    "mat": "ply",
    "qty": 2,
    "role": "front",
@@ -1403,7 +1459,7 @@
    "fin": "birch",
    "grain": "w",
    "holes": [],
-   "id": "P64",
+   "id": "P67",
    "mat": "ply",
    "qty": 2,
    "role": "front",
@@ -1421,7 +1477,7 @@
    "fin": "birch",
    "grain": "w",
    "holes": [],
-   "id": "P65",
+   "id": "P68",
    "mat": "ply",
    "qty": 1,
    "role": "front",
@@ -1439,7 +1495,7 @@
    "fin": "birch",
    "grain": "w",
    "holes": [],
-   "id": "P66",
+   "id": "P69",
    "mat": "ply",
    "qty": 1,
    "role": "front",
@@ -1457,7 +1513,7 @@
    "fin": "birch",
    "grain": "w",
    "holes": [],
-   "id": "P67",
+   "id": "P70",
    "mat": "ply",
    "qty": 2,
    "role": "front",
@@ -1475,7 +1531,7 @@
    "fin": "birch",
    "grain": "w",
    "holes": [],
-   "id": "P68",
+   "id": "P71",
    "mat": "ply",
    "qty": 1,
    "role": "front",
@@ -1493,7 +1549,7 @@
    "fin": "birch",
    "grain": "w",
    "holes": [],
-   "id": "P69",
+   "id": "P72",
    "mat": "ply",
    "qty": 1,
    "role": "front",
@@ -1511,7 +1567,7 @@
    "fin": "birch",
    "grain": "w",
    "holes": [],
-   "id": "P70",
+   "id": "P73",
    "mat": "ply",
    "qty": 2,
    "role": "front",
@@ -1529,7 +1585,7 @@
    "fin": "birch",
    "grain": "w",
    "holes": [],
-   "id": "P71",
+   "id": "P74",
    "mat": "ply",
    "qty": 2,
    "role": "front",

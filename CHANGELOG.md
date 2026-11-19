@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.119
+
+- **Doors in front of uprights are always even**: in a level whose doors sit in front of its uprights, the spacing presets (Even, ⅓ · ⅔, Golden, Wide middle, Shifted) now space the **doors**, not the compartments. Before, "Even" gave equal compartments, and because the outer doors also cover the side panels they came out about 9 mm wider than the middle ones (e.g. 523 / 514 / 523 mm); now they are 520 / 520 / 520. The compartments behind come out a little different instead (496 / 505 / 496 mm).
+  - Other levels in the same column with the same number of uprights and the same preset line up with the door level.
+  - Only levels with doors; open levels and levels with their own door count keep spacing their compartments. "Own positions" stay exactly as you set them.
+  - A note under the upright settings explains this.
+
 ## v0.118
 
 - **"Make the doors the same" handles more walls**:

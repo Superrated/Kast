@@ -98,3 +98,7 @@ The version is `APP_VERSION` in `src/js/81-room-photo.js`. Each update adds 0.00
 ## Make the doors the same (v0.118)
 
 - `41-even-doors.js`: `edSets(G)` (door widths per column, the level with most doors; `follow` = doors in front of uprights), `doorGroups(G, far)`, `edPlan(G, group)` (per stretch between pinned columns: a free column makes room, 2+ door columns trade width, a lone column is fixed and sets the target), `edEvenInside()` moves uprights so following doors match, `evenDoors(far)` applies it by rebuilding up to 10 times. `tests/even_doors.js` checks two real walls.
+
+## Uprights spaced by the doors (v0.119)
+
+- `vdPosDoors(n, mode, span)` (`00-core-data.js`) and `doorVd(q, z)` / `doorVdLead(z)` (`10-build.js`, next to `autoVd`): a closed, hinged level without its own door count, with uprights and a `vdMode`, spaces the uprights over the door span `q.bL…q.bR`; levels of the same column with the same count and mode use the same positions.

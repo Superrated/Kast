@@ -1905,7 +1905,11 @@ function zoneRow(i, k) {
         )
         .join(
           ''
-        )}${z.vdMode ? '' : `<span class="hintp" style="margin:0;align-self:center">Own positions</span>`}</div>`;
+        )}${z.vdMode ? '' : `<span class="hintp" style="margin:0;align-self:center">Own positions</span>`}</div>${
+        z.vdMode && z.type === 'closed' && !(+z.doors > 0) && z.face !== 'curtain' && (!z.doorMode || z.doorMode === 'hinged')
+          ? `<p class="hintp" style="margin:4px 0 0">Spaced by the doors: every door gets the same width (or the chosen proportions). The outer doors also cover the side panels, so the compartments behind them come out a little narrower. Other levels in this column with the same uprights line up with these.</p>`
+          : ''
+      }`;
     }
     o += `</div>`;
     if (zr && zr.vdSag)
