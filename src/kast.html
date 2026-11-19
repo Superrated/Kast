@@ -443,6 +443,7 @@ details.acc>summary::after{font-family:var(--f-b);font-weight:400;font-size:18px
 .ntview{position:fixed;inset:0;z-index:90;background:rgba(10,8,6,.92);display:grid;grid-template-rows:minmax(0,1fr) auto;gap:12px;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));justify-items:center}.ntview img{max-width:100%;max-height:100%;object-fit:contain;align-self:center}
 .dsave{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:end}.dbtns{display:flex;gap:6px}@media(max-width:520px){.dsave{grid-template-columns:minmax(0,1fr)}}
 .dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin:6px 0 12px}
+.cmpsel{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0}.cmpsel select{min-width:0;max-width:100%;flex:1 1 140px;padding:6px 8px;border-radius:8px;border:1px solid var(--line,rgba(0,0,0,.15));background:var(--card,#fff);color:inherit;font:inherit}.cmpwrap{overflow-x:auto}.cmpt{border-collapse:collapse;width:100%;font-size:13px}.cmpt th,.cmpt td{padding:5px 8px;border-bottom:1px solid var(--line,rgba(0,0,0,.08));text-align:left;vertical-align:top}.cmpt thead th{font-weight:600}.cmpt tbody th{font-weight:500;opacity:.8;white-space:nowrap}.cmpt .cdif{font-weight:600}.cmpt .cgood{color:#2E7D4F}.cmpt .cdd{opacity:.7;white-space:nowrap}
 .dcard{display:grid;gap:6px;padding:8px;border-radius:12px;border:1px solid var(--line,rgba(0,0,0,.1));background:var(--card,#fff);min-width:0}.dcard.on{border-color:var(--accent,#3446D6);box-shadow:0 0 0 2px var(--accent-soft,rgba(52,70,214,.15))}
 .dthumb{border:0;padding:0;background:var(--wall,#eee);border-radius:8px;overflow:hidden;cursor:pointer;aspect-ratio:16/10;display:block;width:100%}.dthumb svg{width:100%;height:100%;display:block}
 .dmeta{display:grid;min-width:0}.dmeta b{font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dmeta span{font-size:11.5px;color:var(--ink2,#666)}.dact{display:flex;gap:6px;flex-wrap:wrap}
@@ -759,7 +760,7 @@ details.mx{grid-column:1/-1}
     <div class="acts">
       <button class="btn" data-act="undo" id="bUndo" aria-label="Undo" title="Undo (Ctrl+Z)" disabled>↶</button><button class="btn" data-act="redo" id="bRedo" aria-label="Redo" title="Redo" disabled>↷</button><button class="btn pri dsk" data-act="wizard">Wizard</button>
       <button class="btn dsk" data-act="pdf" title="Download a PDF with elevation, cut list and build guide">PDF</button>
-      <button class="btn dsk" data-act="install" id="instBtn" hidden title="Put Kast on this device as an app">Install app</button><button class="btn dsk" data-act="ntOpen" id="ntBtn">Notes</button><button class="btn dsk" data-act="io" id="dsBtn">Designs</button><button class="btn phone" data-act="mmenu" aria-label="Menu" aria-expanded="false">☰</button>
+      <button class="btn dsk" data-act="install" id="instBtn" hidden title="Put Kast on this device as an app">Install app</button><button class="btn dsk cmtb" data-act="cmt" hidden title="Leave a comment on the drawing — everyone you share Kast with sees it">Comment</button><button class="btn dsk" data-act="ntOpen" id="ntBtn">Notes</button><button class="btn dsk" data-act="io" id="dsBtn">Designs</button><button class="btn phone" data-act="mmenu" aria-label="Menu" aria-expanded="false">☰</button>
     </div>
   </header>
   <div class="main">
@@ -770,7 +771,7 @@ details.mx{grid-column:1/-1}
       <div class="psw phone" id="psw" role="tablist"><button data-act="tab" data-a="cut">Cut list</button><button data-act="tab" data-a="sheets">Sheets</button><button data-act="tab" data-a="loft">Lofting</button></div>
       <div class="mfloat phone" id="mfloat"></div>
       <button type="button" class="bigfab mobonly" data-act="bigView" id="bigfab" aria-label="Bigger drawing">⤢</button>
-      <div class="view" id="v-elev"><div id="elevWrap"></div></div>
+      <div class="view" id="v-elev" data-comment-target><div id="elevWrap"></div></div>
       <div class="statusbar" id="sbar" role="status"></div>
       <div class="view" id="v-3d" hidden><div class="hint3d">Drag to turn · scroll or pinch to zoom · right-drag, Shift-drag or two fingers to move · double-click to reset</div></div>
       <div class="view docview" id="v-cut" hidden></div>
@@ -789,7 +790,7 @@ details.mx{grid-column:1/-1}
   
   <button data-act="tab" data-a="guide"><svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="9" cy="9" r="1.6" fill="currentColor"/><path d="M12 9h4M8 14h8M8 17.5h6" stroke="currentColor" stroke-width="1.6"/></svg><span>Guide</span></button>
 </nav>
-<div class="mmenu" id="mmenu" hidden><button type="button" data-act="io" id="dsBtnM">📁 My designs</button><button type="button" data-act="ntOpen" id="ntBtnM">📝 Notes</button><button type="button" data-act="install" id="instBtnM" hidden>📲 Install app</button><button type="button" data-act="aiOpen">🪄 AI render (photo-real picture)</button><button type="button" data-act="wizard">✨ Start with the wizard</button><button type="button" data-act="pdf">⬇ Download PDF</button></div>
+<div class="mmenu" id="mmenu" hidden><button type="button" data-act="io" id="dsBtnM">📁 My designs</button><button type="button" data-act="ntOpen" id="ntBtnM">📝 Notes</button><button type="button" class="cmtb" data-act="cmt" hidden>💬 Comment on the drawing</button><button type="button" data-act="install" id="instBtnM" hidden>📲 Install app</button><button type="button" data-act="aiOpen">🪄 AI render (photo-real picture)</button><button type="button" data-act="wizard">✨ Start with the wizard</button><button type="button" data-act="pdf">⬇ Download PDF</button></div>
 <div class="pcal" id="pcal" hidden role="dialog" aria-label="Line up your room photo"><header><b>Line up your photo</b><span class="sp"></span><label class="btn sm" style="position:relative;overflow:hidden;cursor:pointer">Other photo<input type="file" accept="image/*" data-photoin style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0"></label><button type="button" class="btn sm" data-act="pcalClose">Cancel</button></header><div class="pstage" id="pstage"></div><footer id="pfoot"></footer></div>
 <input type="file" id="photoIn" accept="image/*" hidden>
 <div class="modal" id="wiz" hidden>
@@ -810,6 +811,7 @@ details.mx{grid-column:1/-1}
       <p class="hintp" id="dsHelp" style="margin:0"></p>
       <p class="hintp" id="dsNote">Loading saved designs…</p>
       <div class="dgrid" id="dsList"></div>
+      <details class="pf" id="dsCmpBox"><summary>Compare two designs side by side</summary><p class="hintp">Pick two designs — price, sheets, size and what is different between them.</p><div id="dsCmp"></div></details>
       <div id="dsBack"></div>
       <details class="pf"><summary>Copy as text / paste a design</summary><p class="hintp">Copy the text to move a design somewhere else, or paste one back and load it.</p><textarea class="io" id="ioText" spellcheck="false"></textarea>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button class="btn" data-act="ioCopy">Copy</button><button class="btn" data-act="ioLoad">Load pasted text</button><button class="btn" data-act="ioReset">Load example</button></div></details>
@@ -2599,8 +2601,8 @@ function secEditorFull(){
   ${evenDoorsUI()}<div class="quickadd"><span>Add next to S${i+1}</span><div class="tchips">${[['cupboard','Cabinet'],['open','Open shelves'],['arch','Arched bookcase'],['door','Walk-through door / hallway'],['desk','Desk'],['seat','Window seat'],['dog','Dog den'],['panel','Panel wall']].map(([k,l])=>`<button type="button" class="tchip" data-act="addQuick" data-a="${k}">+ ${l}</button>`).join('')}</div></div>
   <div class="addrow"><span class="inp"><select id="addPreset" aria-label="Column type to add">${presetOpts()}</select></span><button class="btn" data-act="addSec">Add column</button></div>`;
   const follower=q&&q.follow!=null;
-  h+=`<div class="card sel"><div class="cardh"><h4>Column ${i+1} <span class="zinfo">${q?f0(q.w)+' mm inside':''}</span></h4><div class="tools">
-    <button class="rowbtn" data-act="moveSec" data-a="-1" aria-label="Move left" title="Move left">◀</button><button class="rowbtn" data-act="moveSec" data-a="1" aria-label="Move right" title="Move right">▶</button><button class="rowbtn" data-act="dupSec" aria-label="Duplicate" title="Duplicate">⧉</button><button class="rowbtn" data-act="delSec" aria-label="Delete" title="Delete">✕</button></div></div>
+  h+=`<div class="card sel" data-comment-target><div class="cardh"><h4>Column ${i+1} <span class="zinfo">${q?f0(q.w)+' mm inside':''}</span></h4><div class="tools">
+    <button class="rowbtn" data-act="moveSec" data-a="-1" aria-label="Move left" title="Move left">◀</button><button class="rowbtn" data-act="moveSec" data-a="1" aria-label="Move right" title="Move right">▶</button><button class="rowbtn" data-act="dupSec" aria-label="Duplicate" title="Duplicate">⧉</button><button class="rowbtn" data-act="delSec" aria-label="Delete" title="Delete">✕</button><button class="rowbtn cmtb" data-act="cmtCol" ${CMT?'':'hidden'} aria-label="Comment on this column" title="Comment on this column">💬</button></div></div>
     ${mx('Width, depth &amp; height',`<div class="grid2">${fld('Inside width',p+'.w',{ph:'auto · '+(q?f0(q.w):''),auto:true})}${fld('Depth',p+'.depth',{ph:'wall · '+S.room.D,auto:true})}</div>
     ${s.base==='cab'||s.base==='desk'||!s.base?`<div class="fld"><span>Height</span>${seg(p+'.ownMode',[['','To the ceiling'],['own','Own height']],{dflt:''})}</div>${s.ownMode==='own'?`<div class="grid2">${fld('Cabinet height',p+'.ownH',{ph:'2000'})}<div></div></div><p class="hintp" style="margin:0">This column stops at its own height with a finished top — no top skirt above it. Handy under a low slope, next to a window, or for a sideboard between tall cabinets.</p>`:''}`:''}
     ${+s.depth>0&&+s.depth<+S.room.D?`<div class="fld"><span>Shallower than the wall depth — place it</span>${seg(p+'.align',[['wall','Back to wall (front steps back)'],['front','Front flush (gap behind)']],{dflt:'wall'})}</div>`:''}${!isSheet()||s.base==='panel'?'':`<div class="fld"><span>Back panel</span>${seg(p+'.back',[['full','One piece'],['split','One per level'],['none','No back']])}</div>`}`)}
@@ -3347,7 +3349,39 @@ function dsThumb(d){const k=d.id+':'+(d.updatedAt||d.savedAt);if(DS.thumbs[k]!=n
 function dsBadge(){const c=dsCur(),dirty=dsDirty(),nm=c?(c.name||'Untitled design'):'',b=document.getElementById('dsBtn'),m=document.getElementById('dsBtnM');
   if(b){b.innerHTML=`Designs${nm?` · <span class="dsnm">${esc(nm.length>18?nm.slice(0,17)+'…':nm)}</span>`:''}${dirty&&(c||!ui.fresh||ui.savedSig==null||dsSig()!==ui.savedSig)?'<i class="dsdot" title="Changes not saved yet"></i>':''}`;b.title=c?(dirty?`“${nm}” has changes that are not saved yet`:`“${nm}” — all changes saved`):(dirty?'This design is not saved yet':'Saved designs')}
   if(m)m.textContent='📁 My designs'+(dirty?' · not saved yet':'');try{ntBadge()}catch(e){}}
-function renderDesigns(){const el=document.getElementById('dsList'),note=document.getElementById('dsNote');if(!el||document.getElementById('iom').hidden)return;
+/* ===== compare two designs ===== */
+function cmpStats(st){const S0=S,g0=geo,lp=lastPrice,la=lastAlt,gc=groupsCache;let out=null;PRICING++;
+  try{S=st;geo=build(st);renderCut();const G=geo,mk=makerEstimate(),qs=G.secs.filter(q=>!q.panel&&!q.door),sh=lastPrice.rows.filter(r=>r.grp==='Sheets').reduce((a,r)=>a+(+r.qty||0),0);
+    const fn=k=>{const m=st.mat[k];return m?((MATS[m.type]||{}).short||m.type)+' · '+((FIN[m.fin]||{}).name||m.fin):'—'};
+    out={W:+st.room.W,H:+st.room.H,D:+st.room.D,cols:qs.length,doors:G.fronts.filter(f=>f.kind==='door').length,drawers:G.fronts.filter(f=>f.kind==='drawer').length,
+      panels:G.panels.length,sheets:sh,total:lastPrice.tot.all,tsheets:lastPrice.tot.sheets,tfin:lastPrice.tot.fin,thw:lastPrice.tot.hw,maker:mk?[mk.lo,mk.hi]:null,warns:G.warns.length,
+      front:fn('front'),carcass:fn('carcass'),handle:st.opts.handle||'—'}}catch(e){out=null}
+  PRICING--;S=S0;geo=g0;lastPrice=lp;lastAlt=la;groupsCache=gc;return out}
+function cmpDiff(a,b,pre,out){if(out.length>40)return;const ks=new Set([...Object.keys(a||{}),...Object.keys(b||{})]);ks.forEach(k=>{if(k.startsWith('_'))return;const x=(a||{})[k],y=(b||{})[k];
+  if(JSON.stringify(x)===JSON.stringify(y))return;if(x&&y&&typeof x==='object'&&typeof y==='object'&&!Array.isArray(x)&&pre.split('.').length<3)cmpDiff(x,y,pre?pre+'.'+k:k,out);else out.push(pre?pre+'.'+k:k)})}
+function renderCompare(){const el=document.getElementById('dsCmp'),box=document.getElementById('dsCmpBox');if(!el||!box||!box.open)return;
+  const opts=[{id:'@now',name:'What is open now',state:JSON.stringify(S)}].concat(DS.list.map(d=>({id:d.id,name:d.name||'Untitled design',state:d.state})));
+  if(opts.length<2){el.innerHTML='<p class="hintp">Save at least one design to compare it with what is open now.</p>';return}
+  if(!ui.cmpA||!opts.some(o=>o.id===ui.cmpA))ui.cmpA='@now';if(!ui.cmpB||!opts.some(o=>o.id===ui.cmpB)||ui.cmpB===ui.cmpA)ui.cmpB=(opts.find(o=>o.id!==ui.cmpA&&o.id!==ui.docId)||opts.find(o=>o.id!==ui.cmpA)).id;
+  const sel=(k,v)=>`<select data-cmp="${k}">${opts.map(o=>`<option value="${esc(o.id)}"${o.id===v?' selected':''}>${esc(o.name)}</option>`).join('')}</select>`;
+  const A=opts.find(o=>o.id===ui.cmpA),B=opts.find(o=>o.id===ui.cmpB);let sa=null,sb=null,ja=null,jb=null;
+  try{ja=fixFins(JSON.parse(A.state));sa=cmpStats(JSON.parse(JSON.stringify(ja)))}catch(e){}try{jb=fixFins(JSON.parse(B.state));sb=cmpStats(JSON.parse(JSON.stringify(jb)))}catch(e){}
+  if(!sa||!sb){el.innerHTML=`<div class="cmpsel">${sel('a',ui.cmpA)}<span>vs</span>${sel('b',ui.cmpB)}</div><p class="hintp">One of these designs could not be read.</p>`;return}
+  const mm=v=>f0(v)+' mm',n=v=>String(v),rng=m=>m?eur(m[0])+' – '+eur(m[1]):'—';
+  const rows=[['Wall width',sa.W,sb.W,mm,1],['Height',sa.H,sb.H,mm,1],['Depth',sa.D,sb.D,mm,1],['Columns',sa.cols,sb.cols,n,0],['Doors',sa.doors,sb.doors,n,0],['Drawers',sa.drawers,sb.drawers,n,0],['Panels to cut',sa.panels,sb.panels,n,-1],['Sheets to buy',sa.sheets,sb.sheets,n,-1],
+    ['Boards',sa.tsheets,sb.tsheets,eur,-1],['Finishing',sa.tfin,sb.tfin,eur,-1],['Hardware',sa.thw,sb.thw,eur,-1],['Total to build yourself',sa.total,sb.total,eur,-1],['Cabinet maker (excl. VAT)',sa.maker,sb.maker,rng,0],
+    ['Fronts',sa.front,sb.front,String,0],['Carcass',sa.carcass,sb.carcass,String,0],['Handles',sa.handle,sb.handle,String,0],['Warnings',sa.warns,sb.warns,n,-1]];
+  const cell=(v,o,f,better)=>{const same=JSON.stringify(v)===JSON.stringify(o);let c=same?'':' class="cdif"';if(!same&&better&&typeof v==='number'&&typeof o==='number'){const good=better<0?v<o:false;if(good)c=' class="cdif cgood"'}return `<td${c}>${esc(f(v))}</td>`};
+  const dd=(v,f)=>typeof v==='number'&&Math.abs(v)>0.004?(v>0?'+ ':'− ')+f(Math.abs(v)):'';
+  const diff=[];cmpDiff(ja,jb,'',diff);const secA=(ja.sections||[]).length,secB=(jb.sections||[]).length;
+  const nice=k=>k.replace(/^opts\./,'').replace(/^mat\./,'material: ').replace(/^room\./,'room: ').replace(/\./g,' › ');
+  el.innerHTML=`<div class="cmpsel">${sel('a',ui.cmpA)}<span>vs</span>${sel('b',ui.cmpB)}</div>
+  <div class="cmpwrap"><table class="cmpt"><thead><tr><th></th><th>${esc(A.name)}</th><th>${esc(B.name)}</th><th>Difference</th></tr></thead><tbody>${rows.map(r=>`<tr><th>${r[0]}</th>${cell(r[1],r[2],r[3],r[4])}${cell(r[2],r[1],r[3],r[4])}<td class="cdd">${typeof r[1]==='number'&&typeof r[2]==='number'?esc(dd(r[2]-r[1],r[3])):''}</td></tr>`).join('')}</tbody></table></div>
+  <p class="hintp">Difference = right minus left. Green is the cheaper or simpler one.</p>
+  ${diff.length?`<details class="pf"><summary>Settings that differ (${diff.length>40?'40+':diff.length})</summary><p class="hintp">${secA!==secB?`Columns: ${secA} vs ${secB}. `:''}${diff.slice(0,40).map(k=>esc(nice(k))).join(' · ')}</p></details>`:'<p class="hintp">These two designs have exactly the same settings.</p>'}`}
+document.addEventListener('toggle',e=>{if(e.target&&e.target.id==='dsCmpBox')renderCompare()},true);
+document.addEventListener('change',e=>{const k=e.target&&e.target.dataset&&e.target.dataset.cmp;if(!k)return;if(k==='a')ui.cmpA=e.target.value;else ui.cmpB=e.target.value;renderCompare()});
+function renderDesigns(){const el=document.getElementById('dsList'),note=document.getElementById('dsNote');if(!el||document.getElementById('iom').hidden)return;try{renderCompare()}catch(e){}
   const c=dsCur(),dirty=dsDirty(),now=document.getElementById('dsNow'),btns=document.getElementById('dsBtns'),help=document.getElementById('dsHelp'),nm=c?(c.name||'Untitled design'):'';
   now.className='dsnow'+(dirty?' dirty':'');
   now.innerHTML=c?`<b>Open now: “${esc(nm)}”</b><span>${dirty?'It has changes that are not saved yet.':'All changes are saved.'}</span>`:`<b>This design is not in your list yet</b><span>${dirty?'Give it a name and save it, or it only lives in this browser.':'It is the example. Change something and save it under your own name.'}</span>`;
@@ -3838,7 +3872,7 @@ function saverHTML(){const r=ui.saver;if(!r||!r.cur)return '';const c=r.cur,pc=v
   return `<div class="tw"><table class="cut" style="min-width:560px"><thead><tr><th>Cabinet depth</th><th>Sheets</th><th>Sheet used</th><th>Boards cost</th><th>Difference</th><th></th></tr></thead><tbody>${row(c,true)}${r.rows.map(o=>row(o,false)).join('')}${r.deeper?row(r.deeper,false):''}</tbody></table></div>
   <p class="hintp" style="margin:0">${b?`Making the cabinets <b>${c.d-b.d} mm shallower (${b.d} mm)</b> needs ${c.sheets+c.boards-b.sheets-b.boards} sheet${c.sheets+c.boards-b.sheets-b.boards>1?'s':''} less. Every depth from ${c.d+20} down to ${Math.max(300,c.d-100)} mm was tried; each row is the deepest one that reaches that number of sheets.`:`No depth between ${Math.max(300,c.d-100)} and ${c.d} mm saves a whole sheet — ${c.d} mm is already a good depth.`}${r.deeper?` If there is room, you can even go to <b>${r.deeper.d} mm</b> on the same sheets.`:''} “Sheet used” is how much of the bought sheets ends up as parts.</p>`}
 const eur=v=>'€ '+(v>=100?Math.round(v).toLocaleString('en-GB'):v.toFixed(2));
-let lastPrice=null,lastAlt=null;const STK_ALL={carcass:true,shelf:true,skirt:true,desk:true,front:true};
+let CMT=null;let lastPrice=null,lastAlt=null;const STK_ALL={carcass:true,shelf:true,skirt:true,desk:true,front:true};
 function setStockAll(on){S.opts.stock=Object.assign({},S.opts.stock||{},on?{on:true,roles:Object.assign({},STK_ALL)}:{on:false})}
 function priceHTML(P){const t=P.tot;let last='';
   return `<h3 id="price">Estimated price</h3><div class="pricebox"><div class="ptot"><b>${eur(t.all)}</b><span>for boards, finishing and hardware · incl. 21 % VAT</span></div><div class="pparts"><span><b>${eur(t.sheets)}</b> boards</span><span><b>${eur(t.fin)}</b> edge band &amp; paint</span><span><b>${eur(t.hw)}</b> hardware</span></div>
@@ -4501,7 +4535,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.63';
+const APP_VERSION='v0.64';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
@@ -5157,6 +5191,8 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'install':{if(INST.ev){const ev=INST.ev;INST.ev=null;try{ev.prompt();ev.userChoice.then(r=>{if(r&&r.outcome==='accepted'){toast('Kast is being installed — look for it on your home screen');instShow(false)}else instShow(true)}).catch(()=>{})}catch(er){toast('Use your browser menu: Install app, or Add to Home screen')}}
       else toast(INST.ios?'On iPhone and iPad: tap the Share button in Safari, then “Add to Home Screen”':'Open your browser menu (⋮) and choose “Install app” or “Add to Home screen”',9000);break}
     case 'dsOpen':dsOpen(a);break;
+    case 'cmt':{const v=document.getElementById('v-'+(ui.tab||'elev'))||document.getElementById('v-elev');document.getElementById('mmenu').hidden=true;cmtOpen(v);break}
+    case 'cmtCol':cmtOpen(e.target.closest('.card'));break;
     case 'dsRestore':dsRestore(a);break;
     case 'dsBackDel':{const b=e.target.closest('button');if(b.dataset.armed){dsBackDel(a)}else{b.dataset.armed='1';b.textContent='Tap again to remove';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Remove'}},3000)}break}
     case 'dsDel':{const b=e.target.closest('button');if(b.dataset.armed){dsDelete(a)}else{b.dataset.armed='1';b.textContent='Tap again to delete';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Delete'}},3000)}break}
@@ -5366,6 +5402,9 @@ function instShow(on){['instBtn','instBtnM'].forEach(id=>{const b=document.getEl
   window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();INST.ev=e;if(!standalone)instShow(true)});window.addEventListener('appinstalled',()=>{INST.ev=null;instShow(false)});
   const ua=navigator.userAgent||'';INST.ios=/iPad|iPhone|iPod/.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1);if(INST.ios&&hasMf&&!standalone&&/Safari/.test(ua)&&!/CriOS|FxiOS|EdgiOS/.test(ua))instShow(true)}catch(e){}})();
 dsInit();
+/* comments: open claude.ai's own comment box, pinned to the drawing or a column */
+(async()=>{try{if(window.claude&&claude.use)CMT=await claude.use('comments')}catch(e){CMT=null}if(CMT)document.querySelectorAll('.cmtb').forEach(b=>b.hidden=false)})();
+async function cmtOpen(el){if(!CMT||!el)return;try{const r=await CMT.openComposer({element:el});if(r&&!r.opened)toast('Finish the comment that is already open first')}catch(e){if(e&&e.code==='unavailable'){CMT=null;document.querySelectorAll('.cmtb').forEach(b=>b.hidden=true);toast('Comments are not available in this view')}else if(e&&e.code==='rate_limited')toast('One moment — try again in a few seconds')}}
 try{const stg=document.querySelector('.stage'),setH=()=>{document.documentElement.style.setProperty('--stageH',(innerWidth<=860&&getComputedStyle(stg).position==='sticky'?stg.offsetHeight:0)+'px')};new ResizeObserver(setH).observe(stg);addEventListener('resize',setH);setH()}catch(e){}
 matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>{if(T3&&ui.tab==='3d'){dirty['3d']=true;renderTab('3d')}});
 </script>

@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.64
+
+- **Compare two designs** (Designs → "Compare two designs side by side"): pick any two — or what is open now against a saved one — and see size, columns, doors, drawers, panels, sheets, board / finishing / hardware cost, total, cabinet-maker estimate, materials and warnings next to each other, with the difference and the cheaper one in green. A list shows which settings differ.
+- **Comments.** A "Comment" button (and 💬 on each column card) opens claude.ai's own comment box pinned to the drawing or that column, so you can leave notes for each other on the design.
+- The exploded 3D view per box is reachable from each box step in the build guide ("Show in 3D").
+
 ## v0.63
 
 - **Workshop mode** (Build guide and Cut list): a full-screen view for your phone that shows one cut or one build step at a time in big letters, with Done ✓ and Back.
