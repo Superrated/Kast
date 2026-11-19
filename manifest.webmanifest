@@ -1,7 +1,7 @@
 {
-  "name": "Kast — built-in furniture, drawn and cut",
-  "short_name": "Kast",
-  "description": "Design a built-in cabinet for any wall, including sloped ceilings, and get drawings, a cut list, a price estimate and a build guide.",
+  "name": "Fitted — built-in wardrobes & cabinets, drawn and cut",
+  "short_name": "Fitted",
+  "description": "Design built-in wardrobes and cabinets for any wall, including sloped ceilings, and get drawings, a cut list, a price estimate and a build guide.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

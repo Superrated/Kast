@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.67
+
+- **Kast is now called Fitted** — built-in wardrobes & cabinets, drawn and cut. (Saved designs, notes and settings stay; the GitHub address stays the same.)
+- **Washer + dryer** (new column, wizard wish, and “Show in the niche” → Washing machine / Dryer / Washer + dryer on top): drawn in the drawing and in 3D, with a basket drawer under the washer, stacking kit, anti-vibration pads, vents, and checks for width (610 mm), depth (650 mm) and height. Tips on heat-pump dryers, socket, tap and drain.
+- **Fold-down bed** (new column, wizard wish “Guest bed”, and “Show in the niche” → Fold-down bed): the bed’s underside is the front; mechanism, mattress and wall anchors in the hardware list; checks for width (90 / 140 / 160 cm mattress), height and depth.
+- **Utility cupboard** (new column, wizard wish): socket for chargers, broom rail and a vacuum bracket, with vents.
+- **Inside fittings, grouped**: *For clothes* (trouser rack, tie & belt rack, valet rod, pull-down rail), *Drawers and baskets* (internal drawers, jewellery drawer, wire baskets, laundry baskets, shoe rack), *Extras* (ironing board, pull-out mirror, hidden safe, space for suitcases). Each one is drawn when you look inside, and is listed and priced.
+- **Per level**: mirror on the inside of the door, air vents in the door, utility cupboard.
+- **Lights inside**: switch on with the door, or by a motion sensor.
+- Quick-add buttons now include Wardrobe, Washer + dryer, Fold-down bed and Utility cupboard.
+- Everything is in English, including the shop cut lists, the shop email, the cabinet-maker brief and the DXF read-me.
+- **Ready for more languages**: translations go in `src/lang.js` (see the README). A language button appears once a second language is added.
+
 ## v0.66
 
 - Removed the Nederlands / English switch: the app stays in English.

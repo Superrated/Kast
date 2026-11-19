@@ -1,13 +1,13 @@
-# Kast
+# Fitted
 
-**Kast** designs a built-in cabinet for one wall of a room, including walls under a sloped ceiling, and turns the design into everything needed to build it:
+**Fitted** designs built-in wardrobes and cabinets (not kitchens) for one or more walls of a room, including walls under a sloped ceiling, and turns the design into everything needed to build it:
 
 - a front drawing and a 3D view (also drawn into a photo of your own room)
 - a cut list, sheet cutting plans and drawings of the shaped parts
 - a hardware list and a price estimate (Belgian woodworking shops)
 - a step-by-step build guide, and a PDF with all of the above
 
-Version **v0.66**.
+Version **v0.67**.
 
 ## Use it
 
@@ -52,3 +52,13 @@ For a new version, change `APP_VERSION` near the photo code in `src/kast.html`, 
 - Saving designs in this standalone version is local to the browser. Use *Designs → Copy as text* to move a design to another device.
 
 All prices live in `src/prices.js` (incl. 21 % VAT). Edit them there, or use the "Update prices" button in the app.
+
+
+## Adding a language
+
+Fitted is in English. All translations live in `src/lang.js`:
+
+1. Copy the commented `nl` example in `LANGS`, give it a code (`nl`, `fr`, …), a `name` and a `date` locale.
+2. Under `words`, add `'English text as on screen': 'translation'` pairs. Texts with numbers go under `patterns`.
+3. The longer texts (the shop email, the brief for a cabinet maker) are templates starting with `@` in `LANG_EN`; copy any of them into the new language to translate it.
+4. Run `python3 build.py`. A language button appears in the header as soon as there are two languages. Anything without a translation stays in English.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Builds the standalone, installable Kast app (index.html) from src/kast.html.
+"""Builds the standalone, installable Fitted app (index.html) from src/kast.html.
 
 src/kast.html is the source of the app (page content without the
 <html>/<head>/<body> wrapper); src/prices.js holds every price and is
@@ -15,6 +15,10 @@ src = src.replace("__KAST_VERSION__", version)
 prices = (root / "src" / "prices.js").read_text(encoding="utf-8")
 assert "/*@PRICES@*/" in src, "price marker missing in src/kast.html"
 src = src.replace("/*@PRICES@*/", prices)
+# the languages live in src/lang.js
+langs = (root / "src" / "lang.js").read_text(encoding="utf-8")
+assert "/*@LANG@*/" in src, "language marker missing in src/kast.html"
+src = src.replace("/*@LANG@*/", langs)
 
 # the first lines of the source (title, meta, font links) belong in <head>
 head_lines, body_lines, in_head = [], [], True
@@ -32,7 +36,7 @@ page = f"""<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#E8EBE7">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Kast">
+<meta name="apple-mobile-web-app-title" content="Fitted">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
@@ -50,4 +54,4 @@ page = f"""<!doctype html>
 sw = (root / "sw.js").read_text(encoding="utf-8")
 sw = re.sub(r"const VERSION='[^']*'", f"const VERSION='{version}'", sw)
 (root / "sw.js").write_text(sw, encoding="utf-8")
-print("built index.html for Kast", version, f"({len(page)//1024} kB)")
+print("built index.html for Fitted", version, f"({len(page)//1024} kB)")
