@@ -2,6 +2,10 @@
 
 ## v0.111
 
+- **Prices updated on 19 November 2026:**
+  - Hanssens Hout furniture panels 2500 mm: 300 mm € 12.29 → € 11.83, 500 mm € 18.59 → € 17.88, 550 mm € 19.97 → € 19.20, 600 mm € 21.54 → € 20.74.
+  - Woodcenter: white hardboard 3 mm € 3.68 → € 4.45 per m² (now incl. VAT); new: birch plywood 18 mm € 45.90 per m², solid oak panel 18 mm € 117.98 per m², 600 mm furniture panel € 22.93.
+  - Hardware: push-to-open latches € 3.50 (typical) → € 4.55 (Hornbach); chipboard screws € 0.04 (typical) → € 0.11 (Gamma).
 - **Your shops and board prices** (Parts → Price):
   - **Shops**: name, website, delivery cost, the order amount above which delivery is free, pick-up (and its cost), edge banding per metre, cutting service per cut.
   - **Board prices**: shop, board type, colour or veneer (or any colour), thickness, sheet size, price per sheet, note (e.g. article number).
