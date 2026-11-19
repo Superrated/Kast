@@ -749,14 +749,14 @@ details.mx{grid-column:1/-1}
 @media (prefers-reduced-motion:reduce){#splash{animation-duration:.01s}}
 </style>
 
-<div id="splash" role="status" aria-label="Kast v0.60 is loading"><b>Kast</b><span>v0.60</span></div>
+<div id="splash" role="status" aria-label="Kast v0.61 is loading"><b>Kast</b><span>v0.61</span></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
 
 <div class="app" data-tab="elev">
   <header class="top">
     <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-    <div class="brand" title="Kast v0.60">Kast<small>built-in furniture, drawn and cut · v0.60</small></div>
+    <div class="brand" title="Kast v0.61">Kast<small>built-in furniture, drawn and cut · v0.61</small></div>
     <nav class="tabs" id="tabs">
       <button data-act="tab" data-a="elev" class="on">Elevation</button>
       <button data-act="tab" data-a="3d">3D view</button>
@@ -4054,22 +4054,38 @@ function renderGuide(){
     step('How to cut the panels','',``,hwc('saw',1,'track saw or table saw, fine-tooth blade')+hwc('tape',1,'tape measure + square')+hwc('pencil',1,'pencil for part numbers'),
       `<b>Order of work on every sheet:</b> 1) ${trim?`trim ${trim} mm off the factory edges so you start square`:'check the factory edges are clean and square (set a sheet edge trim under Build if they are not)'}; 2) make all the long <b>rip cuts</b> first, splitting the sheet into strips A, B, C…; 3) <b>cross-cut</b> each strip into its parts, measuring every cut from the freshly cut end; 4) trim any part that is narrower than its strip; 5) cut angles and shapes last. Allow ${kerf} mm for the saw kerf — the plans already do. <b>Melamine chips:</b> with a track or circular saw cut good face <b>down</b>, on a table saw good face <b>up</b>; use a scoring blade or tape over the cut line. Write each part number on its back edge as soon as it is cut.<br><b>Which sheets first:</b> cut the carcass sheets first (sides, tops, bottoms, dividers), then shelves and backs, then the drawer boxes. The doors and drawer fronts are on their own sheets when they are a different board: cut those <b>last</b>, after the carcass stands, so you can measure each opening first and keep the 3 mm gaps even if a box came out a millimetre off.`,
       'Get a second person to support long strips as they come off the saw. Many panel shops cut and edge-band from this cut list for little money.');
-    const cutSVG=(sh,pl,cuts,L,W)=>{const fs=Math.max(36,L/42);let sv=`<svg viewBox="0 0 ${L} ${W}" class="gsheet"><rect width="${L}" height="${W}" fill="#fff" stroke="${GK}" stroke-width="6"/>`;
+    // collect every cut of every sheet first, so they can be numbered sheet by sheet or grouped by saw setting
+    const batch=S.opts.cutOrder==='width',ops=[],plans=[],AZ='ABCDEFGHIJKLMNOPQRSTUVWXYZ',KO={rip:0,cross:1,trim:2};
+    nest.forEach((g,gi)=>{if(!g.sheets.length)return;const L=g.sh.L,W=g.sh.W,pl={g,L,W,sheets:[]};plans.push(pl);
+      g.sheets.forEach((sh,si)=>{const strips={};sh.pl.forEach(c=>{(strips[c.y]=strips[c.y]||[]).push(c)});const ys=Object.keys(strips).map(Number).sort((a,b)=>a-b),cuts=[],txt=[],sn=`${g.name} mm sheet ${si+1}`;
+        const mshort=`${MATS[g.mt]?.short||''} ${FIN[g.fin]?.name||''} ${g.t} mm`.trim(),txtC=[],add=(o,t)=>{o.mat=mshort;o.sheet=sn;o.gi=gi;o.si=si;o.ord=ops.length;cuts.push(o);ops.push(o);if(t)(o.kind==='rip'?txt:txtC).push([o,t])};
+        ys.forEach((y,k)=>{const row=strips[y].sort((a,b)=>a.x-b.x),h=Math.max(...row.map(c=>c.ph)),yc=y+h,nm=AZ[k%26]+(k>=26?Math.floor(k/26):'');
+          if(yc<W-trim-1)add({kind:'rip',v:h,x1:0,y1:yc+kerf/2,x2:L,y2:yc+kerf/2,lbl:`strip ${nm}`,tag:nm},`<b>rip</b> strip ${nm}: ${f0(h)} mm wide, off the long edge`);else txt.push([null,`what is left of the sheet is strip ${nm} (${f0(h)} mm wide)`]);
+          row.forEach((c,j)=>{const xc=c.x+c.pw;let o=null,t;if(xc<L-trim-1){o={kind:'cross',v:c.pw,x1:xc+kerf/2,y1:y,x2:xc+kerf/2,y2:yc,lbl:`strip ${nm} → ${c.p.id}`,tag:`${nm}→${c.p.id}`};t=`strip ${nm}: <b>cross-cut</b> at ${f0(c.pw)} mm → ${c.p.id} ${esc(c.p.type)}`}else t=`strip ${nm}: the piece that is left is ${c.p.id} ${esc(c.p.type)} (${f0(c.pw)} mm)`;
+            const tr=c.ph<h-1?{kind:'trim',v:c.ph,x1:c.x,y1:y+c.ph+kerf/2,x2:xc,y2:y+c.ph+kerf/2,lbl:`${c.p.id} (from strip ${nm})`,tag:c.p.id}:null;
+            if(tr)t+=`, then <b>trim</b> it to ${f0(c.ph)} mm wide`;if(!c.p.rect)t+=` — then <b>shape</b> ${c.p.id} from its Lofting points${c.p.angled?' (bevel as noted in the cut list)':''}`;
+            if(o)add(o,t);else txtC.push([null,t]);if(tr)add(tr,null)})});
+        pl.sheets.push({sh,si,cuts,txt:txt.concat(txtC)})})});
+    // numbering: sheet by sheet (rips first on each sheet), or all cuts with the same saw setting one after another
+    const key=v=>Math.round(v*2)/2;
+    if(batch){ops.sort((a,b)=>KO[a.kind]-KO[b.kind]||key(b.v)-key(a.v)||a.ord-b.ord)}
+    else ops.sort((a,b)=>a.gi-b.gi||a.si-b.si||(a.kind==='rip'?0:1)-(b.kind==='rip'?0:1)||a.ord-b.ord);
+    ops.forEach((o,ix)=>o.num=ix+1);
+    const settings=new Set(ops.map(o=>o.kind+key(o.v))).size;let chg=0,prev='';ops.slice().sort((a,b)=>a.gi-b.gi||a.si-b.si||(a.kind==='rip'?0:1)-(b.kind==='rip'?0:1)||a.ord-b.ord).forEach(o=>{const k=o.kind+key(o.v);if(k!==prev)chg++;prev=k});
+    step('Cut order','',`<div class="fld" style="margin:4px 0 0"><span>Cut</span>${seg('opts.cutOrder',[['','Sheet by sheet'],['width','Same width together']],{dflt:''})}</div>`,'',
+      batch?`All cuts with the same measurement are done one after the other, across every sheet, so you set your track-saw jig, fence or stop only <b>${settings}</b> times (sheet by sheet would be about ${chg} changes). First all <b>rips</b> (widest first), then all <b>cross-cuts</b> (longest first), then the <b>trims</b>. Keep the strips and pieces on a trolley labelled with their sheet and strip letter, and write the part number on each piece as it comes off. The numbers on the sheet drawings follow this order.`:`Each sheet is cut completely before the next one: rips first, then cross-cuts and trims, numbered on each drawing. Tip: choose “Same width together” to make every cut with the same measurement one after the other, so the jig or fence is set only ${settings} times instead of about ${chg}.`);
+    const cutSVG2=(sh,pl,cuts,L,W)=>{const fs=Math.max(36,L/42);let sv=`<svg viewBox="0 0 ${L} ${W}" class="gsheet"><rect width="${L}" height="${W}" fill="#fff" stroke="${GK}" stroke-width="6"/>`;
       pl.forEach(c=>{sv+=`<rect x="${c.x}" y="${c.y}" width="${c.pw}" height="${c.ph}" fill="${c.p.rect?'#F4F4F4':'#EDEFF8'}" stroke="#999" stroke-width="3"/>`;const f=Math.min(fs*1.1,c.ph*.4,c.pw/3.4);if(f>14)sv+=`<text x="${c.x+c.pw/2}" y="${c.y+c.ph/2}" text-anchor="middle" dominant-baseline="middle" font-size="${f}" font-family="IBM Plex Mono,monospace" fill="#555">${c.p.id}</text>`});
       cuts.forEach((k,ix)=>{const col=k.kind==='rip'?'#3446D6':k.kind==='cross'?'#D2463A':'#2E8B57';sv+=`<line x1="${k.x1}" y1="${k.y1}" x2="${k.x2}" y2="${k.y2}" stroke="${col}" stroke-width="${k.kind==='rip'?9:6}"/>`;
-        const mx=k.kind==='rip'?k.x1+60+((ix*170)%(L*0.5)):k.x1,my=k.kind==='rip'?k.y1:(k.y1+k.y2)/2;sv+=`<circle cx="${mx}" cy="${my}" r="${fs*0.62}" fill="${col}"/><text x="${mx}" y="${my}" text-anchor="middle" dominant-baseline="central" font-size="${fs*0.7}" font-weight="700" fill="#fff" font-family="IBM Plex Mono,monospace">${ix+1}</text>`});
+        const mx=k.kind==='rip'?k.x1+60+((ix*170)%(L*0.5)):k.x1,my=k.kind==='rip'?k.y1:(k.y1+k.y2)/2,lab=String(k.num),rr=fs*(lab.length>2?0.8:0.62);sv+=`<circle cx="${mx}" cy="${my}" r="${rr}" fill="${col}"/><text x="${mx}" y="${my}" text-anchor="middle" dominant-baseline="central" font-size="${fs*(lab.length>2?0.6:0.7)}" font-weight="700" fill="#fff" font-family="IBM Plex Mono,monospace">${lab}</text>`});
       return sv+'</svg>'};
-    nest.forEach(g=>{if(!g.sheets.length)return;const L=g.sh.L,W=g.sh.W;let html='',ol='';
-      g.sheets.forEach((sh,si)=>{const strips={};sh.pl.forEach(c=>{(strips[c.y]=strips[c.y]||[]).push(c)});const ys=Object.keys(strips).map(Number).sort((a,b)=>a-b);const rips=[],ripT=[],cuts2=[],txt2=[],AZ='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        ys.forEach((y,k)=>{const row=strips[y].sort((a,b)=>a.x-b.x),h=Math.max(...row.map(c=>c.ph)),yc=y+h,nm=AZ[k%26]+(k>=26?Math.floor(k/26):'');
-          if(yc<W-trim-1){rips.push({kind:'rip',x1:0,y1:yc+kerf/2,x2:L,y2:yc+kerf/2});ripT.push(`<b>rip</b> strip ${nm}: ${f0(h)} mm wide, off the long edge`)}else ripT.push(`what is left of the sheet is strip ${nm} (${f0(h)} mm wide)`);
-          row.forEach((c,j)=>{const xc=c.x+c.pw;let t;if(xc<L-trim-1){cuts2.push({kind:'cross',x1:xc+kerf/2,y1:y,x2:xc+kerf/2,y2:yc});t=`strip ${nm}: <b>cross-cut</b> at ${f0(c.pw)} mm → ${c.p.id} ${esc(c.p.type)}`}else t=`strip ${nm}: the piece that is left is ${c.p.id} ${esc(c.p.type)} (${f0(c.pw)} mm)`;
-            if(c.ph<h-1){cuts2.push({kind:'trim',x1:c.x,y1:y+c.ph+kerf/2,x2:xc,y2:y+c.ph+kerf/2});t+=`, then <b>trim</b> it to ${f0(c.ph)} mm wide`}
-            if(!c.p.rect)t+=` — then <b>shape</b> ${c.p.id} from its Lofting points${c.p.angled?' (bevel as noted in the cut list)':''}`;txt2.push(t)})});
-        const cuts=[...rips,...cuts2],txt=[...ripT,...txt2];
-        html+=`<div class="gsheetwrap">${cutSVG(sh,sh.pl,cuts,L,W)}<p>Sheet ${si+1} of ${g.sheets.length}</p></div>`;
-        ol+=`<details class="pf"${si===0?' open':''}><summary>Sheet ${si+1}: ${rips.length} rip${rips.length===1?'':'s'}, then ${cuts2.length} cross-cuts and trims</summary><ol class="gcuts">${txt.map(t=>`<li>${t}</li>`).join('')}</ol></details>`});
-      step(`Cut ${esc(g.name)} mm sheets (${L}×${W})`,`<div class="gsheets">${html}</div>`,'','',`${ol}<span class="gkey"><i style="background:#3446D6"></i>rip cuts (all first) <i style="background:#D2463A"></i>cross-cuts <i style="background:#2E8B57"></i>trims — numbered in the order you make them. Strips are lettered from the first rip. Light-blue parts are shaped.</span>`)});
+    plans.forEach(({g,L,W,sheets})=>{let html='',ol='';
+      sheets.forEach(({sh,si,cuts,txt})=>{html+=`<div class="gsheetwrap">${cutSVG2(sh,sh.pl,cuts,L,W)}<p>Sheet ${si+1} of ${g.sheets.length}</p></div>`;
+        if(!batch){const rips=cuts.filter(c=>c.kind==='rip').length;ol+=`<details class="pf"${si===0?' open':''}><summary>Sheet ${si+1}: ${rips} rip${rips===1?'':'s'}, then ${cuts.length-rips} cross-cuts and trims</summary><ol class="gcuts">${txt.map(([o,t])=>`<li>${o?`<b>${o.num}.</b> `:''}${t}</li>`).join('')}</ol></details>`}});
+      step(`Cut ${esc(g.name)} mm sheets (${L}×${W})`,`<div class="gsheets">${html}</div>`,'','',`${ol}<span class="gkey"><i style="background:#3446D6"></i>rip cuts <i style="background:#D2463A"></i>cross-cuts <i style="background:#2E8B57"></i>trims — numbered in the order you make them${batch?' (same measurement together — see the list below)':''}. Strips are lettered from the first rip. Light-blue parts are shaped.</span>`)});
+    if(batch&&ops.length){const groups=[];ops.forEach(o=>{const k=o.kind+key(o.v),l=groups[groups.length-1];if(l&&l.k===k)l.ops.push(o);else groups.push({k,kind:o.kind,v:o.v,ops:[o]})});
+      const nm={rip:'Rip',cross:'Cross-cut',trim:'Trim'},how={rip:'set the jig / fence to',cross:'set the stop / mark at',trim:'set the jig / fence to'};
+      step('Cut list by saw setting',`<ol class="gcuts">${groups.map((gp,ix)=>`<li><b>${how[gp.kind]} ${f0(gp.v)} mm</b> — ${nm[gp.kind]} ${gp.ops.length}× (cuts ${gp.ops[0].num}${gp.ops.length>1?'–'+gp.ops[gp.ops.length-1].num:''}): ${(()=>{const bm={};gp.ops.forEach(o=>{((bm[o.mat]=bm[o.mat]||{})[o.si]=bm[o.mat][o.si]||[]).push(o.tag)});return Object.entries(bm).map(([m,ss])=>`<i>${esc(m)}</i> ${Object.entries(ss).map(([si,tg])=>`sheet ${+si+1}: ${tg.join(', ')}`).join(' · ')}`).join(' | ')})()}</li>`).join('')}</ol>`,'','',`${groups.length} settings in this order. A rip cuts a full-length strip off the sheet (the order of strips on one sheet does not matter). A cross-cut takes a part off the end of a strip; a trim rips a part to its final width.`)}
     if(sp.groups.length){let t='';sp.groups.forEach(g=>{t+=`<p><b>${esc(FIN[g.fin]?.name||'')} ${g.t} mm · ${g.W} mm boards</b></p><ol class="gcuts">`+g.bars.map((b,i)=>`<li>Board ${i+1}: ${b.pl.map(c=>`cross-cut ${f0(c.len)} → ${c.p.id}${c.rip?` (rip ${c.rip} mm off the back edge)`:''}`).join(', ')}</li>`).join('')+`</ol>`});
       step('Cut the pre-edged boards','','','',`Square one end first, then cross-cut to length — measure each part from the squared end. Where a part is narrower than the board, rip the extra off the <b>back</b> edge so the factory edge band stays at the front.${t}`)}
     const band=gs.filter(p=>p.band!=='none'&&!sp.ids.has(p.id)&&!(MATS[p.matType]||{}).paint&&!(MATS[p.matType]||{}).micro),bm=band.reduce((a,p)=>a+p.bandM*p.qty,0);
@@ -4436,7 +4452,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.60';
+const APP_VERSION='v0.61';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;

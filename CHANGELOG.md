@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.61
+
+- **Cut order: "Same width together".** New "Cut order" step in the Build guide, with two choices:
+  - **Sheet by sheet** (as before): each sheet is cut completely before the next one.
+  - **Same width together:** every cut with the same measurement is made one after the other, across all sheets and boards. First all rips (widest first), then all cross-cuts (longest first), then the trims. You set the track-saw jig, fence or stop far fewer times; the guide says how many (in the example design 102 instead of about 158).
+  - The numbers on the sheet drawings follow the chosen order. A new list, "Cut list by saw setting", shows for each setting which sheet and strip, or which part, to cut.
+
 ## v0.60
 
 Fixes from an audit of errors, the cut and material lists, and the technical drawings.
