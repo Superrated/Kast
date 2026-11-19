@@ -1,13 +1,13 @@
-# Fitted
+# Fitted by BRUIS
 
-**Fitted** designs built-in wardrobes and cabinets (not kitchens) for one or more walls of a room, including walls under a sloped ceiling, and turns the design into everything needed to build it:
+**Fitted** (by BRUIS) designs built-in wardrobes and cabinets (not kitchens) for one or more walls of a room, including walls under a sloped ceiling, and turns the design into everything needed to build it:
 
 - a front drawing and a 3D view (also drawn into a photo of your own room)
 - a cut list, sheet cutting plans and drawings of the shaped parts
 - a hardware list and a price estimate (Belgian woodworking shops)
 - a step-by-step build guide, and a PDF with all of the above
 
-Version **v0.67**.
+Version **v0.68**.
 
 ## Use it
 

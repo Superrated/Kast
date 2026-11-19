@@ -1,5 +1,26 @@
 # Changelog
 
+## v0.68
+
+- **Fitted by BRUIS**: the name now carries BRUIS (header, page title, PDF cover and footer, installed app).
+- UX audit fixes:
+  - The build guide's time estimate now matches "Your plan".
+  - The time and weight boxes in the guide are readable in dark mode.
+  - The drawing's "Contents" toggle is now "Show items".
+  - Faint hint text has better contrast.
+  - One word list: "closing strip" instead of skirt; "parts" instead of panels.
+  - Tabs: Drawing · 3D · Cut list · Sheets · Shaped parts · Build guide (Lofting is now "Shaped parts"; the phone says Drawing too).
+  - New "Words explained" glossary, linked from every panel.
+  - "Add a column" is one folding list grouped by type; the dropdown is gone.
+  - Top bar: New design · PDF · Designs · ☰ (Notes, Words, Comment and Install moved into the menu, now also on desktop).
+  - Design notes open from the bottom bar or the ⚠ chip only; the duplicate price card is gone from the cut list.
+  - "Building in phases" is now a small link until you use it.
+  - One dark look for anything selected; blue is kept for actions.
+  - Every dialog closes with "Close" at the bottom left.
+  - Sizes in text written like the drawings (1300 mm); no emoji in menus and buttons; no text under 11 px; bigger small buttons.
+  - Smaller page headings; clearer cut-list sheet cards; Construction and Closing strips visible in Simple view.
+  - Plain-language intro on Shaped parts; old duplicate colour scheme removed.
+
 ## v0.67
 
 - **Kast is now called Fitted** — built-in wardrobes & cabinets, drawn and cut. (Saved designs, notes and settings stay; the GitHub address stays the same.)
