@@ -749,14 +749,14 @@ details.mx{grid-column:1/-1}
 @media (prefers-reduced-motion:reduce){#splash{animation-duration:.01s}}
 </style>
 
-<div id="splash" role="status" aria-label="Kast v0.61 is loading"><b>Kast</b><span>v0.61</span></div>
+<div id="splash" role="status" aria-label="Kast v0.62 is loading"><b>Kast</b><span>v0.62</span></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
 
 <div class="app" data-tab="elev">
   <header class="top">
     <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-    <div class="brand" title="Kast v0.61">Kast<small>built-in furniture, drawn and cut · v0.61</small></div>
+    <div class="brand" title="Kast v0.62">Kast<small>built-in furniture, drawn and cut · v0.62</small></div>
     <nav class="tabs" id="tabs">
       <button data-act="tab" data-a="elev" class="on">Elevation</button>
       <button data-act="tab" data-a="3d">3D view</button>
@@ -3131,16 +3131,104 @@ function pdfDialog(){let m=document.getElementById('pdfm');if(!m){m=document.cre
 document.addEventListener('change',e=>{const k=e.target&&e.target.dataset&&e.target.dataset.pdfsec;if(!k)return;ui.pdfSec=ui.pdfSec||{};ui.pdfSec[k]=e.target.checked?1:0;if(!ui.pdfBusy)pdfDialog()});
 async function fitImage(pg,svg,X,Y,W,H){const img=await svgImage(svg);if(!img)return 0;const r=Math.min(W/img.width,H/img.height);const w=img.width*r,h=img.height*r;pg.x.drawImage(img,X+(W-w)/2,Y,w,h);return h}
 function toJpeg(c){return new Promise(res=>c.toBlob(b=>b.arrayBuffer().then(a=>res(new Uint8Array(a))),'image/jpeg',0.86))}
-function buildPdf(jpegs){const enc=new TextEncoder(),parts=[],offs=[];let len=0;const push=b=>{const u=typeof b==='string'?enc.encode(b):b;parts.push(u);len+=u.length};
+function buildPdf(jpegs,o){o=o||{};const PW=o.pw||842,PH=o.ph||595,IW=o.iw||PDFW,IH=o.ih||PDFH;const enc=new TextEncoder(),parts=[],offs=[];let len=0;const push=b=>{const u=typeof b==='string'?enc.encode(b):b;parts.push(u);len+=u.length};
   const n=jpegs.length,obj=k=>{offs[k]=len};push('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n');
   obj(1);push('1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n');
   obj(2);push(`2 0 obj<</Type/Pages/Count ${n}/Kids[${jpegs.map((_,i)=>`${3+i*3} 0 R`).join(' ')}]>>endobj\n`);
-  jpegs.forEach((j,i)=>{const p=3+i*3,c=p+1,im=p+2,cs=`q 842 0 0 595 0 0 cm /I${i} Do Q`;
-    obj(p);push(`${p} 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 842 595]/Resources<</XObject<</I${i} ${im} 0 R>>>>/Contents ${c} 0 R>>endobj\n`);
+  jpegs.forEach((j,i)=>{const p=3+i*3,c=p+1,im=p+2,cs=`q ${PW} 0 0 ${PH} 0 0 cm /I${i} Do Q`;
+    obj(p);push(`${p} 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 ${PW} ${PH}]/Resources<</XObject<</I${i} ${im} 0 R>>>>/Contents ${c} 0 R>>endobj\n`);
     obj(c);push(`${c} 0 obj<</Length ${cs.length}>>stream\n${cs}\nendstream endobj\n`);
-    obj(im);push(`${im} 0 obj<</Type/XObject/Subtype/Image/Width ${PDFW}/Height ${PDFH}/ColorSpace/DeviceRGB/BitsPerComponent 8/Filter/DCTDecode/Length ${j.length}>>stream\n`);push(j);push('\nendstream endobj\n')});
+    obj(im);push(`${im} 0 obj<</Type/XObject/Subtype/Image/Width ${IW}/Height ${IH}/ColorSpace/DeviceRGB/BitsPerComponent 8/Filter/DCTDecode/Length ${j.length}>>stream\n`);push(j);push('\nendstream endobj\n')});
   const total=3+n*3,xref=len;let x=`xref\n0 ${total}\n0000000000 65535 f \n`;for(let k=1;k<total;k++)x+=String(offs[k]).padStart(10,'0')+' 00000 n \n';push(x);push(`trailer<</Size ${total}/Root 1 0 R>>\nstartxref\n${xref}\n%%EOF`);
-  const out=new Uint8Array(len);let o=0;parts.forEach(u=>{out.set(u,o);o+=u.length});return out}
+  const out=new Uint8Array(len);let o_=0;parts.forEach(u=>{out.set(u,o_);o_+=u.length});return out}
+/* ---------- A4 portrait pages in real millimetres (labels and full-size templates) ---------- */
+const A4W=1240,A4H=1754,MMP=A4W/210; // 150 dpi: 5.905 px per mm
+function a4Page(){const c=document.createElement('canvas');c.width=A4W;c.height=A4H;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,A4W,A4H);x.fillStyle='#1D1D1F';x.textBaseline='top';return {c,x}}
+async function savePdfA4(pages,fn,what){const jp=[];for(const p of pages){jp.push(await toJpeg(p.c));p.c.width=p.c.height=1}await saveFile(fn,new Blob([buildPdf(jp,{pw:595.28,ph:841.89,iw:A4W,ih:A4H})],{type:'application/pdf'}),what)}
+const fileBase=()=>(ui.docName||'Kast').replace(/[^\w\- ]+/g,'').trim().replace(/\s+/g,'-')||'Kast';
+// where each part comes from in the cutting plan: "18 mm Melamine #2 B"
+function partSources(gs){const out={},AZ='ABCDEFGHIJKLMNOPQRSTUVWXYZ';nestAll(gs).forEach(n=>n.sheets.forEach((sh,si)=>{const ys=[...new Set(sh.pl.map(c=>c.y))].sort((a,b)=>a-b);sh.pl.forEach(c=>{(out[c.p.id]=out[c.p.id]||[]).push(`${n.t} mm ${MATS[n.mt]?.short||''} sheet ${si+1} · strip ${AZ[ys.indexOf(c.y)%26]}`)})}));return out}
+/* part labels: 24 stickers of 70 × 37 mm on A4 (3 × 8), one per piece */
+async function exportLabels(){const gs=groupsCache||(groupsCache=groupPanels(bgeo())),src=partSources(gs),LW=70*MMP,LH=297/8*MMP,pages=[];let pg=null,n=0;
+  const items=[];gs.forEach(p=>{for(let i=0;i<p.qty;i++)items.push([p,i])});const used={};
+  items.forEach(([p,i])=>{if(n%24===0){pg=a4Page();pages.push(pg)}const c=n%24,X=(c%3)*LW,Y=Math.floor(c/3)*LH,x=pg.x,pad=4*MMP;n++;
+    x.strokeStyle='#E2E2E2';x.lineWidth=1;x.strokeRect(X+0.5,Y+0.5,LW-1,LH-1);
+    x.fillStyle='#1D1D1F';x.font=PF(700,64);x.fillText(p.id,X+pad,Y+pad-4);const idw=x.measureText(p.id).width;
+    x.font=PF(600,23);const tl=wrapText(x,p.type,LW-idw-pad*3).slice(0,2);tl.forEach((l,k)=>x.fillText(l,X+pad*2+idw,Y+pad+k*26));
+    x.font=PF(400,19);x.fillStyle='#555';x.fillText(`${p.secs.join(', ')}${p.qty>1?` · ${i+1} of ${p.qty}`:''}`,X+pad*2+idw,Y+pad+tl.length*26+2);
+    x.fillStyle='#1D1D1F';x.font=PM(28);x.fillText(`${f0(p.L)} × ${f0(p.Wd)} × ${p.t}`,X+pad,Y+pad+80);
+    const bw=84,bh=42,bx=X+LW-pad-bw,by=Y+LH-pad-bh-20;x.font=PF(400,16);x.fillStyle='#333';{let t=`${MATS[p.matType]?.short||''} · ${FIN[p.fin]?.name||''}`;while(t.length>8&&x.measureText(t).width>LW-pad*3-bw)t=t.slice(0,-2);x.fillText(t,X+pad,Y+pad+118)}
+    const sl=(src[p.id]||[]);const k_=used[p.id]=(used[p.id]||0);used[p.id]++;x.fillStyle='#777';x.font=PF(400,16);x.fillText(wrapText(x,sl[k_]||'',LW-pad*3-bw)[0]||'',X+pad,Y+LH-pad-18);
+    // edge-band diagram: thick line = edge band; L = long sides
+    const bs=bandSides(p);x.strokeStyle='#BBB';x.lineWidth=2;x.strokeRect(bx,by,bw,bh);x.strokeStyle='#1D1D1F';x.lineWidth=7;
+    if(bs[0]){x.beginPath();x.moveTo(bx,by+bh);x.lineTo(bx+bw,by+bh);x.stroke()}if(bs[1]){x.beginPath();x.moveTo(bx,by);x.lineTo(bx+bw,by);x.stroke()}if(bs[2]){x.beginPath();x.moveTo(bx,by);x.lineTo(bx,by+bh);x.stroke()}if(bs[3]){x.beginPath();x.moveTo(bx+bw,by);x.lineTo(bx+bw,by+bh);x.stroke()}
+    x.fillStyle='#777';x.font=PF(400,14);x.fillText(bs.some(Boolean)?'edge band':'no edge band',bx,by+bh+4);
+    if((p.holes||[]).some(h=>h.dp)){x.fillStyle='#3446D6';x.font=PF(600,15);x.fillText('hinge cups: see drawing',X+pad,Y+LH-pad-38)}});
+  if(!pages.length){toast('No parts to label');return}
+  await savePdfA4(pages,`${fileBase()}-labels.pdf`,'Labels');}
+/* full-size templates: only the A4 tiles that a sloped or curved edge crosses, at 1:1 */
+async function exportTemplates(){const gs=(groupsCache||(groupsCache=groupPanels(bgeo()))).filter(p=>!p.rect),pages=[],M=10,TW=190,TH=277;
+  if(!gs.length){toast('There are no shaped parts — every part is a rectangle');return}
+  {const pg=a4Page(),x=pg.x;x.font=PF(700,46);x.fillText('Full-size templates',M*MMP,M*MMP);x.font=PF(400,22);x.fillStyle='#333';
+    const intro=['Print at 100 % / “actual size” — not “fit to page”. Check the square below with a ruler: it must be exactly 100 mm.','Only the parts of each panel with a sloped or curved edge are printed. Every page shows where it sits on the panel: the X and Y numbers along its edges are millimetres from the panel’s bottom-left corner, the same as in the Lofting drawing.','Mark the corner coordinates on the board, line the page up with them, tape it down and trace or prick through along the thick line. The grey side is waste.'];
+    let y=M*MMP+80;intro.forEach(t=>{wrapText(x,t,A4W-2*M*MMP).forEach(l=>{x.fillText(l,M*MMP,y);y+=30});y+=12});
+    x.strokeStyle='#1D1D1F';x.lineWidth=2;x.strokeRect(M*MMP,y+20,100*MMP,100*MMP);x.font=PF(600,22);x.fillStyle='#1D1D1F';x.fillText('100 × 100 mm',M*MMP+12,y+32);y+=100*MMP+60;
+    x.font=PF(600,26);x.fillText('In this file',M*MMP,y);y+=40;x.font=PF(400,21);pg.list=y;pages.push(pg)}
+  const toc=[];
+  gs.forEach(p=>{const P=p.poly,shaped=[];for(let i=0;i<P.length;i++){const a=P[i],b=P[(i+1)%P.length];if(Math.abs(a[0]-b[0])>0.5&&Math.abs(a[1]-b[1])>0.5)shaped.push([a,b])}
+    const nx=Math.ceil(p.w/TW),ny=Math.ceil(p.h/TH),tiles=new Set();shaped.forEach(([a,b])=>{const L=Math.hypot(b[0]-a[0],b[1]-a[1]);for(let t=0;t<=L;t+=5){const u=t/L,px=a[0]+(b[0]-a[0])*u,py=a[1]+(b[1]-a[1])*u;tiles.add(Math.min(nx-1,Math.floor(px/TW))+','+Math.min(ny-1,Math.floor(py/TH)))}});
+    const list=[...tiles].map(t=>t.split(',').map(Number)).sort((a,b)=>b[1]-a[1]||a[0]-b[0]);if(!list.length){toc.push(`${p.id} ${p.type} — straight edges only: mark it from the Lofting points`);return}toc.push(`${p.id} ${p.type} (${p.qty}×) — ${list.length} page${list.length>1?'s':''}`);
+    list.forEach(([cx,cy],ti)=>{const pg=a4Page(),x=pg.x,ox=cx*TW,oy=cy*TH,X=mx=>(M+(mx-ox))*MMP,Y=my=>(M+TH-(my-oy))*MMP;
+      // waste side: grey everywhere, then the part in white
+      x.fillStyle='#E9E9E9';x.fillRect(M*MMP,M*MMP,TW*MMP,TH*MMP);x.save();x.beginPath();x.rect(M*MMP,M*MMP,TW*MMP,TH*MMP);x.clip();x.beginPath();P.forEach((q,k)=>k?x.lineTo(X(q[0]),Y(q[1])):x.moveTo(X(q[0]),Y(q[1])));x.closePath();x.fillStyle='#fff';x.fill();x.strokeStyle='#000';x.lineWidth=4;x.stroke();
+      (p.holes||[]).forEach(h=>{if(h.poly){x.beginPath();h.poly.forEach((q,k)=>k?x.lineTo(X(q[0]),Y(q[1])):x.moveTo(X(q[0]),Y(q[1])));x.closePath();x.lineWidth=3;x.stroke()}else{x.beginPath();x.arc(X(h.x),Y(h.y),h.d/2*MMP,0,7);x.lineWidth=2;x.stroke();x.beginPath();x.moveTo(X(h.x)-8,Y(h.y));x.lineTo(X(h.x)+8,Y(h.y));x.moveTo(X(h.x),Y(h.y)-8);x.lineTo(X(h.x),Y(h.y)+8);x.stroke()}});
+      P.forEach((q,k)=>{if(q[0]>=ox-1&&q[0]<=ox+TW+1&&q[1]>=oy-1&&q[1]<=oy+TH+1){x.fillStyle='#000';x.beginPath();x.arc(X(q[0]),Y(q[1]),9,0,7);x.fill();x.fillStyle='#fff';x.font=PF(700,12);x.textAlign='center';x.fillText(String(k+1),X(q[0]),Y(q[1])-6);x.textAlign='left';x.fillStyle='#000';x.font=PM(16);x.fillText(`${r1(q[0])}, ${r1(q[1])}`,X(q[0])+12,Y(q[1])+4)}});
+      x.restore();
+      // rulers: panel coordinates every 10 mm along the tile edges
+      x.strokeStyle='#000';x.lineWidth=1.5;x.fillStyle='#000';x.font=PM(13);
+      for(let mm=Math.ceil(ox/10)*10;mm<=ox+TW;mm+=10){const xx=X(mm),big=mm%50===0;x.beginPath();x.moveTo(xx,M*MMP);x.lineTo(xx,M*MMP+(big?24:12));x.moveTo(xx,(M+TH)*MMP);x.lineTo(xx,(M+TH)*MMP-(big?24:12));x.stroke();if(mm%50===0)x.fillText(String(mm),xx+3,M*MMP+26)}
+      for(let mm=Math.ceil(oy/10)*10;mm<=oy+TH;mm+=10){const yy=Y(mm),big=mm%50===0;x.beginPath();x.moveTo(M*MMP,yy);x.lineTo(M*MMP+(big?24:12),yy);x.moveTo((M+TW)*MMP,yy);x.lineTo((M+TW)*MMP-(big?24:12),yy);x.stroke();if(mm%50===0)x.fillText(String(mm),M*MMP+28,yy-7)}
+      x.lineWidth=1;x.strokeStyle='#999';x.strokeRect(M*MMP,M*MMP,TW*MMP,TH*MMP);
+      x.fillStyle='#fff';x.fillRect(0,A4H-M*MMP+2,A4W,M*MMP);x.fillStyle='#1D1D1F';x.font=PF(600,18);x.fillText(`${p.id} ${p.type} · page ${ti+1} of ${list.length} · X ${f0(ox)}–${f0(ox+TW)}, Y ${f0(oy)}–${f0(oy+TH)} mm from the bottom-left corner`,M*MMP,A4H-M*MMP+12);
+      pages.push(pg)})});
+  {const pg=pages[0],x=pg.x;let y=pg.list;toc.forEach(t=>{x.fillText(t,M*MMP,y);y+=30})}
+  await savePdfA4(pages,`${fileBase()}-templates.pdf`,'Templates')}
+/* ---------- files: save helper, tiny XLSX writer, cut lists for the panel shops ---------- */
+async function saveFile(fn,blob,what){let dl=null;try{if(window.claude&&claude.use)dl=await claude.use('downloads')}catch(e){}
+  if(!dl){if(!window.claude){try{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fn;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);toast(`Saved ${fn}`)}catch(e){toast('Could not save the file here')}return}toast((what||'File')+' ready — saving works in the published Kast app');return}
+  try{await dl.save({filename:fn,data:blob});toast(`Saved ${fn}`)}catch(e){toast(e&&e.code==='declined'?'Not saved':'Could not save the file here')}}
+const CRC_T=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+function crc32(u){let c=0xFFFFFFFF;for(let i=0;i<u.length;i++)c=CRC_T[(c^u[i])&255]^(c>>>8);return (c^0xFFFFFFFF)>>>0}
+function zipStore(files){const enc=new TextEncoder(),parts=[],cen=[];let off=0;const u16=v=>[v&255,(v>>8)&255],u32=v=>[v&255,(v>>8)&255,(v>>16)&255,(v>>>24)&255];
+  files.forEach(([name,data])=>{const nb=enc.encode(name),db=typeof data==='string'?enc.encode(data):data,crc=crc32(db);
+    const lh=new Uint8Array([0x50,0x4b,3,4,...u16(20),...u16(0x0800),...u16(0),...u16(0),...u16(0x21),...u32(crc),...u32(db.length),...u32(db.length),...u16(nb.length),...u16(0)]);
+    parts.push(lh,nb,db);cen.push(new Uint8Array([0x50,0x4b,1,2,...u16(20),...u16(20),...u16(0x0800),...u16(0),...u16(0),...u16(0x21),...u32(crc),...u32(db.length),...u32(db.length),...u16(nb.length),...u16(0),...u16(0),...u16(0),...u16(0),...u32(0),...u32(off)]),nb);off+=lh.length+nb.length+db.length});
+  const cs=cen.reduce((a,b)=>a+b.length,0),end=new Uint8Array([0x50,0x4b,5,6,0,0,0,0,...u16(files.length),...u16(files.length),...u32(cs),...u32(off),0,0]);return new Blob([...parts,...cen,end],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})}
+// sheets: [{name, rows:[[cell,...]], widths:[..], bold:Set(rowIndex)}]; a cell is a string or number
+function xlsxBlob(sheets){const X=v=>String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'),col=i=>{let s='';i++;while(i){const m=(i-1)%26;s=String.fromCharCode(65+m)+s;i=Math.floor((i-1)/26)}return s};
+  const ws=sh=>`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">${sh.widths?`<cols>${sh.widths.map((w,i)=>`<col min="${i+1}" max="${i+1}" width="${w}" customWidth="1"/>`).join('')}</cols>`:''}<sheetData>${sh.rows.map((r,ri)=>`<row r="${ri+1}">${r.map((v,ci)=>v===''||v==null?'':typeof v==='number'?`<c r="${col(ci)}${ri+1}"${sh.bold&&sh.bold.has(ri)?' s="1"':''}><v>${v}</v></c>`:`<c r="${col(ci)}${ri+1}" t="inlineStr"${sh.bold&&sh.bold.has(ri)?' s="1"':''}><is><t xml:space="preserve">${X(v)}</t></is></c>`).join('')}</row>`).join('')}</sheetData></worksheet>`;
+  const files=[['[Content_Types].xml',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>${sheets.map((_,i)=>`<Override PartName="/xl/worksheets/sheet${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('')}</Types>`],
+    ['_rels/.rels','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'],
+    ['xl/workbook.xml',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>${sheets.map((sh,i)=>`<sheet name="${X(sh.name.slice(0,31))}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join('')}</sheets></workbook>`],
+    ['xl/_rels/workbook.xml.rels',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${sheets.map((_,i)=>`<Relationship Id="rId${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join('')}<Relationship Id="rId${sheets.length+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`],
+    ['xl/styles.xml','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts><fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills><borders count="1"><border/></borders><cellStyleXfs count="1"><xf/></cellStyleXfs><cellXfs count="2"><xf/><xf fontId="1" applyFont="1"/></cellXfs></styleSheet>'],
+    ...sheets.map((sh,i)=>[`xl/worksheets/sheet${i+1}.xml`,ws(sh)])];
+  return zipStore(files)}
+const SHOP_INFO={hh:{name:'Hanssens Hout',email:'info@hanssenshout.be',phone:'09 250 96 80',web:'hanssenshout.be/nl/maatwerk',how:'Mail this list to Hanssens Hout, or bring it to the shop. They cut on three panel saws and can edge-band (melamine, veneer, ABS) and drill or rout on CNC.'},
+  wc:{name:'Woodcenter',email:'info@woodcenter.be',phone:'+32 56 42 42 84',web:'woodcenter.be/maatwerk',addr:'Zuidstraat 7, 8560 Wevelgem',how:'Mail this list to Woodcenter (more than 5 panels) — they work out the sheet layout for free and send a message when it is ready to collect. Edge banding: panels at least 70 × 150 mm.'}};
+// edge-band sides for a part: L1/L2 = the two long (length) edges, B1/B2 = the two short (width) edges
+function bandSides(p){if(p.band==='none'||(MATS[p.matType]||{}).paint||(MATS[p.matType]||{}).micro)return ['','','',''];if(p.band==='all')return ['x','x','x','x'];
+  const bl=p.bandLen||0;return Math.abs(bl-p.L)<=Math.abs(bl-p.Wd)?['x','','','']:['','','x','']}
+function shopXlsx(shop){const I=SHOP_INFO[shop],BG=bgeo(),gs=groupsCache||(groupsCache=groupPanels(BG)),nest=nestAll(gs),date=new Date().toLocaleDateString('nl-BE'),name=ui.docName||'Kast';
+  const head=[[`Zaaglijst voor ${I.name}`],['Project',name],['Datum',date],['Klant',''],['Telefoon',''],['Afhalen / leveren','afhalen'],['Kantenband','ABS 1 mm in de kleur van de plaat, tenzij anders vermeld (x = deze kant krijgt kantenband)'],['Maten','afgewerkte maten in mm, kantenband inbegrepen · lengte = in de draadrichting van het decor'],[]];
+  const cols=['Nr','Aantal','Lengte (mm)','Breedte (mm)','Dikte (mm)','Materiaal','Decor / kleur','Draad','Kant L1','Kant L2','Kant B1','Kant B2','Onderdeel','Opmerking'];
+  const rows=gs.map(p=>{const f=FIN[p.fin]||{},grain=f.kind&&f.kind!=='plain'&&!f.micro,bs=bandSides(p),opm=[];if(!p.rect)opm.push(`vorm: rechthoek zagen, schuine kant / vorm zelf bijwerken volgens tekening ${p.id}`);if(p.angled)opm.push('schuine zaagsnede: zie tekening');if((p.holes||[]).some(h=>h.dp))opm.push('scharnierpotten Ø35 (eventueel CNC)');
+    return [p.id,p.qty,+f0(p.L),+f0(p.Wd),+p.t,MATS[p.matType]?.name||p.matType,f.name||p.fin,grain?'ja (lengte)':'vrij',...bs,p.type,opm.join(' · ')]});
+  const sum=[['Plaatmateriaal (schatting van Kast — de zaagdienst optimaliseert zelf)'],['Materiaal','Decor','Dikte (mm)','Plaatmaat','Aantal platen'],...nest.filter(n=>n.sheets.length).map(n=>[MATS[n.mt]?.name||n.mt,FIN[n.fin]?.name||n.fin,+n.t,n.sheet.replace('x',' × '),n.sheets.length+(n.over.length?1:0)])];
+  const info=[[I.name],['E-mail',I.email],['Telefoon',I.phone],['Web',I.web],...(I.addr?[['Adres',I.addr]]:[]),[],[I.how]];
+  return xlsxBlob([{name:'Zaaglijst',rows:[...head,cols,...rows],widths:[7,8,12,12,10,22,24,12,8,8,8,8,28,60],bold:new Set([0,head.length])},{name:'Platen',rows:sum,widths:[24,26,11,16,13],bold:new Set([0,1])},{name:'Contact',rows:info,widths:[14,60],bold:new Set([0])}])}
+async function exportShop(shop){const I=SHOP_INFO[shop];if(!I)return;const fn=`${(ui.docName||'Kast').replace(/[^\w\- ]+/g,'').trim().replace(/\s+/g,'-')||'Kast'}-zaaglijst-${I.name.replace(/\s+/g,'')}.xlsx`;await saveFile(fn,shopXlsx(shop),'Cut list')}
+function shopMail(shop){const I=SHOP_INFO[shop],gs=groupsCache||(groupsCache=groupPanels(bgeo())),n=gs.reduce((a,p)=>a+p.qty,0);return `Beste ${I.name},\n\nIn bijlage vindt u mijn zaaglijst (${n} onderdelen, ${gs.length} verschillende maten) voor project "${ui.docName||'Kast'}". Graag zagen${gs.some(p=>p.band!=='none')?' en kantenbanden (zie kolommen L1/L2/B1/B2)':''}. Kunt u mij een prijs en een afhaaldatum laten weten?\n\nMet vriendelijke groeten,\n`}
 async function exportPdf(){
   const sec=ui.pdfSec||PDF_PRE.full[1],bar=document.getElementById('pdfbar'),stEl=document.getElementById('pdfst'),goB=document.getElementById('pdfgo');ui.pdfCancel=false;if(bar)bar.hidden=false;if(goB){goB.disabled=true;goB.textContent='Working…';const c_=document.getElementById('pdfcl');if(c_)c_.textContent='Stop'}
   const jp=[];let lastY=0;const flush=async all=>{for(let i=0;i<pages.length;i++){const p=pages[i];if(p.done||(!all&&(p===tocPg||i===pages.length-1)))continue;pageFooter(p,i,name,date);p.done=true;jp[i]=await toJpeg(p.c);p.c.width=p.c.height=1}};
@@ -3478,7 +3566,9 @@ function renderCut(){
   const nest=nestAll(gs),sp=stockPlan(gs);
   let h=`<h2>Cut list</h2><p class="lede">Every panel with its finished size. Painted MDF areas count both faces and the edges. Length runs along the grain. Shaped, drilled and fabric-frame parts are drawn point by point in Lofting. Construction: ${S.opts.construct==='boxes'?'separate boxes':'shared partitions'}.</p>
   <div class="stats"><div class="stat"><b>${total}</b><span>panels · ${gs.length} unique</span></div><a class="stat pstat" href="#price" data-act="toPrice"><b id="pstatv">…</b><span>estimated price ↓</span></a>${nest.map(n=>`<div class="stat"><b>${n.sheets.length}${n.over.length?'+':''}</b><span>${esc(n.name)} mm sheets</span></div>`).join('')}${sp.groups.map(g=>`<div class="stat"><b>${g.bars.length}</b><span>${esc(FIN[g.fin]?.name||'')} ${g.t} mm · ${g.W}×${sp.cfg.L} pre-edged boards</span></div>`).join('')}</div>
-  <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap"><button class="btn" data-act="copyCSV">Copy as CSV</button><button class="btn" data-act="copyText">Copy as text</button></div>
+  <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap"><button class="btn" data-act="copyCSV">Copy as CSV</button><button class="btn" data-act="copyText">Copy as text</button><button class="btn" data-act="lblPdf">Part labels (PDF)</button></div>
+  <div class="pbud" style="flex-wrap:wrap"><span class="pbok">Have it cut</span><span style="flex:1 1 260px">Send the cut list to a panel shop: they cut (and edge-band) every part for you. The file is an Excel list in Dutch with sizes, board, grain and which edges get edge band.</span>${Object.entries(SHOP_INFO).map(([k,I])=>`<button type="button" class="btn sm" data-act="shopX" data-a="${k}">Excel for ${I.name}</button>`).join('')}</div>
+  ${ui.shopMail?`<div class="pbud" style="flex-direction:column;align-items:stretch"><span>Mail it to <b>${SHOP_INFO[ui.shopMail].email}</b> (or call ${SHOP_INFO[ui.shopMail].phone}) with the Excel attached. ${SHOP_INFO[ui.shopMail].how} Text you can use:</span><textarea readonly rows="7" style="width:100%;font:inherit;font-size:12.5px">${esc(shopMail(ui.shopMail))}</textarea><button type="button" class="btn sm" data-act="shopMailCopy" style="align-self:flex-start">Copy the text</button></div>`:''}
   <div class="tw"><table class="cut"><thead><tr><th>#</th><th>Part</th><th>Qty</th><th>Length</th><th>Width</th><th>Shape</th><th>Where</th><th>Notes</th></tr></thead><tbody>`;
   let last='';gs.forEach(p=>{const m=matName(p);if(m!==last){h+=`<tr class="grp"><td colspan="8"><span class="sw" style="background:${FIN[p.fin]?.base}"></span> ${esc(m)}</td></tr>`;last=m}
     const nh=p.holes.filter(o=>!o.poly).length,nc=p.holes.filter(o=>o.poly).length;
@@ -3874,7 +3964,7 @@ function vAngle(pts,i,ar){const a=pts[(i-1+pts.length)%pts.length],b=pts[i],c=pt
   let ang=Math.atan2(v1[0]*v2[1]-v1[1]*v2[0],v1[0]*v2[0]+v1[1]*v2[1])*DEG;if(ar>0)ang=-ang;if(ang<0)ang+=360;return ang}
 function renderLoft(){
   const gs=groupsCache||groupPanels(bgeo());const sp=gs.filter(p=>ui.loftAll||!p.rect||p.holes.length||p.angled).sort((a,b)=>((a.rect&&!a.holes.length)?1:0)-((b.rect&&!b.holes.length)?1:0));const el=document.getElementById('v-loft');
-  let h=`<h2>Lofting</h2><p class="lede">Shaped, drilled and angled panels, drawn full-size in numbers. Origin is the bottom-left corner of each panel's bounding box; X runs along the bottom edge, Y upward, all in mm. Mark the points, join them, cut. Blue lines are dimensions; dashed lines lead to the point they measure.</p><div class="seg" style="max-width:420px;margin-bottom:14px"><button type="button" class="${ui.loftAll?'':'on'}" data-act="loftAll" data-a="0">Shaped &amp; drilled parts</button><button type="button" class="${ui.loftAll?'on':''}" data-act="loftAll" data-a="1">Every panel</button></div>`;
+  let h=`<h2>Lofting</h2><div style="display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px"><button type="button" class="btn sm" data-act="tplPdf">Full-size templates (PDF)</button><button type="button" class="btn sm" data-act="lblPdf">Part labels (PDF)</button></div><p class="lede">Shaped, drilled and angled panels, drawn full-size in numbers. Origin is the bottom-left corner of each panel's bounding box; X runs along the bottom edge, Y upward, all in mm. Mark the points, join them, cut. Blue lines are dimensions; dashed lines lead to the point they measure.</p><div class="seg" style="max-width:420px;margin-bottom:14px"><button type="button" class="${ui.loftAll?'':'on'}" data-act="loftAll" data-a="0">Shaped &amp; drilled parts</button><button type="button" class="${ui.loftAll?'on':''}" data-act="loftAll" data-a="1">Every panel</button></div>`;
   if(!sp.length)h+='<p class="lede">All panels are plain rectangles — see the cut list.</p>';
   h+='<div class="lgrid">'+sp.map(p=>{const ar=polyArea(p.poly);return `<div class="lcard"><h4>${p.id} · ${esc(p.type)} <span>${p.qty}× · ${esc(matName(p))}</span></h4>
     <div class="lsvg">${loftSVG(p)}</div>
@@ -4452,7 +4542,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.61';
+const APP_VERSION='v0.62';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
@@ -5020,6 +5110,10 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'shop':S.opts.shop=a;ui.saver=null;changed(true);break;
     case 'saver':sheetSaver();dirty.cut=true;renderCut();{const t=document.getElementById('price');if(t)t.scrollIntoView({block:'start'})}break;
     case 'evenDoors':evenDoors();break;
+    case 'lblPdf':toast('Making the labels…');exportLabels();break;
+    case 'tplPdf':toast('Making the templates…');exportTemplates();break;
+    case 'shopX':ui.shopMail=a;exportShop(a);dirty.cut=true;renderCut();break;
+    case 'shopMailCopy':{const t=shopMail(ui.shopMail);try{navigator.clipboard.writeText(t).then(()=>toast('Text copied'),()=>toast('Select the text and copy it'))}catch(e){toast('Select the text and copy it')}break}
     case 'priceUpd':priceUpd();break;
     case 'saverS':sheetSaver();renderSheets();break;
     case 'saverUse':S.room.D=+a;ui.saver=null;changed(true);toast(`Cabinet depth is now ${a} mm`);break;

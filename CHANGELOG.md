@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.62
+
+- **Have it cut at Hanssens Hout or Woodcenter.** The Cut list tab has an "Excel for Hanssens Hout" and an "Excel for Woodcenter" button. Each makes a Dutch cut list (zaaglijst):
+  - per part: number, quantity, length, width, thickness, board, colour, grain, and which edges get edge band (L1 L2 B1 B2);
+  - a sheet with the boards needed and a sheet with the shop's contact details;
+  - after saving, the app shows the shop's e-mail address and a ready-made message to copy.
+- **Part labels (PDF):** one sticker per piece, 24 per A4 page (70 × 37 mm labels). Each shows the part number, what it is and where it goes, its size, board and colour, a little drawing of its edge-banded sides, and which sheet and strip it comes from.
+- **Full-size templates (PDF):** for every shaped part, the A4 pages its sloped edges run through, printed at 1:1. Rulers along each page show the position on the panel, and the first page has a 100 mm square to check the printer scale.
+
 ## v0.61
 
 - **Cut order: "Same width together".** New "Cut order" step in the Build guide, with two choices:
