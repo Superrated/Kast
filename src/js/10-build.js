@@ -2,7 +2,7 @@
    build(S): turns the design state S into geometry G — every part (G.panels), front (G.fronts), 3D item (G.items), the hardware list (G.H) and the design notes (G.warns).
    Everything else (drawing, cut list, price, guide, 3D) reads G. New checks go at the end of build, next to accessCheck/roomCheck/cornerCheck.
 */
-function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forEach(z=>{if(!z.dog)return;if(z.type!=='closed'){delete z.dog;return}z.shelves=0;z.rail=false;z.vd=[];z.vsh=[];z.fabric=false;z.doorMode='hinged';if(!DOGS[z.dog])z.dog='arch';z.face='flat';z.inset='';z.doors=1}));
+function build(S){regCustom(S);applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forEach(z=>{if(!z.dog)return;if(z.type!=='closed'){delete z.dog;return}z.shelves=0;z.rail=false;z.vd=[];z.vsh=[];z.fabric=false;z.doorMode='hinged';if(!DOGS[z.dog])z.dog='arch';z.face='flat';z.inset='';z.doors=1}));
   const R=S.room,K=S.skirt,M=S.mat,O=S.opts;
   const W=+R.W,D=+R.D,drop=+R.drop||0;
   const tc=+M.carcass.t,tb=+M.back.t,tf=+M.front.t,ts=+M.shelf.t,td=+M.desk.t,tk=+M.skirt.t;

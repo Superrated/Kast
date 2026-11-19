@@ -25,7 +25,8 @@ function renderFinPicker(){const v=finVal(FP.p)||'',q=FP.q.trim().toLowerCase();
   const tile=(k,f)=>{const light=lum(f.base)>.6;const code=f.ral?f.name.slice(4,8):'';return `<button type="button" class="fsw ${k===v?'on':''}" data-act="finPicked" data-a="${k}" title="${esc(f.name)}" style="background:${f.kind!=='plain'?`url(&quot;data:image/svg+xml;utf8,${encodeURIComponent(swatchSVG(k))}&quot;) center/cover`:f.base};color:${light?'#222':'#fff'}"><span>${f.ral?code:esc(f.name)}</span></button>`};
   let h='';
   if(FP.inherit)h+=`<button type="button" class="btn sm ${!v?'on':''}" data-act="finPicked" data-a="" style="justify-self:start">${esc(FP.inherit)}</button>`;
-  const tex=Object.entries(FIN).filter(([,f])=>!f.ral&&!f.hidden&&!f.micro&&match(f)),mic=Object.entries(FIN).filter(([,f])=>f.micro&&match(f));
+  const mine=Object.entries(FIN).filter(([,f])=>f.custom&&match(f));h+=`<h4>Your colours</h4>${mine.length?`<div class="fgrid wide">${mine.map(([k,f])=>tile(k,f)).join('')}</div>`:''}${cuPickerHTML()}`;
+  const tex=Object.entries(FIN).filter(([,f])=>!f.ral&&!f.hidden&&!f.micro&&!f.custom&&match(f)),mic=Object.entries(FIN).filter(([,f])=>f.micro&&match(f));
   if(tex.length)h+=`<h4>Wood &amp; textures</h4><div class="fgrid wide">${tex.map(([k,f])=>tile(k,f)).join('')}</div>`;
   if(mic.length)h+=`<h4>Microcement</h4><div class="fgrid wide">${mic.map(([k,f])=>tile(k,f)).join('')}</div>`;
   for(let fam=1;fam<=9;fam++){const r=Object.entries(FIN).filter(([,f])=>f.ral&&f.fam===fam&&match(f));if(!r.length)continue;
@@ -226,7 +227,7 @@ function renderSide(){
     ${fld('Extra to trim against the wall','skirt.scribe')}${fld('Beam clearance','skirt.beamGap')}${fld('Shelves set back from the front','opts.setback')}${fld('Saw blade thickness','opts.kerf')}${fld('Trim off each sheet edge','opts.trim')}</div></div></details>`;
   h+=`<details class="acc" data-k="mat" ${op('mat')}><summary>Materials</summary><div class="accb">
     ${ROLES.map(([k,l])=>`<div class="mcard"><div class="mtitle">${l}<span>${esc(MATS[S.mat[k].type]?.short||'')} · ${S.mat[k].t} mm ${eurs(boardLevel(S.mat[k].type))}</span></div>${finButton('mat.'+k+'.fin')}${mx('Board &amp; sheet size',`<div class="mgrid">${sel('Board',`mat.${k}.type`,Object.entries(MATS).map(([m,v])=>[m,v.name+'  '+eurs(boardLevel(m),true)]),{re:true})}${fld('Thickness',`mat.${k}.t`)}</div><details class="pf"><summary>Sheet size · ${S.mat[k].sheet.replace('x',' × ')}</summary>${sel('',`mat.${k}.sheet`,SHEETS.map(s=>[s,s.replace('x',' × ')+' mm']))}</details>`)}${stockBuy(k)}</div>`).join('')}
-    </div></details>`;
+    ${custHTML()}</div></details>`;
   h+=`<details class="acc" data-k="secs" ${op('secs')}><summary>Columns</summary><div class="accb">${secEditor()}</div></details>`;
   const parts={};h.split('<details class="acc"').slice(1).forEach(c=>{const m=c.match(/data-k="(\w+)"/);if(m)parts[m[1]]='<details class="acc"'+c});
   el.dataset.flow=pane[0]==='layout'?flowNow():'home';if(isSheet())setTimeout(renderBar,0);el.innerHTML=`<div class="shead"><div class="shandle" data-sgrab="1" aria-hidden="true"><i></i></div><div class="spane" role="tablist">${PANES.map(([k,l])=>`<button type="button" role="tab" aria-selected="${k===pane[0]}" class="${k===pane[0]?'on':''}" data-act="pane" data-a="${k}">${PANE_ICON[k]}<span>${l}</span></button>`).join('')}</div><div class="crumb">${pane[0]==='layout'?crumbHTML():''}</div></div><p class="panelede">${pane[2]} <button type="button" class="linkb" data-act="gloss">What do the words mean?</button></p>`+pane[3].map(k=>parts[k]||'').join('');try{simplifySide(el)}catch(e){}

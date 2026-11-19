@@ -1,5 +1,5 @@
 /* Fitted service worker: keeps the app usable offline after the first visit. */
-const VERSION='v0.101';
+const VERSION='v0.102';
 const CACHE='kast-'+VERSION;
 const CORE=['./','index.html','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()))});

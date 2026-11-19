@@ -109,7 +109,7 @@ function wizRender(){
     <label class="chk wsurv"><input type="checkbox" data-w="survey" id="w-survey" ${WZ.survey?'checked':''}> I measured in more places <small>(recommended — old walls are rarely straight)</small></label>
     ${WZ.survey?`<div class="wsurvb"><div class="grid3">${wf('Width at the floor','wB')}${wf('Halfway up','wM')}${wf('At the top','wT')}</div>${wf('Floor higher at the right end by','fR')}
 <div id="wsv">${wizSurvVerdict()}</div></div>`:''}
-    ${!ui.wizSeen?`<p class="hintp">Just looking? <button class="btn sm" data-act="wizStart">Open the example attic design</button></p>`:''}`}
+    <p class="hintp wstart">Want a head start? <button type="button" class="btn sm" data-act="stOpen">Start from a ready-made design</button>${!ui.wizSeen?` or <button class="btn sm" data-act="wizStart">open the example attic</button>`:''}</p>`}
   if(wstep===1){prev=false;h=`<p class="hintp">Pick the shape you see, then <b>drag the dots</b> to where the slope starts and ends.</p><div class="opts">${[['flat','Flat'],['left','Slope on the left'],['right','Slope on the right'],['both','Slopes both sides'],['double','Two slopes, one side']].map(([k,l])=>`<button class="opt ${WZ.ceil===k?'on':''}" data-act="wizCeil" data-a="${k}">${ceilIcon(k)}${l}</button>`).join('')}</div><div class="grid2">`;
     if(['left','both','double'].includes(WZ.ceil))h+=wf('Left knee wall height','kneeL')+wf('Left slope ends at (from left)','lenL');
     if(WZ.ceil==='double')h+=wf('Slope changes at (from left)','breakX')+wf('Height at that change','breakY');

@@ -196,6 +196,14 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'fbOpen':fbOpen(a||'');break;
     case 'fbKind':FB.kind=a;FB.sent=null;fbRender();break;
     case 'fbSend':fbSend();break;
+    case 'stOpen':stOpen();break;
+    case 'stPick':stPick(a);break;
+    case 'stClose':document.getElementById('stm').hidden=true;break;
+    case 'stFit':ST.fit=!!(document.getElementById('stFit')||{}).checked;break;
+    case 'cuAddFin':{const k=cuAddFin(cuVal('cuFName'),cuVal('cuFCol'),cuVal('cuFKind'));if(k){ui.cuOpen=true;changed(true);toast('Colour added — pick it from any colour button, under “Your colours”')}break}
+    case 'cuAddMat':cuAddMat();break;
+    case 'cuDel':cuDel(a);break;
+    case 'cuPickAdd':{const k=cuAddFin(cuVal('fpCuName'),cuVal('fpCuCol'),cuVal('fpCuKind'));if(!k)break;const p=FP.p;document.getElementById('fpm').hidden=true;if(p.startsWith('wiz:')){WZ[p.slice(4)]=k;wizRender()}else{setP(p,k);fitTypes(S);changed(true)}toast('Colour added and used. It is now under “Your colours” in every colour list.');break}
     case 'fbClose':document.getElementById('fbm').hidden=true;break;
     case 'fbCopy':{const t=(FB.lastText||'')+(FB.lastTech?'\n\n'+FB.lastTech:'');copy(t);break}
     case 'fbDel':{const b_=e.target.closest('button');if(b_&&!b_.dataset.armed){b_.dataset.armed='1';b_.textContent='Delete?';break}(async()=>{try{const[u,id]=a.split('|'),ref=DS.db.doc('feedback/'+u),sn=await ref.get(),d_=sn&&(typeof sn.data==='function'?sn.data():sn),L=((d_&&d_.msgs)||[]).filter(m=>m.id!==id);if(L.length)await ref.set({msgs:L,at:Date.now()});else await ref.delete()}catch(_){}fbInbox()})();break}
@@ -281,7 +289,7 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
       const tc=geo.tc,ys=q.desk?0:q.Pq,hS=gU+tc-ys,M_=geo.maxUnit,low=Math.min(M_-2*tc-10,Math.max(hS-M_+4*tc+10,hS*0.62,ko_?ko_.divY+(ko_.divT||tc)+300-ys+tc:0));S=splitZoneAt(S,i,ys+low-tc);changed(true);toast(geo.secs[i]&&geo.secs[i].splitK>=0?'Split into a lower and an upper unit':'Could not find a good split height — add a fixed divider by hand');break}
     case 'ladAlign':{S=alignLadder(S);changed(true);toast('Cabinets lined up with the ladder rail');break}
     case 'ladPos':{S.ladder=S.ladder||{};S.ladder.pos=Math.max(0,Math.min(1,Math.round(((S.ladder.pos??0.5)+ +a)*10)/10));changed(true);break}
-    case 'wizard':openWiz();break;
+    case 'wizard':{const sm=document.getElementById('stm');if(sm)sm.hidden=true;openWiz();break}
     case 'wizNext':wizGo(1);break;case 'wizBack':wizGo(-1);break;case 'wizSkip':closeWiz();break;
     case 'wizCeil':WZ.ceil=a;wizRender();break;
     case 'wizPur':WZ.pur[a]=!WZ.pur[a];wizRender();break;

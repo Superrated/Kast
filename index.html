@@ -367,6 +367,35 @@ details.pf .grid2{margin-top:6px}
 .grid2{grid-template-columns:repeat(2,minmax(0,1fr))}
 .chips,.tchips,.seg,.rnd{min-width:0;max-width:100%}
 .seg button{min-width:0}
+/* ==== starter designs (96-starters.js) ==== */
+#stm .mbox{width:min(1080px,100%)}
+.stgrp h3{margin:0 0 8px;font-size:.95rem}
+.stgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.stcard{font:inherit;color:inherit;text-align:left;cursor:pointer;display:grid;gap:5px;align-content:start;padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--raised);min-width:0}
+.stcard:hover,.stcard:focus-visible{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.stpic{display:block;aspect-ratio:16/10;border-radius:9px;overflow:hidden;background:var(--wall,#EEE)}
+.stpic svg{width:100%;height:100%;display:block}
+.stcard small{color:var(--ink2);line-height:1.35}
+.stcard .sttrend{color:var(--accent);font-weight:600}
+.stshows{display:flex;flex-wrap:wrap;gap:4px}
+.stshows i{font-style:normal;font-size:.72rem;padding:2px 7px;border-radius:99px;background:var(--accent-soft);color:var(--ink)}
+.wstart{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+/* ==== your own boards and colours (46-custom.js) ==== */
+.culist{display:grid;gap:6px}
+.curow{display:grid;grid-template-columns:28px minmax(0,1fr) auto;grid-template-rows:auto auto;column-gap:10px;align-items:center;padding:6px 8px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.curow .cusw{grid-row:1/3;width:28px;height:28px;border-radius:7px;border:1px solid var(--line)}
+.curow .cub{display:grid;place-items:center;font-style:normal;font-size:.7rem;background:repeating-linear-gradient(90deg,#D9C7A5 0 3px,#C9B38C 3px 5px);color:#3a2c1a}
+.curow b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.curow small{grid-column:2;color:var(--ink2)}
+.curow .rowbtn{grid-row:1/3;grid-column:3}
+.cuform{display:grid;gap:8px;padding:10px;border:1px dashed var(--line);border-radius:12px}
+.cupick{margin:6px 0 10px}
+.cuprow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.cuprow input[type=color]{width:44px;height:34px;border:1px solid var(--line);border-radius:8px;padding:2px;background:var(--surface)}
+.cuprow input[type=text]{flex:1 1 180px;min-width:0;height:34px;border:1px solid var(--line);border-radius:8px;padding:0 10px;background:var(--surface);color:var(--ink);font:inherit}
+.cuprow select{height:34px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit}
+.cuform select{width:100%;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit;padding:0 8px}
+.cuform .inp input[type=color]{cursor:pointer}
 /* ==== 10-look.css — The Fitted look: fonts, tokens for light and dark mode, cards, wizard, dialogs. */
 /* ===== Fitted visual refresh ===== */
 :root{--bg:#F3F3F0;--surface:#FAFAF8;--raised:#FFFFFF;--ink:#17191B;--ink2:#62676B;--ink3:#6A6F74;--line:#E4E5E1;--accent:#3446D6;--accent-ink:#FFFFFF;--accent-soft:rgba(52,70,214,.09);--warn:#B4541A;--warn-soft:rgba(180,84,26,.1);--wall:#E7E7E3;--hatch:#D3D5D1;--stage:#ECEDEA;--paper:#FFFFFF;--shade:rgba(20,22,24,.2);
@@ -786,14 +815,14 @@ input[type=checkbox],input[type=radio]{accent-color:var(--ink)}
 .chk{min-height:32px}
 </style>
 
-<div id="splash" role="status" aria-label="Fitted by BRUIS v0.101 is loading"><b>Fitted</b><span>v0.101</span></div>
+<div id="splash" role="status" aria-label="Fitted by BRUIS v0.102 is loading"><b>Fitted</b><span>v0.102</span></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
 
 <div class="app" data-tab="elev">
   <header class="top">
     <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-    <div class="brand" title="Fitted by BRUIS v0.101">Fitted<span class="bybr">by BRUIS</span><small>built-in wardrobes & cabinets, drawn and cut · v0.101</small></div>
+    <div class="brand" title="Fitted by BRUIS v0.102">Fitted<span class="bybr">by BRUIS</span><small>built-in wardrobes & cabinets, drawn and cut · v0.102</small></div>
     <nav class="tabs" id="tabs">
       <button data-act="tab" data-a="elev" class="on">Drawing</button>
       <button data-act="tab" data-a="3d">3D</button>
@@ -834,7 +863,7 @@ input[type=checkbox],input[type=radio]{accent-color:var(--ink)}
   
   <button data-act="tab" data-a="guide"><svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="9" cy="9" r="1.6" fill="currentColor"/><path d="M12 9h4M8 14h8M8 17.5h6" stroke="currentColor" stroke-width="1.6"/></svg><span>Guide</span></button>
 </nav>
-<div class="mmenu" id="mmenu" hidden><button type="button" data-act="io" id="dsBtnM">My designs</button><button type="button" data-act="wizard">New design (wizard)</button><button type="button" data-act="pdf">Download PDF</button><hr><button type="button" data-act="ntOpen" id="ntBtnM">Notes</button><button type="button" class="cmtb" data-act="cmt" hidden>Comment on the drawing</button><button type="button" data-act="aiOpen">AI render (photo-real picture)</button><hr><button type="button" data-act="fbOpen">Talk to BRUIS — thanks, bugs, ideas, coffee</button><button type="button" data-act="gloss">Words explained</button><button type="button" data-act="lang" data-m="1" hidden></button><button type="button" data-act="install" id="instBtnM" hidden>Install app</button></div>
+<div class="mmenu" id="mmenu" hidden><button type="button" data-act="io" id="dsBtnM">My designs</button><button type="button" data-act="stOpen">Start from a design</button><button type="button" data-act="wizard">New design (wizard)</button><button type="button" data-act="pdf">Download PDF</button><hr><button type="button" data-act="ntOpen" id="ntBtnM">Notes</button><button type="button" class="cmtb" data-act="cmt" hidden>Comment on the drawing</button><button type="button" data-act="aiOpen">AI render (photo-real picture)</button><hr><button type="button" data-act="fbOpen">Talk to BRUIS — thanks, bugs, ideas, coffee</button><button type="button" data-act="gloss">Words explained</button><button type="button" data-act="lang" data-m="1" hidden></button><button type="button" data-act="install" id="instBtnM" hidden>Install app</button></div>
 <div class="pcal" id="pcal" hidden role="dialog" aria-label="Line up your room photo"><header><b>Line up your photo</b><span class="sp"></span><label class="btn sm" style="position:relative;overflow:hidden;cursor:pointer">Other photo<input type="file" accept="image/*" data-photoin style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0"></label><button type="button" class="btn sm" data-act="pcalClose">Cancel</button></header><div class="pstage" id="pstage"></div><footer id="pfoot"></footer></div>
 <input type="file" id="photoIn" accept="image/*" hidden>
 <div class="modal" id="wiz" hidden>
@@ -937,7 +966,7 @@ const MATS={
   solid:{name:'Solid wood panel',short:'Solid wood',t:20,sheet:'2500x1250',edge:'Planed and oiled edge',sag:1000,fins:'wood',rough:.6},
   hdf:{name:'HDF / thin MDF',short:'HDF',t:8,sheet:'2800x2070',edge:'No edge treatment',sag:350,fins:'all',rough:.7}};
 function fitTypes(st){if(st.opts&&st.opts.budget)budgetFix(st);Object.entries(st.mat).forEach(([r,m])=>{if(!finAllowed(m.type,m.fin)){const f=FIN[m.fin]||{};m.type=f.ral?(r==='front'||r==='skirt'?'mdfpaint':(r==='back'?'hdf':'melamine')):(m.fin==='birch'?'ply':(r==='desk'?'solid':'veneer'));m.sheet=MATS[m.type].sheet}});return st}
-const finAllowed=(type,k)=>{const m=MATS[type],f=FIN[k];if(!m||!f)return true;if(m.fins==='wood')return f.kind==='wood'||f.kind==='ply';if(m.fins==='ral')return !!f.ral;if(m.fins==='ply')return k==='birch'||!!f.ral;return true};
+const finAllowed=(type,k)=>{const m=MATS[type],f=FIN[k];if(!m||!f)return true;if(f.custom)return m.fins==='all'||(m.fins==='wood'?f.kind!=='plain':f.kind==='plain');if(m.fins==='wood')return f.kind==='wood'||f.kind==='ply';if(m.fins==='ral')return !!f.ral;if(m.fins==='ply')return k==='birch'||!!f.ral;return true};
 const SHEETS=['2800x2070','2440x1220','3050x1220','3050x1300','2500x1250','2620x2070','4100x1300'];
 const ZTYPES=[['closed','Cupboard with doors'],['open','Open shelves'],['drawers','Drawers'],['opening','Niche / TV'],['speaker','Speaker'],['seat','Window seat']];
 const SLIDES=[250,300,350,400,450,500,550,600];
@@ -1147,7 +1176,7 @@ function vdPos(n,mode,w,tc,lb=0){const base=String(mode||'even').replace(/-r$/,'
    build(S): turns the design state S into geometry G — every part (G.panels), front (G.fronts), 3D item (G.items), the hardware list (G.H) and the design notes (G.warns).
    Everything else (drawing, cut list, price, guide, 3D) reads G. New checks go at the end of build, next to accessCheck/roomCheck/cornerCheck.
 */
-function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forEach(z=>{if(!z.dog)return;if(z.type!=='closed'){delete z.dog;return}z.shelves=0;z.rail=false;z.vd=[];z.vsh=[];z.fabric=false;z.doorMode='hinged';if(!DOGS[z.dog])z.dog='arch';z.face='flat';z.inset='';z.doors=1}));
+function build(S){regCustom(S);applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forEach(z=>{if(!z.dog)return;if(z.type!=='closed'){delete z.dog;return}z.shelves=0;z.rail=false;z.vd=[];z.vsh=[];z.fabric=false;z.doorMode='hinged';if(!DOGS[z.dog])z.dog='arch';z.face='flat';z.inset='';z.doors=1}));
   const R=S.room,K=S.skirt,M=S.mat,O=S.opts;
   const W=+R.W,D=+R.D,drop=+R.drop||0;
   const tc=+M.carcass.t,tb=+M.back.t,tf=+M.front.t,ts=+M.shelf.t,td=+M.desk.t,tk=+M.skirt.t;
@@ -2788,7 +2817,8 @@ function renderFinPicker(){const v=finVal(FP.p)||'',q=FP.q.trim().toLowerCase();
   const tile=(k,f)=>{const light=lum(f.base)>.6;const code=f.ral?f.name.slice(4,8):'';return `<button type="button" class="fsw ${k===v?'on':''}" data-act="finPicked" data-a="${k}" title="${esc(f.name)}" style="background:${f.kind!=='plain'?`url(&quot;data:image/svg+xml;utf8,${encodeURIComponent(swatchSVG(k))}&quot;) center/cover`:f.base};color:${light?'#222':'#fff'}"><span>${f.ral?code:esc(f.name)}</span></button>`};
   let h='';
   if(FP.inherit)h+=`<button type="button" class="btn sm ${!v?'on':''}" data-act="finPicked" data-a="" style="justify-self:start">${esc(FP.inherit)}</button>`;
-  const tex=Object.entries(FIN).filter(([,f])=>!f.ral&&!f.hidden&&!f.micro&&match(f)),mic=Object.entries(FIN).filter(([,f])=>f.micro&&match(f));
+  const mine=Object.entries(FIN).filter(([,f])=>f.custom&&match(f));h+=`<h4>Your colours</h4>${mine.length?`<div class="fgrid wide">${mine.map(([k,f])=>tile(k,f)).join('')}</div>`:''}${cuPickerHTML()}`;
+  const tex=Object.entries(FIN).filter(([,f])=>!f.ral&&!f.hidden&&!f.micro&&!f.custom&&match(f)),mic=Object.entries(FIN).filter(([,f])=>f.micro&&match(f));
   if(tex.length)h+=`<h4>Wood &amp; textures</h4><div class="fgrid wide">${tex.map(([k,f])=>tile(k,f)).join('')}</div>`;
   if(mic.length)h+=`<h4>Microcement</h4><div class="fgrid wide">${mic.map(([k,f])=>tile(k,f)).join('')}</div>`;
   for(let fam=1;fam<=9;fam++){const r=Object.entries(FIN).filter(([,f])=>f.ral&&f.fam===fam&&match(f));if(!r.length)continue;
@@ -2989,7 +3019,7 @@ function renderSide(){
     ${fld('Extra to trim against the wall','skirt.scribe')}${fld('Beam clearance','skirt.beamGap')}${fld('Shelves set back from the front','opts.setback')}${fld('Saw blade thickness','opts.kerf')}${fld('Trim off each sheet edge','opts.trim')}</div></div></details>`;
   h+=`<details class="acc" data-k="mat" ${op('mat')}><summary>Materials</summary><div class="accb">
     ${ROLES.map(([k,l])=>`<div class="mcard"><div class="mtitle">${l}<span>${esc(MATS[S.mat[k].type]?.short||'')} · ${S.mat[k].t} mm ${eurs(boardLevel(S.mat[k].type))}</span></div>${finButton('mat.'+k+'.fin')}${mx('Board &amp; sheet size',`<div class="mgrid">${sel('Board',`mat.${k}.type`,Object.entries(MATS).map(([m,v])=>[m,v.name+'  '+eurs(boardLevel(m),true)]),{re:true})}${fld('Thickness',`mat.${k}.t`)}</div><details class="pf"><summary>Sheet size · ${S.mat[k].sheet.replace('x',' × ')}</summary>${sel('',`mat.${k}.sheet`,SHEETS.map(s=>[s,s.replace('x',' × ')+' mm']))}</details>`)}${stockBuy(k)}</div>`).join('')}
-    </div></details>`;
+    ${custHTML()}</div></details>`;
   h+=`<details class="acc" data-k="secs" ${op('secs')}><summary>Columns</summary><div class="accb">${secEditor()}</div></details>`;
   const parts={};h.split('<details class="acc"').slice(1).forEach(c=>{const m=c.match(/data-k="(\w+)"/);if(m)parts[m[1]]='<details class="acc"'+c});
   el.dataset.flow=pane[0]==='layout'?flowNow():'home';if(isSheet())setTimeout(renderBar,0);el.innerHTML=`<div class="shead"><div class="shandle" data-sgrab="1" aria-hidden="true"><i></i></div><div class="spane" role="tablist">${PANES.map(([k,l])=>`<button type="button" role="tab" aria-selected="${k===pane[0]}" class="${k===pane[0]?'on':''}" data-act="pane" data-a="${k}">${PANE_ICON[k]}<span>${l}</span></button>`).join('')}</div><div class="crumb">${pane[0]==='layout'?crumbHTML():''}</div></div><p class="panelede">${pane[2]} <button type="button" class="linkb" data-act="gloss">What do the words mean?</button></p>`+pane[3].map(k=>parts[k]||'').join('');try{simplifySide(el)}catch(e){}
@@ -3546,6 +3576,57 @@ function alignLadder(base){const st=JSON.parse(JSON.stringify(base)),G=build(st)
     if(+z.h>0)z.h=Math.max(150,Math.round(+z.h-lowH-tc));if(z.rail&&+z.railH>0&&z.railH<H)z.rail=false;
     zs.splice(k,0,lower)});
   return st}
+/* ==== 46-custom.js ====
+   Your own boards and colours.
+   A custom colour becomes a finish (FIN key 'cu_…'), a custom board a board type (MATS key 'cm_…').
+   They are kept in two places: in the design itself (S.custom), so a shared or reopened design still has them,
+   and in this browser's library, so every new design can use them too. regCustom() puts both into FIN and MATS;
+   build() calls it, so anything that builds a design knows its custom boards and colours.
+*/
+const CU_LS='fitted-custom';
+let CU_LIB={fins:{},mats:{}};try{const o=JSON.parse(localStorage.getItem(CU_LS)||'null');if(o&&typeof o==='object')CU_LIB={fins:o.fins||{},mats:o.mats||{}}}catch(e){}
+const CU_KINDS=[['plain','Plain colour'],['wood','Wood grain'],['stone','Stone / speckled']];
+const CU_FINS=[['all','Any colour'],['wood','Wood finishes only'],['ral','Paint colours only']];
+function cuHex(h){return /^#[0-9a-f]{6}$/i.test(String(h||''))?String(h).toUpperCase():'#CCCCCC'}
+function cuShade(hex,f){const n=parseInt(hex.slice(1),16),c=[n>>16,(n>>8)&255,n&255].map(v=>Math.max(0,Math.min(255,Math.round(f<0?v*(1+f):v+(255-v)*f))));return '#'+c.map(v=>v.toString(16).padStart(2,'0')).join('')}
+function cuFin(c){const b=cuHex(c.base),kind=CU_KINDS.some(k=>k[0]===c.kind)?c.kind:'plain';return {name:String(c.name||'My colour').slice(0,48),base:b,grain:cuShade(b,kind==='stone'?-0.25:-0.4),kind,rough:kind==='plain'?.5:.6,custom:true}}
+function cuMat(m){const t=Math.max(3,Math.min(60,+m.t||18)),sh=/^\d{3,4}x\d{3,4}$/.test(String(m.sheet||''))?m.sheet:'2800x2070';
+  return {name:String(m.name||'My board').slice(0,48),short:String(m.name||'My board').slice(0,18),t,sheet:sh,edge:String(m.edge||'Edge band to match').slice(0,80),sag:750,fins:CU_FINS.some(k=>k[0]===m.fins)?m.fins:'all',rough:.5,custom:true}}
+let cuSig='';
+function regCustom(st){const C=(st&&st.custom)||{},all={fins:Object.assign({},CU_LIB.fins,C.fins||{}),mats:Object.assign({},CU_LIB.mats,C.mats||{})},sig=JSON.stringify(all);if(sig===cuSig)return;cuSig=sig;let defs=false;
+  Object.entries(all.fins).forEach(([k,c])=>{if(!/^cu_/.test(k))return;const f=cuFin(c),o=FIN[k];if(!o||o.base!==f.base||o.kind!==f.kind||o.name!==f.name){FIN[k]=f;defs=true}});
+  Object.entries(all.mats).forEach(([k,m])=>{if(!/^cm_/.test(k))return;MATS[k]=cuMat(m)});
+  if(defs&&typeof document!=='undefined'&&document.getElementById('gdefs'))try{buildDefs()}catch(e){}}
+function cuSave(){try{localStorage.setItem(CU_LS,JSON.stringify(CU_LIB))}catch(e){}}
+function cuVal(id){const e=document.getElementById(id);return e?e.value.trim():''}
+/* add a colour; returns its key */
+function cuAddFin(name,base,kind){if(!name){toast('Give the colour a name first');return null}const k='cu_'+uid().slice(1,9),c={name,base:cuHex(base),kind};
+  S.custom=S.custom||{};S.custom.fins=Object.assign({},S.custom.fins,{[k]:c});CU_LIB.fins[k]=c;cuSave();regCustom(S);return k}
+function cuAddMat(){const name=cuVal('cuMName');if(!name){toast('Give the board a name first');return}const k='cm_'+uid().slice(1,9),sheet=cuVal('cuMSheet').replace(/\s*[×x*]\s*/,'x'),m={name,t:+cuVal('cuMT')||18,sheet,fins:cuVal('cuMFins')||'all',edge:cuVal('cuMEdge')},p=parseFloat(cuVal('cuMPrice').replace(',','.'));
+  S.custom=S.custom||{};S.custom.mats=Object.assign({},S.custom.mats,{[k]:m});CU_LIB.mats[k]=m;cuSave();regCustom(S);if(p>0){S.opts.myM2=S.opts.myM2||{};S.opts.myM2[k]=p}
+  ui.cuOpen=true;changed(true);toast(`${name} added — choose it as the board for any part under Materials`)}
+/* remove from the library and the design; parts that used it go back to a standard board or colour */
+function cuDel(k){if(!/^c[um]_/.test(String(k)))return;const isM=/^cm_/.test(k),grp=isM?'mats':'fins',nm=((isM?MATS:FIN)[k]||{}).name||'';delete CU_LIB[grp][k];if(S.custom&&S.custom[grp])delete S.custom[grp][k];cuSave();
+  if(isM){Object.values(S.mat).forEach(m=>{if(m.type===k){m.type='melamine';m.t=18;m.sheet=MATS.melamine.sheet}});(S.sections||[]).forEach(s=>(s.zones||[]).forEach(z=>{if(z.mat===k)delete z.mat}));if(S.opts.myM2)delete S.opts.myM2[k];delete MATS[k]}
+  else{const walk=o=>{if(!o||typeof o!=='object')return;for(const x in o){if(o[x]===k)o[x]=Array.isArray(o)?'':'ral9010';else if(typeof o[x]==='object')walk(o[x])}};walk(S.sections);walk(S.mat);walk(S.opts);delete FIN[k]}
+  cuSig='';regCustom(S);changed(true);toast(`${nm} removed`)}
+function cuUsed(k){const s=JSON.stringify([S.mat,S.sections,S.opts]);return s.includes('"'+k+'"')}
+function custHTML(){const fins=Object.keys(FIN).filter(k=>/^cu_/.test(k)),mats=Object.keys(MATS).filter(k=>/^cm_/.test(k));
+  return `<details class="pf cust"${ui.cuOpen?' open':''} data-cu="1"><summary>Your own boards &amp; colours${fins.length+mats.length?` · ${fins.length+mats.length}`:''}</summary><div style="display:grid;gap:12px;padding-top:8px">
+    <p class="hintp" style="margin:0">Add a board or colour that is not in the lists — a brand paint colour, a special veneer, a board from your own supplier. They stay in this browser for every design, and travel with the design when you share it.</p>
+    ${fins.length?`<div class="culist">${fins.map(k=>{const f=FIN[k];return `<div class="curow"><i class="cusw" style="background:${f.base}"></i><b>${esc(f.name)}</b><small>${esc((CU_KINDS.find(x=>x[0]===f.kind)||CU_KINDS[0])[1])} · ${f.base}${cuUsed(k)?' · in use':''}</small><button type="button" class="rowbtn" data-act="cuDel" data-a="${k}" aria-label="Remove ${esc(f.name)}">×</button></div>`}).join('')}</div>`:''}
+    <div class="cuform"><b>New colour</b><div class="grid2"><label class="fld"><span>Name</span><span class="inp"><input type="text" id="cuFName" maxlength="48" placeholder="e.g. Farrow &amp; Ball Hague Blue"></span></label><label class="fld"><span>Colour</span><span class="inp"><input type="color" id="cuFCol" value="#7A8C7E" style="width:100%;height:34px;border:0;background:none"></span></label></div>
+      <label class="fld"><span>Look</span><select id="cuFKind">${CU_KINDS.map(([k,l])=>`<option value="${k}">${l}</option>`).join('')}</select></label>
+      <button type="button" class="btn sm pri" data-act="cuAddFin" style="justify-self:start">+ Add colour</button></div>
+    ${mats.length?`<div class="culist">${mats.map(k=>{const m=MATS[k],p=+((S.opts.myM2||{})[k])||0;return `<div class="curow"><i class="cusw cub">${f0(m.t)}</i><b>${esc(m.name)}</b><small>${f0(m.t)} mm · ${m.sheet.replace('x',' × ')}${p?` · € ${p.toFixed(2)}/m²`:''} · ${esc((CU_FINS.find(x=>x[0]===m.fins)||CU_FINS[0])[1].toLowerCase())}${cuUsed(k)?' · in use':''}</small><button type="button" class="rowbtn" data-act="cuDel" data-a="${k}" aria-label="Remove ${esc(m.name)}">×</button></div>`}).join('')}</div>`:''}
+    <div class="cuform"><b>New board type</b><div class="grid2"><label class="fld"><span>Name</span><span class="inp"><input type="text" id="cuMName" maxlength="48" placeholder="e.g. Valchromat, oak-veneered ply"></span></label><label class="fld"><span>Thickness</span><span class="inp"><input type="number" id="cuMT" inputmode="decimal" value="18"><em>mm</em></span></label>
+      <label class="fld"><span>Sheet size</span><span class="inp"><input type="text" id="cuMSheet" list="cuSheets" value="2800x2070"></span></label><label class="fld"><span>Price (optional)</span><span class="inp"><input type="number" id="cuMPrice" inputmode="decimal" placeholder="per m²"><em>€/m²</em></span></label>
+      <label class="fld"><span>Colours it comes in</span><select id="cuMFins">${CU_FINS.map(([k,l])=>`<option value="${k}">${l}</option>`).join('')}</select></label><label class="fld"><span>Edges (optional)</span><span class="inp"><input type="text" id="cuMEdge" maxlength="80" placeholder="e.g. 2 mm matching ABS"></span></label></div>
+      <datalist id="cuSheets">${SHEETS.map(s=>`<option value="${s}">`).join('')}</datalist>
+      <button type="button" class="btn sm pri" data-act="cuAddMat" style="justify-self:start">+ Add board type</button></div>
+  </div></details>`}
+/* the small "add your own colour" form inside the colour picker */
+function cuPickerHTML(){return `<div class="cuform cupick"><b>Your own colour</b><div class="cuprow"><input type="color" id="fpCuCol" value="#7A8C7E" aria-label="Colour"><input type="text" id="fpCuName" maxlength="48" placeholder="Name, e.g. Little Greene Aquamarine"><select id="fpCuKind" aria-label="Look">${CU_KINDS.map(([k,l])=>`<option value="${k}">${l}</option>`).join('')}</select><button type="button" class="btn sm pri" data-act="cuPickAdd">Add &amp; use</button></div></div>`}
 /* ==== 50-exports.js ====
    Files: PDF pack, part labels, full-size templates, Excel for the shops, DXF for CNC and the brief for a cabinet maker.
 */
@@ -4323,7 +4404,7 @@ const pKey=k=>String(k).replace(/[^A-Za-z0-9]+/g,'_');
 function priceRows(nest,sp,hw,mats,shopO){const shop=shopO||curShop();let fbN=0;const ov=(S.opts.prices&&typeof S.opts.prices==='object')?S.opts.prices:{},rows=[];
   const add=(grp,key,name,qty,unitLbl,unit,src,est,ref)=>{const k=pKey(key),o=+ov[k]>0?+ov[k]:null,u=o!=null?o:unit;rows.push({grp,k,name,qty,unitLbl,unit:u,dflt:unit,mine:o!=null,shop:src||'',src:o!=null?'your price':(est?'typical':src),est:!!est&&o==null,ref,total:u!=null?u*qty:null})};
   nest.forEach(n=>{const P=PRICE_M2[n.mt]||PRICE_M2.melamine,sh=n.sh||{},area=(sh.L||2800)*(sh.W||2070)/1e6,f=FIN[n.fin]||{};const thin=n.mt==='hdf'&&+n.t<=4,sq=shopPrice(thin?'hdf3':n.mt==='hdf'?'':n.mt,shop);if(sq&&sq.fb)fbN++;let m2=(sq?sq.p:P.p)*(thin?1:(1+0.6*((+n.t||P.t)/P.t-1))),est=!thin&&(!!P.est||Math.abs((+n.t||P.t)-P.t)>1.5);if(n.mt==='veneer'&&n.fin!=='oak'){m2*=n.fin==='walnut'?1.35:1.15;est=true}
-    const my_=+((S.opts.myM2||{})[n.mt])||0;if(my_>0){m2=my_;est=false}const cnt=n.sheets.length+(n.over&&n.over.length?1:0);if(cnt)add('Sheets','m_'+n.mt+'_'+n.fin+'_'+n.t,`${n.name} mm sheet, ${n.sheet.replace('x',' × ')}`,cnt,'sheet',Math.round(m2*area*100)/100,sq?sq.src:P.src,est,P.ref)});
+    const my_=+((S.opts.myM2||{})[n.mt])||0,cu_=!!(MATS[n.mt]&&MATS[n.mt].custom);if(my_>0){m2=my_;est=false}const cnt=n.sheets.length+(n.over&&n.over.length?1:0);if(cnt)add('Sheets','m_'+n.mt+'_'+n.fin+'_'+n.t,`${n.name} mm sheet, ${n.sheet.replace('x',' × ')}`,cnt,'sheet',Math.round(m2*area*100)/100,cu_?'':(sq?sq.src:P.src),cu_?my_<=0:est,cu_?'':P.ref)});
   (sp.groups||[]).forEach(g=>{const white=(FIN[g.fin]||{}).ral&&lum((FIN[g.fin]||{}).base||'#fff')>0.8,L=(sp.cfg&&sp.cfg.L)||2500,sq=stockPrice(g.W,shop);if(sq.fb)fbN++;const w=sq.w;let u=sq.u*(L/2500)*(1+0.6*((+g.t||18)/18-1));if(!white)u*=2.1;
     add('Sheets','s_'+g.fin+'_'+g.t+'_'+g.W,`${FIN[g.fin]?.name||''} ${g.t} mm pre-edged furniture panel, ${g.W} × ${L}`,g.bars.length,'board',Math.round(u*100)/100,sq.src,!white||Math.abs(w-g.W)>5||+g.t!==18||L!==2500,'White 18 mm furniture panels 2500 long — '+Object.entries(STOCK_PRICES).map(([k,t])=>SHOPS[k]+': '+Object.entries(t).map(([a,b])=>a+' € '+b).join(' · ')).join(' | '))});
   let band=-(sp.saved||0),paint=0,micro=0;Object.values(mats||{}).forEach(m=>{if(!m.paint&&!m.micro)band+=m.band||0;if(m.paint)paint+=(m.area||0)*2+(m.peri||0);if(m.micro)micro+=(m.mA||0)+(m.vis||0)});
@@ -5213,7 +5294,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
    Lining the design up with a photo of the room.
 */
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.101';
+const APP_VERSION='v0.102';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
@@ -5927,6 +6008,14 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'fbOpen':fbOpen(a||'');break;
     case 'fbKind':FB.kind=a;FB.sent=null;fbRender();break;
     case 'fbSend':fbSend();break;
+    case 'stOpen':stOpen();break;
+    case 'stPick':stPick(a);break;
+    case 'stClose':document.getElementById('stm').hidden=true;break;
+    case 'stFit':ST.fit=!!(document.getElementById('stFit')||{}).checked;break;
+    case 'cuAddFin':{const k=cuAddFin(cuVal('cuFName'),cuVal('cuFCol'),cuVal('cuFKind'));if(k){ui.cuOpen=true;changed(true);toast('Colour added — pick it from any colour button, under “Your colours”')}break}
+    case 'cuAddMat':cuAddMat();break;
+    case 'cuDel':cuDel(a);break;
+    case 'cuPickAdd':{const k=cuAddFin(cuVal('fpCuName'),cuVal('fpCuCol'),cuVal('fpCuKind'));if(!k)break;const p=FP.p;document.getElementById('fpm').hidden=true;if(p.startsWith('wiz:')){WZ[p.slice(4)]=k;wizRender()}else{setP(p,k);fitTypes(S);changed(true)}toast('Colour added and used. It is now under “Your colours” in every colour list.');break}
     case 'fbClose':document.getElementById('fbm').hidden=true;break;
     case 'fbCopy':{const t=(FB.lastText||'')+(FB.lastTech?'\n\n'+FB.lastTech:'');copy(t);break}
     case 'fbDel':{const b_=e.target.closest('button');if(b_&&!b_.dataset.armed){b_.dataset.armed='1';b_.textContent='Delete?';break}(async()=>{try{const[u,id]=a.split('|'),ref=DS.db.doc('feedback/'+u),sn=await ref.get(),d_=sn&&(typeof sn.data==='function'?sn.data():sn),L=((d_&&d_.msgs)||[]).filter(m=>m.id!==id);if(L.length)await ref.set({msgs:L,at:Date.now()});else await ref.delete()}catch(_){}fbInbox()})();break}
@@ -6012,7 +6101,7 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
       const tc=geo.tc,ys=q.desk?0:q.Pq,hS=gU+tc-ys,M_=geo.maxUnit,low=Math.min(M_-2*tc-10,Math.max(hS-M_+4*tc+10,hS*0.62,ko_?ko_.divY+(ko_.divT||tc)+300-ys+tc:0));S=splitZoneAt(S,i,ys+low-tc);changed(true);toast(geo.secs[i]&&geo.secs[i].splitK>=0?'Split into a lower and an upper unit':'Could not find a good split height — add a fixed divider by hand');break}
     case 'ladAlign':{S=alignLadder(S);changed(true);toast('Cabinets lined up with the ladder rail');break}
     case 'ladPos':{S.ladder=S.ladder||{};S.ladder.pos=Math.max(0,Math.min(1,Math.round(((S.ladder.pos??0.5)+ +a)*10)/10));changed(true);break}
-    case 'wizard':openWiz();break;
+    case 'wizard':{const sm=document.getElementById('stm');if(sm)sm.hidden=true;openWiz();break}
     case 'wizNext':wizGo(1);break;case 'wizBack':wizGo(-1);break;case 'wizSkip':closeWiz();break;
     case 'wizCeil':WZ.ceil=a;wizRender();break;
     case 'wizPur':WZ.pur[a]=!WZ.pur[a];wizRender();break;
@@ -6138,7 +6227,7 @@ function wizRender(){
     <label class="chk wsurv"><input type="checkbox" data-w="survey" id="w-survey" ${WZ.survey?'checked':''}> I measured in more places <small>(recommended — old walls are rarely straight)</small></label>
     ${WZ.survey?`<div class="wsurvb"><div class="grid3">${wf('Width at the floor','wB')}${wf('Halfway up','wM')}${wf('At the top','wT')}</div>${wf('Floor higher at the right end by','fR')}
 <div id="wsv">${wizSurvVerdict()}</div></div>`:''}
-    ${!ui.wizSeen?`<p class="hintp">Just looking? <button class="btn sm" data-act="wizStart">Open the example attic design</button></p>`:''}`}
+    <p class="hintp wstart">Want a head start? <button type="button" class="btn sm" data-act="stOpen">Start from a ready-made design</button>${!ui.wizSeen?` or <button class="btn sm" data-act="wizStart">open the example attic</button>`:''}</p>`}
   if(wstep===1){prev=false;h=`<p class="hintp">Pick the shape you see, then <b>drag the dots</b> to where the slope starts and ends.</p><div class="opts">${[['flat','Flat'],['left','Slope on the left'],['right','Slope on the right'],['both','Slopes both sides'],['double','Two slopes, one side']].map(([k,l])=>`<button class="opt ${WZ.ceil===k?'on':''}" data-act="wizCeil" data-a="${k}">${ceilIcon(k)}${l}</button>`).join('')}</div><div class="grid2">`;
     if(['left','both','double'].includes(WZ.ceil))h+=wf('Left knee wall height','kneeL')+wf('Left slope ends at (from left)','lenL');
     if(WZ.ceil==='double')h+=wf('Slope changes at (from left)','breakX')+wf('Height at that change','breakY');
@@ -6193,6 +6282,101 @@ document.getElementById('wiz').addEventListener('input',e=>{const el=e.target;
 document.getElementById('wiz').addEventListener('toggle',e=>{if(e.target.classList&&e.target.classList.contains('wadv')&&WZ&&wstep===4)WZ.adv=e.target.open},true);
 document.getElementById('wiz').addEventListener('click',e=>{const b=e.target.closest('[data-act="wizSet"]');if(!b)return;const[k,v]=b.dataset.a.split(':');WZ[k]=+v;if(k==='t')WZ.tf=+v+1;wizRender()});
 
+/* ==== 96-starters.js ====
+   Starter designs: ready-made walls to begin from, from simple to "everything Fitted can do".
+   Each starter follows a current high-end interior trend and shows a few of the app's features.
+   To add one: add an entry to STARTERS with make() returning a full design (start from stBase).
+*/
+/* a clean flat room with one set of boards; m = {front,carcass,desk} finish keys and board types */
+function stBase(o){const s=exampleState();s.name=o.name;s.room={W:o.W||3600,H:o.H||2500,D:o.D||600,drop:0,ceil:o.ceil||[{x:0,y:o.H||2500},{x:o.W||3600,y:o.H||2500}],beams:o.beams||[]};
+  const c=o.c||'ral9010',f=o.f||c,ft=o.ft||(FIN[f]&&FIN[f].ral?'mdfpaint':'veneer');
+  s.mat.carcass=Object.assign(s.mat.carcass,{type:'melamine',t:18,sheet:'2800x2070',fin:c});s.mat.shelf=Object.assign(s.mat.shelf,{type:'melamine',t:o.shelfT||18,sheet:'2800x2070',fin:c});s.mat.back=Object.assign(s.mat.back,{type:'hdf',t:8,sheet:'2800x2070',fin:c});
+  s.mat.front=Object.assign(s.mat.front,{type:ft,t:19,sheet:MATS[ft].sheet,fin:f});s.mat.skirt=Object.assign(s.mat.skirt,{type:ft,t:19,sheet:MATS[ft].sheet,fin:o.k||f});
+  if(o.d){const dt=FIN[o.d]&&FIN[o.d].ral?'mdfpaint':'veneer';s.mat.desk=Object.assign(s.mat.desk,{type:dt,t:dt==='veneer'?19:22,sheet:MATS[dt].sheet,fin:o.d})}
+  Object.assign(s.opts,{handle:o.h||'none',handleWood:o.hw||'oak',handleSize:o.hs||'M',construct:'shared',innerLight:!!o.light});s.opts.two={on:false,y:1000,fin:f};
+  s.sections=o.secs;if(o.ladder)s.ladder={on:true,wood:o.ladder};return s}
+const STARTERS=[
+  {key:'white',level:'Simple',name:'Clean white wardrobe',trend:'Handleless, all white',blurb:'Three columns, flush push-to-open doors in white. The easiest start.',
+    shows:['Hanging rails','Drawers','Push-to-open','Cut list'],
+    make:()=>stBase({name:'Clean white wardrobe',W:2400,c:'ral9010',f:'ral9010',ft:'melamine',shelfT:25,secs:[
+      Sec({zones:[Z('closed',{rail:true,shelves:1})]}),Sec({zones:[Z('drawers',{h:720,count:4}),Z('closed',{shelves:3})]}),Sec({zones:[Z('closed',{rail:true,shelves:1})]})]})},
+  {key:'oak',level:'Simple',name:'Warm oak bedroom',trend:'Warm wood, soft greige',blurb:'Oak doors with wooden edge pulls, and smart fittings behind them.',
+    shows:['Inside fittings','Lights in the cupboard','Mirror in the door','Wooden handles'],
+    make:()=>stBase({name:'Warm oak bedroom',W:3200,c:'ral1013',f:'oak',h:'edge',hw:'oak',light:true,shelfT:25,secs:[
+      Sec({zones:[Z('closed',{rail:true,shelves:1,fit:'trouser'})]}),
+      Sec({zones:[Z('drawers',{h:720,count:3}),Z('closed',{shelves:2,fit:'jewel',dMirror:true})]}),
+      Sec({zones:[Z('closed',{rail:true,shelves:1,fit:'lift'})]}),
+      Sec({zones:[Z('closed',{rail:true,shelves:1,fit:'shoe',fitN:2})]})]})},
+  {key:'media',level:'Classic',name:'Quiet luxury media wall',trend:'Quiet luxury: tone-on-tone, one warm accent',blurb:'Flush greige doors, a walnut-lined TV niche and speakers behind fabric.',
+    shows:['TV niche','Speakers with fabric','Wood-lined niche','3D view'],
+    make:()=>stBase({name:'Quiet luxury media wall',W:4000,H:2600,c:'ral7044',f:'ral7044',shelfT:25,secs:[
+      Sec({zones:[Z('drawers',{h:700,count:3}),Z('closed',{shelves:3})]}),
+      Sec({w:400,zones:[Z('closed',{h:560,shelves:1,doors:1,hinge:'L',fabric:true,fabricCol:'pebble'}),Z('speaker',{h:430,grille:true,fabricCol:'pebble'}),Z('closed',{shelves:2})]}),
+      Sec({w:1500,zones:[Z('drawers',{h:430,count:2}),Z('opening',{h:880,tv:65,box:true,inFin:'walnut',boxFin:'walnut'}),Z('closed',{shelves:0,doors:3})]}),
+      Sec({w:400,zones:[Z('closed',{h:560,shelves:1,doors:1,hinge:'R',fabric:true,fabricCol:'pebble'}),Z('speaker',{h:430,grille:true,fabricCol:'pebble'}),Z('closed',{shelves:2})]}),
+      Sec({zones:[Z('drawers',{h:700,count:3}),Z('closed',{shelves:3})]})]})},
+  {key:'arch',level:'Classic',name:'Fluted arches in clay',trend:'Colour drenching, curves and reeded fronts',blurb:'One earthy colour on everything: fluted doors below, arched shelves above, a cushioned seat in the middle.',
+    shows:['Arches','Fluted doors','Colour drench','Window seat'],
+    make:()=>{const c=FIN.ral3012?'ral3012':'ral8025';return stBase({name:'Fluted arches in clay',W:3600,c,f:c,secs:[
+      Sec({zones:[Z('closed',{h:820,shelves:1,face:'fluted'}),Z('open',{shelves:3,arch:true,inFin:c,drench:true})]}),
+      Sec({zones:[Z('closed',{h:820,shelves:1,face:'fluted'}),Z('open',{shelves:3,arch:true,inFin:c,drench:true})]}),
+      Sec({w:1200,zones:[Z('seat',{h:440,count:2,fabricCol:'oatmeal'}),Z('open',{h:700,shelves:0,box:true,inFin:'oak',boxFin:'oak'}),Z('closed',{shelves:1,face:'fluted'})]}),
+      Sec({zones:[Z('closed',{h:820,shelves:1,face:'fluted'}),Z('open',{shelves:3,arch:true,inFin:c,drench:true})]}),
+      Sec({zones:[Z('closed',{h:820,shelves:1,face:'fluted'}),Z('open',{shelves:3,arch:true,inFin:c,drench:true})]})]})}},
+  {key:'attic',level:'Showcase',name:'Attic under the slopes',trend:'Japandi: light oak, sage, calm',blurb:'Sloping ceilings and a beam: low cupboards, a reading nook for the kids, and a wardrobe in the tall part.',
+    shows:['Sloping ceilings','Beam cut-out','Reading nook','Low cupboards'],
+    make:()=>{const c=FIN.ral6021?'ral6021':'ral1013';return slopeFix(stBase({name:'Attic under the slopes',W:4200,H:2500,c:'ral1013',f:c,h:'woodcup',hw:'oak',shelfT:25,
+      ceil:[{x:0,y:1250},{x:1600,y:2500},{x:3300,y:2500},{x:4200,y:1800}],beams:[{x:1950,w:200,bottom:2300,depth:300}],secs:[
+      Sec({w:700,zones:[Z('closed',{shelves:1})]}),
+      Sec({w:800,zones:[Z('drawers',{h:420,count:2}),Z('opening',{h:900,look:'nook',nookPad:true,nookLedges:true,fabricCol:'sage'}),Z('closed',{shelves:1})]}),
+      Sec({w:800,zones:[Z('drawers',{h:600,count:3}),Z('closed',{rail:true,shelves:1})]}),
+      Sec({zones:[Z('closed',{rail:true,shelves:1})]}),
+      Sec({w:600,zones:[Z('drawers',{h:600,count:3}),Z('closed',{shelves:1})]})]}))}},
+  {key:'library',level:'Showcase',name:'Dark library and study',trend:'Moody smoked oak, lit glass, bronze tones',blurb:'Smoked oak with a built-in desk, lit glass cabinets, a bar niche and a rolling library ladder.',
+    shows:['Built-in desk','Glass doors with lights','Library ladder','Bar niche'],
+    make:()=>stBase({name:'Dark library and study',W:4400,H:2800,c:'black',f:'smoked',d:'walnut',h:'edge',hw:'walnut',light:true,ladder:'walnut',shelfT:25,secs:[
+      Sec({w:800,zones:[Z('closed',{h:860,shelves:1}),Z('open',{shelves:4})]}),
+      Sec({w:800,zones:[Z('closed',{h:860,shelves:1}),Z('open',{h:520,shelves:0,niche:'bar',box:true,boxFin:'walnut'}),Z('closed',{shelves:2,face:'glass'})]}),
+      Sec({w:1200,base:'desk',deskH:740,deskLED:true,zones:[Z('open',{h:620,shelves:0}),Z('closed',{shelves:2,face:'glass'})]}),
+      Sec({zones:[Z('closed',{h:860,shelves:1}),Z('open',{shelves:4})]})]})},
+  {key:'utility',level:'Showcase',name:'Laundry and pantry wall',trend:'Hard-working utility room in soft sage',blurb:'Washer and dryer stacked at a good height, a tall pantry pull-out, a utility cupboard and an ironing board.',
+    shows:['Washer + dryer','Pantry pull-out','Utility cupboard','Ironing board'],
+    make:()=>{const c=FIN.ral6021?'ral6021':'ral7044';return stBase({name:'Laundry and pantry wall',W:3000,H:2500,D:660,c:'ral9001',f:c,h:'woodknob',hw:'oak',secs:[
+      PRESETS.laundry.make(),PRESETS.utility.make(),PRESETS.pantry.make(),
+      Sec({zones:[Z('closed',{h:1000,shelves:1,fit:'ironing'}),Z('closed',{shelves:2})]})]})}},
+  {key:'guest',level:'Showcase',name:'Guest room and home office',trend:'Japandi with cane and birch',blurb:'A bed that folds down from the wall, a desk with a lamp strip and a wardrobe with cane doors.',
+    shows:['Fold-down bed','Desk','Cane doors','Plywood look'],
+    make:()=>stBase({name:'Guest room and home office',W:3800,H:2500,c:'birch',f:'oak',d:'oak',h:'woodpull',hw:'oak',shelfT:25,secs:[
+      Sec({w:1000,zones:[Z('opening',{h:2120,look:'bed',grommet:false}),Z('closed',{shelves:0})]}),
+      Sec({w:1100,base:'desk',deskH:740,deskLED:true,zones:[Z('open',{h:600,shelves:0}),Z('closed',{shelves:1,face:'cane'})]}),
+      Sec({zones:[Z('drawers',{h:600,count:3}),Z('closed',{rail:true,shelves:1,face:'cane',doors:2})]}),
+      Sec({zones:[Z('closed',{rail:true,shelves:1,face:'cane',doors:2})]})]})},
+  {key:'kids',level:'Showcase',name:'Kids’ adventure wall',trend:'Playful colour blocking',blurb:'A climbing wall over a shaft, an arched reading den, a hideout for the dog and toy drawers with coloured handles.',
+    shows:['Climbing wall','Reading den','Dog den','Coloured handles'],
+    make:()=>{const c=FIN.ral1013?'ral1013':'ral9001',f=FIN.ral5014?'ral5014':'ral6021';return stBase({name:'Kids’ adventure wall',W:4000,H:2500,c,f,d:'oak',h:'stick',secs:[
+      Sec({w:900,base:'panel',panel:{...PANEL_DEF},zones:[]}),
+      Sec({w:800,zones:[Z('drawers',{h:420,count:2}),Z('opening',{h:950,look:'nook',nookFront:'arch',nookPad:true,nookCurtain:true,fabricCol:'mustard'}),Z('closed',{shelves:1})]}),
+      Sec({w:1180,zones:[Z('closed',{h:820,dog:'house',doors:1,shelves:0}),Z('open',{h:500,shelves:0}),Z('closed',{shelves:1})]}),
+      Sec({zones:[Z('drawers',{h:900,count:4}),Z('closed',{shelves:2})]})]})}},
+];
+const ST={fit:false,thumbs:{}};
+function stMake(k,fit){const T=STARTERS.find(x=>x.key===k);if(!T)return null;let st=T.make();
+  if(fit&&S&&S.room){const R=JSON.parse(JSON.stringify(S.room));delete R.corner;st.room=R;st.skirt=JSON.parse(JSON.stringify(S.skirt||st.skirt));
+    // flexible columns share the wall; fixed-size ones (speakers, appliances, panel walls) keep their width
+    st.sections.forEach(sc=>{const fixed=sc.base==='panel'||(sc.zones||[]).some(z=>z.type==='speaker'||z.fridge||z.fit==='larder'||['oven','combi','washer','dryer','stack','bed'].includes(z.look));if(!fixed)sc.w=null});
+    st=slopeFix(st)}
+  st=fitTypes(st);if(st.ladder&&st.ladder.on)try{st=alignLadder(st)}catch(e){}return st}
+function stThumb(k){if(ST.thumbs[k]!=null)return ST.thumbs[k];let h='';try{const st=stMake(k,false);h=elevSVG(st,build(st),{mini:true})}catch(e){h=''}ST.thumbs[k]=h;return h}
+function stOpen(){let m=document.getElementById('stm');if(!m){m=document.createElement('div');m.id='stm';m.className='modal';document.body.appendChild(m);m.addEventListener('click',e=>{if(e.target===m)m.hidden=true})}
+  const mm=document.getElementById('mmenu');if(mm)mm.hidden=true;const w=document.getElementById('wiz');if(w&&!w.hidden)closeWiz();stRender();m.hidden=false}
+function stRender(){const m=document.getElementById('stm');if(!m)return;const lv=['Simple','Classic','Showcase'];
+  m.innerHTML=`<div class="mbox" role="dialog" aria-modal="true" aria-label="Start from a design"><div class="mhead"><h2>Start from a design</h2></div><div class="mbody" style="display:grid;gap:14px">
+    <p class="hintp" style="margin:0">Pick one and make it yours — every part can be changed afterwards. They go from simple to showing off everything Fitted can do.</p>
+    <label class="chk"><input type="checkbox" id="stFit" ${ST.fit?'checked':''} data-act="stFit"> Fit it to my wall (${f0(+S.room.W)} × ${f0(+S.room.H)} mm${(S.room.ceil||[]).some(p=>Math.abs(+p.y-+S.room.H)>1)?', with its slopes':''})</label>
+    ${lv.map(L=>`<div class="stgrp"><h3>${L==='Simple'?'Simple — a quick start':L==='Classic'?'Classic — a statement wall':'Showcase — everything Fitted can do'}</h3><div class="stgrid">${STARTERS.filter(t=>t.level===L).map(t=>`<button type="button" class="stcard" data-act="stPick" data-a="${t.key}"><span class="stpic">${stThumb(t.key)}</span><b>${esc(t.name)}</b><small class="sttrend">${esc(t.trend)}</small><small>${esc(t.blurb)}</small><span class="stshows">${t.shows.map(x=>`<i>${esc(x)}</i>`).join('')}</span></button>`).join('')}</div></div>`).join('')}
+  </div><div class="mfoot"><button type="button" class="btn" data-act="stClose">Close</button><button type="button" class="btn" data-act="wizard">Or use the step-by-step wizard</button></div></div>`}
+function stPick(k){const T=STARTERS.find(x=>x.key===k);const st=stMake(k,ST.fit);if(!st)return;const kept_=dsKeep();dsDetach(false);S=st;ui.sel=0;ui.zsel=null;ui.wizSeen=1;groupsCache=null;
+  const m=document.getElementById('stm');if(m)m.hidden=true;changed(true);toast(`${T.name} — change anything you like${kept_?'. The design you had open was kept under Designs → Recovered work.':''}`)}
 /* ==== 99-boot.js ====
    Start-up: load the saved design, first render, install button, saved designs, offcuts, languages, comments.
 */

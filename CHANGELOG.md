@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.102
+
+- **Start from a design**: a gallery of nine ready-made designs, from simple to "everything Fitted can do", each in a current high-end interior trend: Clean white wardrobe, Warm oak bedroom, Quiet luxury media wall, Fluted arches in clay, Attic under the slopes, Dark library and study, Laundry and pantry wall, Guest room and home office, Kids' adventure wall. Each card lists the features it shows. Every starter opens without design notes. "Fit it to my wall" puts the starter on your own wall size and slopes. Open it from the menu (☰ → Start from a design) or from the first step of the wizard.
+- **Your own boards and colours** (Look → Materials → Your own boards & colours):
+  - add a colour with a name, a colour picker and a look (plain, wood grain or stone);
+  - add a board type with its thickness, sheet size, price per m², the colours it comes in and its edges.
+  They work everywhere: drawings, 3D, the cut list, sheets and prices. They are saved in this browser for every design, and also inside the design, so a shared design keeps them. The colour picker has a quick "Your own colour — Add & use" form too.
+
 ## v0.101
 
 - **Pantry column**: a tall larder pull-out — one frame with 4–6 baskets that slides straight out, with the door fixed to the frame (no hinges). Checks width (270–620 mm), depth, height (up to about 2 m) and the free floor in front. Also an inside fitting ("Larder pull-out") for any cupboard.

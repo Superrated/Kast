@@ -348,3 +348,32 @@ details.pf .grid2{margin-top:6px}
 .grid2{grid-template-columns:repeat(2,minmax(0,1fr))}
 .chips,.tchips,.seg,.rnd{min-width:0;max-width:100%}
 .seg button{min-width:0}
+/* ==== starter designs (96-starters.js) ==== */
+#stm .mbox{width:min(1080px,100%)}
+.stgrp h3{margin:0 0 8px;font-size:.95rem}
+.stgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.stcard{font:inherit;color:inherit;text-align:left;cursor:pointer;display:grid;gap:5px;align-content:start;padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--raised);min-width:0}
+.stcard:hover,.stcard:focus-visible{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.stpic{display:block;aspect-ratio:16/10;border-radius:9px;overflow:hidden;background:var(--wall,#EEE)}
+.stpic svg{width:100%;height:100%;display:block}
+.stcard small{color:var(--ink2);line-height:1.35}
+.stcard .sttrend{color:var(--accent);font-weight:600}
+.stshows{display:flex;flex-wrap:wrap;gap:4px}
+.stshows i{font-style:normal;font-size:.72rem;padding:2px 7px;border-radius:99px;background:var(--accent-soft);color:var(--ink)}
+.wstart{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+/* ==== your own boards and colours (46-custom.js) ==== */
+.culist{display:grid;gap:6px}
+.curow{display:grid;grid-template-columns:28px minmax(0,1fr) auto;grid-template-rows:auto auto;column-gap:10px;align-items:center;padding:6px 8px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.curow .cusw{grid-row:1/3;width:28px;height:28px;border-radius:7px;border:1px solid var(--line)}
+.curow .cub{display:grid;place-items:center;font-style:normal;font-size:.7rem;background:repeating-linear-gradient(90deg,#D9C7A5 0 3px,#C9B38C 3px 5px);color:#3a2c1a}
+.curow b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.curow small{grid-column:2;color:var(--ink2)}
+.curow .rowbtn{grid-row:1/3;grid-column:3}
+.cuform{display:grid;gap:8px;padding:10px;border:1px dashed var(--line);border-radius:12px}
+.cupick{margin:6px 0 10px}
+.cuprow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.cuprow input[type=color]{width:44px;height:34px;border:1px solid var(--line);border-radius:8px;padding:2px;background:var(--surface)}
+.cuprow input[type=text]{flex:1 1 180px;min-width:0;height:34px;border:1px solid var(--line);border-radius:8px;padding:0 10px;background:var(--surface);color:var(--ink);font:inherit}
+.cuprow select{height:34px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit}
+.cuform select{width:100%;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit;padding:0 8px}
+.cuform .inp input[type=color]{cursor:pointer}

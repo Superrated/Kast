@@ -33,7 +33,7 @@ const MATS={
   solid:{name:'Solid wood panel',short:'Solid wood',t:20,sheet:'2500x1250',edge:'Planed and oiled edge',sag:1000,fins:'wood',rough:.6},
   hdf:{name:'HDF / thin MDF',short:'HDF',t:8,sheet:'2800x2070',edge:'No edge treatment',sag:350,fins:'all',rough:.7}};
 function fitTypes(st){if(st.opts&&st.opts.budget)budgetFix(st);Object.entries(st.mat).forEach(([r,m])=>{if(!finAllowed(m.type,m.fin)){const f=FIN[m.fin]||{};m.type=f.ral?(r==='front'||r==='skirt'?'mdfpaint':(r==='back'?'hdf':'melamine')):(m.fin==='birch'?'ply':(r==='desk'?'solid':'veneer'));m.sheet=MATS[m.type].sheet}});return st}
-const finAllowed=(type,k)=>{const m=MATS[type],f=FIN[k];if(!m||!f)return true;if(m.fins==='wood')return f.kind==='wood'||f.kind==='ply';if(m.fins==='ral')return !!f.ral;if(m.fins==='ply')return k==='birch'||!!f.ral;return true};
+const finAllowed=(type,k)=>{const m=MATS[type],f=FIN[k];if(!m||!f)return true;if(f.custom)return m.fins==='all'||(m.fins==='wood'?f.kind!=='plain':f.kind==='plain');if(m.fins==='wood')return f.kind==='wood'||f.kind==='ply';if(m.fins==='ral')return !!f.ral;if(m.fins==='ply')return k==='birch'||!!f.ral;return true};
 const SHEETS=['2800x2070','2440x1220','3050x1220','3050x1300','2500x1250','2620x2070','4100x1300'];
 const ZTYPES=[['closed','Cupboard with doors'],['open','Open shelves'],['drawers','Drawers'],['opening','Niche / TV'],['speaker','Speaker'],['seat','Window seat']];
 const SLIDES=[250,300,350,400,450,500,550,600];

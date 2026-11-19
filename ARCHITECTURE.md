@@ -40,3 +40,8 @@ The app has no test files in the repo. The checks used during development load t
 - export every file type.
 
 `python3 build.py --source` prints the assembled source for such checks.
+
+## Starter designs and custom boards/colours (v0.102)
+
+- `src/js/46-custom.js`: your own colours (FIN keys `cu_…`) and board types (MATS keys `cm_…`). They are stored in `S.custom` and in localStorage (`fitted-custom`). `regCustom(st)` is called at the start of `build()`, so FIN and MATS always know them.
+- `src/js/96-starters.js`: `STARTERS`, ready-made designs. To add one, add an entry whose `make()` returns a design built with `stBase({...})`. Keep each starter free of design notes; the test in `st1.py` checks this.
