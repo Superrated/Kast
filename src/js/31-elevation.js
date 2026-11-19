@@ -996,6 +996,15 @@ function elevSVG(S, G, o = {}) {
             `<rect x="${l}" y="${Y(y + G.ts)}" width="${r - l}" height="${G.ts}" fill="${phF(zr.inFin || M.shelf.fin)}" stroke="rgba(0,0,0,.25)" stroke-width="${sw * 0.5}"/>`
           )
         );
+      // the front rail standing on a header / level board takes the bottom of this level (shelves are spaced above it)
+      if (vis)
+        (G.hRails || [])
+          .filter(r_ => !r_.rear && Math.abs(r_.y0 - zr.y0) < 1 && r_.xb > q.xa + 5 && r_.xa < q.xb - 5)
+          .forEach(r_ =>
+            push(
+              `<rect x="${r_.xa}" y="${Y(r_.y1)}" width="${r_.xb - r_.xa}" height="${r_.y1 - r_.y0}" fill="${ph('carcass')}" stroke="rgba(0,0,0,.3)" stroke-width="${sw * 0.5}"><title>Header rail ${f0(r_.y1 - r_.y0)} mm — shelves are spaced above it</title></rect>`
+            )
+          );
       if (vis)
         (G.vdivs || [])
           .filter(d => d.sec === q.i && d.zone === zr.k)

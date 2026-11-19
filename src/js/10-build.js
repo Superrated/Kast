@@ -7627,6 +7627,7 @@ function build(S) {
   } catch (e) {
     oops('build #3', e);
   }
+  result.hRails = hRails; // rails on edge on top of a header or level board (front ones are drawn in the front view)
   // link each cut-list panel to its 3D board, so holes and hardware can be placed in 3D (see linkPanels below)
   try {
     linkPanels(panels, items, secs);

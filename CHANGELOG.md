@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.125
+
+- **Header rail shown in the front view**: a level standing on a header (e.g. above a wide niche or reading nook) has a 100 mm rail on edge at its front. It is now drawn at the bottom of that level (when you look inside or the doors are hidden). Shelves are spaced evenly above it, so the spaces now also look even in the drawing — before, the bottom space looked 100 mm taller because the rail was not drawn.
+
 ## v0.124
 
 - **Cut-outs fully dimensioned** in the machining drawings (screen and PDF), for arched front frames, porthole and other nook fronts:
