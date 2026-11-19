@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.129
+
+- **Header rails are fixed down**: both rails on edge (front and back) now get two fixings at each end through the box sides (25 and 75 mm up, on the rail's centre line) — connector screws, or Ø8 dowel holes with glued dowels — in the side parts, machining drawings and shop forms. The header board gets countersunk Ø4.5 holes from below, about every 250 mm along both rails, for screws up into the rails. The hardware list counts them (the side screws with the other joints, plus "Chipboard screws 4 × 40 (header into the rails)"), and the 3D assembly shows the screws going into the rails.
+- **Assemble 3D**: boxes pull apart more than twice as far, so every part stands clear; new **See-through** switch (next to Measurements, Letters, Hardware) makes every board glass-like so holes, pins and hardware show through. It is remembered with the other switches.
+
 ## v0.128
 
 - **Hinges clear the header rail**: the front rail on a header stands 20–38 mm behind the front, right where the hinge mounting plates go (37 mm). The lowest hinge of a door in the level above is now placed so its plate stays 8 mm above the rail (e.g. balder S1: lowest hinge 1566 → 1607 mm; the others spread evenly above it). The door's cup holes, the plate holes in the sides and uprights and the notes follow.

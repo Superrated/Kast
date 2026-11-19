@@ -159,6 +159,12 @@ function renderCut() {
         ]);
       } else hw.push(['Beech dowels Ø8 × 35 + wood glue', J.joints * 2, 'Ø8 × 12 in the side, Ø8 × 25 in the edge']);
     }
+    if (H.railScrews)
+      hw.push([
+        'Chipboard screws 4 × 40, countersunk (header into the rails)',
+        H.railScrews,
+        'From below through the header into the rails on edge, about every 250 mm; Ø4 clearance + countersink, Ø2.5 pilot into the rail edge'
+      ]);
     hw.push([
       J.groove ? 'Back panel in groove (no fixings)' : 'Back nails 1.4 × 25 / screws 3.5 × 16',
       J.groove ? '—' : Math.round(geo.secs.length * 40),

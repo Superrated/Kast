@@ -1027,6 +1027,13 @@ document.addEventListener('click', e => {
       wxApplyT();
       wxDraw();
       break;
+    case 'wxSee':
+      WX.see = !WX.see;
+      wxSave();
+      e.target.closest('button').classList.toggle('on', WX.see);
+      e.target.closest('button').setAttribute('aria-pressed', String(WX.see));
+      wxDraw();
+      break;
     case 'wxReset':
       if (WX.r && WX.r.home) {
         Object.assign(WX.r.ctl, WX.r.home);

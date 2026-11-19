@@ -12,13 +12,14 @@ try {
   if (o) {
     WX.hw = o.hw !== false;
     WX.marks = o.marks !== false;
+    WX.see = !!o.see;
   }
 } catch (e) {
   oops('workshop-3d #1', e, 1);
 }
 function wxSave() {
   try {
-    localStorage.setItem('fitted-wx', JSON.stringify({ hw: WX.hw, marks: WX.marks }));
+    localStorage.setItem('fitted-wx', JSON.stringify({ hw: WX.hw, marks: WX.marks, see: !!WX.see }));
   } catch (e) {
     oops('workshop-3d #2', e, 1);
   }
@@ -102,7 +103,7 @@ function wxRender(m) {
         ? `<label class="wxsl"><span>Closed</span><input type="range" id="wxT" min="0" max="1" step="0.01" value="${WX.t}" aria-label="Pull the box apart"><span>Apart</span></label>`
         : `<div class="wxstep" id="wxStepBox"></div>`
     }
-      <div class="wxtg"><button type="button" class="tchip ${WX.dims ? 'on' : ''}" data-act="wxDims" aria-pressed="${WX.dims}">Measurements</button><button type="button" class="tchip ${WX.labels ? 'on' : ''}" data-act="wxLabs" aria-pressed="${WX.labels}">Letters</button><button type="button" class="tchip ${WX.hw ? 'on' : ''}" data-act="wxHw" aria-pressed="${WX.hw}">Hardware</button><button type="button" class="tchip ${WX.marks ? 'on' : ''}" data-act="wxMarks" aria-pressed="${WX.marks}">Holes &amp; marks</button><button type="button" class="tchip" data-act="wxReset">Reset view</button></div></div>
+      <div class="wxtg"><button type="button" class="tchip ${WX.dims ? 'on' : ''}" data-act="wxDims" aria-pressed="${WX.dims}">Measurements</button><button type="button" class="tchip ${WX.labels ? 'on' : ''}" data-act="wxLabs" aria-pressed="${WX.labels}">Letters</button><button type="button" class="tchip ${WX.hw ? 'on' : ''}" data-act="wxHw" aria-pressed="${WX.hw}">Hardware</button><button type="button" class="tchip ${WX.marks ? 'on' : ''}" data-act="wxMarks" aria-pressed="${WX.marks}">Holes &amp; marks</button><button type="button" class="tchip ${WX.see ? 'on' : ''}" data-act="wxSee" aria-pressed="${!!WX.see}">See-through</button><button type="button" class="tchip" data-act="wxReset">Reset view</button></div></div>
       <div class="wxlist" id="wxList"></div></div></div>`;
   wxScene(c);
   wxListRender();
@@ -159,7 +160,7 @@ function wxScene(c) {
   sun.position.set(1, 1.6, 1.3);
   scene.add(sun);
   const bx = c.bx,
-    EX = Math.max(180, Math.min(420, (bx.y1 - bx.y0) * 0.12)),
+    EX = 2.2 * Math.max(180, Math.min(420, (bx.y1 - bx.y0) * 0.12)), // pulled apart well clear (more than twice the drawings' spacing)
     ctr = new THREE.Vector3((bx.x0 + bx.x1) / 2, (bx.y0 + bx.y1) / 2, (bx.z0 + bx.z1) / 2),
     { rows, tagOf } = tdPartRows(c);
   const gs = groupsCache || (groupsCache = groupPanels(bgeo()));
@@ -470,8 +471,9 @@ function wxDraw() {
     const on = WX.sel == null || p.row === WX.sel,
       hi = WX.sel != null && p.row === WX.sel,
       ed = p.grp.children[1].material;
-    p.mesh.material.opacity = on ? 1 : 0.18;
-    p.mesh.material.depthWrite = on;
+    const base = WX.see ? 0.3 : 1; // See-through: every board glass-like, so holes, pins and hardware show
+    p.mesh.material.opacity = on ? base : 0.18 * base;
+    p.mesh.material.depthWrite = on && !WX.see;
     ed.color.set(hi ? 0x3446d6 : 0x2a2a2a);
     ed.opacity = hi ? 1 : on ? 0.55 : 0.1;
   });

@@ -2366,8 +2366,21 @@ function build(S) {
         hFin =
           isHead && up_ && up_.type === 'open' && up_.drench && FIN[up_.inFin] ? up_.inFin : colDrench(q) || undefined;
       zr.divFin = hFin || null; // header under a colour-drenched open level takes its colour
+      // screws from below through the (top) header board into the rails on edge, every 250 mm or so
+      const railScrews = [];
+      if (isHead) {
+        const nS = Math.max(2, Math.round(L / 250) + 1),
+          xsS = Array.from({ length: nS }, (_, j) => 40 + ((L - 80) * j) / (nS - 1)),
+          dd = dDep - dOff;
+        [20 + tc / 2, dd - tc / 2].forEach((yy, j) => {
+          if (j === 0 && up_ && (up_.type === 'open' || up_.face === 'glass')) return; // no front rail when the level above is open
+          xsS.forEach(x_ => railScrews.push({ x: x_, y: yy, d: 4.5, face: 'through, countersunk from below · screw into the rail' }));
+        });
+        H.railScrews = (H.railScrews || 0) + railScrews.length;
+      }
       for (let l = 0; l < (isSplit ? 2 : isHead ? Math.max(1, Math.round(zr.divT / tc)) : 1); l++)
         addPanel({
+          holes: isHead && l === Math.max(1, Math.round(zr.divT / tc)) - 1 ? railScrews : undefined,
           type:
             isSplit && l === 1
               ? 'Bottom (upper unit)'
@@ -6646,6 +6659,20 @@ function build(S) {
             } else put(uF + u, y, { d: 5, cf: 1, face: 'through · connector screw' });
           })
         );
+        // header rails on edge: two fixings per rail end (25 and 75 mm up), on the rail's centre line
+        hRails
+          .filter(r_ => (isL ? Math.abs(r_.xa - q.xa) < 3 : Math.abs(r_.xb - q.xb) < 3))
+          .forEach(r_ => {
+            // one entry stands for the rear rail, and the front rail too when the level above has doors (rear: false)
+            const hh = r_.y1 - r_.y0;
+            (r_.rear ? [q.Dh - tc / 2] : [20 + tc / 2, q.Dh - tc / 2]).forEach(u =>
+              [hh * 0.25, hh * 0.75].forEach(dy => {
+                const y = r_.y0 + dy;
+                if (JN === 'dowel') put(uF + u, y, { d: 8, dp: 12, face: face + ' · dowel (header rail)', dw: 1 });
+                else put(uF + u, y, { d: 5, cf: 1, face: 'through · connector screw (header rail)' });
+              })
+            );
+          });
         // shelf-support holes, per level, by this column's setting
         const mode = pinMode(q);
         q.zones.forEach(zr => {
@@ -7565,9 +7592,10 @@ function build(S) {
     let joints = 0;
     jt.forEach(q => {
       const per = JN === 'confirmat' || JN === 'screw' ? Math.ceil((q.Dc - 100) / 250) + 1 : q.Dc > 450 ? 3 : 2;
-      const nh = 1 + 1 + q.zones.filter(zr => !zr.top && zr.divY).length;
-      q.jn = nh * 2 * per;
-      joints += nh * 2 * per;
+      const nh = 1 + 1 + q.zones.filter(zr => !zr.top && zr.divY).length,
+        rj = hRails.filter(r_ => r_.xa < q.xb && r_.xb > q.xa).reduce((a_, r_) => a_ + (r_.rear ? 1 : 2) * 2 * 2, 0); // header rails: 2 fixings at each end of each rail
+      q.jn = nh * 2 * per + rj;
+      joints += nh * 2 * per + rj;
     });
     H.join = { type: JN, joints, dowels: JN === 'confirmat' || JN === 'screw' ? 0 : joints, groove: GRV };
     H.wallHang = jt.filter(q => !q.free || q.mount === 'wall').length * 2;

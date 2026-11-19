@@ -65,7 +65,8 @@
     "287 2361 5 0 through · connector screw",
     "287 447 5 0 through · connector screw",
     "287 9 5 0 through · connector screw",
-    "37 1448 5 12 face towards S2",
+    "29 1449 5 0 through · connector screw (header rail)",
+    "29 1499 5 0 through · connector screw (header rail)",
     "37 1480 5 12 face towards S2",
     "37 1512 5 12 face towards S2",
     "37 1544 5 12 face towards S2",
@@ -129,6 +130,9 @@
     "537 2248 5 12 face towards S2",
     "537 2280 5 12 face towards S2",
     "537 2312 5 12 face towards S2",
+    "565 1449 5 0 through · connector screw (header rail)",
+    "565 1499 5 0 through · connector screw (header rail)",
+    "62 1448 5 12 face towards S2",
     "62 1541 5 12 face towards S2",
     "62 1573 5 12 face towards S2",
     "62 1896.8 5 12 face towards S2",
@@ -331,7 +335,16 @@
    "band": "1000",
    "fin": "ral1013",
    "grain": "w",
-   "holes": [],
+   "holes": [
+    "280 29 4.5 0 through, countersunk from below · screw into the rail",
+    "280 565 4.5 0 through, countersunk from below · screw into the rail",
+    "40 29 4.5 0 through, countersunk from below · screw into the rail",
+    "40 565 4.5 0 through, countersunk from below · screw into the rail",
+    "520 29 4.5 0 through, countersunk from below · screw into the rail",
+    "520 565 4.5 0 through, countersunk from below · screw into the rail",
+    "760 29 4.5 0 through, countersunk from below · screw into the rail",
+    "760 565 4.5 0 through, countersunk from below · screw into the rail"
+   ],
    "id": "P9",
    "mat": "melamine",
    "qty": 1,
@@ -392,14 +405,14 @@
     "287 447 5 0 through · connector screw",
     "287 847 5 0 through · connector screw",
     "287 9 5 0 through · connector screw",
+    "29 1449 5 0 through · connector screw (header rail)",
+    "29 1499 5 0 through · connector screw (header rail)",
     "312 2361 5 0 through · connector screw",
     "312 9 5 0 through · connector screw",
     "37 1398 5 12 face towards S3",
     "37 1430 5 12 face towards S3",
-    "37 1448 5 12 face towards S2",
     "37 1462 5 12 face towards S3",
     "37 1480 5 12 face towards S2",
-    "37 1494 5 12 face towards S3",
     "37 1512 5 12 face towards S2",
     "37 1526 5 12 face towards S3",
     "37 1544 5 12 face towards S2",
@@ -524,6 +537,10 @@
     "537 2326 5 12 face towards S3",
     "549 2361 5 0 through · connector screw",
     "549 9 5 0 through · connector screw",
+    "565 1449 5 0 through · connector screw (header rail)",
+    "565 1499 5 0 through · connector screw (header rail)",
+    "62 1448 5 12 face towards S2",
+    "62 1494 5 12 face towards S3",
     "62 1541 5 12 face towards S2",
     "62 1573 5 12 face towards S2",
     "62 1896.8 5 12 face towards S2",
@@ -1777,7 +1794,7 @@
   "join": {
    "dowels": 0,
    "groove": true,
-   "joints": 66,
+   "joints": 74,
    "type": "confirmat"
   },
   "led": [
@@ -1793,6 +1810,7 @@
   "ped": 0,
   "pins": 32,
   "pocket": 0,
+  "railScrews": 8,
   "rails": [],
   "slide": [],
   "slides": {
@@ -1804,10 +1822,10 @@
  },
  "link": {
   "boards": 59,
-  "holesOnLinked": 17,
+  "holesOnLinked": 18,
   "linked": 50,
   "unlinkedWithHoles": 0
  },
  "notes": [],
- "price": 1698.9
+ "price": 1701.3
 }

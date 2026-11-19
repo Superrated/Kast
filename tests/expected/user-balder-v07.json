@@ -47,7 +47,8 @@
     "214.5 2456 5 0 through · connector screw",
     "214.5 497 5 0 through · connector screw",
     "214.5 9 5 0 through · connector screw",
-    "37 1408 5 12 face towards S1",
+    "29 1409 5 0 through · connector screw (header rail)",
+    "29 1459 5 0 through · connector screw (header rail)",
     "37 1440 5 12 face towards S1",
     "37 1472 5 12 face towards S1",
     "37 1504 5 12 face towards S1",
@@ -117,10 +118,13 @@
     "392 2336 5 12 face towards S1",
     "392 2368 5 12 face towards S1",
     "392 2400 5 12 face towards S1",
+    "420 1409 5 0 through · connector screw (header rail)",
+    "420 1459 5 0 through · connector screw (header rail)",
     "50 1375 5 0 through · connector screw",
     "50 2456 5 0 through · connector screw",
     "50 497 5 0 through · connector screw",
     "50 9 5 0 through · connector screw",
+    "62 1408 5 12 face towards S1",
     "62 1501 5 12 face towards S1",
     "62 1533 5 12 face towards S1",
     "62 1924.3 5 12 face towards S1",
@@ -150,6 +154,8 @@
     "214.5 2456 5 0 through · connector screw",
     "214.5 497 5 0 through · connector screw",
     "214.5 9 5 0 through · connector screw",
+    "29 1409 5 0 through · connector screw (header rail)",
+    "29 1459 5 0 through · connector screw (header rail)",
     "37 1501 5 12 face towards S1",
     "37 1533 5 12 face towards S1",
     "37 1924.3 5 12 face towards S1",
@@ -160,6 +166,8 @@
     "379 2456 5 0 through · connector screw",
     "379 497 5 0 through · connector screw",
     "379 9 5 0 through · connector screw",
+    "420 1409 5 0 through · connector screw (header rail)",
+    "420 1459 5 0 through · connector screw (header rail)",
     "50 1375 5 0 through · connector screw",
     "50 2456 5 0 through · connector screw",
     "50 497 5 0 through · connector screw",
@@ -576,7 +584,22 @@
    "band": "1000",
    "fin": "ral9010",
    "grain": "w",
-   "holes": [],
+   "holes": [
+    "1009.3 29 4.5 0 through, countersunk from below · screw into the rail",
+    "1009.3 420 4.5 0 through, countersunk from below · screw into the rail",
+    "1251.7 29 4.5 0 through, countersunk from below · screw into the rail",
+    "1251.7 420 4.5 0 through, countersunk from below · screw into the rail",
+    "1494 29 4.5 0 through, countersunk from below · screw into the rail",
+    "1494 420 4.5 0 through, countersunk from below · screw into the rail",
+    "282.3 29 4.5 0 through, countersunk from below · screw into the rail",
+    "282.3 420 4.5 0 through, countersunk from below · screw into the rail",
+    "40 29 4.5 0 through, countersunk from below · screw into the rail",
+    "40 420 4.5 0 through, countersunk from below · screw into the rail",
+    "524.7 29 4.5 0 through, countersunk from below · screw into the rail",
+    "524.7 420 4.5 0 through, countersunk from below · screw into the rail",
+    "767 29 4.5 0 through, countersunk from below · screw into the rail",
+    "767 420 4.5 0 through, countersunk from below · screw into the rail"
+   ],
    "id": "P8",
    "mat": "melamine",
    "qty": 1,
@@ -2518,7 +2541,7 @@
   "join": {
    "dowels": 0,
    "groove": true,
-   "joints": 48,
+   "joints": 56,
    "type": "screw"
   },
   "led": [
@@ -2534,6 +2557,7 @@
   "ped": 0,
   "pins": 72,
   "pocket": 0,
+  "railScrews": 14,
   "rails": [
    {
     "L": 500,
@@ -2548,7 +2572,7 @@
  },
  "link": {
   "boards": 116,
-  "holesOnLinked": 19,
+  "holesOnLinked": 20,
   "linked": 64,
   "unlinkedWithHoles": 0
  },
@@ -2558,5 +2582,5 @@
   "S1: the reading nook is 824 mm high inside — about 744 mm above a cushion: fine for children up to about 7, tight from about 8. Children up to about 12 need about 950 mm inside (870 mm above an 80 mm cushion).",
   "S4: a hanging rail needs about 550 mm of depth inside (a hanger is 420–450 mm wide plus sleeves); here there is 429 mm, so clothes will stick out or the doors won't close. Use shelves here, or a pull-out rail that faces the front."
  ],
- "price": 1250.6
+ "price": 1253.1
 }

@@ -25,6 +25,7 @@ const SYNC = {
     if (o) {
       WX.hw = o.hw !== false;
       WX.marks = o.marks !== false;
+      WX.see = !!o.see;
     }
   },
   'fitted-pn': () => {

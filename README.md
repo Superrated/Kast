@@ -7,7 +7,7 @@
 - a hardware list and a price estimate (Belgian woodworking shops)
 - a step-by-step build guide, and a PDF with all of the above
 
-Version **v0.128**.
+Version **v0.129**.
 
 ## Use it
 

@@ -128,7 +128,7 @@ function asHW(c, G) {
       hw.push(Object.assign(s, { hw: type, host: host || null, extra: extra || [0, 0, 0] }));
     },
     inc = (t, n) => (cnt[t] = (cnt[t] || 0) + (n || 1));
-  const boards = c.cs.filter(s => (s.role === 'carcass' || s.role === 'shelf') && s.ax === 1);
+  const boards = c.cs.filter(s => (s.role === 'carcass' || s.role === 'shelf') && (s.ax === 1 || (s.ax === 2 && s.bb[1][1] - s.bb[1][0] <= 160))); // horizontal boards, and rails on edge
   c.cs.forEach(s => {
     const H = asHoles(s, ctr, G);
     if (!H.length) return;
