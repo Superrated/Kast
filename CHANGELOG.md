@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.111
+
+- **Your shops and board prices** (Parts → Price):
+  - **Shops**: name, website, delivery cost, the order amount above which delivery is free, pick-up (and its cost), edge banding per metre, cutting service per cut.
+  - **Board prices**: shop, board type, colour or veneer (or any colour), thickness, sheet size, price per sheet, note (e.g. article number).
+  - **This design**: for every board in the design, which of your prices is used — or a "+ Add my price" button already filled in. When your shop's sheet size is different, it is priced per m² and one tap switches the design to their sheet size.
+  - **Buy the boards from**: the cheapest of your shops, or one shop.
+  - **Delivery per shop**: free above your amount (it says how much more you need for free delivery), or the pick-up cost when you tick "pick up". Edge banding and cutting are counted at the shop that supplies the most sheets.
+  - Saved in this browser and, in the published app, in your own private space. It works for every design.
+
 ## v0.110
 
 - **Machining drawings for every part**, measured from one corner marked **0** (sides: front edge, bottom; tops, bottoms and shelves: front edge, left):

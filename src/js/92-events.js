@@ -124,6 +124,13 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'lblPdf':toast('Making the labels…');exportLabels();break;
     case 'tplPdf':toast('Making the templates…');exportTemplates();break;
     case 'dxfZip':exportDXF();break;
+    case 'msAddShop':msAddShop();break;
+    case 'msAddOff':msAddOff();break;
+    case 'msAddFor':{const[mt,fin,t,sheet]=a.split('|');msAddOff({mt,fin,t,sheet});break}
+    case 'msDelShop':{const b=e.target.closest('button');if(!b.dataset.armed){b.dataset.armed='1';b.textContent='Sure?';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='×'}},3000);break}MS.shops=MS.shops.filter(x=>x.id!==a);MS.offers=MS.offers.filter(x=>x.shop!==a);if(S.opts.msShop===a)S.opts.msShop='';msSave();break}
+    case 'msDelOff':MS.offers=MS.offers.filter(x=>x.id!==a);msSave();break;
+    case 'msPickShop':S.opts.msShop=a||'';saveSoon();msSave();break;
+    case 'msSheet':{const[mt,sheet]=a.split('|');Object.values(S.mat).forEach(m=>{if(m.type===mt)m.sheet=sheet});changed(true);toast(`Sheet size set to ${sheet.replace('x',' × ')} for that board`);break}
     case 'mdPdf':mdExportPDF();break;
     case 'pjStart':openState.walls=true;pjStart();break;
     case 'pjAdd':pjAdd();break;

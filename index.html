@@ -526,6 +526,13 @@ aside.side.locked>*:not(.shead):not(.lockban):not(.viewsw){pointer-events:none;o
 .mdt{border-collapse:collapse;font-size:12px;width:100%}.mdt th{text-align:left;font-weight:600;color:#555;border-bottom:1px solid #ddd;padding:3px 4px}.mdt td{border-bottom:1px solid #eee;padding:4px;vertical-align:top;font-variant-numeric:tabular-nums}.mdt small{display:block;color:#666}
 .mdl{margin:0;font-size:12px;color:#333}.mdn{margin:0;padding-left:16px;font-size:12px;color:#333}
 @media (max-width:700px){.mdbody{grid-template-columns:minmax(0,1fr)}}
+/* your shops and board prices */
+.mscard{margin-top:18px}.msb{display:grid;gap:12px;padding-top:8px}.msb h4{margin:6px 0 0}
+.mst input,.mst select{width:100%;min-width:70px;height:32px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);font:inherit;font-size:12.5px;padding:0 6px}
+.mst td{padding:4px}.mst{min-width:860px}.mschk{display:flex;gap:4px;align-items:center;font-size:12px;white-space:nowrap;margin-bottom:4px}.mschk input{width:auto;min-width:0;height:auto}
+.msstl{display:grid;gap:6px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--raised)}
+.msst{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;justify-content:space-between;font-size:13px;padding:4px 0;border-top:1px solid var(--line)}.msst:first-of-type{border-top:0}.msst em{font-style:normal;color:var(--ink2)}.msst.ok em{color:#2E7D50}
+.seg.wrap{flex-wrap:wrap}
 /* ==== 10-look.css — The Fitted look: fonts, tokens for light and dark mode, cards, wizard, dialogs. */
 /* ===== Fitted visual refresh ===== */
 :root{--bg:#F3F3F0;--surface:#FAFAF8;--raised:#FFFFFF;--ink:#17191B;--ink2:#62676B;--ink3:#6A6F74;--line:#E4E5E1;--accent:#3446D6;--accent-ink:#FFFFFF;--accent-soft:rgba(52,70,214,.09);--warn:#B4541A;--warn-soft:rgba(180,84,26,.1);--wall:#E7E7E3;--hatch:#D3D5D1;--stage:#ECEDEA;--paper:#FFFFFF;--shade:rgba(20,22,24,.2);
@@ -945,14 +952,14 @@ input[type=checkbox],input[type=radio]{accent-color:var(--ink)}
 .chk{min-height:32px}
 </style>
 
-<div id="splash" role="status" aria-label="Fitted by BRUIS v0.110 is loading"><b>Fitted</b><span>v0.110</span></div>
+<div id="splash" role="status" aria-label="Fitted by BRUIS v0.111 is loading"><b>Fitted</b><span>v0.111</span></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
 
 <div class="app" data-tab="elev">
   <header class="top">
     <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-    <div class="brand" title="Fitted by BRUIS v0.110">Fitted<span class="bybr">by BRUIS</span><small>built-in wardrobes & cabinets, drawn and cut · v0.110</small></div>
+    <div class="brand" title="Fitted by BRUIS v0.111">Fitted<span class="bybr">by BRUIS</span><small>built-in wardrobes & cabinets, drawn and cut · v0.111</small></div>
     <nav class="tabs" id="tabs">
       <button data-act="tab" data-a="elev" class="on">Drawing</button>
       <button data-act="tab" data-a="3d">3D</button>
@@ -4809,7 +4816,7 @@ function renderCut(){
   h+=`<h3>Hardware</h3><div class="tw"><table class="cut hwt" style="min-width:480px"><thead><tr><th>Item</th><th>Qty</th><th>Notes</th></tr></thead><tbody>${hw.map(r=>`<tr><td>${esc(r[0])}</td><td class="n">${r[1]}</td><td class="note">${esc(r[2])}</td></tr>`).join('')}</tbody></table></div>`;
   lastPrice=priceRows(nest,sp,hw,mats);lastPrice.nest=nest;lastPrice.shops=['best',...Object.keys(SHOPS)].map(k=>{const t=k===lastPrice.tot.shop?lastPrice.tot:priceRows(nest,sp,hw,mats,k).tot;return {k,total:t.all,fb:t.fb}});lastAlt=null;
   if(ROLES.some(([k])=>k!=='back'&&S.mat[k].type==='melamine')){const keep=S.opts.stock,was=!!(keep&&keep.on);try{setStockAll(!was);lastAlt={on:!was,total:priceRows(nestAll(gs),stockPlan(gs),hw,mats).tot.all}}catch(e){}S.opts.stock=keep;if(keep===undefined)delete S.opts.stock}
-  h+='</section><section data-psec="price">'+priceHTML(lastPrice)+'</section>';
+  h+='</section><section data-psec="price">'+priceHTML(lastPrice)+msHTML(nest)+'</section>';
   if(PRICING)return;
   el.innerHTML=partBar()+h;budSoon();{const pv=document.getElementById('pstatv');if(pv)pv.textContent=eur(lastPrice.tot.all)}
 }
@@ -4972,11 +4979,16 @@ const pKey=k=>String(k).replace(/[^A-Za-z0-9]+/g,'_');
 function priceRows(nest,sp,hw,mats,shopO){const shop=shopO||curShop();let fbN=0;const ov=(S.opts.prices&&typeof S.opts.prices==='object')?S.opts.prices:{},rows=[];
   const add=(grp,key,name,qty,unitLbl,unit,src,est,ref)=>{const k=pKey(key),o=+ov[k]>0?+ov[k]:null,u=o!=null?o:unit;rows.push({grp,k,name,qty,unitLbl,unit:u,dflt:unit,mine:o!=null,shop:src||'',src:o!=null?'your price':(est?'typical':src),est:!!est&&o==null,ref,total:u!=null?u*qty:null})};
   nest.forEach(n=>{const P=PRICE_M2[n.mt]||PRICE_M2.melamine,sh=n.sh||{},area=(sh.L||2800)*(sh.W||2070)/1e6,f=FIN[n.fin]||{};const thin=n.mt==='hdf'&&+n.t<=4,sq=shopPrice(thin?'hdf3':n.mt==='hdf'?'':n.mt,shop);if(sq&&sq.fb)fbN++;let m2=(sq?sq.p:P.p)*(thin?1:(1+0.6*((+n.t||P.t)/P.t-1))),est=!thin&&(!!P.est||Math.abs((+n.t||P.t)-P.t)>1.5);if(n.mt==='veneer'&&n.fin!=='oak'){m2*=n.fin==='walnut'?1.35:1.15;est=true}
-    const my_=+((S.opts.myM2||{})[n.mt])||0,cu_=!!(MATS[n.mt]&&MATS[n.mt].custom);if(my_>0){m2=my_;est=false}const cnt=n.sheets.length+(n.over&&n.over.length?1:0);if(cnt)add('Sheets','m_'+n.mt+'_'+n.fin+'_'+n.t,`${n.name} mm sheet, ${n.sheet.replace('x',' × ')}`,cnt,'sheet',Math.round(m2*area*100)/100,cu_?'':(sq?sq.src:P.src),cu_?my_<=0:est,cu_?'':P.ref)});
+    const my_=+((S.opts.myM2||{})[n.mt])||0,cu_=!!(MATS[n.mt]&&MATS[n.mt].custom);if(my_>0){m2=my_;est=false}const cnt=n.sheets.length+(n.over&&n.over.length?1:0);const uo=typeof msOffer==='function'?msOffer(n):null;
+    if(uo&&cnt){add('Sheets','m_'+n.mt+'_'+n.fin+'_'+n.t,`${n.name} mm sheet, ${n.sheet.replace('x',' × ')}`,cnt,'sheet',uo.unit,uo.shop.name,false,`Your price at ${uo.shop.name}: € ${(+uo.o.price).toFixed(2)} for a ${uo.o.sheet.replace('x',' × ')} sheet${uo.o.note?' · '+uo.o.note:''}`);
+      if(+uo.shop.cutEach>0){const cuts=(n.parts||[]).length*2+cnt;(rows._cuts=rows._cuts||{})[uo.shop.name]=((rows._cuts||{})[uo.shop.name]||0)+cuts}if(+uo.shop.edgeM>0){(rows._edge=rows._edge||{})[uo.shop.name]=(rows._edge[uo.shop.name]||0)+cnt}return}
+    if(cnt)add('Sheets','m_'+n.mt+'_'+n.fin+'_'+n.t,`${n.name} mm sheet, ${n.sheet.replace('x',' × ')}`,cnt,'sheet',Math.round(m2*area*100)/100,cu_?'':(sq?sq.src:P.src),cu_?my_<=0:est,cu_?'':P.ref)});
   (sp.groups||[]).forEach(g=>{const white=(FIN[g.fin]||{}).ral&&lum((FIN[g.fin]||{}).base||'#fff')>0.8,L=(sp.cfg&&sp.cfg.L)||2500,sq=stockPrice(g.W,shop);if(sq.fb)fbN++;const w=sq.w;let u=sq.u*(L/2500)*(1+0.6*((+g.t||18)/18-1));if(!white)u*=2.1;
     add('Sheets','s_'+g.fin+'_'+g.t+'_'+g.W,`${FIN[g.fin]?.name||''} ${g.t} mm pre-edged furniture panel, ${g.W} × ${L}`,g.bars.length,'board',Math.round(u*100)/100,sq.src,!white||Math.abs(w-g.W)>5||+g.t!==18||L!==2500,'White 18 mm furniture panels 2500 long — '+Object.entries(STOCK_PRICES).map(([k,t])=>SHOPS[k]+': '+Object.entries(t).map(([a,b])=>a+' € '+b).join(' · ')).join(' | '))});
   let band=-(sp.saved||0),paint=0,micro=0;Object.values(mats||{}).forEach(m=>{if(!m.paint&&!m.micro)band+=m.band||0;if(m.paint)paint+=(m.area||0)*2+(m.peri||0);if(m.micro)micro+=(m.mA||0)+(m.vis||0)});
-  if(band>0.5)add('Finishing','edge','Edge banding (ABS 1 mm or veneer), incl. 10 % waste',Math.ceil(band*1.1),'m',FINISH_PRICE.edge.p,FINISH_PRICE.edge.src||'',FINISH_PRICE.edge.est,FINISH_PRICE.edge.ref);
+  {const eS=rows._edge?Object.entries(rows._edge).sort((a,b)=>b[1]-a[1])[0]:null,es=eS&&MS.shops.find(x=>x.name===eS[0]);
+    if(band>0.5){if(es&&+es.edgeM>0)add('Finishing','edge',`Edge banding at ${es.name}, incl. 10 % waste`,Math.ceil(band*1.1),'m',+es.edgeM,es.name,false,`Your price at ${es.name}: € ${(+es.edgeM).toFixed(2)} per metre`);else add('Finishing','edge','Edge banding (ABS 1 mm or veneer), incl. 10 % waste',Math.ceil(band*1.1),'m',FINISH_PRICE.edge.p,FINISH_PRICE.edge.src||'',FINISH_PRICE.edge.est,FINISH_PRICE.edge.ref)}}
+  Object.entries(rows._cuts||{}).forEach(([nm,c])=>{const sh=MS.shops.find(x=>x.name===nm);if(sh)add('Finishing','cut_'+nm,`Cutting service at ${nm} (about ${c} cuts)`,c,'cut',+sh.cutEach,nm,false,`Your price at ${nm}: € ${(+sh.cutEach).toFixed(2)} per cut — the number of cuts is an estimate`)});
   if(micro>0.2)add('Finishing','micro','Microcement on the visible sides (front face + visible edges): primer, base coat, 2 finish coats, PU varnish, incl. 15 % waste',Math.ceil(micro*1.15),'m²',FINISH_PRICE.micro.p,FINISH_PRICE.micro.src||'',FINISH_PRICE.micro.est,FINISH_PRICE.micro.ref);
   if(paint>0.5)add('Finishing','paint',false?'':'Primer + two coats of lacquer for the painted MDF',Math.ceil(paint),'m²',FINISH_PRICE.paint.p,FINISH_PRICE.paint.src||'',FINISH_PRICE.paint.est,FINISH_PRICE.paint.ref);
   hw.forEach((r,i)=>{const nm=String(r[0]),q=r[1];if(/Finger (hole|slot|groove)|Speaker baffles|Back panel in groove|Open doorway|groove pull|Handleless/i.test(nm))return;let rule=PRICE_HW.find(x=>x[0].test(nm));if(!rule&&/handle|pull|knob|grip|cup|profile|bar/i.test(nm))rule=[null,isBudget()&&isWoodHandle(S.opts.handle)?HANDLE_PRICE.wood:HANDLE_PRICE.other,1];
@@ -4985,7 +4997,8 @@ function priceRows(nest,sp,hw,mats,shopO){const shop=shopO||curShop();let fbN=0;
     if(!rule){rows.push({grp:'Hardware',k:pKey('h_'+nm.slice(0,40)),name:nm,qty,unitLbl,unit:(+ov[pKey('h_'+nm.slice(0,40))]>0?+ov[pKey('h_'+nm.slice(0,40))]:null),dflt:null,mine:+ov[pKey('h_'+nm.slice(0,40))]>0,src:+ov[pKey('h_'+nm.slice(0,40))]>0?'your price':'not priced',est:false,total:+ov[pKey('h_'+nm.slice(0,40))]>0?+ov[pKey('h_'+nm.slice(0,40))]*qty:null});return}
     add('Hardware','h_'+nm.slice(0,40),nm,qty,unitLbl,rule[1],rule[3]||'',rule[2],rule[3]?`${rule[3]} webshop, € ${rule[1].toFixed(2)} each`:'Typical trade price — not looked up')});
   {const shops={};rows.forEach(r=>{if(r.total==null)return;const k=r.shop||'';if(!k)return;(shops[k]=shops[k]||{n:0,sub:0}).n++;shops[k].sub+=r.total});const my=S.opts.ship||{};
-    Object.entries(shops).forEach(([k,o])=>{const d=SHIP[k]||{p:7.95,est:1,note:'typical webshop delivery'},u=my[k]!=null&&my[k]!==''?+my[k]:d.p;if(u>0||my[k]!=null)rows.push({grp:'Shipping',k:'ship_'+k,name:`Delivery from ${k}`,qty:1,unitLbl:'pc',unit:u,dflt:d.p,mine:my[k]!=null&&my[k]!=='',shop:k,src:my[k]!=null&&my[k]!==''?'your price':d.est?'typical':k,est:!!d.est&&my[k]==null,ref:d.note,total:u,ship:1})});rows.shops=shops}
+    Object.entries(shops).forEach(([k,o])=>{const ms_=typeof msShip==='function'?msShip(k,o.sub):null;if(ms_){const mine=my[k]!=null&&my[k]!=='',u=mine?+my[k]:ms_.u;rows.push({grp:'Shipping',k:'ship_'+k,name:ms_.name,qty:1,unitLbl:'pc',unit:u,dflt:ms_.u,mine,shop:k,src:mine?'your price':k,est:false,ref:ms_.ref,total:u,ship:1});return}
+      const d=SHIP[k]||{p:7.95,est:1,note:'typical webshop delivery'},u=my[k]!=null&&my[k]!==''?+my[k]:d.p;if(u>0||my[k]!=null)rows.push({grp:'Shipping',k:'ship_'+k,name:`Delivery from ${k}`,qty:1,unitLbl:'pc',unit:u,dflt:d.p,mine:my[k]!=null&&my[k]!=='',shop:k,src:my[k]!=null&&my[k]!==''?'your price':d.est?'typical':k,est:!!d.est&&my[k]==null,ref:d.note,total:u,ship:1})});rows.shops=shops}
   const sum=g=>rows.filter(r=>r.grp===g&&r.total!=null).reduce((a,r)=>a+r.total,0),tot={sheets:sum('Sheets'),fin:sum('Finishing'),hw:sum('Hardware'),ship:sum('Shipping')};tot.all=tot.sheets+tot.fin+tot.hw+tot.ship;tot.est=rows.filter(r=>r.est&&r.total!=null).reduce((a,r)=>a+r.total,0);tot.none=rows.filter(r=>r.total==null).length;tot.fb=fbN;tot.shop=shop;
   return {rows,tot}}
 function nearRal(fin){const f=FIN[fin];if(!f||f.ral)return f?fin:'ral9010';const h=x=>[1,3,5].map(i=>parseInt(x.slice(i,i+2),16)),a=h(f.base);let best='ral9010',bd=1e9;Object.entries(FIN).forEach(([k,v])=>{if(!v.ral||!/^#[0-9a-f]{6}$/i.test(v.base))return;const b=h(v.base),d=(a[0]-b[0])**2+(a[1]-b[1])**2+(a[2]-b[2])**2;if(d<bd){bd=d;best=k}});return best}
@@ -5267,6 +5280,61 @@ function nestAll(gs){
   return Object.values(byKey).map(g=>{const sh=sheetOf(g.sheet),grain=FIN[g.fin]&&FIN[g.fin].kind!=='plain'&&!FIN[g.fin].micro;
     const sc=sawCfg(),ou=offUse(g),r=packGroup(ou.parts,sh,sc.kerf,sc.trim,grain);return {...g,...r,offUsed:ou.used,sh,grain,name:`${MATS[g.mt]?.short||''} ${FIN[g.fin]?.name} ${g.t}`}});
 }
+/* ==== 68-my-shops.js ====
+   Your own shops and board prices (Parts → Price → Your shops and board prices).
+   A shop: name, website, delivery cost, free delivery from (order amount), pick-up (and its cost),
+           edge banding per metre, cutting service per cut.
+   A price: shop, board type, colour/veneer (or any colour), thickness, sheet size, price per sheet.
+   priceRows() (66-prices-budget.js) asks msOffer() for every sheet material: the cheapest of your prices
+   (or the shop you chose) wins over the built-in prices. Delivery is counted per shop with the free-delivery
+   threshold, or the pick-up cost. Saved in this browser and, when the app can, in your own private space.
+*/
+const MS_LS='fitted-myshops';let MS={shops:[],offers:[]};
+try{const o=JSON.parse(localStorage.getItem(MS_LS)||'null');if(o&&Array.isArray(o.shops))MS={shops:o.shops,offers:Array.isArray(o.offers)?o.offers:[]}}catch(e){}
+let msDoc=null,msT=null;
+async function msInit(){try{if(!(window.claude&&claude.use))return;const db=await claude.use('db'),u=await claude.use('user');if(!db||!u||!u.id)return;const id=await u.id();if(!id)return;msDoc=db.doc(`data/users/${id}/fitted/myshops`);
+  const d=await msDoc.get();const v=d&&(d.data?d.data():d);if(v&&Array.isArray(v.shops)&&(v.shops.length||v.offers&&v.offers.length)&&!MS.shops.length&&!MS.offers.length){MS={shops:v.shops,offers:v.offers||[]};msLocal();dirty.cut=true;if(ui.tab==='cut')renderCut()}}catch(e){msDoc=null}}
+function msLocal(){try{localStorage.setItem(MS_LS,JSON.stringify(MS))}catch(e){}}
+function msSave(){msLocal();clearTimeout(msT);msT=setTimeout(()=>{try{msDoc&&msDoc.set({shops:MS.shops,offers:MS.offers,updatedAt:Date.now()})}catch(e){}},800);groupsCache=null;dirty.cut=true;if(ui.tab==='cut'){const sc=document.getElementById('v-cut'),y=sc?sc.scrollTop:0;renderCut();if(sc)sc.scrollTop=y}try{priceSoon()}catch(e){}}
+const msShop=id=>MS.shops.find(s=>s.id===id)||null;
+const msArea=sheet=>{const s=sheetOf(sheet);return s.L*s.W/1e6};
+/* the best of your prices for one sheet material of the design */
+function msOffer(n){const pick=S.opts.msShop||'';const ok=MS.offers.filter(o=>o.mt===n.mt&&Math.abs(+o.t-+n.t)<0.6&&(o.fin==='*'||o.fin===n.fin)&&msShop(o.shop)&&(!pick||o.shop===pick)&&+o.price>0);
+  if(!ok.length)return null;const per=o=>+o.price/msArea(o.sheet);ok.sort((a,b)=>(a.fin==='*')-(b.fin==='*')||per(a)-per(b));const o=ok[0],same=sheetOf(o.sheet).L===sheetOf(n.sheet).L&&sheetOf(o.sheet).W===sheetOf(n.sheet).W;
+  return {o,shop:msShop(o.shop),same,unit:same?+o.price:Math.round(per(o)*msArea(n.sheet)*100)/100}}
+/* delivery / pick-up for one of your shops, given what you buy there */
+function msShip(name,sub){const s=MS.shops.find(x=>x.name===name);if(!s)return null;const pick=!!(S.opts.msPick||{})[s.id];
+  if(pick)return {name:`Pick-up at ${s.name}`,u:+s.pickCost||0,ref:s.pickNote||'You collect the order yourself'};
+  const free=+s.freeFrom||0,c=+s.ship||0;if(free>0&&sub>=free)return {name:`Delivery from ${s.name} — free`,u:0,ref:`Free delivery from € ${free.toFixed(2)}; this order is € ${sub.toFixed(2)}`};
+  return {name:`Delivery from ${s.name}`,u:c,ref:free>0?`Free from € ${free.toFixed(2)} — € ${(free-sub).toFixed(2)} more and delivery is free`:'Your delivery cost'}}
+/* ---------- the panel ---------- */
+function msFinOpts(sel){const used=[...new Set(Object.values(S.mat).map(m=>m.fin))],tex=Object.entries(FIN).filter(([k,f])=>!f.ral&&!f.hidden&&!used.includes(k)),ral=Object.entries(FIN).filter(([k,f])=>f.ral&&!used.includes(k));
+  const o=(k,l)=>`<option value="${esc(k)}"${k===sel?' selected':''}>${esc(l)}</option>`;return o('*','Any colour')+`<optgroup label="In this design">${used.filter(k=>FIN[k]).map(k=>o(k,FIN[k].name)).join('')}</optgroup><optgroup label="Wood, textures, your colours">${tex.map(([k,f])=>o(k,f.name)).join('')}</optgroup><optgroup label="RAL colours">${ral.map(([k,f])=>o(k,f.name)).join('')}</optgroup>`}
+function msMatOpts(sel){return Object.entries(MATS).map(([k,m])=>`<option value="${k}"${k===sel?' selected':''}>${esc(m.name)}</option>`).join('')}
+function msShopOpts(sel){return MS.shops.map(s=>`<option value="${s.id}"${s.id===sel?' selected':''}>${esc(s.name)}</option>`).join('')}
+function msHTML(nest){const used=[];(nest||[]).forEach(n=>{const k=n.mt+'|'+n.fin+'|'+n.t+'|'+n.sheet;if(!used.some(u=>u.k===k))used.push({k,n,cnt:n.sheets.length+(n.over&&n.over.length?1:0)})});
+  const pick=S.opts.msShop||'',P=S.opts.msPick||{};
+  const status=used.map(({n,cnt})=>{const m=msOffer(n);return `<div class="msst ${m?'ok':''}"><span><b>${esc(n.name)} mm</b> · ${n.sheet.replace('x',' × ')} · ${cnt} sheet${cnt>1?'s':''}</span>${m?`<em>€ ${m.unit.toFixed(2)} a sheet at ${esc(m.shop.name)}${m.same?'':` (their sheet is ${m.o.sheet.replace('x',' × ')} — priced per m²; <button type="button" class="linkb" data-act="msSheet" data-a="${esc(n.mt)}|${esc(m.o.sheet)}">use their sheet size</button>)`}</em>`:`<button type="button" class="btn sm" data-act="msAddFor" data-a="${esc(n.mt)}|${esc(n.fin)}|${n.t}|${esc(n.sheet)}" ${MS.shops.length?'':'disabled'}>+ Add my price</button>`}</div>`}).join('');
+  const shopRow=s=>`<tr data-ms-shop="${s.id}"><td><input data-ms="name" value="${esc(s.name)}" aria-label="Shop name"></td><td><input data-ms="url" value="${esc(s.url||'')}" placeholder="website" aria-label="Website"></td><td><input data-ms="ship" type="number" inputmode="decimal" value="${s.ship??''}" aria-label="Delivery cost"></td><td><input data-ms="freeFrom" type="number" inputmode="decimal" value="${s.freeFrom??''}" placeholder="—" aria-label="Free delivery from"></td>
+    <td><label class="mschk"><input type="checkbox" data-ms="pick" ${P[s.id]?'checked':''}> pick up</label><input data-ms="pickCost" type="number" inputmode="decimal" value="${s.pickCost??''}" placeholder="€ 0" aria-label="Pick-up cost"></td><td><input data-ms="edgeM" type="number" inputmode="decimal" value="${s.edgeM??''}" placeholder="—" aria-label="Edge banding per metre"></td><td><input data-ms="cutEach" type="number" inputmode="decimal" value="${s.cutEach??''}" placeholder="—" aria-label="Cutting per cut"></td><td><button type="button" class="rowbtn" data-act="msDelShop" data-a="${s.id}" aria-label="Remove ${esc(s.name)}">×</button></td></tr>`;
+  const offRow=o=>`<tr data-ms-off="${o.id}"><td><select data-ms="shop">${msShopOpts(o.shop)}</select></td><td><select data-ms="mt">${msMatOpts(o.mt)}</select></td><td><select data-ms="fin">${msFinOpts(o.fin)}</select></td><td><input data-ms="t" type="number" inputmode="decimal" value="${o.t}" aria-label="Thickness"></td><td><input data-ms="sheet" list="msSheets" value="${esc(o.sheet)}" aria-label="Sheet size"></td><td><input data-ms="price" type="number" inputmode="decimal" value="${o.price??''}" aria-label="Price per sheet"></td><td><input data-ms="note" value="${esc(o.note||'')}" placeholder="article nr, note" aria-label="Note"></td><td><button type="button" class="rowbtn" data-act="msDelOff" data-a="${o.id}" aria-label="Remove this price">×</button></td></tr>`;
+  return `<details class="pf mscard"${ui.msOpen!==false?' open':''} data-msopen="1"><summary>Your shops and board prices${MS.offers.length?` · ${MS.offers.length} price${MS.offers.length>1?'s':''}`:''}</summary><div class="msb">
+    <p class="hintp" style="margin:0">Add the shops you buy from and what a sheet costs there — per board, colour or veneer, thickness and sheet size. Fitted uses the cheapest of your prices (or the shop you pick), adds delivery per shop (free above the amount you enter) or the pick-up cost, and your edge banding and cutting prices. Saved in this browser${msDoc?' and in your account':''}, for every design.</p>
+    ${MS.shops.length?`<div class="fld"><span>Buy the boards from</span><div class="seg wrap"><button type="button" class="${!pick?'on':''}" data-act="msPickShop" data-a="">Cheapest of my shops</button>${MS.shops.map(s=>`<button type="button" class="${pick===s.id?'on':''}" data-act="msPickShop" data-a="${s.id}">${esc(s.name)}</button>`).join('')}</div></div>`:''}
+    ${used.length?`<div class="msstl"><b>This design</b>${status}</div>`:''}
+    <h4>Shops</h4><div class="tw"><table class="cut mst"><thead><tr><th>Shop</th><th>Website</th><th>Delivery €</th><th>Free from €</th><th>Pick-up €</th><th>Edge band €/m</th><th>Cutting €/cut</th><th></th></tr></thead><tbody>${MS.shops.map(shopRow).join('')||'<tr><td colspan="8" class="note">No shops yet.</td></tr>'}</tbody></table></div>
+    <div class="dbtns"><button type="button" class="btn sm" data-act="msAddShop">+ Add a shop</button></div>
+    <h4>Board prices</h4>${MS.shops.length?`<div class="tw"><table class="cut mst"><thead><tr><th>Shop</th><th>Board</th><th>Colour / veneer</th><th>mm</th><th>Sheet</th><th>€ / sheet</th><th>Note</th><th></th></tr></thead><tbody>${MS.offers.map(offRow).join('')||'<tr><td colspan="8" class="note">No prices yet — add one, or tap “+ Add my price” above.</td></tr>'}</tbody></table></div>
+    <div class="dbtns"><button type="button" class="btn sm" data-act="msAddOff">+ Add a board price</button></div>`:'<p class="hintp" style="margin:0">Add a shop first.</p>'}
+    <datalist id="msSheets">${SHEETS.map(s=>`<option value="${s}">`).join('')}</datalist></div></details>`}
+function msNewId(){return 'm'+Date.now().toString(36)+Math.random().toString(36).slice(2,5)}
+function msAddShop(){MS.shops.push({id:msNewId(),name:'My shop '+(MS.shops.length+1),url:'',ship:0,freeFrom:0,pickCost:0,edgeM:'',cutEach:''});msSave()}
+function msAddOff(pre){if(!MS.shops.length){msAddShop()}const p=pre||{};const sh=S.opts.msShop||MS.shops[0].id;MS.offers.push({id:msNewId(),shop:sh,mt:p.mt||S.mat.carcass.type,fin:p.fin||'*',t:+p.t||18,sheet:p.sheet||'2800x2070',price:'',note:''});ui.msOpen=true;msSave();
+  setTimeout(()=>{const r=document.querySelector(`[data-ms-off="${MS.offers[MS.offers.length-1].id}"] [data-ms="price"]`);if(r){r.focus();r.scrollIntoView({block:'center'})}},80)}
+document.addEventListener('change',e=>{const el=e.target;if(!el||!el.dataset||!el.dataset.ms)return;const f=el.dataset.ms,rs=el.closest('[data-ms-shop]'),ro=el.closest('[data-ms-off]');
+  if(rs){const s=msShop(rs.dataset.msShop);if(!s)return;if(f==='pick'){S.opts.msPick=Object.assign({},S.opts.msPick,{[s.id]:el.checked});saveSoon();msSave();return}s[f]=el.type==='number'?(el.value===''?'':+el.value):el.value.trim();msSave();return}
+  if(ro){const o=MS.offers.find(x=>x.id===ro.dataset.msOff);if(!o)return;let v=el.value;if(f==='t'||f==='price')v=v===''?'':+v;if(f==='sheet')v=String(v).replace(/\s*[×x*]\s*/,'x');o[f]=v;msSave()}});
+document.addEventListener('toggle',e=>{if(e.target&&e.target.dataset&&e.target.dataset.msopen)ui.msOpen=e.target.open},true);
 /* ==== 70-build-guide.js ====
    The build guide (IKEA-style steps) with Bolt & Pip.
 */
@@ -5950,7 +6018,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
    Lining the design up with a photo of the room.
 */
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.110';
+const APP_VERSION='v0.111';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
@@ -6730,6 +6798,13 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'lblPdf':toast('Making the labels…');exportLabels();break;
     case 'tplPdf':toast('Making the templates…');exportTemplates();break;
     case 'dxfZip':exportDXF();break;
+    case 'msAddShop':msAddShop();break;
+    case 'msAddOff':msAddOff();break;
+    case 'msAddFor':{const[mt,fin,t,sheet]=a.split('|');msAddOff({mt,fin,t,sheet});break}
+    case 'msDelShop':{const b=e.target.closest('button');if(!b.dataset.armed){b.dataset.armed='1';b.textContent='Sure?';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='×'}},3000);break}MS.shops=MS.shops.filter(x=>x.id!==a);MS.offers=MS.offers.filter(x=>x.shop!==a);if(S.opts.msShop===a)S.opts.msShop='';msSave();break}
+    case 'msDelOff':MS.offers=MS.offers.filter(x=>x.id!==a);msSave();break;
+    case 'msPickShop':S.opts.msShop=a||'';saveSoon();msSave();break;
+    case 'msSheet':{const[mt,sheet]=a.split('|');Object.values(S.mat).forEach(m=>{if(m.type===mt)m.sheet=sheet});changed(true);toast(`Sheet size set to ${sheet.replace('x',' × ')} for that board`);break}
     case 'mdPdf':mdExportPDF();break;
     case 'pjStart':openState.walls=true;pjStart();break;
     case 'pjAdd':pjAdd();break;
@@ -7233,7 +7308,7 @@ function instShow(on){['instBtn','instBtnM'].forEach(id=>{const b=document.getEl
 (function(){try{const standalone=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true,hasMf=!!document.querySelector('link[rel="manifest"]');
   window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();INST.ev=e;if(!standalone)instShow(true)});window.addEventListener('appinstalled',()=>{INST.ev=null;instShow(false)});
   const ua=navigator.userAgent||'';INST.ios=/iPad|iPhone|iPod/.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1);if(INST.ios&&hasMf&&!standalone&&/Safari/.test(ua)&&!/CriOS|FxiOS|EdgiOS/.test(ua))instShow(true)}catch(e){}})();
-dsInit();offInit();
+dsInit();offInit();try{msInit()}catch(e){}
 document.addEventListener('click',e=>{const m=document.getElementById('mmenu');if(!m||m.hidden)return;if(e.target.closest('#mmenu [data-act]')){setTimeout(()=>{m.hidden=true;document.querySelectorAll('[data-act=mmenu]').forEach(b=>b.setAttribute('aria-expanded','false'))},0);return}if(!e.target.closest('#mmenu,[data-act=mmenu]')){m.hidden=true;document.querySelectorAll('[data-act=mmenu]').forEach(b=>b.setAttribute('aria-expanded','false'))}},true);
 /* ===== languages (dictionaries in src/lang.js) =====
    tr(text) translates a text for files and PDFs; tr('@key',{..}) fills a longer template.

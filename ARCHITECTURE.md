@@ -69,3 +69,7 @@ The app has no test files in the repo. The checks used during development load t
 ## Machining drawings (v0.110)
 
 - `53-machining.js`: `mdPart(p,den)` turns a cut-list part (poly, holes, notes, edge banding, grain) into td-style entities. `mdHoleRows` builds the hole table, `mdBlock` the HTML for the guide, and `mdExportPDF` writes one A4 page per part. The 0 corner: sides have x = 0 at the front edge; other carcass parts have y = 0 at the front edge.
+
+## Your shops and prices (v0.111)
+
+- `68-my-shops.js`: `MS={shops,offers}` (localStorage `fitted-myshops`, plus `data/users/<id>/fitted/myshops` in the db). `msOffer(n)` picks the price for a sheet material, `msShip(name,subtotal)` works out delivery or pick-up, and `msHTML(nest)` draws the panel under Price. All of it is hooked into `priceRows()`.

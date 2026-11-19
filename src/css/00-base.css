@@ -507,3 +507,10 @@ aside.side.locked>*:not(.shead):not(.lockban):not(.viewsw){pointer-events:none;o
 .mdt{border-collapse:collapse;font-size:12px;width:100%}.mdt th{text-align:left;font-weight:600;color:#555;border-bottom:1px solid #ddd;padding:3px 4px}.mdt td{border-bottom:1px solid #eee;padding:4px;vertical-align:top;font-variant-numeric:tabular-nums}.mdt small{display:block;color:#666}
 .mdl{margin:0;font-size:12px;color:#333}.mdn{margin:0;padding-left:16px;font-size:12px;color:#333}
 @media (max-width:700px){.mdbody{grid-template-columns:minmax(0,1fr)}}
+/* your shops and board prices */
+.mscard{margin-top:18px}.msb{display:grid;gap:12px;padding-top:8px}.msb h4{margin:6px 0 0}
+.mst input,.mst select{width:100%;min-width:70px;height:32px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);font:inherit;font-size:12.5px;padding:0 6px}
+.mst td{padding:4px}.mst{min-width:860px}.mschk{display:flex;gap:4px;align-items:center;font-size:12px;white-space:nowrap;margin-bottom:4px}.mschk input{width:auto;min-width:0;height:auto}
+.msstl{display:grid;gap:6px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--raised)}
+.msst{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;justify-content:space-between;font-size:13px;padding:4px 0;border-top:1px solid var(--line)}.msst:first-of-type{border-top:0}.msst em{font-style:normal;color:var(--ink2)}.msst.ok em{color:#2E7D50}
+.seg.wrap{flex-wrap:wrap}

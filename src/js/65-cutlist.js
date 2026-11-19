@@ -86,7 +86,7 @@ function renderCut(){
   h+=`<h3>Hardware</h3><div class="tw"><table class="cut hwt" style="min-width:480px"><thead><tr><th>Item</th><th>Qty</th><th>Notes</th></tr></thead><tbody>${hw.map(r=>`<tr><td>${esc(r[0])}</td><td class="n">${r[1]}</td><td class="note">${esc(r[2])}</td></tr>`).join('')}</tbody></table></div>`;
   lastPrice=priceRows(nest,sp,hw,mats);lastPrice.nest=nest;lastPrice.shops=['best',...Object.keys(SHOPS)].map(k=>{const t=k===lastPrice.tot.shop?lastPrice.tot:priceRows(nest,sp,hw,mats,k).tot;return {k,total:t.all,fb:t.fb}});lastAlt=null;
   if(ROLES.some(([k])=>k!=='back'&&S.mat[k].type==='melamine')){const keep=S.opts.stock,was=!!(keep&&keep.on);try{setStockAll(!was);lastAlt={on:!was,total:priceRows(nestAll(gs),stockPlan(gs),hw,mats).tot.all}}catch(e){}S.opts.stock=keep;if(keep===undefined)delete S.opts.stock}
-  h+='</section><section data-psec="price">'+priceHTML(lastPrice)+'</section>';
+  h+='</section><section data-psec="price">'+priceHTML(lastPrice)+msHTML(nest)+'</section>';
   if(PRICING)return;
   el.innerHTML=partBar()+h;budSoon();{const pv=document.getElementById('pstatv');if(pv)pv.textContent=eur(lastPrice.tot.all)}
 }

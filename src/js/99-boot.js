@@ -15,7 +15,7 @@ function instShow(on){['instBtn','instBtnM'].forEach(id=>{const b=document.getEl
 (function(){try{const standalone=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true,hasMf=!!document.querySelector('link[rel="manifest"]');
   window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();INST.ev=e;if(!standalone)instShow(true)});window.addEventListener('appinstalled',()=>{INST.ev=null;instShow(false)});
   const ua=navigator.userAgent||'';INST.ios=/iPad|iPhone|iPod/.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1);if(INST.ios&&hasMf&&!standalone&&/Safari/.test(ua)&&!/CriOS|FxiOS|EdgiOS/.test(ua))instShow(true)}catch(e){}})();
-dsInit();offInit();
+dsInit();offInit();try{msInit()}catch(e){}
 document.addEventListener('click',e=>{const m=document.getElementById('mmenu');if(!m||m.hidden)return;if(e.target.closest('#mmenu [data-act]')){setTimeout(()=>{m.hidden=true;document.querySelectorAll('[data-act=mmenu]').forEach(b=>b.setAttribute('aria-expanded','false'))},0);return}if(!e.target.closest('#mmenu,[data-act=mmenu]')){m.hidden=true;document.querySelectorAll('[data-act=mmenu]').forEach(b=>b.setAttribute('aria-expanded','false'))}},true);
 /* ===== languages (dictionaries in src/lang.js) =====
    tr(text) translates a text for files and PDFs; tr('@key',{..}) fills a longer template.
