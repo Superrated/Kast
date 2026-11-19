@@ -45,3 +45,9 @@ The app has no test files in the repo. The checks used during development load t
 
 - `src/js/46-custom.js`: your own colours (FIN keys `cu_…`) and board types (MATS keys `cm_…`). They are stored in `S.custom` and in localStorage (`fitted-custom`). `regCustom(st)` is called at the start of `build()`, so FIN and MATS always know them.
 - `src/js/96-starters.js`: `STARTERS`, ready-made designs. To add one, add an entry whose `make()` returns a design built with `stBase({...})`. Keep each starter free of design notes; the test in `st1.py` checks this.
+
+## Saving, rooms and sharing (v0.103)
+
+- `55-designs.js`: the My designs window. `ioOpen(tab)` opens it and `renderDesigns()` draws the tab. `dsSave(true)` adds a design (first save or a copy). `dsAutoSoon()`/`dsAuto()` save the open design a few seconds after `changed()`. `dsStatus()` feeds the header button (`dsBadge`).
+- `56-rooms-share.js`: rooms (`RM`, collection `rooms` or localStorage `fitted-rooms-v1`). `fitToRoom(st, room)` puts a design into a room. Files and text use `{app,kind:'design'|'room',version,name,design|room}`, and `ioImport(text)` opens either kind.
+- `snap()` resets the undo history when the open design changes (`ui.histDoc`), so an Undo can never write one design into another.

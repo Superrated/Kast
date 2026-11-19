@@ -220,7 +220,7 @@ document.addEventListener('change',e=>{const el=e.target,k=el&&el.dataset&&el.da
 function csv(){const gs=groupsCache||groupPanels(bgeo());const q=v=>`"${String(v).replace(/"/g,'""')}"`;
   return ['id,part,qty,board,colour,thickness_mm,length_mm,width_mm,shape,where,notes',...gs.map(p=>[p.id,q(p.type),p.qty,q(MATS[p.matType]?.name||''),q(FIN[p.fin]?.name||p.fin),p.t,f0(p.L),f0(p.Wd),q(p.rect?'rect':'shaped '+p.poly.length+'pts'),q(p.secs.join(' ')),q(p.notes.join('; '))].join(','))].join('\n')}
 function txt(){const gs=groupsCache||groupPanels(bgeo());return gs.map(p=>`${p.id}  ${p.qty}×  ${p.type}  ${f0(p.L)} × ${f0(p.Wd)} × ${p.t}  ${MATS[p.matType]?.short||''} ${FIN[p.fin]?.name||p.fin}${p.rect?'':'  (shaped)'}`).join('\n')}
-async function copy(t){try{await navigator.clipboard.writeText(t);toast('Copied')}catch(e){const ta=document.getElementById('ioText');document.getElementById('iom').hidden=false;ta.value=t;ta.select();toast('Select all and copy')}}
+async function copy(t){try{await navigator.clipboard.writeText(t);toast('Copied')}catch(e){ioOpen('share');setTimeout(()=>{const ta=document.getElementById('ioText');if(ta){ta.value=t;ta.focus();ta.select()}},60);toast('Select all and copy')}}
 
 function loftSVG(p){
   const w=p.w,h=p.h,pts=p.poly,big=Math.max(w,h,240),fs=Math.max(15,big/40),gp=fs*2.1,ar=polyArea(pts),lw=big/700;

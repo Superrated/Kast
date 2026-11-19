@@ -1,5 +1,22 @@
 # Changelog
 
+## v0.103
+
+- **Saving is automatic**: save a design once (the header button says **Save** until you do). From then on every change saves by itself a few seconds later. The header shows the design's name with ✓ when it is saved. An earlier version is kept at most every 20 minutes, so you can always go back.
+- **My designs** has three tabs:
+  - **Designs**: rename (tap the name), save a copy, and per design Open, Rename, Duplicate, Download file or Delete. A search box appears when you have more than five designs.
+  - **Rooms** (new): save the room of a design (wall, slopes, beams, sockets, doors). "New design here" starts any design already fitted to it; "Use for the open design" moves your cabinets into it.
+  - **Share & files**: download the design or just the room as a file, copy it as text, open a file or text someone sent you, PDF and cut-list files.
+- **New design** is one place: the step-by-step wizard, a saved room, the example attic, or a ready-made design that can be fitted to any saved room.
+- **Layout fixes**:
+  - the desktop tabs are no longer cut off;
+  - the header now reads New · Share · Save/name · ☰;
+  - the menu is grouped as designs, tools and help;
+  - on phones the Layout panel shows your columns first, with styles folded away;
+  - the 🪴 button now says "Items";
+  - "No design issues" no longer shows twice on desktop.
+- **Safety**: Undo can no longer carry one design's changes into another saved design, and opening the example attic now keeps your unsaved work.
+
 ## v0.102
 
 - **Start from a design**: a gallery of nine ready-made designs, from simple to "everything Fitted can do", each in a current high-end interior trend: Clean white wardrobe, Warm oak bedroom, Quiet luxury media wall, Fluted arches in clay, Attic under the slopes, Dark library and study, Laundry and pantry wall, Guest room and home office, Kids' adventure wall. Each card lists the features it shows. Every starter opens without design notes. "Fit it to my wall" puts the starter on your own wall size and slopes. Open it from the menu (☰ → Start from a design) or from the first step of the wizard.

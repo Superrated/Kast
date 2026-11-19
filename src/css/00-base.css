@@ -377,3 +377,53 @@ details.pf .grid2{margin-top:6px}
 .cuprow select{height:34px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit}
 .cuform select{width:100%;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit;padding:0 8px}
 .cuform .inp input[type=color]{cursor:pointer}
+/* ==== header: tabs never clip; tagline only on very wide screens ==== */
+@media (min-width:861px){.tabs{flex:initial;min-width:0;overflow-x:auto}}
+@media (max-width:1680px){.brand small{display:none}}
+/* save status button in the header */
+#dsBtn.dsb{gap:6px;max-width:240px}
+#dsBtn.dsb .dsnm{color:var(--ink);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+#dsBtn.dsb .dsst2{font-style:normal;font-size:12px;width:18px;height:18px;border-radius:50%;display:inline-grid;place-items:center;flex:none;background:var(--accent-soft);color:var(--accent)}
+#dsBtn.dsb.ok .dsst2{background:rgba(46,125,80,.14);color:#2E7D50}
+#dsBtn.dsb.err .dsst2{background:var(--warn);color:#fff}
+#dsBtn.dsb.new{border-color:var(--accent);color:var(--accent);font-weight:600}
+#dsBtn.dsb .dsico{font-size:9px;color:var(--warn)}
+@media (max-width:520px){#dsBtn.dsb{max-width:132px}}
+/* ==== My designs window ==== */
+#iom .mbox{width:min(960px,100%)}
+#iom .mhead{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
+.iotabs{flex-wrap:nowrap;max-width:100%;overflow-x:auto}
+.iotabs button{white-space:nowrap}
+.dsnow2{display:grid;grid-template-columns:minmax(0,180px) minmax(0,1fr);gap:14px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--raised);align-items:start}
+.dsnow2 .dthumb{cursor:default}
+.dsnowb{display:grid;gap:8px;min-width:0}
+.dsst{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink2)}
+.dsst i{width:8px;height:8px;border-radius:50%;background:var(--ink3);flex:none}
+.dsnow2.ok .dsst i{background:#2E7D50}.dsnow2.new .dsst i,.dsnow2.err .dsst i{background:var(--warn)}.dsnow2.saving .dsst i,.dsnow2.dirty .dsst i{background:var(--accent)}
+.dsnow2.new{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.dbtns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.dshead{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.dshead h3{margin:0;font-size:1rem}.dshead h3 small{font-weight:500;color:var(--ink3);margin-left:4px}
+.dsfind{flex:0 1 240px}
+.dmeta{display:grid;gap:2px;min-width:0}.dmeta b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dmeta span{font-size:12px;color:var(--ink2)}
+.dact{display:flex;flex-wrap:wrap;gap:6px}
+.dmore{display:flex;flex-wrap:wrap;gap:6px;padding-top:6px;border-top:1px solid var(--line)}
+.btn.warnb{color:var(--warn)}
+.rmthumb{background:var(--surface)!important}
+.shgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px}
+.shcard{display:grid;gap:8px;align-content:start;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--raised);min-width:0}
+.shcard h3{margin:0;font-size:1rem}.shcard .io{min-height:90px}
+.filebtn{position:relative;overflow:hidden;cursor:pointer}
+.filebtn input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0}
+@media (max-width:560px){.dsnow2{grid-template-columns:minmax(0,1fr)}.dsnow2 .dthumb{max-height:150px}}
+/* ==== New design hub ==== */
+.sthub{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:10px}
+.sthb{font:inherit;color:inherit;text-align:left;cursor:pointer;display:grid;gap:4px;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--raised)}
+.sthb:hover,.sthb:focus-visible{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.sthb small{color:var(--ink2);line-height:1.35}
+.sth{margin:4px 0 0;font-size:1.05rem}
+.stfit{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.stfit select{min-width:0;max-width:100%;flex:1 1 260px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit;padding:0 8px}
+/* the status bar already says "No design issues" on desktop */
+@media (min-width:861px){.okline{display:none}}
+@media (min-width:861px) and (max-width:1300px){.viewsw>span{display:none}}

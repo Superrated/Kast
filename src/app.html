@@ -22,8 +22,8 @@
       <button data-act="tab" data-a="guide">Build guide</button>
     </nav>
     <div class="acts">
-      <button class="btn" data-act="undo" id="bUndo" aria-label="Undo" title="Undo (Ctrl+Z)" disabled>↶</button><button class="btn" data-act="redo" id="bRedo" aria-label="Redo" title="Redo" disabled>↷</button><button class="btn dsk" data-act="wizard" title="Start a new design with the step-by-step wizard">New design</button>
-      <button class="btn dsk" data-act="pdf" title="Download a PDF with the drawing, cut list and build guide">PDF</button><button class="btn" data-act="io" id="dsBtn">Designs</button><button class="btn" data-act="mmenu" aria-label="More" aria-expanded="false" title="More">☰</button>
+      <button class="btn" data-act="undo" id="bUndo" aria-label="Undo" title="Undo (Ctrl+Z)" disabled>↶</button><button class="btn" data-act="redo" id="bRedo" aria-label="Redo" title="Redo" disabled>↷</button><button class="btn dsk" data-act="newHub" title="Start a new design: ready-made designs, the step-by-step wizard or a saved room">New</button>
+      <button class="btn dsk" data-act="ioShare1" title="Share this design, download it as a file or PDF, or open one someone sent you">Share</button><button class="btn dsb" data-act="io" id="dsBtn">Save</button><button class="btn" data-act="mmenu" aria-label="More" aria-expanded="false" title="More">☰</button>
     </div>
   </header>
   <div class="main">
@@ -53,7 +53,7 @@
   
   <button data-act="tab" data-a="guide"><svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="9" cy="9" r="1.6" fill="currentColor"/><path d="M12 9h4M8 14h8M8 17.5h6" stroke="currentColor" stroke-width="1.6"/></svg><span>Guide</span></button>
 </nav>
-<div class="mmenu" id="mmenu" hidden><button type="button" data-act="io" id="dsBtnM">My designs</button><button type="button" data-act="stOpen">Start from a design</button><button type="button" data-act="wizard">New design (wizard)</button><button type="button" data-act="pdf">Download PDF</button><hr><button type="button" data-act="ntOpen" id="ntBtnM">Notes</button><button type="button" class="cmtb" data-act="cmt" hidden>Comment on the drawing</button><button type="button" data-act="aiOpen">AI render (photo-real picture)</button><hr><button type="button" data-act="fbOpen">Talk to BRUIS — thanks, bugs, ideas, coffee</button><button type="button" data-act="gloss">Words explained</button><button type="button" data-act="lang" data-m="1" hidden></button><button type="button" data-act="install" id="instBtnM" hidden>Install app</button></div>
+<div class="mmenu" id="mmenu" hidden><button type="button" data-act="io" id="dsBtnM">My designs</button><button type="button" data-act="ioRooms">My rooms</button><button type="button" data-act="ioShare1">Share &amp; files</button><button type="button" data-act="newHub">New design</button><button type="button" data-act="pdf">Download PDF</button><hr><button type="button" data-act="ntOpen" id="ntBtnM">Notes</button><button type="button" class="cmtb" data-act="cmt" hidden>Comment on the drawing</button><button type="button" data-act="aiOpen">AI render (photo-real picture)</button><hr><button type="button" data-act="fbOpen">Talk to BRUIS — thanks, bugs, ideas, coffee</button><button type="button" data-act="gloss">Words explained</button><button type="button" data-act="lang" data-m="1" hidden></button><button type="button" data-act="install" id="instBtnM" hidden>Install app</button></div>
 <div class="pcal" id="pcal" hidden role="dialog" aria-label="Line up your room photo"><header><b>Line up your photo</b><span class="sp"></span><label class="btn sm" style="position:relative;overflow:hidden;cursor:pointer">Other photo<input type="file" accept="image/*" data-photoin style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0"></label><button type="button" class="btn sm" data-act="pcalClose">Cancel</button></header><div class="pstage" id="pstage"></div><footer id="pfoot"></footer></div>
 <input type="file" id="photoIn" accept="image/*" hidden>
 <div class="modal" id="wiz" hidden>
@@ -65,20 +65,9 @@
 </div>
 
 <div class="modal" id="iom" hidden>
-  <div class="mbox">
-    <div class="mhead"><h2>Designs</h2></div>
-    <div class="mbody">
-      <div class="dsnow" id="dsNow"></div>
-      <div class="dsave"><label class="fld"><span>Name of this design</span><span class="inp"><input type="text" id="dsName" placeholder="Name it — e.g. Attic, oak + sage" maxlength="80"></span></label>
-        <div class="dbtns" id="dsBtns"></div></div>
-      <p class="hintp" id="dsHelp" style="margin:0"></p>
-      <p class="hintp" id="dsNote">Loading saved designs…</p>
-      <div class="dgrid" id="dsList"></div>
-      <details class="pf" id="dsCmpBox"><summary>Compare two designs side by side</summary><p class="hintp">Pick two designs — price, sheets, size and what is different between them.</p><div id="dsCmp"></div></details>
-      <div id="dsBack"></div>
-      <details class="pf"><summary>Copy as text / paste a design</summary><p class="hintp">Copy the text to move a design somewhere else, or paste one back and load it.</p><textarea class="io" id="ioText" spellcheck="false"></textarea>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button class="btn" data-act="ioCopy">Copy</button><button class="btn" data-act="ioLoad">Load pasted text</button><button class="btn" data-act="ioReset">Load example</button></div></details>
-    </div>
+  <div class="mbox" role="dialog" aria-modal="true" aria-label="My designs">
+    <div class="mhead"><h2>My designs</h2><div class="seg iotabs" id="ioTabs" role="tablist"><button type="button" role="tab" data-act="ioTab" data-a="designs">Designs</button><button type="button" role="tab" data-act="ioTab" data-a="rooms">Rooms</button><button type="button" role="tab" data-act="ioTab" data-a="share">Share &amp; files</button></div></div>
+    <div class="mbody" id="ioBody" style="display:grid;gap:12px"></div>
     <div class="mfoot"><button class="btn" data-act="ioClose">Close</button><div></div></div>
   </div>
 </div>

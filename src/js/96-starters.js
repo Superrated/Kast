@@ -76,20 +76,24 @@ const STARTERS=[
       Sec({zones:[Z('drawers',{h:900,count:4}),Z('closed',{shelves:2})]})]})}},
 ];
 const ST={fit:false,thumbs:{}};
+function stRoomData(){if(ST.roomId){const r=(RM.list||[]).find(x=>x.id===ST.roomId),d=r&&rmParse(r);if(d&&d.room)return d}return roomOf(S)}
 function stMake(k,fit){const T=STARTERS.find(x=>x.key===k);if(!T)return null;let st=T.make();
-  if(fit&&S&&S.room){const R=JSON.parse(JSON.stringify(S.room));delete R.corner;st.room=R;st.skirt=JSON.parse(JSON.stringify(S.skirt||st.skirt));
-    // flexible columns share the wall; fixed-size ones (speakers, appliances, panel walls) keep their width
-    st.sections.forEach(sc=>{const fixed=sc.base==='panel'||(sc.zones||[]).some(z=>z.type==='speaker'||z.fridge||z.fit==='larder'||['oven','combi','washer','dryer','stack','bed'].includes(z.look));if(!fixed)sc.w=null});
-    st=slopeFix(st)}
+  if(fit&&S&&S.room){st=fitToRoom(st,stRoomData())}
   st=fitTypes(st);if(st.ladder&&st.ladder.on)try{st=alignLadder(st)}catch(e){}return st}
 function stThumb(k){if(ST.thumbs[k]!=null)return ST.thumbs[k];let h='';try{const st=stMake(k,false);h=elevSVG(st,build(st),{mini:true})}catch(e){h=''}ST.thumbs[k]=h;return h}
 function stOpen(){let m=document.getElementById('stm');if(!m){m=document.createElement('div');m.id='stm';m.className='modal';document.body.appendChild(m);m.addEventListener('click',e=>{if(e.target===m)m.hidden=true})}
   const mm=document.getElementById('mmenu');if(mm)mm.hidden=true;const w=document.getElementById('wiz');if(w&&!w.hidden)closeWiz();stRender();m.hidden=false}
-function stRender(){const m=document.getElementById('stm');if(!m)return;const lv=['Simple','Classic','Showcase'];
-  m.innerHTML=`<div class="mbox" role="dialog" aria-modal="true" aria-label="Start from a design"><div class="mhead"><h2>Start from a design</h2></div><div class="mbody" style="display:grid;gap:14px">
-    <p class="hintp" style="margin:0">Pick one and make it yours — every part can be changed afterwards. They go from simple to showing off everything Fitted can do.</p>
-    <label class="chk"><input type="checkbox" id="stFit" ${ST.fit?'checked':''} data-act="stFit"> Fit it to my wall (${f0(+S.room.W)} × ${f0(+S.room.H)} mm${(S.room.ceil||[]).some(p=>Math.abs(+p.y-+S.room.H)>1)?', with its slopes':''})</label>
+function stRender(){const m=document.getElementById('stm');if(!m)return;const lv=['Simple','Classic','Showcase'];const R=S.room,rooms=(RM.list||[]);if(ST.roomId&&!rooms.some(r=>r.id===ST.roomId))ST.roomId=null;
+  const slope=(R.ceil||[]).some(p=>Math.abs(+p.y-+R.H)>1);
+  const roomSel=`<div class="stfit"><label class="chk"><input type="checkbox" id="stFit" ${ST.fit?'checked':''} data-act="stFit"> Fit it to a wall</label><select id="stRoom" aria-label="Which wall" ${ST.fit?'':'disabled'}><option value="">the wall of the open design (${f0(+R.W)} × ${f0(+R.H)} mm${slope?', sloping':''})</option>${rooms.map(r=>{const d=rmParse(r)||{},rr=d.room||{};return `<option value="${esc(r.id)}"${r.id===ST.roomId?' selected':''}>${esc(r.name||'Room')} (${f0(+rr.W)} × ${f0(+rr.H)} mm)</option>`}).join('')}</select></div>`;
+  m.innerHTML=`<div class="mbox" role="dialog" aria-modal="true" aria-label="New design"><div class="mhead"><h2>New design</h2></div><div class="mbody" style="display:grid;gap:14px">
+    <div class="sthub"><button type="button" class="sthb" data-act="wizard"><b>Step by step</b><small>Measure your wall and tell Fitted what you need — it proposes designs.</small></button>${rooms.length?`<button type="button" class="sthb" data-act="stInRoom"><b>In a saved room</b><small>${rooms.length} room${rooms.length>1?'s':''} saved — choose the room below, then a design.</small></button>`:''}<button type="button" class="sthb" data-act="wizStart"><b>The example attic</b><small>A sloped attic wall with a beam, ready to explore.</small></button></div>
+    <h3 class="sth">Or start from a ready-made design</h3>
+    <p class="hintp" style="margin:0">Pick one and make it yours — every part can be changed. They go from simple to showing off everything Fitted can do.</p>
+    ${roomSel}
     ${lv.map(L=>`<div class="stgrp"><h3>${L==='Simple'?'Simple — a quick start':L==='Classic'?'Classic — a statement wall':'Showcase — everything Fitted can do'}</h3><div class="stgrid">${STARTERS.filter(t=>t.level===L).map(t=>`<button type="button" class="stcard" data-act="stPick" data-a="${t.key}"><span class="stpic">${stThumb(t.key)}</span><b>${esc(t.name)}</b><small class="sttrend">${esc(t.trend)}</small><small>${esc(t.blurb)}</small><span class="stshows">${t.shows.map(x=>`<i>${esc(x)}</i>`).join('')}</span></button>`).join('')}</div></div>`).join('')}
-  </div><div class="mfoot"><button type="button" class="btn" data-act="stClose">Close</button><button type="button" class="btn" data-act="wizard">Or use the step-by-step wizard</button></div></div>`}
+  </div><div class="mfoot"><button type="button" class="btn" data-act="stClose">Close</button><div></div></div></div>`}
 function stPick(k){const T=STARTERS.find(x=>x.key===k);const st=stMake(k,ST.fit);if(!st)return;const kept_=dsKeep();dsDetach(false);S=st;ui.sel=0;ui.zsel=null;ui.wizSeen=1;groupsCache=null;
   const m=document.getElementById('stm');if(m)m.hidden=true;changed(true);toast(`${T.name} — change anything you like${kept_?'. The design you had open was kept under Designs → Recovered work.':''}`)}
+
+document.addEventListener('change',e=>{if(e.target&&e.target.id==='stRoom'){ST.roomId=e.target.value||null;ST.fit=true}});

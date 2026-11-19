@@ -184,7 +184,25 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'isoSec':ui.sel=Math.max(0,Math.min(secs.length-1,ui.sel+(+a)));ui.zsel=null;applyExplode();isoFrame();renderBar();renderSide();dirty.elev=true;break;
     case 'copyCSV':copy(csv());break;
     case 'copyText':copy(txt());break;
-    case 'io':document.getElementById('ioText').value=JSON.stringify(S,null,1);document.getElementById('dsName').value=(dsCur()?ui.docName:'')||ui.docName||'';document.getElementById('iom').hidden=false;renderDesigns();break;
+    case 'io':ioOpen('designs',dsCur()?null:'dsName');break;
+    case 'ioRooms':ioOpen('rooms');break;
+    case 'ioShare1':ioOpen('share');break;
+    case 'ioTab':ui.ioTab=a||'designs';renderDesigns();break;
+    case 'newHub':{const mm=document.getElementById('mmenu');if(mm)mm.hidden=true;const io=document.getElementById('iom');if(io)io.hidden=true;ST.roomId=null;stOpen();break}
+    case 'dsMore':ui.dsMore=a||null;ui.dsRen=null;renderDesigns();break;
+    case 'dsRen':ui.dsRen=a;renderDesigns();setTimeout(()=>{const r=document.getElementById('dsRen');if(r){r.focus();r.select()}},50);break;
+    case 'dsRenOk':{const r=document.getElementById('dsRen');dsRename(a,r?r.value:'');break}
+    case 'dsDup':dsDup(a);break;
+    case 'dsFile':dsFile(a);break;
+    case 'ioFile':ioFile();break;
+    case 'ioCopyText':ioCopyText();break;
+    case 'ioShare':ioShare();break;
+    case 'ioToCut':{document.getElementById('iom').hidden=true;const tb=document.querySelector('#tabs [data-a="cut"]')||document.querySelector('#bnav [data-a="cut"]');if(tb)tb.click();break}
+    case 'rmSave':rmSave();break;
+    case 'rmUse':rmUse(a);break;
+    case 'rmNew':rmNew(a);break;
+    case 'rmFile':rmFile(a||'');break;
+    case 'rmDel':{const b=e.target.closest('button');if(b.dataset.armed){rmDel(a)}else{b.dataset.armed='1';b.textContent='Tap again to delete';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Delete'}},3000)}break}
     case 'dsSave':dsSave(false);break;case 'dsSaveNew':dsSave(true);break;
     case 'install':{if(INST.ev){const ev=INST.ev;INST.ev=null;try{ev.prompt();ev.userChoice.then(r=>{if(r&&r.outcome==='accepted'){toast('Fitted is being installed — look for it on your home screen');instShow(false)}else instShow(true)}).catch(()=>{})}catch(er){toast('Use your browser menu: Install app, or Add to Home screen')}}
       else toast(INST.ios?'On iPhone and iPad: tap the Share button in Safari, then “Add to Home Screen”':'Open your browser menu (⋮) and choose “Install app” or “Add to Home screen”',9000);break}
@@ -198,8 +216,9 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'fbSend':fbSend();break;
     case 'stOpen':stOpen();break;
     case 'stPick':stPick(a);break;
+    case 'stInRoom':{ST.fit=true;if(!ST.roomId&&RM.list[0])ST.roomId=RM.list[0].id;stRender();const f=document.querySelector('#stm .stfit');if(f){f.scrollIntoView({block:'center'});const sel=document.getElementById('stRoom');if(sel)sel.focus()}break}
     case 'stClose':document.getElementById('stm').hidden=true;break;
-    case 'stFit':ST.fit=!!(document.getElementById('stFit')||{}).checked;break;
+    case 'stFit':ST.fit=!!(document.getElementById('stFit')||{}).checked;{const r=document.getElementById('stRoom');if(r)r.disabled=!ST.fit}break;
     case 'cuAddFin':{const k=cuAddFin(cuVal('cuFName'),cuVal('cuFCol'),cuVal('cuFKind'));if(k){ui.cuOpen=true;changed(true);toast('Colour added — pick it from any colour button, under “Your colours”')}break}
     case 'cuAddMat':cuAddMat();break;
     case 'cuDel':cuDel(a);break;
@@ -216,7 +235,7 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'ntOpen':ntOpen();break;
     case 'ntClose':document.getElementById('ntm').hidden=true;break;
     case 'ntAdd':ntAdd();break;
-    case 'ntToDesigns':{document.getElementById('ntm').hidden=true;const b=document.createElement('button');b.dataset.act='io';document.body.append(b);b.click();b.remove();setTimeout(()=>{const n=document.getElementById('dsName');if(n)n.focus()},120);break}
+    case 'ntToDesigns':{document.getElementById('ntm').hidden=true;ioOpen('designs','dsName');break}
     case 'ntSaveNow':dsSave(false).then(()=>ntRender());break;
     case 'ntDelete':{const b=e.target.closest('button');if(!b.dataset.armed){b.dataset.armed='1';b.textContent='Tap again to delete';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Delete'}},3000);break}const L=ntList(),j=L.findIndex(n=>n.id===a);if(j<0)break;const n=L.splice(j,1)[0];if(n.pid){ntDel(n.pid);delete NT_CACHE[n.pid]}ntChanged();toast('Note deleted');break}
     case 'ntView':{const n=ntList().find(x=>x.id===a);if(!n)break;const v=document.getElementById('ntView'),im=document.getElementById('ntViewImg');im.src=NT_CACHE[n.pid]||n.thumb||'';v.hidden=false;if(!NT_CACHE[n.pid]&&n.pid)ntGet(n.pid).then(src=>{if(src){NT_CACHE[n.pid]=src;im.src=src}else toast('Only the small preview is on this device — the full photo was saved somewhere else')});break}
@@ -228,7 +247,7 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'aiCopy':aiCopy(document.getElementById('aiText').value,'Instruction copied — paste it next to the picture in your picture AI');break;
     case 'aiCopyNote':{const n=document.getElementById('aiNote').value.trim();if(!n){toast('Type the small change first');break}aiCopy('Keep everything else exactly the same — same camera angle, same cabinet layout, same room. Change only this: '+n+'.','Change copied — paste it as your next message');break}
     case 'ioCopy':copy(document.getElementById('ioText').value);break;
-    case 'ioLoad':try{const o=JSON.parse(document.getElementById('ioText').value);if(!o.sections||!o.room)throw 0;dsKeep();dsDetach(false);S=fixFins(o);ui.sel=0;ui.zsel=null;document.getElementById('iom').hidden=true;changed(true);toast('Design loaded')}catch(err){toast('That text is not a saved design')}break;
+    case 'ioLoad':{const t=(document.getElementById('ioText')||{}).value||'';if(!t.trim()){toast('Paste the text first');break}ioImport(t);break}
     case 'ioReset':{const kept=dsKeep();dsDetach(true);S=exampleState();ui.sel=0;document.getElementById('iom').hidden=true;changed(true);ui.savedSig=dsSig();saveSoon();toast('Example loaded'+(kept?'. Your unsaved work was kept under Designs → Recovered work.':''));break}
     case 'setv':{const[pth,val,t]=a.split('|');{const mz=/^(sections\.\d+\.zones\.\d+)\.type$/.exec(pth);if(mz&&val==='opening'){const z0=getP(mz[1]);if(z0&&z0.type!=='opening'&&!z0.look)z0.look='nook'}}setP(pth,t==='x'?null:t==='n'?+val:val);if(/^opts\.must\.\d+\.pos$/.test(pth)){geo=build(S);if(mustOff()){randomize('layout');break}}if(/^opts\.must\.\d+\.w(Min|Max)$/.test(pth)){const mm=getP(pth.replace(/\.w(Min|Max)$/,''));if(mm)mm.w=null}if(pth==='opts.screen.pos'&&val!=='x'&&S.opts.screen)S.opts.screen.x=null;if(pth==='opts.screen.w'&&S.opts.screen)S.opts.screen.diag=null;if(pth.endsWith('.ownMode')){const sx=getP(pth.slice(0,-8));if(sx&&val==='own'){if(!(+sx.ownH>0)){const qi=geo.secs[+pth.split('.')[1]],lo=qi?Math.min(geo.ceilAt(qi.lx),geo.ceilAt(qi.rx)):(+S.room.H||2500);sx.ownH=Math.max(600,Math.round(Math.min(2000,lo-250)/10)*10)}(sx.zones||[]).forEach((z,j,arr)=>{if(j<arr.length-1&&+z.h>0)z.h=null})}}if(pth.endsWith('.look')&&val==='dj'){const zz=getP(pth.slice(0,-5));if(zz.led==null)zz.led=true}if(pth.endsWith('.base')&&val==='door'){const sc=getP(pth.slice(0,-5));sc.zones=[Z('passage',{h:2050}),Z('closed',{shelves:1})];if(!(+sc.w>0))sc.w=900;sc.back='split'}if(pth.endsWith('.base')&&val!=='door'){const sc=getP(pth.slice(0,-5));if(sc.zones&&sc.zones[0]&&sc.zones[0].type==='passage'){sc.zones.shift();if(!sc.zones.length)sc.zones.push(Z('closed',{shelves:2}))}}if(pth.endsWith('.base')&&val==='desk'){const i=+pth.split('.')[1],sc=S.sections[i];if(sc.zones&&sc.zones[0]&&sc.zones.length>1&&+sc.zones[0].h>0&&+sc.zones[0].h<560)sc.zones[0].h=600;if(sc.zones&&sc.zones.length<2)sc.zones=[Z('open',{h:600,shelves:0}),Z('closed',{shelves:1})];const q=geo.secs[i];if(q&&q.w<1000){const nb=S.sections[i+1]&&!['panel','door','desk'].includes(S.sections[i+1].base)?i+1:(S.sections[i-1]&&!['panel','door','desk'].includes(S.sections[i-1].base)?i-1:-1);if(nb>=0){const per=geo.boxes?2*geo.tc:geo.tc,w=q.w+geo.secs[nb].w+per;S.sections.splice(nb,1);const k=nb<i?i-1:i;S.sections[k].w=Math.round(w);ui.sel=k;S.opts.cols=0;setTimeout(()=>toast(`The desk takes two columns: ${Math.round(w)} mm`),50)}}}if(pth.endsWith('.base')&&val==='free'){const sc=getP(pth.slice(0,-5));if(!(+sc.freeH>0))sc.freeH=900;sc.mount=sc.mount||'legs'}if(pth.endsWith('.base')&&val==='panel'){const sc=getP(pth.slice(0,-5));if(!sc.panel)sc.panel={...PANEL_DEF}}if(pth.endsWith('.type'))ui.zsel=+pth.split('.')[3];if(pth==='opts.wmode'){randomize('layout');break}changed(true);break}
     case 'step':{const[pth,d,mn,mx]=a.split('|');setP(pth,Math.max(+mn,Math.min(+mx,(+getP(pth)||0)+ +d)));changed(true);break}
@@ -301,6 +320,6 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'wizJump':if(+a<=wstep+1){wstep=+a;wizRender()}break;
     case 'wizFin':{const[r,k]=a.split(':');WZ[r]=k;wizRender();break}
     case 'wizCount':{const nn=Math.max(1,Math.min(10,WZ.secs.length+ +a));while(WZ.secs.length<nn){const k='cupboard';WZ.secs.push({type:k,w:''})}WZ.secs.length=nn;wizRender();break}
-    case 'wizStart':S=slopeFix(exampleState());ui.sel=0;closeWiz();changed(true);toast('Example design loaded');break;
+    case 'wizStart':{const kept=dsKeep();dsDetach(true);S=slopeFix(exampleState());ui.sel=0;ui.zsel=null;closeWiz();const sm=document.getElementById('stm');if(sm)sm.hidden=true;changed(true);toast('Example design loaded'+(kept?'. Your unsaved work was kept under My designs → Recovered work.':''));break}
   }});
 

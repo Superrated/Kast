@@ -396,6 +396,56 @@ details.pf .grid2{margin-top:6px}
 .cuprow select{height:34px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit}
 .cuform select{width:100%;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit;padding:0 8px}
 .cuform .inp input[type=color]{cursor:pointer}
+/* ==== header: tabs never clip; tagline only on very wide screens ==== */
+@media (min-width:861px){.tabs{flex:initial;min-width:0;overflow-x:auto}}
+@media (max-width:1680px){.brand small{display:none}}
+/* save status button in the header */
+#dsBtn.dsb{gap:6px;max-width:240px}
+#dsBtn.dsb .dsnm{color:var(--ink);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+#dsBtn.dsb .dsst2{font-style:normal;font-size:12px;width:18px;height:18px;border-radius:50%;display:inline-grid;place-items:center;flex:none;background:var(--accent-soft);color:var(--accent)}
+#dsBtn.dsb.ok .dsst2{background:rgba(46,125,80,.14);color:#2E7D50}
+#dsBtn.dsb.err .dsst2{background:var(--warn);color:#fff}
+#dsBtn.dsb.new{border-color:var(--accent);color:var(--accent);font-weight:600}
+#dsBtn.dsb .dsico{font-size:9px;color:var(--warn)}
+@media (max-width:520px){#dsBtn.dsb{max-width:132px}}
+/* ==== My designs window ==== */
+#iom .mbox{width:min(960px,100%)}
+#iom .mhead{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
+.iotabs{flex-wrap:nowrap;max-width:100%;overflow-x:auto}
+.iotabs button{white-space:nowrap}
+.dsnow2{display:grid;grid-template-columns:minmax(0,180px) minmax(0,1fr);gap:14px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--raised);align-items:start}
+.dsnow2 .dthumb{cursor:default}
+.dsnowb{display:grid;gap:8px;min-width:0}
+.dsst{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink2)}
+.dsst i{width:8px;height:8px;border-radius:50%;background:var(--ink3);flex:none}
+.dsnow2.ok .dsst i{background:#2E7D50}.dsnow2.new .dsst i,.dsnow2.err .dsst i{background:var(--warn)}.dsnow2.saving .dsst i,.dsnow2.dirty .dsst i{background:var(--accent)}
+.dsnow2.new{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.dbtns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.dshead{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.dshead h3{margin:0;font-size:1rem}.dshead h3 small{font-weight:500;color:var(--ink3);margin-left:4px}
+.dsfind{flex:0 1 240px}
+.dmeta{display:grid;gap:2px;min-width:0}.dmeta b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dmeta span{font-size:12px;color:var(--ink2)}
+.dact{display:flex;flex-wrap:wrap;gap:6px}
+.dmore{display:flex;flex-wrap:wrap;gap:6px;padding-top:6px;border-top:1px solid var(--line)}
+.btn.warnb{color:var(--warn)}
+.rmthumb{background:var(--surface)!important}
+.shgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px}
+.shcard{display:grid;gap:8px;align-content:start;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--raised);min-width:0}
+.shcard h3{margin:0;font-size:1rem}.shcard .io{min-height:90px}
+.filebtn{position:relative;overflow:hidden;cursor:pointer}
+.filebtn input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0}
+@media (max-width:560px){.dsnow2{grid-template-columns:minmax(0,1fr)}.dsnow2 .dthumb{max-height:150px}}
+/* ==== New design hub ==== */
+.sthub{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:10px}
+.sthb{font:inherit;color:inherit;text-align:left;cursor:pointer;display:grid;gap:4px;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--raised)}
+.sthb:hover,.sthb:focus-visible{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.sthb small{color:var(--ink2);line-height:1.35}
+.sth{margin:4px 0 0;font-size:1.05rem}
+.stfit{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.stfit select{min-width:0;max-width:100%;flex:1 1 260px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit;padding:0 8px}
+/* the status bar already says "No design issues" on desktop */
+@media (min-width:861px){.okline{display:none}}
+@media (min-width:861px) and (max-width:1300px){.viewsw>span{display:none}}
 /* ==== 10-look.css — The Fitted look: fonts, tokens for light and dark mode, cards, wizard, dialogs. */
 /* ===== Fitted visual refresh ===== */
 :root{--bg:#F3F3F0;--surface:#FAFAF8;--raised:#FFFFFF;--ink:#17191B;--ink2:#62676B;--ink3:#6A6F74;--line:#E4E5E1;--accent:#3446D6;--accent-ink:#FFFFFF;--accent-soft:rgba(52,70,214,.09);--warn:#B4541A;--warn-soft:rgba(180,84,26,.1);--wall:#E7E7E3;--hatch:#D3D5D1;--stage:#ECEDEA;--paper:#FFFFFF;--shade:rgba(20,22,24,.2);
@@ -815,14 +865,14 @@ input[type=checkbox],input[type=radio]{accent-color:var(--ink)}
 .chk{min-height:32px}
 </style>
 
-<div id="splash" role="status" aria-label="Fitted by BRUIS v0.102 is loading"><b>Fitted</b><span>v0.102</span></div>
+<div id="splash" role="status" aria-label="Fitted by BRUIS v0.103 is loading"><b>Fitted</b><span>v0.103</span></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
 
 <div class="app" data-tab="elev">
   <header class="top">
     <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-    <div class="brand" title="Fitted by BRUIS v0.102">Fitted<span class="bybr">by BRUIS</span><small>built-in wardrobes & cabinets, drawn and cut · v0.102</small></div>
+    <div class="brand" title="Fitted by BRUIS v0.103">Fitted<span class="bybr">by BRUIS</span><small>built-in wardrobes & cabinets, drawn and cut · v0.103</small></div>
     <nav class="tabs" id="tabs">
       <button data-act="tab" data-a="elev" class="on">Drawing</button>
       <button data-act="tab" data-a="3d">3D</button>
@@ -832,8 +882,8 @@ input[type=checkbox],input[type=radio]{accent-color:var(--ink)}
       <button data-act="tab" data-a="guide">Build guide</button>
     </nav>
     <div class="acts">
-      <button class="btn" data-act="undo" id="bUndo" aria-label="Undo" title="Undo (Ctrl+Z)" disabled>↶</button><button class="btn" data-act="redo" id="bRedo" aria-label="Redo" title="Redo" disabled>↷</button><button class="btn dsk" data-act="wizard" title="Start a new design with the step-by-step wizard">New design</button>
-      <button class="btn dsk" data-act="pdf" title="Download a PDF with the drawing, cut list and build guide">PDF</button><button class="btn" data-act="io" id="dsBtn">Designs</button><button class="btn" data-act="mmenu" aria-label="More" aria-expanded="false" title="More">☰</button>
+      <button class="btn" data-act="undo" id="bUndo" aria-label="Undo" title="Undo (Ctrl+Z)" disabled>↶</button><button class="btn" data-act="redo" id="bRedo" aria-label="Redo" title="Redo" disabled>↷</button><button class="btn dsk" data-act="newHub" title="Start a new design: ready-made designs, the step-by-step wizard or a saved room">New</button>
+      <button class="btn dsk" data-act="ioShare1" title="Share this design, download it as a file or PDF, or open one someone sent you">Share</button><button class="btn dsb" data-act="io" id="dsBtn">Save</button><button class="btn" data-act="mmenu" aria-label="More" aria-expanded="false" title="More">☰</button>
     </div>
   </header>
   <div class="main">
@@ -863,7 +913,7 @@ input[type=checkbox],input[type=radio]{accent-color:var(--ink)}
   
   <button data-act="tab" data-a="guide"><svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="9" cy="9" r="1.6" fill="currentColor"/><path d="M12 9h4M8 14h8M8 17.5h6" stroke="currentColor" stroke-width="1.6"/></svg><span>Guide</span></button>
 </nav>
-<div class="mmenu" id="mmenu" hidden><button type="button" data-act="io" id="dsBtnM">My designs</button><button type="button" data-act="stOpen">Start from a design</button><button type="button" data-act="wizard">New design (wizard)</button><button type="button" data-act="pdf">Download PDF</button><hr><button type="button" data-act="ntOpen" id="ntBtnM">Notes</button><button type="button" class="cmtb" data-act="cmt" hidden>Comment on the drawing</button><button type="button" data-act="aiOpen">AI render (photo-real picture)</button><hr><button type="button" data-act="fbOpen">Talk to BRUIS — thanks, bugs, ideas, coffee</button><button type="button" data-act="gloss">Words explained</button><button type="button" data-act="lang" data-m="1" hidden></button><button type="button" data-act="install" id="instBtnM" hidden>Install app</button></div>
+<div class="mmenu" id="mmenu" hidden><button type="button" data-act="io" id="dsBtnM">My designs</button><button type="button" data-act="ioRooms">My rooms</button><button type="button" data-act="ioShare1">Share &amp; files</button><button type="button" data-act="newHub">New design</button><button type="button" data-act="pdf">Download PDF</button><hr><button type="button" data-act="ntOpen" id="ntBtnM">Notes</button><button type="button" class="cmtb" data-act="cmt" hidden>Comment on the drawing</button><button type="button" data-act="aiOpen">AI render (photo-real picture)</button><hr><button type="button" data-act="fbOpen">Talk to BRUIS — thanks, bugs, ideas, coffee</button><button type="button" data-act="gloss">Words explained</button><button type="button" data-act="lang" data-m="1" hidden></button><button type="button" data-act="install" id="instBtnM" hidden>Install app</button></div>
 <div class="pcal" id="pcal" hidden role="dialog" aria-label="Line up your room photo"><header><b>Line up your photo</b><span class="sp"></span><label class="btn sm" style="position:relative;overflow:hidden;cursor:pointer">Other photo<input type="file" accept="image/*" data-photoin style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0"></label><button type="button" class="btn sm" data-act="pcalClose">Cancel</button></header><div class="pstage" id="pstage"></div><footer id="pfoot"></footer></div>
 <input type="file" id="photoIn" accept="image/*" hidden>
 <div class="modal" id="wiz" hidden>
@@ -875,20 +925,9 @@ input[type=checkbox],input[type=radio]{accent-color:var(--ink)}
 </div>
 
 <div class="modal" id="iom" hidden>
-  <div class="mbox">
-    <div class="mhead"><h2>Designs</h2></div>
-    <div class="mbody">
-      <div class="dsnow" id="dsNow"></div>
-      <div class="dsave"><label class="fld"><span>Name of this design</span><span class="inp"><input type="text" id="dsName" placeholder="Name it — e.g. Attic, oak + sage" maxlength="80"></span></label>
-        <div class="dbtns" id="dsBtns"></div></div>
-      <p class="hintp" id="dsHelp" style="margin:0"></p>
-      <p class="hintp" id="dsNote">Loading saved designs…</p>
-      <div class="dgrid" id="dsList"></div>
-      <details class="pf" id="dsCmpBox"><summary>Compare two designs side by side</summary><p class="hintp">Pick two designs — price, sheets, size and what is different between them.</p><div id="dsCmp"></div></details>
-      <div id="dsBack"></div>
-      <details class="pf"><summary>Copy as text / paste a design</summary><p class="hintp">Copy the text to move a design somewhere else, or paste one back and load it.</p><textarea class="io" id="ioText" spellcheck="false"></textarea>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button class="btn" data-act="ioCopy">Copy</button><button class="btn" data-act="ioLoad">Load pasted text</button><button class="btn" data-act="ioReset">Load example</button></div></details>
-    </div>
+  <div class="mbox" role="dialog" aria-modal="true" aria-label="My designs">
+    <div class="mhead"><h2>My designs</h2><div class="seg iotabs" id="ioTabs" role="tablist"><button type="button" role="tab" data-act="ioTab" data-a="designs">Designs</button><button type="button" role="tab" data-act="ioTab" data-a="rooms">Rooms</button><button type="button" role="tab" data-act="ioTab" data-a="share">Share &amp; files</button></div></div>
+    <div class="mbody" id="ioBody" style="display:grid;gap:12px"></div>
     <div class="mfoot"><button class="btn" data-act="ioClose">Close</button><div></div></div>
   </div>
 </div>
@@ -3111,11 +3150,12 @@ function secEditor(){
   if(f==='col')return cut>=0?full.slice(cut):full;
   const tiles=`<p class="mhint">Tap a column — here or in the drawing — to edit it.</p><div class="mcols">${S.sections.map((x,j)=>{const q=geo.secs[j];const zic=(x.zones||[]).slice().reverse().slice(0,6).map(z=>ZICON[z.type]||'').join('');
     return `<button type="button" class="mcol ${j===ui.sel?'on':''}" data-act="selSec" data-a="${j}"><b>${j+1}<small>${q?f0(q.w):''}</small></b><span>${SECT_LBL[x.base]||'Cabinet'}${x.pinX!=null&&x.pinX!==''?' 📌':''}</span>${x.base==='panel'?'':`<span class="zic">${zic}</span>`}</button>`}).join('')}</div>`;
-  const qa=full.indexOf('<div class="quickadd">'),qaEnd=cut>=0?cut:full.length,adds=qa>=0?full.slice(qa,qaEnd):'';
+  const qm=/<details class="quickadd[\s\S]*?<\/details>/.exec(full),adds=qm?qm[0].replace(/\+ Add a column next to S\d+/,'+ Add a column'):'';
   const shuf=`<div class="mshuf"><button type="button" class="pri" data-act="rand" data-a="all"><i>✨</i>Surprise me</button><button type="button" data-act="rand" data-a="keep"><i>⇄</i>Contents</button><button type="button" data-act="rand" data-a="layout"><i>▦</i>Layout</button><button type="button" data-act="rand" data-a="fin"><i>◐</i>Colours</button></div>`;
   const sty=stylePick();
-  const more=mx('Shuffle rules: box widths, columns &amp; add a column',`<div class="sbw"><span class="sbl">Box widths when shuffling the layout</span>${seg('opts.wmode',WMODES,{dflt:'mixed'})}</div><div class="sbr" style="margin:8px 0">${S.opts.wmode==='fixed'?sbn('Every box','opts.wFix','600')+'<span class="sbl">TV niche, desk and the like become a double box; leftover is one filler box</span>':sbn('Narrowest','opts.wMin','any')+sbn('Widest','opts.wMax','any')}</div><div class="colsctl"><span>Columns</span><div class="step"><button type="button" data-act="cols" data-a="-1" aria-label="Fewer columns">−</button><b>${+S.opts.cols>0?S.opts.cols:'Free'}</b><button type="button" data-act="cols" data-a="1" aria-label="More columns">+</button></div></div>${adds}`);
-  return shuf+sty+`<div class="mlock" style="display:flex;gap:8px;flex-wrap:wrap">${lockChip()}${budChipBtn()}</div>`+mx('Always include when shuffling'+((S.opts.must||[]).length?` · ${(S.opts.must||[]).length}`:''),mustUI(),'must')+`<div class="mlbl">Columns — tap one to edit</div>`+tiles.replace(/<p class="mhint">[^<]*<\/p>/,'')+more}
+  const more=mx('Shuffle rules: box widths and number of columns',`<div class="sbw"><span class="sbl">Box widths when shuffling the layout</span>${seg('opts.wmode',WMODES,{dflt:'mixed'})}</div><div class="sbr" style="margin:8px 0">${S.opts.wmode==='fixed'?sbn('Every box','opts.wFix','600')+'<span class="sbl">TV niche, desk and the like become a double box; leftover is one filler box</span>':sbn('Narrowest','opts.wMin','any')+sbn('Widest','opts.wMax','any')}</div><div class="colsctl"><span>Columns</span><div class="step"><button type="button" data-act="cols" data-a="-1" aria-label="Fewer columns">−</button><b>${+S.opts.cols>0?S.opts.cols:'Free'}</b><button type="button" data-act="cols" data-a="1" aria-label="More columns">+</button></div></div>`);
+  // columns first (that is what you came to edit), then the shuffle buttons, then the folded extras
+  return `<div class="mlbl">Your columns — tap one to edit</div>`+tiles.replace(/<p class="mhint">[^<]*<\/p>/,'')+adds+`<div class="mlbl">Shuffle</div>`+shuf+mx('Styles — restyle the whole wall in one tap',sty,'sty')+`<div class="mlock" style="display:flex;gap:8px;flex-wrap:wrap">${lockChip()}${budChipBtn()}</div>`+mx('Always include when shuffling'+((S.opts.must||[]).length?` · ${(S.opts.must||[]).length}`:''),mustUI(),'must')+more}
 /* bottom sheet sizing */
 const SHEET={st:'half'};
 function sheetSizes(){const hh=document.querySelector('header.top')?.offsetHeight||52,bn=document.getElementById('bnav')?.offsetHeight||62,av=innerHeight-hh-bn;
@@ -3877,8 +3917,8 @@ function dsDirty(){if(ui.savedSig!=null)return dsSig()!==ui.savedSig;const c=dsC
 const dsBackLocal=()=>{try{return JSON.parse(localStorage.getItem(DSB)||'[]')}catch(e){return []}};
 async function dsInit(){let db=null;try{if(window.claude&&claude.use)db=await claude.use('db')}catch(e){db=null}
   if(ui.fresh&&ui.savedSig==null){try{ui.savedSig=dsSig()}catch(e){}}
-  if(!db){DS.local=true;DS.list=dsLocalGet().sort((a,b)=>b.updatedAt-a.updatedAt);DS.backs=dsBackLocal();DS.state='ready';renderDesigns();dsBadge();return}
-  DS.db=db;const t=setTimeout(()=>{if(DS.state==='loading'){DS.state='slow';renderDesigns()}},10000);
+  if(!db){DS.local=true;DS.list=dsLocalGet().sort((a,b)=>b.updatedAt-a.updatedAt);DS.backs=dsBackLocal();DS.state='ready';rmInit();renderDesigns();dsBadge();return}
+  DS.db=db;rmInit();const t=setTimeout(()=>{if(DS.state==='loading'){DS.state='slow';renderDesigns()}},10000);
   db.collection('designs').orderBy('updatedAt','desc').limit(200).onSnapshot(snap=>{clearTimeout(t);DS.list=snap.docs.map(d=>Object.assign({id:d.id},d.data()));DS.state='ready';renderDesigns();dsBadge()},err=>{clearTimeout(t);DS.state='error';DS.err=err&&err.message;renderDesigns()});
   try{db.collection('backups').orderBy('savedAt','desc').limit(80).onSnapshot(snap=>{DS.backs=snap.docs.map(d=>Object.assign({id:d.id},d.data()));renderDesigns()},()=>{})}catch(e){}}
 /* Safety net: every time something would be replaced or thrown away, a copy goes here first.
@@ -3890,9 +3930,10 @@ async function dsBackup(kind,name,state,of){if(!state||state.length>240000)retur
 function dsPrune(){if(!DS.db)return;const seen={},kill=[];DS.backs.forEach(b=>{const k=b.kind==='version'?'v:'+b.of:b.kind,max=b.kind==='version'?8:b.kind==='deleted'?15:10;seen[k]=(seen[k]||0)+1;if(seen[k]>max||Date.now()-(+b.savedAt||0)>90*864e5)kill.push(b.id)});kill.slice(0,10).forEach(id=>{try{DS.db.doc('backups/'+id).delete().catch(()=>{})}catch(e){}})}
 function dsAgo(ts){const m=Math.round((Date.now()-ts)/60000);return m<1?'just now':m<60?m+' min ago':m<1440?Math.round(m/60)+' h ago':new Date(ts).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'})}
 function dsThumb(d){const k=d.id+':'+(d.updatedAt||d.savedAt);if(DS.thumbs[k]!=null)return DS.thumbs[k];let h='';try{const st=fixFins(JSON.parse(d.state));h=elevSVG(st,build(st),{mini:true})}catch(e){h=''}DS.thumbs[k]=h;return h}
-function dsBadge(){const c=dsCur(),dirty=dsDirty(),nm=c?(c.name||'Untitled design'):'',b=document.getElementById('dsBtn'),m=document.getElementById('dsBtnM');
-  if(b){b.innerHTML=`Designs${nm?` · <span class="dsnm">${esc(nm.length>18?nm.slice(0,17)+'…':nm)}</span>`:''}${dirty&&(c||!ui.fresh||ui.savedSig==null||dsSig()!==ui.savedSig)?'<i class="dsdot" title="Changes not saved yet"></i>':''}`;b.title=c?(dirty?`“${nm}” has changes that are not saved yet`:`“${nm}” — all changes saved`):(dirty?'This design is not saved yet':'Saved designs')}
-  if(m)m.textContent='My designs'+(dirty?' · not saved yet':'');try{ntBadge()}catch(e){}}
+function dsBadge(){const c=dsCur(),st=dsStatus(),nm=c?(c.name||'Untitled design'):(ui.docName||''),b=document.getElementById('dsBtn'),m=document.getElementById('dsBtnM');
+  if(b){b.className='btn dsb '+st.k;b.innerHTML=st.k==='new'?`<span class="dsico" aria-hidden="true">●</span>Save`:`<span class="dsnm">${esc(nm.length>22?nm.slice(0,21)+'…':nm)}</span><i class="dsst2" aria-hidden="true">${st.k==='ok'?'✓':st.k==='err'?'!':'…'}</i>`;
+    b.title=st.k==='new'?'This design is not saved yet — tap to name and save it':`“${nm}” — ${st.t}. Tap for your designs, rooms and sharing.`;b.setAttribute('aria-label',st.k==='new'?'Save this design':`My designs — ${nm}, ${st.t}`)}
+  if(m)m.textContent=st.k==='new'?'Save this design':'My designs';try{ntBadge()}catch(e){}}
 /* ===== compare two designs ===== */
 function cmpStats(st){const S0=S,g0=geo,lp=lastPrice,la=lastAlt,gc=groupsCache;let out=null;PRICING++;
   try{S=st;geo=build(st);renderCut();const G=geo,mk=makerEstimate(),qs=G.secs.filter(q=>!q.panel&&!q.door),sh=lastPrice.rows.filter(r=>r.grp==='Sheets').reduce((a,r)=>a+(+r.qty||0),0);
@@ -3923,37 +3964,149 @@ function renderCompare(){const el=document.getElementById('dsCmp'),box=document.
   <div class="cmpwrap"><table class="cmpt"><thead><tr><th></th><th>${esc(A.name)}</th><th>${esc(B.name)}</th><th>Difference</th></tr></thead><tbody>${rows.map(r=>`<tr><th>${r[0]}</th>${cell(r[1],r[2],r[3],r[4])}${cell(r[2],r[1],r[3],r[4])}<td class="cdd">${typeof r[1]==='number'&&typeof r[2]==='number'?esc(dd(r[2]-r[1],r[3])):''}</td></tr>`).join('')}</tbody></table></div>
   <p class="hintp">Difference = right minus left. Green is the cheaper or simpler one.</p>
   ${diff.length?`<details class="pf"><summary>Settings that differ (${diff.length>40?'40+':diff.length})</summary><p class="hintp">${secA!==secB?`Columns: ${secA} vs ${secB}. `:''}${diff.slice(0,40).map(k=>esc(nice(k))).join(' · ')}</p></details>`:'<p class="hintp">These two designs have exactly the same settings.</p>'}`}
-document.addEventListener('toggle',e=>{if(e.target&&e.target.dataset&&e.target.dataset.qa)ui.qaOpen=e.target.open;if(e.target&&e.target.id==='dsCmpBox')renderCompare();if(e.target&&e.target.dataset&&e.target.dataset.off)ui.offOpen=e.target.open},true);
+document.addEventListener('toggle',e=>{if(e.target&&e.target.dataset&&e.target.dataset.qa)ui.qaOpen=e.target.open;if(e.target&&e.target.id==='dsCmpBox'){ui.cmpOpen=e.target.open;renderCompare()}if(e.target&&e.target.dataset&&e.target.dataset.off)ui.offOpen=e.target.open},true);
 document.addEventListener('change',e=>{const k=e.target&&e.target.dataset&&e.target.dataset.cmp;if(!k)return;if(k==='a')ui.cmpA=e.target.value;else ui.cmpB=e.target.value;renderCompare()});
-function renderDesigns(){const el=document.getElementById('dsList'),note=document.getElementById('dsNote');if(!el||document.getElementById('iom').hidden)return;try{renderCompare()}catch(e){}
-  const c=dsCur(),dirty=dsDirty(),now=document.getElementById('dsNow'),btns=document.getElementById('dsBtns'),help=document.getElementById('dsHelp'),nm=c?(c.name||'Untitled design'):'';
-  now.className='dsnow'+(dirty?' dirty':'');
-  now.innerHTML=c?`<b>Open now: “${esc(nm)}”</b><span>${dirty?'It has changes that are not saved yet.':'All changes are saved.'}</span>`:`<b>This design is not in your list yet</b><span>${dirty?'Give it a name and save it, or it only lives in this browser.':'It is the example. Change something and save it under your own name.'}</span>`;
-  btns.innerHTML=c?`<button class="btn pri" data-act="dsSave">Save changes</button><button class="btn" data-act="dsSaveNew">Save as a new design</button>`:`<button class="btn pri" data-act="dsSaveNew">Save as a new design</button>`;
-  help.textContent=c?`“Save changes” updates “${nm}” in the list below — the way it was before stays under its “Earlier versions”. “Save as a new design” leaves “${nm}” untouched and adds a second one.`:'Saving adds this design to the list below. Nothing in the list is replaced.';
-  note.textContent=DS.state==='loading'?'Loading saved designs…':DS.state==='slow'?'Still loading — check your connection.':DS.state==='error'?'Saved designs could not be loaded right now.':DS.local?'Saved in this browser only (shared saving works in the published app).':DS.list.length?'Saved in the app — everyone you share Fitted with sees these.':'No saved designs yet. Name this one and tap Save.';
+/* ===== the "My designs" window: three tabs — Designs, Rooms (56-rooms-share.js), Share & files ===== */
+function ioOpen(tab,focus){ui.ioTab=tab||ui.ioTab||'designs';const m=document.getElementById('iom');m.hidden=false;const mm=document.getElementById('mmenu');if(mm)mm.hidden=true;renderDesigns();
+  if(focus)setTimeout(()=>{const n=document.getElementById(focus);if(n){n.focus();try{n.select()}catch(e){}}},90)}
+/* where the open design stands: new (not in the list), saving, dirty (will save in a moment), ok, err */
+function dsStatus(){const c=dsCur();if(!c&&!ui.docId)return {k:'new',t:'Not saved yet'};if(ui.dsSaving||!c)return {k:'saving',t:'Saving…'};if(ui.dsErr)return {k:'err',t:'Not saved: '+ui.dsErr};if(dsDirty())return {k:'dirty',t:'Saving in a moment…'};return {k:'ok',t:'Saved '+dsAgo(+c.updatedAt||Date.now())}}
+function renderDesigns(){const m=document.getElementById('iom');if(!m||m.hidden)return;const body=document.getElementById('ioBody');if(!body)return;const t=ui.ioTab||'designs';
+  document.querySelectorAll('#ioTabs button').forEach(b=>{const on=b.dataset.a===t;b.classList.toggle('on',on);b.setAttribute('aria-selected',on)});
+  const keep={};['dsFind','rmName','ioText','dsRen'].forEach(id=>{const e=document.getElementById(id);if(e)keep[id]=[e.value,document.activeElement===e]});
+  const nmE=document.getElementById('dsName'),nmKeep=nmE&&document.activeElement===nmE?nmE.value:null;
+  body.innerHTML=t==='rooms'?roomsHTML():t==='share'?shareHTML():designsHTML();
+  Object.entries(keep).forEach(([id,[v,f]])=>{const e=document.getElementById(id);if(e){e.value=v;if(f)e.focus()}});if(nmKeep!=null){const e=document.getElementById('dsName');if(e){e.value=nmKeep;e.focus()}}
+  if(t==='designs')try{renderCompare()}catch(e){}}
+function designsHTML(){const c=dsCur(),st=dsStatus(),nm=c?(c.name||'Untitled design'):(ui.docName||S.name||'');const q=(ui.dsFind||'').trim().toLowerCase();
+  const note=DS.state==='loading'?'Loading your designs…':DS.state==='slow'?'Still loading — check your connection.':DS.state==='error'?'Your designs could not be loaded right now.':DS.local?'Saved in this browser.':'Saved in Fitted — everyone you share this Fitted page with can open them too.';
+  let thumb='';try{thumb=elevSVG(S,geo,{mini:true})}catch(e){}
+  const now=`<div class="dsnow2 ${st.k}"><div class="dthumb" aria-hidden="true">${thumb}</div><div class="dsnowb">
+    <label class="fld"><span>${c?'Open now — tap the name to rename it':'Give this design a name'}</span><span class="inp"><input type="text" id="dsName" maxlength="80" value="${esc(nm)}" placeholder="e.g. Attic, oak + sage" enterkeyhint="done"></span></label>
+    <div class="dsst"><i aria-hidden="true"></i><span>${esc(st.t)}${c?' · every change saves by itself':''}</span></div>
+    <div class="dbtns">${c?`<button type="button" class="btn sm" data-act="dsSaveNew">Save a copy</button><button type="button" class="btn sm" data-act="ioTab" data-a="share">Share this design</button><button type="button" class="btn sm" data-act="newHub">New design</button>`:`<button type="button" class="btn pri" data-act="dsSaveNew">Save design</button><span class="hintp" style="margin:0">After this, changes save by themselves.</span>`}</div></div></div>`;
   const vers=id=>DS.backs.filter(b=>b.kind==='version'&&b.of===id);
-  el.innerHTML=DS.list.map(d=>{const v=vers(d.id);return `<div class="dcard${d.id===ui.docId?' on':''}"><button type="button" class="dthumb" data-act="dsOpen" data-a="${esc(d.id)}" aria-label="Open ${esc(d.name||'design')}">${dsThumb(d)}</button><div class="dmeta"><b>${esc(d.name||'Untitled design')}</b><span>${dsAgo(+d.updatedAt||0)}${d.id===ui.docId?' · open now':''}</span></div><div class="dact"><button type="button" class="btn sm" data-act="dsOpen" data-a="${esc(d.id)}">Open</button><button type="button" class="btn sm" data-act="dsDel" data-a="${esc(d.id)}">Delete</button></div>${v.length?`<details class="pf dver"><summary>Earlier versions (${v.length})</summary>${v.map(b=>`<div class="dvrow"><span>${dsAgo(+b.savedAt||0)}${b.name&&b.name!==d.name?' · “'+esc(b.name)+'”':''}</span><button type="button" class="btn sm" data-act="dsRestore" data-a="${esc(b.id)}">Open this version</button></div>`).join('')}</details>`:''}</div>`}).join('');
-  const rest=DS.backs.filter(b=>b.kind!=='version'||!DS.list.some(d=>d.id===b.of)),bk=document.getElementById('dsBack'),KL={auto:'unsaved work, kept automatically',deleted:'deleted design',version:'earlier version of a deleted design'};
-  if(bk)bk.innerHTML=rest.length?`<details class="pf"${ui.dsBackOpen?' open':''} data-dsback="1"><summary>Recovered work and deleted designs (${rest.length})</summary><p class="hintp">Fitted puts a copy here whenever unsaved work is about to be replaced, and when you delete a design. Copies stay for about three months.</p><div class="dgrid">${rest.map(b=>`<div class="dcard"><div class="dthumb" aria-hidden="true">${dsThumb(b)}</div><div class="dmeta"><b>${esc(b.name||'Untitled design')}</b><span>${KL[b.kind]||''} · ${dsAgo(+b.savedAt||0)}</span></div><div class="dact"><button type="button" class="btn sm" data-act="dsRestore" data-a="${esc(b.id)}">Open</button><button type="button" class="btn sm" data-act="dsBackDel" data-a="${esc(b.id)}">Remove</button></div></div>`).join('')}</div></details>`:''}
-async function dsSave(asNew){const name=(document.getElementById('dsName').value||'').trim()||'Untitled design',state=JSON.stringify(S);
-  if(state.length>240000){toast('This design is too big to save');return}
-  const rec={name,state,updatedAt:Date.now()},cur=asNew?null:dsCur();
-  try{if(cur&&cur.state!==state){const ok=await dsBackup('version',cur.name,cur.state,cur.id);if(!ok){toast('Could not keep a copy of the earlier version, so nothing was replaced. Use “Save as a new design”.');return}}
-    if(DS.db){if(cur)await DS.db.doc('designs/'+cur.id).set(rec);else{const ref=await DS.db.collection('designs').add(rec);ui.docId=ref.id}}
-    else{const l=dsLocalGet();const id=cur?cur.id:('d'+Date.now().toString(36));const i=l.findIndex(d=>d.id===id);const r=Object.assign({id},rec);if(i>=0)l[i]=r;else l.push(r);if(!dsLocalPut(l)){toast('Could not save in this browser');return}ui.docId=id;DS.list=l.sort((a,b)=>b.updatedAt-a.updatedAt)}
-    ui.docName=name;ui.savedSig=dsHash(state);ui.fresh=0;saveSoon();toast(cur?`Saved the changes to “${name}”`:`Saved “${name}” as a new design`);renderDesigns();dsBadge()}
-  catch(e){toast(e&&(e.code==='not_granted'||e.code==='revoked')?'You can look at designs but not save — ask for edit access':'Could not save right now')}}
+  const list=DS.list.filter(d=>!q||(d.name||'').toLowerCase().includes(q));
+  const cards=list.map(d=>{const v=vers(d.id),on=d.id===ui.docId,more=ui.dsMore===d.id,ren=ui.dsRen===d.id;
+    return `<div class="dcard${on?' on':''}"><button type="button" class="dthumb" data-act="dsOpen" data-a="${esc(d.id)}" aria-label="Open ${esc(d.name||'design')}">${dsThumb(d)}</button>
+      <div class="dmeta">${ren?`<span class="inp"><input type="text" id="dsRen" data-id="${esc(d.id)}" maxlength="80" value="${esc(d.name||'')}" enterkeyhint="done" aria-label="New name"></span>`:`<b>${esc(d.name||'Untitled design')}</b>`}<span>${on?'open now · ':''}${dsAgo(+d.updatedAt||0)}</span></div>
+      <div class="dact">${ren?`<button type="button" class="btn sm pri" data-act="dsRenOk" data-a="${esc(d.id)}">Save name</button><button type="button" class="btn sm" data-act="dsMore" data-a="">Cancel</button>`:`${on?'':`<button type="button" class="btn sm pri" data-act="dsOpen" data-a="${esc(d.id)}">Open</button>`}<button type="button" class="btn sm" data-act="dsMore" data-a="${more?'':esc(d.id)}" aria-expanded="${more}" aria-label="More for ${esc(d.name||'design')}">${more?'Less':'More…'}</button>`}</div>
+      ${more&&!ren?`<div class="dmore"><button type="button" class="btn sm" data-act="dsRen" data-a="${esc(d.id)}">Rename</button><button type="button" class="btn sm" data-act="dsDup" data-a="${esc(d.id)}">Duplicate</button><button type="button" class="btn sm" data-act="dsFile" data-a="${esc(d.id)}">Download file</button><button type="button" class="btn sm warnb" data-act="dsDel" data-a="${esc(d.id)}">Delete</button></div>`:''}
+      ${v.length?`<details class="pf dver"><summary>Earlier versions (${v.length})</summary>${v.map(b=>`<div class="dvrow"><span>${dsAgo(+b.savedAt||0)}${b.name&&b.name!==d.name?' · “'+esc(b.name)+'”':''}</span><button type="button" class="btn sm" data-act="dsRestore" data-a="${esc(b.id)}">Open this version</button></div>`).join('')}</details>`:''}</div>`}).join('');
+  const rest=DS.backs.filter(b=>b.kind!=='version'||!DS.list.some(d=>d.id===b.of)),KL={auto:'unsaved work, kept automatically',deleted:'deleted design',version:'earlier version of a deleted design'};
+  return now+`<div class="dshead"><h3>My designs${DS.list.length?` <small>${DS.list.length}</small>`:''}</h3>${DS.list.length>5?`<span class="inp dsfind"><input type="search" id="dsFind" placeholder="Find a design" aria-label="Find a design" value="${esc(ui.dsFind||'')}"></span>`:''}</div>
+    <p class="hintp" style="margin:0">${note}</p>
+    ${DS.list.length?(list.length?`<div class="dgrid">${cards}</div>`:'<p class="hintp">No design has that name.</p>'):'<p class="hintp">Nothing saved yet — name the design above and tap Save design.</p>'}
+    ${DS.list.length?`<details class="pf" id="dsCmpBox"${ui.cmpOpen?' open':''}><summary>Compare two designs side by side</summary><p class="hintp">Pick two designs — price, sheets, size and what is different between them.</p><div id="dsCmp"></div></details>`:''}
+    ${rest.length?`<details class="pf"${ui.dsBackOpen?' open':''} data-dsback="1"><summary>Recovered work and deleted designs (${rest.length})</summary><p class="hintp">Fitted puts a copy here whenever unsaved work is about to be replaced, and when you delete a design. Copies stay for about three months.</p><div class="dgrid">${rest.map(b=>`<div class="dcard"><div class="dthumb" aria-hidden="true">${dsThumb(b)}</div><div class="dmeta"><b>${esc(b.name||'Untitled design')}</b><span>${KL[b.kind]||''} · ${dsAgo(+b.savedAt||0)}</span></div><div class="dact"><button type="button" class="btn sm" data-act="dsRestore" data-a="${esc(b.id)}">Open</button><button type="button" class="btn sm" data-act="dsBackDel" data-a="${esc(b.id)}">Remove</button></div></div>`).join('')}</div></details>`:''}`}
+/* write one design record; returns its id */
+async function dsWrite(id,rec){if(DS.db){if(id){await DS.db.doc('designs/'+id).set(rec);return id}const ref=await DS.db.collection('designs').add(rec);return ref.id}
+  const l=dsLocalGet();id=id||('d'+Date.now().toString(36)+Math.random().toString(36).slice(2,4));const i=l.findIndex(d=>d.id===id),r=Object.assign({id},rec);if(i>=0)l[i]=r;else l.push(r);if(!dsLocalPut(l))throw {code:'full'};DS.list=l.sort((a,b)=>b.updatedAt-a.updatedAt);return id}
+const dsErrText=e=>e&&(e.code==='not_granted'||e.code==='revoked'||e.code==='not_writer')?'you can look but not save — ask for edit access':e&&e.code==='full'?'this browser is full':'no connection, trying again';
+/* first save, or "Save a copy": always adds a new design to the list. From then on dsAuto keeps it up to date. */
+async function dsSave(asNew){const cur=dsCur();if(!asNew&&cur)return dsAuto();const el=document.getElementById('dsName');let name=((el&&el.value)||'').trim()||ui.docName||S.name||'Untitled design';
+  if(cur&&name===(cur.name||''))name=(cur.name||'Design')+' (copy)';const state=JSON.stringify(S);if(state.length>240000){toast('This design is too big to save');return}
+  try{const id=await dsWrite(null,{name,state,updatedAt:Date.now()});ui.docId=id;ui.docName=name;ui.savedSig=dsHash(state);ui.fresh=0;ui.dsErr='';saveSoon();
+    toast(cur?`Saved a copy — you are now working in “${name}”`:`Saved “${name}”. From now on every change saves by itself.`);renderDesigns();dsBadge()}
+  catch(e){toast('Could not save: '+dsErrText(e))}}
+/* autosave: a design that is in the list saves itself a few seconds after each change. An "earlier version" copy is kept at most every 20 minutes. */
+let dsAutoT=null;
+function dsAutoSoon(){if(!ui.docId)return;clearTimeout(dsAutoT);if(dsDirty())dsAutoT=setTimeout(dsAuto,2500);dsBadge()}
+async function dsAuto(){const cur=dsCur();if(!cur||!dsDirty()||ui.dsSaving)return;const state=JSON.stringify(S);if(state.length>240000){ui.dsErr='the design is too big';dsBadge();return}
+  ui.dsSaving=true;dsBadge();
+  try{const lastV=DS.backs.filter(b=>b.kind==='version'&&b.of===cur.id).reduce((a,b)=>Math.max(a,+b.savedAt||0),0);
+    if(cur.state&&cur.state!==state&&(ui.forceVer||Date.now()-lastV>20*60000)){const ok=await dsBackup('version',cur.name,cur.state,cur.id);if(ok)ui.forceVer=false}
+    await dsWrite(cur.id,{name:cur.name||'Untitled design',state,updatedAt:Date.now()});ui.savedSig=dsHash(state);ui.dsErr=''}
+  catch(e){ui.dsErr=dsErrText(e);if(!/look but not/.test(ui.dsErr)){clearTimeout(dsAutoT);dsAutoT=setTimeout(dsAuto,15000)}}
+  ui.dsSaving=false;dsBadge();renderDesigns();if(dsDirty())dsAutoSoon()}
+async function dsRename(id,name){name=String(name||'').trim();const d=DS.list.find(x=>x.id===id);if(!d||!name||name===d.name){ui.dsRen=null;renderDesigns();return}
+  try{const st=id===ui.docId?JSON.stringify(S):d.state;await dsWrite(id,{name,state:st,updatedAt:Date.now()});if(id===ui.docId){ui.docName=name;ui.savedSig=dsHash(st)}d.name=name;ui.dsRen=null;ui.dsMore=null;toast(`Renamed to “${name}”`)}catch(e){toast('Could not rename: '+dsErrText(e))}renderDesigns();dsBadge()}
+async function dsDup(id){const d=DS.list.find(x=>x.id===id);if(!d)return;try{await dsWrite(null,{name:(d.name||'Design')+' (copy)',state:id===ui.docId?JSON.stringify(S):d.state,updatedAt:Date.now()});ui.dsMore=null;toast('Duplicated — the copy is at the top of the list')}catch(e){toast('Could not duplicate: '+dsErrText(e))}renderDesigns()}
 /* keep unsaved work before something replaces what is in the editor */
 function dsKeep(){try{if(!dsDirty())return false;if(ui.fresh&&!ui.docId&&ui.savedSig!=null&&dsSig()===ui.savedSig)return false;dsBackup('auto',ui.docName||'Unsaved design',JSON.stringify(S),ui.docId||'');return true}catch(e){return false}}
 /* a brand-new design (wizard, example, pasted text) must never be saved over the design that was open before */
 function dsDetach(clean){ui.docId=null;ui.docName='';ui.savedSig=null;ui.fresh=clean?1:0;const n=document.getElementById('dsName');if(n)n.value=''}
 function dsOpen(id){const d=DS.list.find(x=>x.id===id);if(!d)return;const kept=dsKeep();try{S=fixFins(JSON.parse(d.state));ui.docId=d.id;ui.docName=d.name||'';ui.fresh=0;ui.sel=0;ui.zsel=null;document.getElementById('iom').hidden=true;changed(true);ui.savedSig=dsSig();saveSoon();toast(`Opened “${d.name||'design'}”`+(kept?'. Your unsaved work was kept under Designs → Recovered work.':''))}catch(e){toast('That design could not be opened')}}
-function dsRestore(bid){const b=DS.backs.find(x=>x.id===bid);if(!b)return;dsKeep();try{S=fixFins(JSON.parse(b.state));const still=b.kind==='version'&&DS.list.some(d=>d.id===b.of);ui.docId=still?b.of:null;ui.docName=still?(DS.list.find(d=>d.id===b.of).name||''):(b.name||'');ui.fresh=0;ui.sel=0;ui.zsel=null;document.getElementById('iom').hidden=true;changed(true);ui.savedSig=null;saveSoon();toast(still?`This earlier version of “${ui.docName}” is open. Tap Designs → Save changes to make it the current one.`:`“${b.name||'Design'}” is open again. Tap Designs → Save as a new design to keep it.`)}catch(e){toast('That copy could not be opened')}}
+function dsRestore(bid){const b=DS.backs.find(x=>x.id===bid);if(!b)return;dsKeep();try{S=fixFins(JSON.parse(b.state));const still=b.kind==='version'&&DS.list.some(d=>d.id===b.of);ui.docId=still?b.of:null;ui.docName=still?(DS.list.find(d=>d.id===b.of).name||''):(b.name||'');ui.fresh=0;ui.sel=0;ui.zsel=null;document.getElementById('iom').hidden=true;changed(true);ui.savedSig=null;saveSoon();ui.forceVer=true;toast(still?`This earlier version of “${ui.docName}” is open again and is now the current one. The newer one stays under Earlier versions.`:`“${b.name||'Design'}” is open again. Tap Save at the top to keep it in your designs.`)}catch(e){toast('That copy could not be opened')}}
 async function dsBackDel(bid){try{if(DS.db)await DS.db.doc('backups/'+bid).delete();else{const l=dsBackLocal().filter(b=>b.id!==bid);localStorage.setItem(DSB,JSON.stringify(l));DS.backs=l}renderDesigns()}catch(e){toast('Could not remove it right now')}}
 async function dsDelete(id){const d=DS.list.find(x=>x.id===id);try{if(d){const ok=await dsBackup('deleted',d.name,d.state,d.id);if(!ok){toast('Could not keep a copy, so nothing was deleted');return}}
     if(DS.db)await DS.db.doc('designs/'+id).delete();else{const l=dsLocalGet().filter(d=>d.id!==id);dsLocalPut(l);DS.list=l}if(ui.docId===id){ui.docId=null;ui.savedSig=null}ui.dsBackOpen=1;toast('Deleted — a copy stays under “Recovered work and deleted designs”');renderDesigns();dsBadge()}catch(e){toast('Could not delete right now')}}
 
+/* ==== 56-rooms-share.js ====
+   Saved rooms and sharing.
+   A room is the wall without the cabinets: size, slopes, beams, sockets, doors, closing strips.
+   Rooms are kept like designs (in the app's shared list when there is one, otherwise in this browser),
+   so you can measure once and try many designs in the same room.
+   Sharing: download a design or room file, copy it as text, open what someone sent you.
+*/
+const RM={list:[],state:'loading'};const RML='fitted-rooms-v1';
+const rmLocalGet=()=>{try{return JSON.parse(localStorage.getItem(RML)||'[]')}catch(e){return []}};
+function rmInit(){if(!DS.db){RM.list=rmLocalGet().sort((a,b)=>b.updatedAt-a.updatedAt);RM.state='ready';return}
+  try{DS.db.collection('rooms').orderBy('updatedAt','desc').limit(100).onSnapshot(snap=>{RM.list=snap.docs.map(d=>Object.assign({id:d.id},d.data()));RM.state='ready';renderDesigns()},()=>{RM.state='error';renderDesigns()})}catch(e){RM.state='error'}}
+/* the part of a design that is "the room" */
+function roomOf(st){const R=JSON.parse(JSON.stringify(st.room||{}));delete R.corner;return {room:R,skirt:JSON.parse(JSON.stringify(st.skirt||{}))}}
+function rmParse(r){try{return typeof r.data==='string'?JSON.parse(r.data):r.data}catch(e){return null}}
+async function rmAdd(name,data){const rec={name:String(name||'My room').slice(0,80),data:JSON.stringify(data),updatedAt:Date.now()};
+  if(DS.db){const ref=await DS.db.collection('rooms').add(rec);return ref.id}
+  const l=rmLocalGet(),id='r'+Date.now().toString(36);l.unshift(Object.assign({id},rec));try{localStorage.setItem(RML,JSON.stringify(l))}catch(e){throw {code:'full'}}RM.list=l;return id}
+async function rmSave(){const el=document.getElementById('rmName'),R=S.room;const name=((el&&el.value)||'').trim()||`Wall ${f0(+R.W)} × ${f0(+R.H)}`;
+  try{await rmAdd(name,roomOf(S));if(el)el.value='';toast(`Room “${name}” saved — use it for any design`);ui.ioTab='rooms';renderDesigns()}catch(e){toast('Could not save the room: '+dsErrText(e))}}
+async function rmDel(id){try{if(DS.db)await DS.db.doc('rooms/'+id).delete();else{const l=rmLocalGet().filter(r=>r.id!==id);localStorage.setItem(RML,JSON.stringify(l));RM.list=l}toast('Room removed');renderDesigns()}catch(e){toast('Could not remove it right now')}}
+/* put a design's cabinets into another room: flexible columns share the new wall, fixed-size ones (speakers, appliances, panel walls) keep their width */
+function fitToRoom(st,data){st=JSON.parse(JSON.stringify(st));const sameW=Math.abs((+(st.room||{}).W||0)-(+data.room.W||0))<5;st.room=JSON.parse(JSON.stringify(data.room));if(data.skirt)st.skirt=Object.assign({},st.skirt,JSON.parse(JSON.stringify(data.skirt)));delete st.proj;
+  (st.sections||[]).forEach(sc=>{const fixed=sc.base==='panel'||(sc.zones||[]).some(z=>z.type==='speaker'||z.fridge||z.fit==='larder'||['oven','combi','washer','dryer','stack','bed'].includes(z.look));if(!fixed&&!sameW){sc.w=null;sc.pinX=null}});
+  try{st=slopeFix(st)}catch(e){}return fitTypes(st)}
+function rmUse(id){const r=RM.list.find(x=>x.id===id),d=r&&rmParse(r);if(!d||!d.room){toast('That room could not be read');return}if(S.proj){toast('This design has several walls — open one wall, or start a new design in this room');return}
+  S=fitToRoom(S,d);ui.sel=0;ui.zsel=null;document.getElementById('iom').hidden=true;changed(true);toast(`Your cabinets now stand in “${r.name}”. Undo brings the old room back.`)}
+function rmNew(id){ST.fit=true;ST.roomId=id;document.getElementById('iom').hidden=true;stOpen()}
+function roomThumb(d){const R=(d&&d.room)||{},W=Math.max(600,+R.W||3000),H=Math.max(600,+R.H||2500),pts=(R.ceil&&R.ceil.length?R.ceil:[{x:0,y:H},{x:W,y:H}]).map(p=>[Math.max(0,Math.min(W,+p.x)),Math.max(0,+p.y)]);
+  const Y=y=>H-y,poly=[[0,0],...pts,[W,0]];let o=`<svg viewBox="-120 -160 ${W+240} ${H+320}" role="img" aria-label="Wall ${f0(W)} by ${f0(H)} mm"><polygon points="${poly.map(p=>`${f0(p[0])},${f0(Y(p[1]))}`).join(' ')}" style="fill:var(--raised);stroke:var(--ink2)" stroke-width="24"/>`;
+  (R.beams||[]).forEach(b=>{o+=`<rect x="${f0(+b.x)}" y="${f0(Y(H))}" width="${f0(+b.w)}" height="${f0(Math.max(0,H-(+b.bottom||H)))}" style="fill:var(--ink3)"/>`});
+  (R.wobs||[]).forEach(w=>{const D=WOB[w.type]||{w:80,h:80};o+=`<rect x="${f0(+w.x)}" y="${f0(Y((+w.y||0)+(D.h||80)))}" width="${f0(D.w||80)}" height="${f0(D.h||80)}" style="fill:var(--accent)" opacity=".55"/>`});
+  return o+`<text x="${f0(W/2)}" y="${f0(H/2)}" text-anchor="middle" font-size="${f0(Math.min(W,H)/7)}" style="fill:var(--ink2)">${f0(W)} × ${f0(H)}</text></svg>`}
+function roomsHTML(){const R=S.room,slope=(R.ceil||[]).some(p=>Math.abs(+p.y-+R.H)>1);
+  const cur=`<div class="dsnow2 ok"><div class="dthumb rmthumb" aria-hidden="true">${roomThumb(roomOf(S))}</div><div class="dsnowb"><label class="fld"><span>Save the room of the open design</span><span class="inp"><input type="text" id="rmName" maxlength="80" placeholder="e.g. Attic bedroom, left wall" enterkeyhint="done"></span></label>
+    <div class="dsst"><span>${f0(+R.W)} × ${f0(+R.H)} mm, ${f0(+R.D)} deep${slope?', sloping ceiling':''}${(R.beams||[]).length?', beam':''}${(R.wobs||[]).length?`, ${(R.wobs||[]).length} thing${(R.wobs||[]).length>1?'s':''} on the wall`:''}</span></div>
+    <div class="dbtns"><button type="button" class="btn pri" data-act="rmSave">Save room</button><span class="hintp" style="margin:0">Measure once, try as many designs as you like in it.</span></div></div></div>`;
+  const list=RM.list.map(r=>{const d=rmParse(r);return `<div class="dcard"><div class="dthumb rmthumb" aria-hidden="true">${roomThumb(d)}</div><div class="dmeta"><b>${esc(r.name||'Room')}</b><span>${dsAgo(+r.updatedAt||0)}</span></div>
+    <div class="dact"><button type="button" class="btn sm pri" data-act="rmNew" data-a="${esc(r.id)}">New design here</button><button type="button" class="btn sm" data-act="rmUse" data-a="${esc(r.id)}">Use for the open design</button><button type="button" class="btn sm" data-act="rmFile" data-a="${esc(r.id)}">Download</button><button type="button" class="btn sm warnb" data-act="rmDel" data-a="${esc(r.id)}">Delete</button></div></div>`}).join('');
+  return cur+`<div class="dshead"><h3>My rooms${RM.list.length?` <small>${RM.list.length}</small>`:''}</h3></div>${RM.list.length?`<div class="dgrid">${list}</div>`:`<p class="hintp">${RM.state==='loading'?'Loading your rooms…':'No rooms saved yet. Save the room above — then “New design here” starts any design in it, already fitted to the wall.'}</p>`}`}
+/* ---- files and text ---- */
+const slugOf=n=>(String(n||'design').normalize('NFKD').replace(/[^\w\s-]/g,'').trim().replace(/\s+/g,'-').slice(0,48)||'design');
+function designPack(st,name){return {app:'Fitted by BRUIS',kind:'design',version:APP_VERSION,name:name||st.name||'My design',saved:new Date().toISOString(),design:st}}
+function roomPack(data,name){return {app:'Fitted by BRUIS',kind:'room',version:APP_VERSION,name:name||'My room',saved:new Date().toISOString(),room:data.room,skirt:data.skirt}}
+function packBlob(o){return new Blob([JSON.stringify(o)],{type:'application/json'})}
+function curName(){const c=dsCur();return (c&&c.name)||ui.docName||S.name||'My design'}
+function ioFile(){const nm=curName();saveFile(slugOf(nm)+'.fitted.json',packBlob(designPack(S,nm)),'Design file')}
+function dsFile(id){const d=DS.list.find(x=>x.id===id);if(!d)return;let st;try{st=JSON.parse(d.state)}catch(e){return}saveFile(slugOf(d.name)+'.fitted.json',packBlob(designPack(st,d.name)),'Design file')}
+function rmFile(id){let nm,data;if(id){const r=RM.list.find(x=>x.id===id);data=r&&rmParse(r);nm=r&&r.name}else{data=roomOf(S);nm=((document.getElementById('rmName')||{}).value||'').trim()||'Room '+curName()}if(!data)return;saveFile(slugOf(nm)+'.room.fitted.json',packBlob(roomPack(data,nm)),'Room file')}
+function ioCopyText(){const nm=curName();copy(`Fitted design “${nm}” — to open it: Fitted → ☰ → Share & files → paste it in the box.\n`+JSON.stringify(designPack(S,nm)))}
+function canShareFile(){try{return !!(navigator.share&&navigator.canShare&&navigator.canShare({files:[new File(['{}'],'a.json',{type:'application/json'})]}))}catch(e){return false}}
+async function ioShare(){const nm=curName();try{await navigator.share({title:nm,text:`My Fitted design “${nm}”`,files:[new File([JSON.stringify(designPack(S,nm))],slugOf(nm)+'.fitted.json',{type:'application/json'})]})}catch(e){if(!e||e.name!=='AbortError')toast('Sharing is not available here — use Download design file')}}
+/* open a design or room from a file or pasted text */
+async function ioImport(t){let o=null;try{const s=String(t||''),i=s.indexOf('{');o=JSON.parse(s.slice(i))}catch(e){}
+  if(o&&o.kind==='room'&&o.room){try{await rmAdd(o.name||'Room',{room:o.room,skirt:o.skirt});ui.ioTab='rooms';document.getElementById('iom').hidden=false;renderDesigns();toast(`Room “${o.name||'Room'}” added to your rooms. Tap “New design here” to design for it.`)}catch(e){toast('Could not add the room: '+dsErrText(e))}return}
+  const st=o&&o.design?o.design:o;if(!st||!st.sections||!st.room){toast('That is not a Fitted design or room');return}
+  const kept=dsKeep();dsDetach(false);S=fixFins(st);ui.docName=(o&&o.name)||st.name||'';ui.sel=0;ui.zsel=null;document.getElementById('iom').hidden=true;changed(true);
+  toast(`Opened “${ui.docName||'design'}”. Tap Save at the top to keep it in your designs.`+(kept?' Your unsaved work was kept under Recovered work.':''))}
+document.addEventListener('change',e=>{const el=e.target;if(!el||!el.matches||!el.matches('[data-iofile]'))return;const f=el.files&&el.files[0];if(!f)return;if(f.size>2e6){toast('That file is too big for a Fitted design');return}const rd=new FileReader();rd.onload=()=>{ioImport(rd.result);el.value=''};rd.readAsText(f)});
+document.addEventListener('keydown',e=>{if(e.key!=='Enter')return;const id=e.target&&e.target.id;if(id==='dsName'){e.preventDefault();dsCur()?dsNameCommit():dsSave(true)}else if(id==='dsRen'){e.preventDefault();dsRename(e.target.dataset.id,e.target.value)}else if(id==='rmName'){e.preventDefault();rmSave()}else if(id==='dsFind'){e.preventDefault()}});
+document.addEventListener('input',e=>{if(e.target&&e.target.id==='dsFind'){ui.dsFind=e.target.value;renderDesigns()}});
+document.addEventListener('change',e=>{if(e.target&&e.target.id==='dsName'&&dsCur())dsNameCommit()});
+function dsNameCommit(){const c=dsCur(),el=document.getElementById('dsName');if(c&&el)dsRename(c.id,el.value)}
+function shareHTML(){const nm=curName(),inList=!!dsCur();
+  return `<div class="shgrid">
+  <section class="shcard"><h3>Send this design</h3><p class="hintp">“${esc(nm)}” as a file the other person opens in Fitted. Your own colours and boards go with it.</p>
+    <div class="dbtns"><button type="button" class="btn pri" data-act="ioFile">Download design file</button>${canShareFile()?'<button type="button" class="btn" data-act="ioShare">Share…</button>':''}<button type="button" class="btn" data-act="ioCopyText">Copy as text</button></div>
+    <p class="hintp" style="margin:0">“Copy as text” fits in an e-mail or chat message. ${DS.local?'':inList?'Anyone who opens this same Fitted page also finds it under My designs.':'Saved designs also show up for anyone who opens this same Fitted page.'}</p></section>
+  <section class="shcard"><h3>For the workshop</h3><p class="hintp">A PDF with the drawings, cut list and build guide — or the cut list files for the panel saw.</p>
+    <div class="dbtns"><button type="button" class="btn" data-act="pdf">Download PDF</button><button type="button" class="btn" data-act="ioToCut">Cut list files</button></div></section>
+  <section class="shcard"><h3>Send just the room</h3><p class="hintp">Only the measurements — wall, slopes, beams, sockets, doors — so someone can design for your room.</p>
+    <div class="dbtns"><button type="button" class="btn" data-act="rmFile">Download room file</button><button type="button" class="btn" data-act="ioTab" data-a="rooms">My rooms</button></div></section>
+  <section class="shcard"><h3>Open what someone sent you</h3><p class="hintp">A design or room file (.fitted.json), or text copied from Fitted.</p>
+    <div class="dbtns"><label class="btn pri filebtn">Open a file…<input type="file" accept=".json,.fitted,application/json,text/plain" data-iofile></label></div>
+    <textarea class="io" id="ioText" spellcheck="false" placeholder="…or paste the text here"></textarea><div class="dbtns"><button type="button" class="btn" data-act="ioLoad">Open pasted text</button></div></section>
+  </div>`}
 /* ==== 60-randomizer.js ====
    Shuffle / "Surprise me": random layouts that respect the wishes (MUSTS) and the room.
 */
@@ -4586,7 +4739,7 @@ document.addEventListener('change',e=>{const el=e.target,k=el&&el.dataset&&el.da
 function csv(){const gs=groupsCache||groupPanels(bgeo());const q=v=>`"${String(v).replace(/"/g,'""')}"`;
   return ['id,part,qty,board,colour,thickness_mm,length_mm,width_mm,shape,where,notes',...gs.map(p=>[p.id,q(p.type),p.qty,q(MATS[p.matType]?.name||''),q(FIN[p.fin]?.name||p.fin),p.t,f0(p.L),f0(p.Wd),q(p.rect?'rect':'shaped '+p.poly.length+'pts'),q(p.secs.join(' ')),q(p.notes.join('; '))].join(','))].join('\n')}
 function txt(){const gs=groupsCache||groupPanels(bgeo());return gs.map(p=>`${p.id}  ${p.qty}×  ${p.type}  ${f0(p.L)} × ${f0(p.Wd)} × ${p.t}  ${MATS[p.matType]?.short||''} ${FIN[p.fin]?.name||p.fin}${p.rect?'':'  (shaped)'}`).join('\n')}
-async function copy(t){try{await navigator.clipboard.writeText(t);toast('Copied')}catch(e){const ta=document.getElementById('ioText');document.getElementById('iom').hidden=false;ta.value=t;ta.select();toast('Select all and copy')}}
+async function copy(t){try{await navigator.clipboard.writeText(t);toast('Copied')}catch(e){ioOpen('share');setTimeout(()=>{const ta=document.getElementById('ioText');if(ta){ta.value=t;ta.focus();ta.select()}},60);toast('Select all and copy')}}
 
 function loftSVG(p){
   const w=p.w,h=p.h,pts=p.poly,big=Math.max(w,h,240),fs=Math.max(15,big/40),gp=fs*2.1,ar=polyArea(pts),lw=big/700;
@@ -5294,7 +5447,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
    Lining the design up with a photo of the room.
 */
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.102';
+const APP_VERSION='v0.103';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
@@ -5736,11 +5889,11 @@ function renderBar(){
   if(ui.tab==='elev'||ui.tab==='3d')h+=`<span class="sp"></span><span class="note" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">Fronts ${finSel('front')} Carcass ${finSel('carcass')}</span>`;
   else h+='<span class="sp"></span>';
   if(ui.tab==='elev'||ui.tab==='3d')h+=`<button class="btn sm mobonly" data-act="bigView" aria-label="${ui.big?'Smaller drawing':'Bigger drawing'}">${ui.big?'⤡ Smaller':'⤢ Bigger'}</button>`;
-  const nt=w.length?`<details class="notes"${ui.notesOpen||ui.mnotes?' open':''}><summary>${w.length} design note${w.length>1?'s':''} — tap to read</summary><div class="fixall"><button type="button" class="fixb" data-act="fixAll">Fix what Fitted can</button><button type="button" class="fixb" data-act="notesClose">Close</button><span>Each fix follows the advice in its note. Undo brings it back.</span></div><ul>${[...new Set(w)].map((x,j)=>`<li>${esc(x)}${fixBtn(x,j)}</li>`).join('')}</ul></details>`:'<span class="note" style="color:var(--ink2)">No design issues found</span>';
+  const nt=w.length?`<details class="notes"${ui.notesOpen||ui.mnotes?' open':''}><summary>${w.length} design note${w.length>1?'s':''} — tap to read</summary><div class="fixall"><button type="button" class="fixb" data-act="fixAll">Fix what Fitted can</button><button type="button" class="fixb" data-act="notesClose">Close</button><span>Each fix follows the advice in its note. Undo brings it back.</span></div><ul>${[...new Set(w)].map((x,j)=>`<li>${esc(x)}${fixBtn(x,j)}</li>`).join('')}</ul></details>`:'<span class="note okline" style="color:var(--ink2)">No design issues found</span>';
   if((ui.tab==='elev'||ui.tab==='3d')&&S.opts.screen&&S.opts.screen.on)h=`<button class="btn sm ${S.opts.screen.show==='down'?'on':''}" data-act="scrT" title="Pull the screen drawer out and roll the screen down, or put it away">${S.opts.screen.show==='down'?'Screen is down':'Pull screen down'}</button>`+(ui.tab==='3d'?`<button class="btn sm ${ui.cinema?'on':''}" data-act="cinema" title="Dim the room, switch the picture on and look from the sofa">Cinema view</button>`:'')+h;
   b.innerHTML=`<div class="tools">${h}</div><div class="bnotes">${nt}</div>`;
   {const mf=document.getElementById('mfloat');if(mf){const wn=[...new Set(w)];const fmN={solid:'Doors',glass:'See-through',off:'No doors'}[ui.fm]||'Doors';
-    mf.innerHTML=`${wn.length?`<button type="button" class="mfb warn" data-act="mnotes">⚠ ${wn.length}</button>`:''}<button type="button" class="mfb pchip" data-act="toPriceTab" aria-label="Estimated price">${pchipText()}</button><span class="sp"></span><button type="button" class="mfb" data-act="fmCycle" aria-label="Fronts: ${fmN}">${FM_ICON[ui.fm]||''}${fmN}</button><button type="button" class="mfb ${ui.props?'on':''}" data-act="props" aria-label="Styling props">🪴</button>${S.opts.screen&&S.opts.screen.on?`<button type="button" class="mfb ${S.opts.screen.show==='down'?'on':''}" data-act="scrT">Screen</button>`:''}${flowNow()!=='home'?`<button type="button" class="mfb" data-act="focusT">${ui.focus===false?'Zoom in':'Whole wall'}</button>`:''}`+(ui.mnotes&&wn.length?`<ul class="mnotes"><li class="fixall" style="list-style:none;margin-left:-16px"><button type="button" class="fixb" data-act="fixAll">Fix what Fitted can</button></li>${wn.map((x,j)=>`<li>${esc(x)}${fixBtn(x,j)}</li>`).join('')}</ul>`:'')}}try{fixScan()}catch(e){}
+    mf.innerHTML=`${wn.length?`<button type="button" class="mfb warn" data-act="mnotes">⚠ ${wn.length}</button>`:''}<button type="button" class="mfb pchip" data-act="toPriceTab" aria-label="Estimated price">${pchipText()}</button><span class="sp"></span><button type="button" class="mfb" data-act="fmCycle" aria-label="Fronts: ${fmN}">${FM_ICON[ui.fm]||''}${fmN}</button><button type="button" class="mfb ${ui.props?'on':''}" data-act="props" aria-pressed="${!!ui.props}" title="Show books, clothes and boxes at real size">🪴 Items</button>${S.opts.screen&&S.opts.screen.on?`<button type="button" class="mfb ${S.opts.screen.show==='down'?'on':''}" data-act="scrT">Screen</button>`:''}${flowNow()!=='home'?`<button type="button" class="mfb" data-act="focusT">${ui.focus===false?'Zoom in':'Whole wall'}</button>`:''}`+(ui.mnotes&&wn.length?`<ul class="mnotes"><li class="fixall" style="list-style:none;margin-left:-16px"><button type="button" class="fixb" data-act="fixAll">Fix what Fitted can</button></li>${wn.map((x,j)=>`<li>${esc(x)}${fixBtn(x,j)}</li>`).join('')}</ul>`:'')}}try{fixScan()}catch(e){}
   placeFmode();renderStatus();
 }
 function renderStatus(){const el=document.getElementById('sbar');if(!el||!geo)return;const qs=geo.secs.filter(q=>!q.panel),wn=[...new Set(geo.warns)].length,tops=geo.cps.map(p=>p.y);
@@ -5797,13 +5950,15 @@ function renderTab(t){
   if(t==='elev'){try{ztbRender()}catch(e){}}
   if(t==='3d')rebuild3D();if(t==='cut')renderCut();if(t==='loft')renderLoft();if(t==='sheets')renderSheets();if(t==='guide')renderGuide();
 }
-function changed(side){if(S.proj){try{pjSync()}catch(e){}}geo=build(S);if(side)renderSide();renderViews();saveSoon();snap();priceSoon()}
+function changed(side){if(S.proj){try{pjSync()}catch(e){}}geo=build(S);if(side)renderSide();renderViews();saveSoon();snap();priceSoon();try{dsAutoSoon()}catch(e){}}
 let prT=null;function pchipText(){if(!lastPrice)return '≈ € …';const d=ui.priceD||0;return `≈ ${eur(lastPrice.tot.all)}${Math.abs(d)>=1?` <small>${d<0?'▼':'▲'} ${eur(Math.abs(d)).replace('€ ','€')}</small>`:''}`}
 function priceSoon(){clearTimeout(prT);prT=setTimeout(()=>{try{const prev=ui.priceLast!=null?ui.priceLast:(lastPrice?lastPrice.tot.all:null);if(ui.tab!=='cut'){renderCut();dirty.cut=true}if(!lastPrice)return;ui.priceLast=lastPrice.tot.all;if(prev!=null&&Math.abs(lastPrice.tot.all-prev)>=1)ui.priceD=lastPrice.tot.all-prev;document.querySelectorAll('.pchip').forEach(el=>{el.innerHTML=pchipText()});budChips()}catch(e){}},220)}
 let hist=[],fut=[],lastSnap=null;
-function snap(){const j=JSON.stringify(S);if(j===lastSnap)return;if(lastSnap!=null){hist.push(lastSnap);if(hist.length>100)hist.shift();fut=[]}lastSnap=j;updUndo()}
+function snap(){const j=JSON.stringify(S);if(j===lastSnap)return;
+  // a different design was opened: its undo history starts fresh, so Undo can never pour one saved design into another
+  if((ui.histDoc||null)!==(ui.docId||null)){hist=[];fut=[];ui.histDoc=ui.docId||null}else if(lastSnap!=null){hist.push(lastSnap);if(hist.length>100)hist.shift();fut=[]}lastSnap=j;updUndo()}
 function updUndo(){const u=document.getElementById('bUndo'),r=document.getElementById('bRedo');if(u)u.disabled=!hist.length;if(r)r.disabled=!fut.length}
-function undoRedo(dir){const from=dir<0?hist:fut,to=dir<0?fut:hist;if(!from.length)return;to.push(lastSnap);lastSnap=from.pop();S=JSON.parse(lastSnap);geo=build(S);renderSide();renderViews();saveSoon();updUndo();toast(dir<0?'Undone':'Redone')}
+function undoRedo(dir){const from=dir<0?hist:fut,to=dir<0?fut:hist;if(!from.length)return;to.push(lastSnap);lastSnap=from.pop();S=JSON.parse(lastSnap);geo=build(S);renderSide();renderViews();saveSoon();updUndo();try{dsAutoSoon()}catch(e){}toast(dir<0?'Undone':'Redone')}
 let chT=null;function changedSoon(){clearTimeout(chT);chT=setTimeout(()=>{geo=build(S);renderViews();updateSideInfo();saveSoon();snap();priceSoon()},160)}
 function updateSideInfo(){const s=document.getElementById('side');const scr=s.scrollTop,ae=document.activeElement,id=ae&&ae.id,ss=ae&&ae.selectionStart;
   // only placeholders/info depend on geometry; refresh section editor in place when not typing in it
@@ -5996,7 +6151,25 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'isoSec':ui.sel=Math.max(0,Math.min(secs.length-1,ui.sel+(+a)));ui.zsel=null;applyExplode();isoFrame();renderBar();renderSide();dirty.elev=true;break;
     case 'copyCSV':copy(csv());break;
     case 'copyText':copy(txt());break;
-    case 'io':document.getElementById('ioText').value=JSON.stringify(S,null,1);document.getElementById('dsName').value=(dsCur()?ui.docName:'')||ui.docName||'';document.getElementById('iom').hidden=false;renderDesigns();break;
+    case 'io':ioOpen('designs',dsCur()?null:'dsName');break;
+    case 'ioRooms':ioOpen('rooms');break;
+    case 'ioShare1':ioOpen('share');break;
+    case 'ioTab':ui.ioTab=a||'designs';renderDesigns();break;
+    case 'newHub':{const mm=document.getElementById('mmenu');if(mm)mm.hidden=true;const io=document.getElementById('iom');if(io)io.hidden=true;ST.roomId=null;stOpen();break}
+    case 'dsMore':ui.dsMore=a||null;ui.dsRen=null;renderDesigns();break;
+    case 'dsRen':ui.dsRen=a;renderDesigns();setTimeout(()=>{const r=document.getElementById('dsRen');if(r){r.focus();r.select()}},50);break;
+    case 'dsRenOk':{const r=document.getElementById('dsRen');dsRename(a,r?r.value:'');break}
+    case 'dsDup':dsDup(a);break;
+    case 'dsFile':dsFile(a);break;
+    case 'ioFile':ioFile();break;
+    case 'ioCopyText':ioCopyText();break;
+    case 'ioShare':ioShare();break;
+    case 'ioToCut':{document.getElementById('iom').hidden=true;const tb=document.querySelector('#tabs [data-a="cut"]')||document.querySelector('#bnav [data-a="cut"]');if(tb)tb.click();break}
+    case 'rmSave':rmSave();break;
+    case 'rmUse':rmUse(a);break;
+    case 'rmNew':rmNew(a);break;
+    case 'rmFile':rmFile(a||'');break;
+    case 'rmDel':{const b=e.target.closest('button');if(b.dataset.armed){rmDel(a)}else{b.dataset.armed='1';b.textContent='Tap again to delete';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Delete'}},3000)}break}
     case 'dsSave':dsSave(false);break;case 'dsSaveNew':dsSave(true);break;
     case 'install':{if(INST.ev){const ev=INST.ev;INST.ev=null;try{ev.prompt();ev.userChoice.then(r=>{if(r&&r.outcome==='accepted'){toast('Fitted is being installed — look for it on your home screen');instShow(false)}else instShow(true)}).catch(()=>{})}catch(er){toast('Use your browser menu: Install app, or Add to Home screen')}}
       else toast(INST.ios?'On iPhone and iPad: tap the Share button in Safari, then “Add to Home Screen”':'Open your browser menu (⋮) and choose “Install app” or “Add to Home screen”',9000);break}
@@ -6010,8 +6183,9 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'fbSend':fbSend();break;
     case 'stOpen':stOpen();break;
     case 'stPick':stPick(a);break;
+    case 'stInRoom':{ST.fit=true;if(!ST.roomId&&RM.list[0])ST.roomId=RM.list[0].id;stRender();const f=document.querySelector('#stm .stfit');if(f){f.scrollIntoView({block:'center'});const sel=document.getElementById('stRoom');if(sel)sel.focus()}break}
     case 'stClose':document.getElementById('stm').hidden=true;break;
-    case 'stFit':ST.fit=!!(document.getElementById('stFit')||{}).checked;break;
+    case 'stFit':ST.fit=!!(document.getElementById('stFit')||{}).checked;{const r=document.getElementById('stRoom');if(r)r.disabled=!ST.fit}break;
     case 'cuAddFin':{const k=cuAddFin(cuVal('cuFName'),cuVal('cuFCol'),cuVal('cuFKind'));if(k){ui.cuOpen=true;changed(true);toast('Colour added — pick it from any colour button, under “Your colours”')}break}
     case 'cuAddMat':cuAddMat();break;
     case 'cuDel':cuDel(a);break;
@@ -6028,7 +6202,7 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'ntOpen':ntOpen();break;
     case 'ntClose':document.getElementById('ntm').hidden=true;break;
     case 'ntAdd':ntAdd();break;
-    case 'ntToDesigns':{document.getElementById('ntm').hidden=true;const b=document.createElement('button');b.dataset.act='io';document.body.append(b);b.click();b.remove();setTimeout(()=>{const n=document.getElementById('dsName');if(n)n.focus()},120);break}
+    case 'ntToDesigns':{document.getElementById('ntm').hidden=true;ioOpen('designs','dsName');break}
     case 'ntSaveNow':dsSave(false).then(()=>ntRender());break;
     case 'ntDelete':{const b=e.target.closest('button');if(!b.dataset.armed){b.dataset.armed='1';b.textContent='Tap again to delete';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Delete'}},3000);break}const L=ntList(),j=L.findIndex(n=>n.id===a);if(j<0)break;const n=L.splice(j,1)[0];if(n.pid){ntDel(n.pid);delete NT_CACHE[n.pid]}ntChanged();toast('Note deleted');break}
     case 'ntView':{const n=ntList().find(x=>x.id===a);if(!n)break;const v=document.getElementById('ntView'),im=document.getElementById('ntViewImg');im.src=NT_CACHE[n.pid]||n.thumb||'';v.hidden=false;if(!NT_CACHE[n.pid]&&n.pid)ntGet(n.pid).then(src=>{if(src){NT_CACHE[n.pid]=src;im.src=src}else toast('Only the small preview is on this device — the full photo was saved somewhere else')});break}
@@ -6040,7 +6214,7 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'aiCopy':aiCopy(document.getElementById('aiText').value,'Instruction copied — paste it next to the picture in your picture AI');break;
     case 'aiCopyNote':{const n=document.getElementById('aiNote').value.trim();if(!n){toast('Type the small change first');break}aiCopy('Keep everything else exactly the same — same camera angle, same cabinet layout, same room. Change only this: '+n+'.','Change copied — paste it as your next message');break}
     case 'ioCopy':copy(document.getElementById('ioText').value);break;
-    case 'ioLoad':try{const o=JSON.parse(document.getElementById('ioText').value);if(!o.sections||!o.room)throw 0;dsKeep();dsDetach(false);S=fixFins(o);ui.sel=0;ui.zsel=null;document.getElementById('iom').hidden=true;changed(true);toast('Design loaded')}catch(err){toast('That text is not a saved design')}break;
+    case 'ioLoad':{const t=(document.getElementById('ioText')||{}).value||'';if(!t.trim()){toast('Paste the text first');break}ioImport(t);break}
     case 'ioReset':{const kept=dsKeep();dsDetach(true);S=exampleState();ui.sel=0;document.getElementById('iom').hidden=true;changed(true);ui.savedSig=dsSig();saveSoon();toast('Example loaded'+(kept?'. Your unsaved work was kept under Designs → Recovered work.':''));break}
     case 'setv':{const[pth,val,t]=a.split('|');{const mz=/^(sections\.\d+\.zones\.\d+)\.type$/.exec(pth);if(mz&&val==='opening'){const z0=getP(mz[1]);if(z0&&z0.type!=='opening'&&!z0.look)z0.look='nook'}}setP(pth,t==='x'?null:t==='n'?+val:val);if(/^opts\.must\.\d+\.pos$/.test(pth)){geo=build(S);if(mustOff()){randomize('layout');break}}if(/^opts\.must\.\d+\.w(Min|Max)$/.test(pth)){const mm=getP(pth.replace(/\.w(Min|Max)$/,''));if(mm)mm.w=null}if(pth==='opts.screen.pos'&&val!=='x'&&S.opts.screen)S.opts.screen.x=null;if(pth==='opts.screen.w'&&S.opts.screen)S.opts.screen.diag=null;if(pth.endsWith('.ownMode')){const sx=getP(pth.slice(0,-8));if(sx&&val==='own'){if(!(+sx.ownH>0)){const qi=geo.secs[+pth.split('.')[1]],lo=qi?Math.min(geo.ceilAt(qi.lx),geo.ceilAt(qi.rx)):(+S.room.H||2500);sx.ownH=Math.max(600,Math.round(Math.min(2000,lo-250)/10)*10)}(sx.zones||[]).forEach((z,j,arr)=>{if(j<arr.length-1&&+z.h>0)z.h=null})}}if(pth.endsWith('.look')&&val==='dj'){const zz=getP(pth.slice(0,-5));if(zz.led==null)zz.led=true}if(pth.endsWith('.base')&&val==='door'){const sc=getP(pth.slice(0,-5));sc.zones=[Z('passage',{h:2050}),Z('closed',{shelves:1})];if(!(+sc.w>0))sc.w=900;sc.back='split'}if(pth.endsWith('.base')&&val!=='door'){const sc=getP(pth.slice(0,-5));if(sc.zones&&sc.zones[0]&&sc.zones[0].type==='passage'){sc.zones.shift();if(!sc.zones.length)sc.zones.push(Z('closed',{shelves:2}))}}if(pth.endsWith('.base')&&val==='desk'){const i=+pth.split('.')[1],sc=S.sections[i];if(sc.zones&&sc.zones[0]&&sc.zones.length>1&&+sc.zones[0].h>0&&+sc.zones[0].h<560)sc.zones[0].h=600;if(sc.zones&&sc.zones.length<2)sc.zones=[Z('open',{h:600,shelves:0}),Z('closed',{shelves:1})];const q=geo.secs[i];if(q&&q.w<1000){const nb=S.sections[i+1]&&!['panel','door','desk'].includes(S.sections[i+1].base)?i+1:(S.sections[i-1]&&!['panel','door','desk'].includes(S.sections[i-1].base)?i-1:-1);if(nb>=0){const per=geo.boxes?2*geo.tc:geo.tc,w=q.w+geo.secs[nb].w+per;S.sections.splice(nb,1);const k=nb<i?i-1:i;S.sections[k].w=Math.round(w);ui.sel=k;S.opts.cols=0;setTimeout(()=>toast(`The desk takes two columns: ${Math.round(w)} mm`),50)}}}if(pth.endsWith('.base')&&val==='free'){const sc=getP(pth.slice(0,-5));if(!(+sc.freeH>0))sc.freeH=900;sc.mount=sc.mount||'legs'}if(pth.endsWith('.base')&&val==='panel'){const sc=getP(pth.slice(0,-5));if(!sc.panel)sc.panel={...PANEL_DEF}}if(pth.endsWith('.type'))ui.zsel=+pth.split('.')[3];if(pth==='opts.wmode'){randomize('layout');break}changed(true);break}
     case 'step':{const[pth,d,mn,mx]=a.split('|');setP(pth,Math.max(+mn,Math.min(+mx,(+getP(pth)||0)+ +d)));changed(true);break}
@@ -6113,7 +6287,7 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'wizJump':if(+a<=wstep+1){wstep=+a;wizRender()}break;
     case 'wizFin':{const[r,k]=a.split(':');WZ[r]=k;wizRender();break}
     case 'wizCount':{const nn=Math.max(1,Math.min(10,WZ.secs.length+ +a));while(WZ.secs.length<nn){const k='cupboard';WZ.secs.push({type:k,w:''})}WZ.secs.length=nn;wizRender();break}
-    case 'wizStart':S=slopeFix(exampleState());ui.sel=0;closeWiz();changed(true);toast('Example design loaded');break;
+    case 'wizStart':{const kept=dsKeep();dsDetach(true);S=slopeFix(exampleState());ui.sel=0;ui.zsel=null;closeWiz();const sm=document.getElementById('stm');if(sm)sm.hidden=true;changed(true);toast('Example design loaded'+(kept?'. Your unsaved work was kept under My designs → Recovered work.':''));break}
   }});
 
 /* ==== 94-wizard.js ====
@@ -6360,23 +6534,27 @@ const STARTERS=[
       Sec({zones:[Z('drawers',{h:900,count:4}),Z('closed',{shelves:2})]})]})}},
 ];
 const ST={fit:false,thumbs:{}};
+function stRoomData(){if(ST.roomId){const r=(RM.list||[]).find(x=>x.id===ST.roomId),d=r&&rmParse(r);if(d&&d.room)return d}return roomOf(S)}
 function stMake(k,fit){const T=STARTERS.find(x=>x.key===k);if(!T)return null;let st=T.make();
-  if(fit&&S&&S.room){const R=JSON.parse(JSON.stringify(S.room));delete R.corner;st.room=R;st.skirt=JSON.parse(JSON.stringify(S.skirt||st.skirt));
-    // flexible columns share the wall; fixed-size ones (speakers, appliances, panel walls) keep their width
-    st.sections.forEach(sc=>{const fixed=sc.base==='panel'||(sc.zones||[]).some(z=>z.type==='speaker'||z.fridge||z.fit==='larder'||['oven','combi','washer','dryer','stack','bed'].includes(z.look));if(!fixed)sc.w=null});
-    st=slopeFix(st)}
+  if(fit&&S&&S.room){st=fitToRoom(st,stRoomData())}
   st=fitTypes(st);if(st.ladder&&st.ladder.on)try{st=alignLadder(st)}catch(e){}return st}
 function stThumb(k){if(ST.thumbs[k]!=null)return ST.thumbs[k];let h='';try{const st=stMake(k,false);h=elevSVG(st,build(st),{mini:true})}catch(e){h=''}ST.thumbs[k]=h;return h}
 function stOpen(){let m=document.getElementById('stm');if(!m){m=document.createElement('div');m.id='stm';m.className='modal';document.body.appendChild(m);m.addEventListener('click',e=>{if(e.target===m)m.hidden=true})}
   const mm=document.getElementById('mmenu');if(mm)mm.hidden=true;const w=document.getElementById('wiz');if(w&&!w.hidden)closeWiz();stRender();m.hidden=false}
-function stRender(){const m=document.getElementById('stm');if(!m)return;const lv=['Simple','Classic','Showcase'];
-  m.innerHTML=`<div class="mbox" role="dialog" aria-modal="true" aria-label="Start from a design"><div class="mhead"><h2>Start from a design</h2></div><div class="mbody" style="display:grid;gap:14px">
-    <p class="hintp" style="margin:0">Pick one and make it yours — every part can be changed afterwards. They go from simple to showing off everything Fitted can do.</p>
-    <label class="chk"><input type="checkbox" id="stFit" ${ST.fit?'checked':''} data-act="stFit"> Fit it to my wall (${f0(+S.room.W)} × ${f0(+S.room.H)} mm${(S.room.ceil||[]).some(p=>Math.abs(+p.y-+S.room.H)>1)?', with its slopes':''})</label>
+function stRender(){const m=document.getElementById('stm');if(!m)return;const lv=['Simple','Classic','Showcase'];const R=S.room,rooms=(RM.list||[]);if(ST.roomId&&!rooms.some(r=>r.id===ST.roomId))ST.roomId=null;
+  const slope=(R.ceil||[]).some(p=>Math.abs(+p.y-+R.H)>1);
+  const roomSel=`<div class="stfit"><label class="chk"><input type="checkbox" id="stFit" ${ST.fit?'checked':''} data-act="stFit"> Fit it to a wall</label><select id="stRoom" aria-label="Which wall" ${ST.fit?'':'disabled'}><option value="">the wall of the open design (${f0(+R.W)} × ${f0(+R.H)} mm${slope?', sloping':''})</option>${rooms.map(r=>{const d=rmParse(r)||{},rr=d.room||{};return `<option value="${esc(r.id)}"${r.id===ST.roomId?' selected':''}>${esc(r.name||'Room')} (${f0(+rr.W)} × ${f0(+rr.H)} mm)</option>`}).join('')}</select></div>`;
+  m.innerHTML=`<div class="mbox" role="dialog" aria-modal="true" aria-label="New design"><div class="mhead"><h2>New design</h2></div><div class="mbody" style="display:grid;gap:14px">
+    <div class="sthub"><button type="button" class="sthb" data-act="wizard"><b>Step by step</b><small>Measure your wall and tell Fitted what you need — it proposes designs.</small></button>${rooms.length?`<button type="button" class="sthb" data-act="stInRoom"><b>In a saved room</b><small>${rooms.length} room${rooms.length>1?'s':''} saved — choose the room below, then a design.</small></button>`:''}<button type="button" class="sthb" data-act="wizStart"><b>The example attic</b><small>A sloped attic wall with a beam, ready to explore.</small></button></div>
+    <h3 class="sth">Or start from a ready-made design</h3>
+    <p class="hintp" style="margin:0">Pick one and make it yours — every part can be changed. They go from simple to showing off everything Fitted can do.</p>
+    ${roomSel}
     ${lv.map(L=>`<div class="stgrp"><h3>${L==='Simple'?'Simple — a quick start':L==='Classic'?'Classic — a statement wall':'Showcase — everything Fitted can do'}</h3><div class="stgrid">${STARTERS.filter(t=>t.level===L).map(t=>`<button type="button" class="stcard" data-act="stPick" data-a="${t.key}"><span class="stpic">${stThumb(t.key)}</span><b>${esc(t.name)}</b><small class="sttrend">${esc(t.trend)}</small><small>${esc(t.blurb)}</small><span class="stshows">${t.shows.map(x=>`<i>${esc(x)}</i>`).join('')}</span></button>`).join('')}</div></div>`).join('')}
-  </div><div class="mfoot"><button type="button" class="btn" data-act="stClose">Close</button><button type="button" class="btn" data-act="wizard">Or use the step-by-step wizard</button></div></div>`}
+  </div><div class="mfoot"><button type="button" class="btn" data-act="stClose">Close</button><div></div></div></div>`}
 function stPick(k){const T=STARTERS.find(x=>x.key===k);const st=stMake(k,ST.fit);if(!st)return;const kept_=dsKeep();dsDetach(false);S=st;ui.sel=0;ui.zsel=null;ui.wizSeen=1;groupsCache=null;
   const m=document.getElementById('stm');if(m)m.hidden=true;changed(true);toast(`${T.name} — change anything you like${kept_?'. The design you had open was kept under Designs → Recovered work.':''}`)}
+
+document.addEventListener('change',e=>{if(e.target&&e.target.id==='stRoom'){ST.roomId=e.target.value||null;ST.fit=true}});
 /* ==== 99-boot.js ====
    Start-up: load the saved design, first render, install button, saved designs, offcuts, languages, comments.
 */
