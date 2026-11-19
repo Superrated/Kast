@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.110
+
+- **Machining drawings for every part**, measured from one corner marked **0** (sides: front edge, bottom; tops, bottoms and shelves: front edge, left):
+  - every hole drawn at its spot (black = blind, white = through), with X positions along the top and Y positions along the side;
+  - a **hole table** per kind of hole: Ø, depth, which face, how many, and every X and Y (rows of shelf-pin holes written as "108 → 1924, every 32");
+  - the back **groove** with its width and its distance from the back edge;
+  - **cut-outs**, and the **coordinates of every corner** of shaped parts;
+  - **edge banding** as thick bars, the **front edge** and the **grain**;
+  - all finishing notes: bevels, routing, rounding over, fluting and so on.
+- **In the build guide**: each box's "Drill the sides" and "Drill top and bottom" now show these real drawings instead of the sketch, plus a fold-out with the drawings of every other part of that box.
+- **Drawings → Labels & files → Machining drawings (PDF)**: one A4 page per part, vector, with the drawing, the hole table and the notes.
+
 ## v0.109
 
 - **The Parts area is now three tabs: Parts · Drawings · Workshop.** On phones they are at the top of the Parts screen; on bigger screens they are in the header. The last tab you used opens again.

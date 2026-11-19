@@ -124,6 +124,7 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'lblPdf':toast('Making the labels…');exportLabels();break;
     case 'tplPdf':toast('Making the templates…');exportTemplates();break;
     case 'dxfZip':exportDXF();break;
+    case 'mdPdf':mdExportPDF();break;
     case 'pjStart':openState.walls=true;pjStart();break;
     case 'pjAdd':pjAdd();break;
     case 'pjOpen':pjOpen(+a);break;

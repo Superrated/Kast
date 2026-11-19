@@ -65,3 +65,7 @@ The app has no test files in the repo. The checks used during development load t
 ## Parts area (v0.109)
 
 - `91-parts-nav.js`: the tabs Parts · Drawings · Workshop. The views are v-cut (List / Shopping / Price, which are `<section data-psec>` blocks of one render), v-sheets, v-draw (Technical drawings via `tdBodyHTML`, plus Labels & files), v-loft and v-work. `pnGo(key)` opens a section, `showTab(tab)` switches the view, and the last place is kept in localStorage `fitted-pn`.
+
+## Machining drawings (v0.110)
+
+- `53-machining.js`: `mdPart(p,den)` turns a cut-list part (poly, holes, notes, edge banding, grain) into td-style entities. `mdHoleRows` builds the hole table, `mdBlock` the HTML for the guide, and `mdExportPDF` writes one A4 page per part. The 0 corner: sides have x = 0 at the front edge; other carcass parts have y = 0 at the front edge.

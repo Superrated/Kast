@@ -499,3 +499,11 @@ aside.side.locked>*:not(.shead):not(.lockban):not(.viewsw){pointer-events:none;o
 .wkcard{display:grid;gap:10px;align-content:start;padding:16px;border-radius:16px;border:1px solid var(--line);background:var(--raised)}.wkcard h3{margin:0;font-size:1.1rem}.wkcard p{margin:0;color:var(--ink2);font-size:13.5px;line-height:1.45}.wkcard>.btn{justify-self:start;min-height:44px}
 .wkasm{border-color:var(--accent)}.wkboxes{display:flex;flex-wrap:wrap;gap:6px}.wkboxes .tchip{display:grid;line-height:1.15;text-align:left}.wkboxes small{font-weight:400;opacity:.75;font-size:11px}
 .wkcard .wsprog{height:6px;border-radius:3px;background:var(--line);overflow:hidden}.wkcard .wsprog>i{display:block;height:100%;background:var(--accent)}
+/* machining drawings in the build guide */
+.mdblk{border:1px solid var(--line);border-radius:12px;background:#fff;color:#1D1D1F;padding:10px 12px;margin:8px 0;display:grid;gap:8px}
+.mdh{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}.mdh span{font-size:12px;color:#555}
+.mdbody{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr);gap:12px;align-items:start}
+.mdpic svg{width:100%;height:auto;display:block}
+.mdt{border-collapse:collapse;font-size:12px;width:100%}.mdt th{text-align:left;font-weight:600;color:#555;border-bottom:1px solid #ddd;padding:3px 4px}.mdt td{border-bottom:1px solid #eee;padding:4px;vertical-align:top;font-variant-numeric:tabular-nums}.mdt small{display:block;color:#666}
+.mdl{margin:0;font-size:12px;color:#333}.mdn{margin:0;padding-left:16px;font-size:12px;color:#333}
+@media (max-width:700px){.mdbody{grid-template-columns:minmax(0,1fr)}}
