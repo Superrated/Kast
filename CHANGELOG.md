@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.118
+
+- **"Make the doors the same" handles more walls**:
+  - **Doors that follow the uprights** (a level split by uprights, doors in front of each part) are evened out inside the column too. "Even" uprights make the compartments equal, but the outer doors also cover the side panels, so they came out wider than the middle ones (e.g. 523 / 514 / 523 mm). The uprights now move a few millimetres so the doors match; levels with the same uprights move along so they stay in line.
+  - **Pinned columns** no longer stop it. A column boxed in by pinned columns keeps its width and the others follow it; a free column in the same stretch makes room (it becomes "auto width"). Two door columns with nothing else between pinned columns trade width between them.
+  - The suggestion says what will happen: which column stays, which makes room, and which uprights move.
+- Tests: the balder v07 wall and a 3-door + 2-door wall must both end up with equal doors.
+
 ## v0.117
 
 - **Doors of different widths → the same** (Layout, top of the column editor): besides "almost the same" doors, Fitted now also offers to even out doors that are further apart, e.g. a 3-door column next to a 2-door column. It shows the widths now and after ("S1 3× 439, S2 2× 504 mm → all 465 mm") and warns how far the columns move, because inside fittings change size too. **Make them the same anyway** does it; afterwards it says how far the columns moved and whether new design notes appeared. Undo puts it back; **Hide** hides the suggestion for this session.

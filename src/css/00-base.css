@@ -4185,3 +4185,5 @@ aside.side.locked > *:not(.shead):not(.lockban):not(.viewsw) {
 /* doors further apart (40-side-panel.js evenDoorsFarUI) */
 .evfar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:12.5px;padding:8px 10px;border-radius:10px;background:var(--warn-soft);border-color:transparent}
 .evfar>span{flex:1 1 220px}.evfar small{color:var(--ink2)}.evfarb{display:flex;gap:6px}
+.evnear{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:12.5px;padding:8px 10px;border-radius:10px;background:var(--surface2,rgba(52,70,214,.06));border-color:transparent}
+.evnear>span{flex:1 1 220px}.evnear small,.evfar small{color:var(--ink2)}

@@ -94,3 +94,7 @@ The version is `APP_VERSION` in `src/js/81-room-photo.js`. Each update adds 0.00
 ## Order checklist (v0.116)
 
 - `69-buy-list.js`: `buyListHTML(lastPrice)` groups `lastPrice.rows` by shop; status in `S.done.buy` (`items['shop|name'] = {s:'ordered'|'here', at}`, `shops[shop].ref`). `S.done` is allowed through the build lock. Placed in the Shopping section via the `<!--BUYLIST-->` marker in `renderCut`.
+
+## Make the doors the same (v0.118)
+
+- `41-even-doors.js`: `edSets(G)` (door widths per column, the level with most doors; `follow` = doors in front of uprights), `doorGroups(G, far)`, `edPlan(G, group)` (per stretch between pinned columns: a free column makes room, 2+ door columns trade width, a lone column is fixed and sets the target), `edEvenInside()` moves uprights so following doors match, `evenDoors(far)` applies it by rebuilding up to 10 times. `tests/even_doors.js` checks two real walls.

@@ -17,6 +17,7 @@ D, E = ROOT / "tests" / "designs", ROOT / "tests" / "expected"; E.mkdir(exist_ok
 snap = (ROOT / "tests" / "snapshot.js").read_text()
 screens = (ROOT / "tests" / "screens.js").read_text()
 order_check = (ROOT / "tests" / "order_check.js").read_text()
+even_doors = (ROOT / "tests" / "even_doors.js").read_text()
 fails = 0
 with sync_playwright() as pw:
     b, p = open_page(pw)
@@ -46,6 +47,9 @@ with sync_playwright() as pw:
             problems.append("page errors: " + " | ".join(p.errors[:3])); p.errors.clear()
         print(("FAIL " if problems else "ok   ") + f.stem + "".join("\n  - " + x for x in problems))
         fails += bool(problems)
+    for name, ok, info in p.evaluate(even_doors, json.loads((D / "user-balder-v07.json").read_text())):
+        print(("ok   " if ok else "FAIL ") + "make the doors the same: " + name + ("" if ok else "\n  - " + info))
+        fails += not ok
     b.close()
 print(f"\n{fails} failed" if fails else "\nall passed" + (" (expected results updated)" if upd else ""))
 sys.exit(1 if fails else 0)
