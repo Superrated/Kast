@@ -1,24 +1,46 @@
 #!/usr/bin/env python3
-"""Builds the standalone, installable Fitted app (index.html) from src/kast.html.
+"""Builds the standalone, installable Fitted app (index.html).
 
-src/kast.html is the source of the app (page content without the
-<html>/<head>/<body> wrapper); src/prices.js holds every price and is
-copied into it at the /*@PRICES@*/ marker. Run:  python3 build.py
+The source is split into small files so it is easy to read and extend:
+
+  src/app.html     the page: header, panels, dialogs (markup only)
+  src/css/*.css    the styles, in file-name order
+  src/js/*.js      the program, in file-name order (one topic per file)
+  src/prices.js    every price, copied in at the /*@PRICES@*/ marker
+  src/lang.js      translations, copied in at the /*@LANG@*/ marker
+
+Run:  python3 build.py           → writes index.html
+      python3 build.py --source  → prints the assembled source (for tests)
 """
-import re, pathlib
+import re, sys, pathlib
 root = pathlib.Path(__file__).parent
-src = (root / "src" / "kast.html").read_text(encoding="utf-8")
+
+
+def read(*parts):
+    return (root.joinpath(*parts)).read_text(encoding="utf-8")
+
+
+def assemble():
+    """The whole app as one page (without the <html>/<head>/<body> wrapper)."""
+    page = read("src", "app.html")
+    css = "".join(p.read_text(encoding="utf-8") for p in sorted((root / "src" / "css").glob("*.css")))
+    js = "".join(p.read_text(encoding="utf-8") for p in sorted((root / "src" / "js").glob("*.js")))
+    assert "<!--@CSS@-->" in page and "<!--@JS@-->" in page, "markers missing in src/app.html"
+    src = page.replace("<!--@CSS@-->", css, 1).replace("<!--@JS@-->", js, 1)
+    for marker, name in (("/*@PRICES@*/", "prices.js"), ("/*@LANG@*/", "lang.js")):
+        assert marker in src, marker + " missing in src/js"
+        src = src.replace(marker, read("src", name), 1)
+    return src
+
+
+if "--source" in sys.argv:
+    sys.stdout.write(assemble())
+    sys.exit(0)
+
+src = assemble()
 version = re.search(r"const APP_VERSION='([^']+)'", src).group(1)
 # the version shown in the header and on the loading screen comes from APP_VERSION
 src = src.replace("__KAST_VERSION__", version)
-# all prices live in src/prices.js; they are copied into the app here
-prices = (root / "src" / "prices.js").read_text(encoding="utf-8")
-assert "/*@PRICES@*/" in src, "price marker missing in src/kast.html"
-src = src.replace("/*@PRICES@*/", prices)
-# the languages live in src/lang.js
-langs = (root / "src" / "lang.js").read_text(encoding="utf-8")
-assert "/*@LANG@*/" in src, "language marker missing in src/kast.html"
-src = src.replace("/*@LANG@*/", langs)
 
 # the first lines of the source (title, meta, font links) belong in <head>
 head_lines, body_lines, in_head = [], [], True

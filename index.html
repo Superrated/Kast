@@ -17,6 +17,7 @@
 </head>
 <body>
 <style>
+/* ==== 00-base.css — Base styles: colours (tokens on :root — change colours here), layout, buttons, panels, tables. */
 /* Layout: drafting table — editor rail on the left, drawing board on the right; stacks on phones */
 html,body{height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-b);font-size:14px;line-height:1.45}
@@ -366,6 +367,7 @@ details.pf .grid2{margin-top:6px}
 .grid2{grid-template-columns:repeat(2,minmax(0,1fr))}
 .chips,.tchips,.seg,.rnd{min-width:0;max-width:100%}
 .seg button{min-width:0}
+/* ==== 10-look.css — The Fitted look: fonts, tokens for light and dark mode, cards, wizard, dialogs. */
 /* ===== Fitted visual refresh ===== */
 :root{--bg:#F3F3F0;--surface:#FAFAF8;--raised:#FFFFFF;--ink:#17191B;--ink2:#62676B;--ink3:#6A6F74;--line:#E4E5E1;--accent:#3446D6;--accent-ink:#FFFFFF;--accent-soft:rgba(52,70,214,.09);--warn:#B4541A;--warn-soft:rgba(180,84,26,.1);--wall:#E7E7E3;--hatch:#D3D5D1;--stage:#ECEDEA;--paper:#FFFFFF;--shade:rgba(20,22,24,.2);
   --f-d:'Instrument Serif',Georgia,serif;--f-b:'Instrument Sans',system-ui,-apple-system,sans-serif;--f-m:'IBM Plex Mono',ui-monospace,Menlo,monospace}
@@ -579,6 +581,7 @@ details.mx .mustbox{border:0;background:none;padding:0;margin:0}details.mx .must
 .stpick{display:flex;align-items:center;gap:8px;min-width:0}.stpick .inp{flex:1;min-width:0}.stpick select{width:100%;min-width:0;text-overflow:ellipsis}.stpick .ssw{flex:none}.stpick .ssw i{width:14px;height:14px}
 @media (max-width:860px){.stpick{margin-bottom:10px}}
 @media (max-width:860px){.mlock .lockchip{min-height:42px;font-size:13.5px;padding:8px 14px 8px 10px}}
+/* ==== 20-phone.css — Phone layout: bottom sheet, bottom tabs, full-screen drawing. */
 /* ===== phone declutter ===== */
 .phone{display:none!important}.mmenu{display:none}
 .mmenu button:hover,.mmenu button:active{background:var(--accent-soft)}.mmenu hr{border:0;border-top:1px solid var(--line);margin:4px 6px}
@@ -728,6 +731,7 @@ details.mx{grid-column:1/-1}
   .app[data-tab="elev"] .chips.dskchips,.app[data-tab="3d"] .chips.dskchips{display:none}
 }
 
+/* ==== 30-desktop.css — Desktop and tablet polish. */
 /* ===== desktop & tablet polish ===== */
 .statusbar{display:none}.sidet{display:none}
 @media (min-width:861px){
@@ -774,6 +778,7 @@ details.mx{grid-column:1/-1}
 .euros{font-size:11px;font-weight:700;letter-spacing:.02em;color:var(--ink2);white-space:nowrap}.euros i{font-style:normal;opacity:.28}.mypr .grid2{margin-top:6px}
 /* bigger tap targets for small text buttons */
 .fixb{min-height:32px;padding:4px 12px}.linkb{min-height:28px;padding:4px 2px}
+/* ==== 40-selected.css — One look for "selected", tap-target sizes. */
 /* ===== one look for "selected" everywhere: dark fill. Blue (accent) is kept for actions. ===== */
 .btn.on,.pbsec.on,.mfb.on,.psw button.on,.steps button.on,.wdep .btn.on,.spane button.on,.chip.on,.tchip.on,.seg button.on,.fmode button.on,.ztg button.on,.lockchip.on,.pdfpre .btn.on,.splitrow .tchip.on{background:var(--ink)!important;color:var(--bg)!important;border-color:var(--ink)!important;box-shadow:none}
 .bnav button.on{background:var(--ink)!important;color:var(--bg)!important}
@@ -781,14 +786,14 @@ input[type=checkbox],input[type=radio]{accent-color:var(--ink)}
 .chk{min-height:32px}
 </style>
 
-<div id="splash" role="status" aria-label="Fitted by BRUIS v0.72 is loading"><b>Fitted</b><span>v0.72</span></div>
+<div id="splash" role="status" aria-label="Fitted by BRUIS v0.73 is loading"><b>Fitted</b><span>v0.73</span></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
 
 <div class="app" data-tab="elev">
   <header class="top">
     <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-    <div class="brand" title="Fitted by BRUIS v0.72">Fitted<span class="bybr">by BRUIS</span><small>built-in wardrobes & cabinets, drawn and cut · v0.72</small></div>
+    <div class="brand" title="Fitted by BRUIS v0.73">Fitted<span class="bybr">by BRUIS</span><small>built-in wardrobes & cabinets, drawn and cut · v0.73</small></div>
     <nav class="tabs" id="tabs">
       <button data-act="tab" data-a="elev" class="on">Drawing</button>
       <button data-act="tab" data-a="3d">3D</button>
@@ -897,6 +902,11 @@ input[type=checkbox],input[type=radio]{accent-color:var(--ink)}
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
+/* ==== 00-core-data.js ====
+   Basic data: rounding helpers, finishes (FIN), board types (MATS), column presets (PRESETS), the example design, inside fittings (FITS), wall obstacles (WOB), bumps (BUMPS), ceiling things (COBJ).
+   To add a column type: add it to PRESETS (and to the "Add a column" list in 40-side-panel.js).
+   To add an inside fitting: add it to FITS with its group (grp) — it then shows in the fittings list.
+*/
 /*CORE-START*/
 const r1=v=>Math.round(v*10)/10, f0=v=>Math.round(v), DEG=180/Math.PI;
 let _uid=1; const uid=()=>'i'+(_uid++)+Math.random().toString(36).slice(2,6);
@@ -916,8 +926,6 @@ const RAL_FAM={1:'Yellow & beige',2:'Orange',3:'Red',4:'Violet',5:'Blue',6:'Gree
 const FIN_ALIAS={white:'ral9010',greige:'ral1013',sage:'ral6021',ink:'ral5011'};
 const MC_SKIP=/fabric|Speaker baffle/i,MC_OLD={mc_chalk:'ral9001',mc_sand:'ral1015',mc_greige:'ral1019',mc_stone:'ral7044',mc_clay:'ral3012',mc_sage:'ral6021',mc_graphite:'ral7024',mc_anthracite:'ral7016'};
 function fixFins(st){try{const walk=o=>{if(!o||typeof o!=='object')return;for(const k in o){const v=o[k];if(typeof v==='string'&&MC_OLD[v])o[k]=MC_OLD[v];else if(v&&typeof v==='object')walk(v)}};walk(st)}catch(e){}if(st&&st.opts){st.opts.construct=st.opts.construct||'shared';if(!st.opts.two)st.opts.two={on:false,y:1000,fin:'ral7016'};if(st.opts.handle==='dots')st.opts.handle='hole';if(!HANDLES.some(h=>h[0]===st.opts.handle))st.opts.handle='bar';if(st.opts.dotPat&&!['lead','square','diamond','tri','arc'].includes(st.opts.dotPat))st.opts.dotPat=''}if(st&&st.sections)st.sections.forEach(s=>{s.back=s.back||'full';if(s.base==='panel'&&!s.panel)s.panel={...PANEL_DEF};(s.zones||[]).forEach(z=>{if(z.face==='dots'){z.face='flat';if(!z.hd)z.hd='hole'}if(z.hd==='dots')z.hd='hole';if(Array.isArray(z.hts))z.hts=z.hts.map(v=>v==='dots'?'hole':v);if(!Array.isArray(z.fins))z.fins=[];if(!Array.isArray(z.nh))z.nh=[];if(!Array.isArray(z.vd))z.vd=[];if(!Array.isArray(z.vsh))z.vsh=[];if(z.fin==null)z.fin='';if(z.inFin==null)z.inFin='';if(z.fabricCol==null)z.fabricCol='charcoal'})});if(st&&st.mat)Object.entries(st.mat).forEach(([role,m])=>{if(!MATS[m.type]){const f=FIN[m.fin]||FIN[FIN_ALIAS[m.fin]];m.type=role==='back'?'hdf':(f&&f.kind!=='plain'&&f.kind!=='stone')?(m.fin==='birch'?'ply':(role==='carcass'||role==='shelf'?'melamine':'veneer')):(role==='front'||role==='skirt'?'mdfpaint':'melamine')}if(FIN_ALIAS[m.fin])m.fin=FIN_ALIAS[m.fin];if(!FIN[m.fin])m.fin='ral9010'});return st}
-function finOptsHTML(v){const tex=Object.entries(FIN).filter(([,f])=>!f.ral&&!f.hidden);let h=`<optgroup label="Wood &amp; textures">${tex.map(([k,f])=>`<option value="${k}" ${k===v?'selected':''}>${f.name}</option>`).join('')}</optgroup>`;
-  for(let fam=1;fam<=9;fam++){const r=Object.entries(FIN).filter(([,f])=>f.ral&&f.fam===fam);h+=`<optgroup label="RAL ${fam}000 · ${RAL_FAM[fam]}">${r.map(([k,f])=>`<option value="${k}" ${k===v?'selected':''}>${f.name}</option>`).join('')}</optgroup>`}return h}
 const ROLES=[['carcass','Sides, tops & bottoms'],['shelf','Shelves'],['back','Back panels'],['front','Doors & fronts'],['desk','Desk top'],['skirt','Closing strips & plinth']];
 const MATS={
   melamine:{name:'Melamine chipboard',short:'Melamine',t:18,sheet:'2800x2070',edge:'1 mm ABS edge band',sag:700,fins:'all',rough:.5},
@@ -1130,6 +1138,10 @@ function railReach(S){const h=Math.max(800,Math.min(2200,+((S.room||{}).person||
 const VD_MODES={even:{l:'Even',ok:n=>n>=1},third:{l:'⅓ · ⅔',ok:n=>n===1,r:[1,2]},golden:{l:'Golden',ok:n=>n===1,r:[0.382,0.618]},wide:{l:'Wide middle',ok:n=>n===2||n===4,r:n=>n===2?[1,2,1]:[1,1,2,1,1]},shift:{l:'Shifted',ok:n=>n>=2,r:n=>[1,...Array(n-1).fill(2),1]}};
 function vdPos(n,mode,w,tc,lb=0){const base=String(mode||'even').replace(/-r$/,''),M=VD_MODES[base]||VD_MODES.even;let r=M.ok(n)&&M.r?(typeof M.r==='function'?M.r(n):M.r).slice():Array(n+1).fill(1);if(/-r$/.test(mode))r.reverse();
   const use=w-2*lb-n*tc,sum=r.reduce((a,b)=>a+b,0),out=[];let x=lb;for(let j=0;j<n;j++){x+=use*r[j]/sum;out.push(x+tc/2);x+=tc}return out}
+/* ==== 10-build.js ====
+   build(S): turns the design state S into geometry G — every part (G.panels), front (G.fronts), 3D item (G.items), the hardware list (G.H) and the design notes (G.warns).
+   Everything else (drawing, cut list, price, guide, 3D) reads G. New checks go at the end of build, next to accessCheck/roomCheck/cornerCheck.
+*/
 function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forEach(z=>{if(!z.dog)return;if(z.type!=='closed'){delete z.dog;return}z.shelves=0;z.rail=false;z.vd=[];z.vsh=[];z.fabric=false;z.doorMode='hinged';if(!DOGS[z.dog])z.dog='arch';z.face='flat';z.inset='';z.doors=1}));
   const R=S.room,K=S.skirt,M=S.mat,O=S.opts;
   const W=+R.W,D=+R.D,drop=+R.drop||0;
@@ -2109,6 +2121,9 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
 }
 
 /* grouping for cut list */
+/* ==== 20-room-checks.js ====
+   Checks and helpers that look at the whole room: getting it in (doors, stairs, hatch), weight and wall fixing, time and weekend plan, several walls and corners (any angle, diagonal corner cabinet, tapering), and room restrictions (bumps, ceiling things, side-wall doors and windows, space in front).
+*/
 /* ===== getting it into the room: doors, stairs, hatch ===== */
 const ACC_KINDS=[['door','🚪','Doorway','The narrowest door on the way'],['stairs','🪜','Stairs','The staircase up'],['hatch','🕳️','Hatch','A loft hatch or small opening']];
 function accRoute(A){if(!A)return [];return ACC_KINDS.map(([k])=>Object.assign({kind:k},A[k]||{})).filter(o=>o.on&&+o.w>0&&+o.h>0)}
@@ -2224,7 +2239,7 @@ function cornerCheck(G,St){const C=St.room&&St.room.corner;if(!C)return;const W=
       notes:[`Closes the corner between ${L.name} and this wall. It turns ${L.strip.a1}° away from ${L.name}’s front and ${L.strip.a2}° towards this wall’s front (the cabinet edges stay square): tilt the saw blade ${L.strip.a1.toFixed(1)}° on one long edge and ${L.strip.a2.toFixed(1)}° on the other so both edges sit flush. Cut it 10 mm wider and trim on site.`]});
     G.H.funParts.push({n:`Corner closing strip: ${f0(L.strip.w)} mm wide, bevelled ${L.strip.a1.toFixed(1)}° and ${L.strip.a2.toFixed(1)}°`,q:'1',sec:'corner'})}
   if(L.diag){const d=L.diag,tc=G.tc||18,Pl=G.P||0,top=+(St.skirt||{}).top||40,hb=Math.max(600,Math.min(d.h-top,2400)-Pl),sec='corner '+d.names,poly=d.poly;
-    const bb=[0,1,2].map(()=>0);cornerPanel(G,St,'carcass','Corner cabinet — bottom',poly,{sec,notes:[`Five-sided: legs ${f0(d.legA)} and ${f0(d.legB)} mm along the walls, front ${f0(d.front)} mm. The sides stand on it; the backs are nailed on behind.`],band:'front',bandLen:d.front});
+    cornerPanel(G,St,'carcass','Corner cabinet — bottom',poly,{sec,notes:[`Five-sided: legs ${f0(d.legA)} and ${f0(d.legB)} mm along the walls, front ${f0(d.front)} mm. The sides stand on it; the backs are nailed on behind.`],band:'front',bandLen:d.front});
     cornerPanel(G,St,'carcass','Corner cabinet — top',poly,{sec,notes:['Same shape as the bottom.'],band:'front',bandLen:d.front});
     cornerPanel(G,St,'carcass','Corner cabinet — side (towards '+d.names.split(' / ')[0]+')',[[0,0],[d.DA,0],[d.DA,hb],[0,hb]],{sec,band:'front',bandLen:hb});
     cornerPanel(G,St,'carcass','Corner cabinet — side (towards '+d.names.split(' / ')[1]+')',[[0,0],[d.DB,0],[d.DB,hb],[0,hb]],{sec,band:'front',bandLen:hb});
@@ -2350,6 +2365,9 @@ function packGroup(parts,sheet,kerf,trim,grainLock){
 }
 /*CORE-END*/
 
+/* ==== 30-ui-helpers.js ====
+   Small UI helpers shared by the panels.
+*/
 /* ================= UI ================= */
 const LS='builtin-lofter-v1';
 let S, geo, ui={peek:true,pane:'layout',fm:'solid',props:true,tab:'elev',sel:0,zsel:null,xray:false,hide:false,zoom:1,hide3D:false,room3D:true,wizSeen:false};
@@ -2384,6 +2402,9 @@ function buildDefs(){let out='';
   out+=`<linearGradient id="tvg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2B3540"/><stop offset=".55" stop-color="#101418"/><stop offset="1" stop-color="#080A0C"/></linearGradient>`;
   document.getElementById('gdefs').innerHTML=out}
 
+/* ==== 31-elevation.js ====
+   elevSVG(S,G,o): the front drawing (SVG) with sizes, the things in the room and the design notes markers.
+*/
 /* ===== Elevation ===== */
 const n1=v=>(+v).toFixed(1);
 function propSVG(p,Y){const x=p.x,y=p.y,st='stroke="rgba(0,0,0,.28)" stroke-width="1.5"';
@@ -2708,6 +2729,9 @@ function elevSVG(S,G,o={}){
   push('</svg>');return out.join('');
 }
 
+/* ==== 40-side-panel.js ====
+   The side panel (Room · Layout · Look · Build): renderSide, the column and level editors, Simple/Expert view, the "Words explained" glossary and the "Talk to BRUIS" feedback dialog.
+*/
 /* ===== Side panel ===== */
 const getP=p=>p.split('.').reduce((o,k)=>o==null?o:o[k],S);
 function setP(p,v){const ks=p.split('.');let o=S;for(let i=0;i<ks.length-1;i++){if(o[ks[i]]==null)o[ks[i]]=/^\d+$/.test(ks[i+1])?[]:{};o=o[ks[i]]}o[ks[ks.length-1]]=v}
@@ -2960,7 +2984,6 @@ function evenDoorsUI(){let g=[];try{g=doorGroups(geo)}catch(e){}if(!g.length)ret
 function secEditorFull(){
   const secs=S.sections;
   let h=isSheet()?'':shufBar();
-  if(0)h+='';
   if(!secs.length)return h+`<div class="addrow"><span class="inp"><select id="addPreset">${presetOpts()}</select></span><button class="btn" data-act="addSec">Add</button></div>`;
   ui.sel=Math.max(0,Math.min(ui.sel,secs.length-1));const i=ui.sel,s=secs[i],q=geo.secs[i],p='sections.'+i;
   h+=`<div class="chips dskchips">${secs.map((x,j)=>`<button class="chip ${j===i?'on':''}" data-act="selSec" data-a="${j}">S${j+1}${x.base==='panel'?' ▦':''}<small>${geo.secs[j]?f0(geo.secs[j].w):''}</small></button>`).join('')}</div>
@@ -3188,6 +3211,9 @@ function zoneRow(i,k){
   return h;
 }
 
+/* ==== 45-styles.js ====
+   Design styles: one-tap looks driven by design rules.
+*/
 /* ===== Design styles: one-tap looks driven by design rules ===== */
 /* Rules every style follows:
    1. Shared datum lines — level breaks line up across all columns (calm horizontals).
@@ -3488,6 +3514,9 @@ function alignLadder(base){const st=JSON.parse(JSON.stringify(base)),G=build(st)
     if(+z.h>0)z.h=Math.max(150,Math.round(+z.h-lowH-tc));if(z.rail&&+z.railH>0&&z.railH<H)z.rail=false;
     zs.splice(k,0,lower)});
   return st}
+/* ==== 50-exports.js ====
+   Files: PDF pack, part labels, full-size templates, Excel for the shops, DXF for CNC and the brief for a cabinet maker.
+*/
 /* ===== PDF export: pages are drawn on a canvas and stored as JPEGs in a small hand-written PDF ===== */
 const PDFW=1754,PDFH=1240; // A4 landscape at 150 dpi
 function cssVarsInline(svg){const cs=getComputedStyle(document.documentElement);return svg.replace(/var\((--[a-z0-9-]+)\)/gi,(m,v)=>(cs.getPropertyValue(v)||'#888').trim()||'#888')}
@@ -3720,6 +3749,9 @@ async function exportPdf(){
   if(!dl){if(!window.claude){try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([pdf],{type:'application/pdf'}));a.download=fn;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);toast(`Saved ${fn} · ${pages.length} pages`)}catch(e){toast('Could not save the PDF here')}return}toast('PDF ready — saving works in the published Fitted app');return}
   try{await dl.save({filename:fn,data:new Blob([pdf],{type:'application/pdf'})});toast(`Saved ${fn} · ${pages.length} pages`)}catch(e){toast(e&&e.code==='declined'?'Not saved':'Could not save the PDF here')}}
 
+/* ==== 55-designs.js ====
+   Saved designs (shared in the app through the db capability), backups, versions and "compare two designs".
+*/
 /* ===== Saved designs (shared in the app) ===== */
 const DS={db:null,list:[],state:'loading',local:false,thumbs:{}};const DSL='kast-designs-v1';
 const dsLocalGet=()=>{try{return JSON.parse(localStorage.getItem(DSL)||'[]')}catch(e){return []}};
@@ -3809,6 +3841,9 @@ async function dsBackDel(bid){try{if(DS.db)await DS.db.doc('backups/'+bid).delet
 async function dsDelete(id){const d=DS.list.find(x=>x.id===id);try{if(d){const ok=await dsBackup('deleted',d.name,d.state,d.id);if(!ok){toast('Could not keep a copy, so nothing was deleted');return}}
     if(DS.db)await DS.db.doc('designs/'+id).delete();else{const l=dsLocalGet().filter(d=>d.id!==id);dsLocalPut(l);DS.list=l}if(ui.docId===id){ui.docId=null;ui.savedSig=null}ui.dsBackOpen=1;toast('Deleted — a copy stays under “Recovered work and deleted designs”');renderDesigns();dsBadge()}catch(e){toast('Could not delete right now')}}
 
+/* ==== 60-randomizer.js ====
+   Shuffle / "Surprise me": random layouts that respect the wishes (MUSTS) and the room.
+*/
 /* ===== Randomizer ===== */
 const PALETTES=[
   {c:'ral9010',f:'oak',a:'ral6021',d:'walnut',k:'oak'},{c:'ral9016',f:'ral7016',a:'oak',d:'oak',k:'ral7016'},{c:'birch',f:'birch',a:'ral5024',d:'birch',k:'birch'},
@@ -3975,7 +4010,6 @@ function randomize(mode){
     const G=build(st),sc=G.warns.length*10+(G.railHigh||0)*60+G.warns.filter(w=>w.includes('beam')).length*25+(st._mustMiss||[]).length*80+compScore(st,G,sk);if(sc<bs){bs=sc;best=st;bk=sk}if(k>=12&&bs<4)break}
   best=snapLines(tidy(alignLines(best,bk)));
   S=ladderSense(best);const miss=S._mustMiss||[];delete S._mustMiss;if(S.ladder&&S.ladder.on)S=alignLadder(S);S=slopeFix(S);ui.sel=0;ui.zsel=null;if(bk&&mode==='all')ui.style=bk;changed(true);const nw=geo.warns.length;if(miss.length){toast(`Couldn't fully place: ${miss.join(', ')} — the wall is too short or too low there.`);return}if(bk){toast(`${mode==='all'?'Surprise: '+STYLES[bk].name:'New layout · '+STYLES[bk].name+' rules'}${nw?` · ${nw} design note${nw>1?'s':''}`:''}`);return}toast(nw?`New layout · ${nw} design note${nw>1?'s':''}`:'New layout — no design issues')}
-function keepColours(st){return st}
 /* Composition score — lower is calmer. The visual rules a shuffle is judged on:
    lines that line up, mirrored partners that match, few different column types, weight low, a focal point near the axis, some (not too much) openness. */
 function zoneSig(q){return q.desk?'desk':(q.zones||[]).map(zr=>{const z=zr.z||{};return z.type+(z.face==='glass'?'g':'')+(z.dog?'d':'')}).join('|')}
@@ -4000,6 +4034,9 @@ function alignLines(st,key){let cur=st,G=build(cur),w0=G.warns.length,s0=compSco
     if(!done)break}
   if(st._mustMiss)cur._mustMiss=st._mustMiss;return cur}
 
+/* ==== 65-cutlist.js ====
+   The cut list tab and the sheet cutting plans.
+*/
 /* ===== Cut list / lofting / sheets ===== */
 let groupsCache=null;
 const bandTxt=p=>{const m=MATS[p.matType]||{},w=/Drawer box/.test(p.type)?'top edge':p.band==='all'?'all edges':'front edge';return (m.micro?'Microcement on: ':m.paint?'Paint: ':'Edge band: ')+w};
@@ -4089,6 +4126,9 @@ function renderCut(){
   if(PRICING)return;
   el.innerHTML=partBar()+h;budSoon();{const pv=document.getElementById('pstatv');if(pv)pv.textContent=eur(lastPrice.tot.all)}
 }
+/* ==== 66-prices-budget.js ====
+   Prices: owner-only online price check, your own prices, delivery per shop, € levels, the price table, one-tap fixes and the budget card. All numbers live in src/prices.js.
+*/
 /* ===== Price guide — Belgium, incl. 21 % VAT. Board prices: Hanssens Hout webshop; Blum hinge + plate: Pierard. Checked 13 Nov 2026. est:1 = typical trade price, not looked up ===== */
 /* ============================================================
    Fitted — all prices in one place.
@@ -4501,6 +4541,9 @@ function stockPlan(gs){const cfg=stockCfg(),groups={},kerf=sawCfg().kerf;let sav
     if(p.band==='front')saved+=(p.bandLen||0)*p.qty/1000;else if(p.band==='all')saved+=2*sf.len*p.qty/1000});
   const out=Object.values(groups).map(g=>{const bars=[];g.pcs.sort((a,b)=>b.len-a.len).forEach(c=>{let bar=bars.find(b=>b.used+c.len+(b.pl.length?kerf:0)<=cfg.L);if(!bar){bar={used:0,pl:[]};bars.push(bar)}const x=bar.used+(bar.pl.length?kerf:0);bar.pl.push(Object.assign({x},c));bar.used=x+c.len});return Object.assign(g,{bars})});
   return {cfg,groups:out,saved,ids}}
+/* ==== 67-offcuts.js ====
+   Offcuts: keep leftovers and cut small parts from them first.
+*/
 /* ===== offcuts: leftover pieces kept for later ===== */
 const OFF={list:[],db:null,LS:'kast-offcuts'};
 function offLocal(){try{return JSON.parse(localStorage.getItem(OFF.LS)||'[]')}catch(e){return []}}
@@ -4537,6 +4580,9 @@ function nestAll(gs){
   return Object.values(byKey).map(g=>{const sh=sheetOf(g.sheet),grain=FIN[g.fin]&&FIN[g.fin].kind!=='plain'&&!FIN[g.fin].micro;
     const sc=sawCfg(),ou=offUse(g),r=packGroup(ou.parts,sh,sc.kerf,sc.trim,grain);return {...g,...r,offUsed:ou.used,sh,grain,name:`${MATS[g.mt]?.short||''} ${FIN[g.fin]?.name} ${g.t}`}});
 }
+/* ==== 70-build-guide.js ====
+   The build guide (IKEA-style steps) with Bolt & Pip.
+*/
 /* ===== Build guide (IKEA-style step-by-step) ===== */
 const GK='#1D1D1F';
 function obl(x,y,d){return [x+d*0.42,-(y+d*0.32)]}
@@ -4877,6 +4923,9 @@ function renderSheets(){
   el.innerHTML=partBar()+h;
 }
 
+/* ==== 80-3d.js ====
+   The 3D view (three.js): scene, materials, meshes from G.items, camera.
+*/
 /* ===== 3D ===== */
 let T3=null;
 function texFor(fin,mc){const f=Object.assign({},FIN[fin]||FIN.ral9010);if(mc){f.micro=true;f.grain='#000000'}const c=document.createElement('canvas');c.width=c.height=512;const x=c.getContext('2d');const r=rng(fin.length*7919+fin.charCodeAt(0));
@@ -5121,8 +5170,11 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   const C=[0,1,2].map(i=>-(R[0][i]*t[0]+R[1][i]*t[1]+R[2][i]*t[2]));
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
+/* ==== 81-room-photo.js ====
+   Lining the design up with a photo of the room.
+*/
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.72';
+const APP_VERSION='v0.73';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
@@ -5143,6 +5195,9 @@ async function photoShots(){const out=[];if(!window.THREE)return out;try{if(!T3)
       const cv=document.createElement('canvas');cv.width=w;cv.height=h;const x=cv.getContext('2d');x.drawImage(PH.img,0,0,w,h);try{x.filter=T3.renderer.domElement.style.filter||'none'}catch(e){}x.drawImage(T3.renderer.domElement,0,0,w,h);x.filter='none';(PH.occ||[]).forEach(sh=>{if(sh.length<3)return;x.save();x.beginPath();sh.forEach((q,k)=>{const X=q[0]*w/PH.iw,Y=q[1]*h/PH.ih;k?x.lineTo(X,Y):x.moveTo(X,Y)});x.closePath();x.clip();x.drawImage(PH.img,0,0,w,h);x.restore()});out.push(cv)}catch(e){}}
   await new Promise(r=>phUse(cur0,r));ui.photoOn=on0;PH.adjust=adj0;try{setPhotoMode(on0)}catch(e){}return out}
 const photoActive=()=>!!(ui.photoOn&&PH.pose&&PH.img);
+/* ==== 82-notes.js ====
+   Notes: text and photos that belong to a design.
+*/
 /* ===== Notes: text and photos (hand-drawn sketches) that belong to the design =====
    The note list lives in the design itself (S.notes), so it is saved, undone and opened with it. A photo is too big for that:
    the design keeps a small preview, the full photo goes to the app's shared store (or this device's storage outside claude.ai). */
@@ -5180,6 +5235,9 @@ document.addEventListener('change',e=>{const t=e.target;if(!t)return;if(t.matche
   if(t.dataset&&t.dataset.nttext!=null){const n=ntList().find(x=>x.id===t.dataset.nttext);if(n){const v=t.value.trim();if(v){n.text=v;ntChanged()}else toast('A note can’t be empty — use Delete to remove it')}}
   if(t.dataset&&t.dataset.ntcap!=null){const n=ntList().find(x=>x.id===t.dataset.ntcap);if(n){n.text=t.value.trim();ntChanged()}}});
 document.addEventListener('paste',e=>{const m=document.getElementById('ntm');if(!m||m.hidden)return;const fs=[...((e.clipboardData&&e.clipboardData.items)||[])].filter(i=>i.kind==='file'&&/^image\//.test(i.type)).map(i=>i.getAsFile());if(fs.length){e.preventDefault();ntFiles(fs)}});
+/* ==== 83-ai-render.js ====
+   AI render hand-off: the picture and instruction for an outside image AI.
+*/
 /* ===== AI render hand-off: Fitted supplies the picture and the instruction, an outside picture AI makes the photo ===== */
 const AI={shots:[],cur:0,plain:null};
 function aiPlainShot(){try{if(!T3)return null;const el=T3.renderer.domElement,w=el.width,h=el.height;if(!w||!h)return null;T3.renderer.render(T3.scene,T3.cam);const cv=document.createElement('canvas'),k=Math.min(1,1600/w);cv.width=Math.round(w*k);cv.height=Math.round(h*k);const x=cv.getContext('2d');x.fillStyle=getComputedStyle(document.body).getPropertyValue('--stage').trim()||'#E8EBE7';x.fillRect(0,0,cv.width,cv.height);x.drawImage(el,0,0,cv.width,cv.height);return cv}catch(e){return null}}
@@ -5272,6 +5330,9 @@ function photoCamLook(dSmall,w,h,con){let noise=6,soft=0.5,vig=0.1;try{const n=M
     noise=hp[Math.floor(hp.length*0.5)]*1.5;const top=gr[Math.floor(gr.length*0.985)],rng=Math.max(20,con*255);soft=top<8?0.45:Math.max(0.3,Math.min(0.75,0.85-top/rng*1.6));
     let c=0,nc=0,e=0,ne=0;for(let py=0;py<h;py++)for(let px=0;px<w;px++){const i=(py*w+px)*4,L=(dSmall[i]+dSmall[i+1]+dSmall[i+2])/3,rx=(px/w-0.5)*2,ry=(py/h-0.5)*2,r2=rx*rx+ry*ry;if(r2<0.2){c+=L;nc++}else if(r2>1.3){e+=L;ne++}}if(nc&&ne)vig=Math.max(0,Math.min(0.3,(1-(e/ne)/(c/nc+1e-6))*0.6))}catch(e){}
   return {noise,soft,vig}}
+/* ==== 84-3d-light-others.js ====
+   3D light presets and the other walls of the room around the open wall.
+*/
 /* ===== light presets for the 3D view ===== */
 const LIGHTS={'':['☀️','Daylight'],morning:['🌅','Morning'],evening:['🌇','Evening'],night:['🌙','Evening, lamps on']};
 function dayLight(W,maxC,D){if(!T3||ui.photoOn)return;const L=ui.light||'',B=T3._lb||(T3._lb={sc:T3.sun.color.getHex(),si:T3.sun.intensity,hc:T3.hemi.color.getHex(),hi:T3.hemi.intensity,ai:T3.amb.intensity,fi:T3.fill.intensity,ex:T3.renderer.toneMappingExposure});
@@ -5424,6 +5485,9 @@ function pcalRender(){if(!PH.img){pcalEmpty();return}if(PH.maskEdit){pcalMask();
   const up=()=>{if(drag==null)return;drag=null;photoSave();pcalRender()};el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up)}
 
 
+/* ==== 85-drag-and-phases.js ====
+   Dragging level edges in the drawing, and building in phases (only some columns).
+*/
 /* ===== drag level edges in the drawing ===== */
 (function(){const wrap=document.getElementById('elevWrap');let d=null;
   const svgY=e=>{const sv=wrap.querySelector('svg');const pt=sv.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const m=sv.getScreenCTM();return m?pt.matrixTransform(m.inverse()).y:0};
@@ -5478,6 +5542,9 @@ function partBar(){const p=S.opts.part||{},on=!!p.on,ps=partSet(),n=geo.secs.len
   <label class="chk"><input type="checkbox" data-act="partShared" ${p.shared!==false?'checked':''}> Also plinths, top closing strips and wall fillers</label>
   <p class="hintp" style="margin:0">${ps?`Parts, sheets, shaped parts, hardware, guide and PDF now cover <b>${partLabel().toLowerCase()}</b> only. A side shared with a column you're not building is included, so the cabinets stand on their own.`:'Tap the columns you want to build now.'}</p>`:''}</div>`}
 
+/* ==== 86-screen-3d.js ====
+   The projector screen in 3D.
+*/
 /* ===== projector screen in 3D: the drawer slides out, the cloth rolls down, the picture comes on ===== */
 function screenTex(){if(T3.scrTex)return T3.scrTex;const c=document.createElement('canvas');c.width=640;c.height=360;const x=c.getContext('2d');
   try{const g=x.createLinearGradient(0,0,0,360);g.addColorStop(0,'#1B2A4A');g.addColorStop(.45,'#C96B4B');g.addColorStop(.62,'#F2C27A');g.addColorStop(.63,'#2F4858');g.addColorStop(1,'#16222E');x.fillStyle=g;x.fillRect(0,0,640,360);
@@ -5538,6 +5605,9 @@ function camPreset(k){if(!T3)return;const maxC=Math.max(...geo.cps.map(p=>p.y),+
   const to={x:geo.W/2,y:maxC*0.48,z:-geo.D/2,r:fit,theta:k==='front'?0:k==='left'?-0.55:k==='seat'?0:0.48,phi:k==='front'?0.04:k==='seat'?0.02:0.16};
   if(k==='seat'){to.r=Math.max(3200,geo.W*0.9);to.y=1150;to.z=0}camTo(to)}
 
+/* ==== 90-bar-views.js ====
+   The toolbar above the drawing, the status bar and switching views.
+*/
 /* ===== bar, views ===== */
 function renderBar(){
   const b=document.getElementById('bar');const w=geo.warns;let h='';
@@ -5620,6 +5690,9 @@ function updateSideInfo(){const s=document.getElementById('side');const scr=s.sc
   const box=s.querySelector('details[data-k="secs"] .accb');if(box&&!(ae&&box.contains(ae)))box.innerHTML=secEditor();
   s.scrollTop=scr}
 
+/* ==== 92-events.js ====
+   All clicks: one big switch on data-act="…". To add a button: give it data-act="myAction" and add a case here.
+*/
 /* ===== events ===== */
 document.addEventListener('keydown',e=>{const tg=e.target;if(!e.ctrlKey&&!e.metaKey&&!e.altKey&&(e.key==='f'||e.key==='F')&&!(tg&&(tg.tagName==='INPUT'||tg.tagName==='TEXTAREA'||tg.tagName==='SELECT'))&&(ui.tab==='elev'||ui.tab==='3d')){setFm({solid:'glass',glass:'off',off:'solid'}[ui.fm]);return}if(!(e.ctrlKey||e.metaKey))return;const t=e.target;if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'))return;const k=e.key.toLowerCase();if(k==='z'){e.preventDefault();undoRedo(e.shiftKey?1:-1)}else if(k==='y'){e.preventDefault();undoRedo(1)}});
 document.addEventListener('focusin',e=>{const el=e.target;if(el&&el.dataset&&el.dataset.p==='room.W')ui.prevW=+S.room.W});
@@ -5915,6 +5988,9 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'wizStart':S=slopeFix(exampleState());ui.sel=0;closeWiz();changed(true);toast('Example design loaded');break;
   }});
 
+/* ==== 94-wizard.js ====
+   The wizard: room steps (draggable drawing, survey, getting it in) and cabinet steps (wishes, look, proposals, budget).
+*/
 /* ===== wizard ===== */
 let WZ=null,wstep=0;
 const WSTEPS=['Wall','Ceiling','Getting in','Wishes','Look','Proposals','Budget'],WICON=['📏','⛰️','🪜','✨','🎨','🏠','💶'],WGRP=[['Your room',0,3],['Your cabinet',3,7]];
@@ -6078,6 +6154,9 @@ document.getElementById('wiz').addEventListener('input',e=>{const el=e.target;
 document.getElementById('wiz').addEventListener('toggle',e=>{if(e.target.classList&&e.target.classList.contains('wadv')&&WZ&&wstep===4)WZ.adv=e.target.open},true);
 document.getElementById('wiz').addEventListener('click',e=>{const b=e.target.closest('[data-act="wizSet"]');if(!b)return;const[k,v]=b.dataset.a.split(':');WZ[k]=+v;if(k==='t')WZ.tf=+v+1;wizRender()});
 
+/* ==== 99-boot.js ====
+   Start-up: load the saved design, first render, install button, saved designs, offcuts, languages, comments.
+*/
 /* ===== boot ===== */
 {const sp=document.getElementById('splash');if(sp)sp.addEventListener('animationend',()=>sp.remove())}
 try{new ResizeObserver(()=>{const f=document.getElementById('fmode');if(f)f.style.top=(document.getElementById('bar').offsetHeight+10)+'px'}).observe(document.getElementById('bar'))}catch(e){}

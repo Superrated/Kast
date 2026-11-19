@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.73
+
+- **Code cleanup**: the single 6,000-line source file is split into readable pieces.
+  - `src/app.html` holds the page, `src/css/` the styles, and `src/js/` the program in 25 topic files, each with a short note at the top on what it does.
+  - `build.py` glues them together, and the built app is exactly the same as before the split.
+  - New `ARCHITECTURE.md` explains how the app works and how to add a column type, an inside fitting, a design check, a price or a language.
+- Removed two unused functions and some dead code.
+- Bug and sanity check of the latest features (prices and delivery, corners and tapering, room restrictions, feedback); no problems found.
+
 ## v0.72
 
 - **Online price check for the owner only**: the "Update prices" button that looks prices up at the shops now only shows for you, the owner. Everyone else sees guide prices and types their own.

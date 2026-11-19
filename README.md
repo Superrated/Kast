@@ -7,7 +7,7 @@
 - a hardware list and a price estimate (Belgian woodworking shops)
 - a step-by-step build guide, and a PDF with all of the above
 
-Version **v0.72**.
+Version **v0.73**.
 
 ## Use it
 
@@ -32,18 +32,18 @@ On a free GitHub account this only works when the repository is public.
 
 | File | What it is |
 | --- | --- |
-| `src/kast.html` | The whole app in one file. This is the file to edit. |
-| `build.py` | Wraps `src/kast.html` into the installable `index.html`. |
+| `src/ (see ARCHITECTURE.md)` | The whole app in one file. This is the file to edit. |
+| `build.py` | Wraps `src/ (see ARCHITECTURE.md)` into the installable `index.html`. |
 | `index.html` | The built app. Do not edit by hand. |
 | `manifest.webmanifest`, `sw.js`, `icons/` | What makes it installable and usable offline. |
 
 ## Changing the app
 
-1. Edit `src/kast.html`.
+1. Edit `src/ (see ARCHITECTURE.md)`.
 2. Run `python3 build.py`.
 3. Open `index.html` to check.
 
-For a new version, change `APP_VERSION` near the photo code in `src/kast.html`, then run the build again. The header, the loading screen and the offline cache all pick up the new version number by themselves.
+For a new version, change `APP_VERSION` near the photo code in `src/ (see ARCHITECTURE.md)`, then run the build again. The header, the loading screen and the offline cache all pick up the new version number by themselves.
 
 ## Good to know
 
@@ -66,4 +66,4 @@ Fitted is in English. All translations live in `src/lang.js`:
 
 ## Buy-me-a-coffee link
 
-Put your Buy Me a Coffee or Ko-fi address in `SUPPORT.coffee` near "messages to BRUIS" in `src/kast.html`, then run `python3 build.py`. Until then the coffee tab invites people to say thanks instead.
+Put your Buy Me a Coffee or Ko-fi address in `SUPPORT.coffee` near "messages to BRUIS" in `src/ (see ARCHITECTURE.md)`, then run `python3 build.py`. Until then the coffee tab invites people to say thanks instead.

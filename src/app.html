@@ -1,0 +1,124 @@
+<title>Fitted by BRUIS</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+<!--@CSS@--></style>
+
+<div id="splash" role="status" aria-label="Fitted by BRUIS __KAST_VERSION__ is loading"><b>Fitted</b><span>__KAST_VERSION__</span></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
+
+<div class="app" data-tab="elev">
+  <header class="top">
+    <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
+    <div class="brand" title="Fitted by BRUIS __KAST_VERSION__">Fitted<span class="bybr">by BRUIS</span><small>built-in wardrobes & cabinets, drawn and cut · __KAST_VERSION__</small></div>
+    <nav class="tabs" id="tabs">
+      <button data-act="tab" data-a="elev" class="on">Drawing</button>
+      <button data-act="tab" data-a="3d">3D</button>
+      <button data-act="tab" data-a="cut">Cut list</button>
+      <button data-act="tab" data-a="sheets">Sheets</button>
+      <button data-act="tab" data-a="loft">Shaped parts</button>
+      <button data-act="tab" data-a="guide">Build guide</button>
+    </nav>
+    <div class="acts">
+      <button class="btn" data-act="undo" id="bUndo" aria-label="Undo" title="Undo (Ctrl+Z)" disabled>↶</button><button class="btn" data-act="redo" id="bRedo" aria-label="Redo" title="Redo" disabled>↷</button><button class="btn dsk" data-act="wizard" title="Start a new design with the step-by-step wizard">New design</button>
+      <button class="btn dsk" data-act="pdf" title="Download a PDF with the drawing, cut list and build guide">PDF</button><button class="btn" data-act="io" id="dsBtn">Designs</button><button class="btn" data-act="mmenu" aria-label="More" aria-expanded="false" title="More">☰</button>
+    </div>
+  </header>
+  <div class="main">
+    <aside class="side" id="side"></aside>
+    <section class="stage">
+      <div class="bar" id="bar"></div>
+      <div class="fmode" id="fmode" role="group" aria-label="Show fronts"></div>
+      <div class="psw phone" id="psw" role="tablist"><button data-act="tab" data-a="cut">Cut list</button><button data-act="tab" data-a="sheets">Sheets</button><button data-act="tab" data-a="loft">Shaped parts</button></div>
+      <div class="mfloat phone" id="mfloat"></div>
+      <button type="button" class="bigfab mobonly" data-act="bigView" id="bigfab" aria-label="Bigger drawing">⤢</button>
+      <div class="view" id="v-elev" data-comment-target><div id="elevWrap"></div></div>
+      <div class="statusbar" id="sbar" role="status"></div>
+      <div class="view" id="v-3d" hidden><div class="hint3d">Drag to turn · scroll or pinch to zoom · right-drag, Shift-drag or two fingers to move · double-click to reset</div></div>
+      <div class="view docview" id="v-cut" hidden></div>
+      <div class="view docview" id="v-loft" hidden></div>
+      <div class="view docview" id="v-sheets" hidden></div>
+      <div class="view docview" id="v-guide" hidden></div>
+    </section>
+  </div>
+</div>
+
+<nav class="bnav" id="bnav" aria-label="Views">
+  <button data-act="tab" data-a="elev" class="on"><svg viewBox="0 0 24 24"><path d="M3 21V9l9-6 9 6v12z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 21v-7h8v7M12 14v7" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>Drawing</span></button>
+  <button data-act="tab" data-a="3d"><svg viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z M12 12l8-4.5M12 12v9M12 12L4 7.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span>3D</span></button>
+  <button data-act="tab" data-a="cut"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 9h8M8 13h8M8 17h5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>Parts</span></button>
+  
+  
+  <button data-act="tab" data-a="guide"><svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="9" cy="9" r="1.6" fill="currentColor"/><path d="M12 9h4M8 14h8M8 17.5h6" stroke="currentColor" stroke-width="1.6"/></svg><span>Guide</span></button>
+</nav>
+<div class="mmenu" id="mmenu" hidden><button type="button" data-act="io" id="dsBtnM">My designs</button><button type="button" data-act="wizard">New design (wizard)</button><button type="button" data-act="pdf">Download PDF</button><hr><button type="button" data-act="ntOpen" id="ntBtnM">Notes</button><button type="button" class="cmtb" data-act="cmt" hidden>Comment on the drawing</button><button type="button" data-act="aiOpen">AI render (photo-real picture)</button><hr><button type="button" data-act="fbOpen">Talk to BRUIS — thanks, bugs, ideas, coffee</button><button type="button" data-act="gloss">Words explained</button><button type="button" data-act="lang" data-m="1" hidden></button><button type="button" data-act="install" id="instBtnM" hidden>Install app</button></div>
+<div class="pcal" id="pcal" hidden role="dialog" aria-label="Line up your room photo"><header><b>Line up your photo</b><span class="sp"></span><label class="btn sm" style="position:relative;overflow:hidden;cursor:pointer">Other photo<input type="file" accept="image/*" data-photoin style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0"></label><button type="button" class="btn sm" data-act="pcalClose">Cancel</button></header><div class="pstage" id="pstage"></div><footer id="pfoot"></footer></div>
+<input type="file" id="photoIn" accept="image/*" hidden>
+<div class="modal" id="wiz" hidden>
+  <div class="mbox">
+    <div class="mhead"><h2 id="wizTitle">New built-in</h2><div class="steps" id="wizSteps" role="tablist" aria-label="Wizard steps"></div></div>
+    <div class="mbody" id="wizBody"></div>
+    <div class="mfoot"><button class="btn" data-act="wizSkip" id="wizSkip">Close</button><div style="display:flex;gap:6px"><button class="btn" data-act="wizBack" id="wizBack">Back</button><button class="btn pri" data-act="wizNext" id="wizNext">Next</button></div></div>
+  </div>
+</div>
+
+<div class="modal" id="iom" hidden>
+  <div class="mbox">
+    <div class="mhead"><h2>Designs</h2></div>
+    <div class="mbody">
+      <div class="dsnow" id="dsNow"></div>
+      <div class="dsave"><label class="fld"><span>Name of this design</span><span class="inp"><input type="text" id="dsName" placeholder="Name it — e.g. Attic, oak + sage" maxlength="80"></span></label>
+        <div class="dbtns" id="dsBtns"></div></div>
+      <p class="hintp" id="dsHelp" style="margin:0"></p>
+      <p class="hintp" id="dsNote">Loading saved designs…</p>
+      <div class="dgrid" id="dsList"></div>
+      <details class="pf" id="dsCmpBox"><summary>Compare two designs side by side</summary><p class="hintp">Pick two designs — price, sheets, size and what is different between them.</p><div id="dsCmp"></div></details>
+      <div id="dsBack"></div>
+      <details class="pf"><summary>Copy as text / paste a design</summary><p class="hintp">Copy the text to move a design somewhere else, or paste one back and load it.</p><textarea class="io" id="ioText" spellcheck="false"></textarea>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button class="btn" data-act="ioCopy">Copy</button><button class="btn" data-act="ioLoad">Load pasted text</button><button class="btn" data-act="ioReset">Load example</button></div></details>
+    </div>
+    <div class="mfoot"><button class="btn" data-act="ioClose">Close</button><div></div></div>
+  </div>
+</div>
+
+<div class="modal" id="aim" hidden>
+  <div class="mbox">
+    <div class="mhead"><h2>AI render</h2></div>
+    <div class="mbody" style="display:grid;gap:12px">
+      <p class="hintp" style="margin:0">Fitted makes the picture and the instruction; a picture AI you already use (ChatGPT, Gemini or another one) turns them into a photo. The result is a mood picture — the AI may shift small details, so the drawing and the cut list stay the truth.</p>
+      <div id="aiPick" class="tchips"></div>
+      <div class="aishot"><img id="aiImg" alt="The picture Fitted hands to the picture AI"><p class="hintp" id="aiNone" hidden style="margin:0"></p></div>
+      <label class="fld"><span>Small changes — optional, in your own words</span><span class="inp"><input type="text" id="aiNote" placeholder="e.g. warmer evening light, no handles, darker floor" maxlength="300"></span></label>
+      <label class="fld"><span>Instruction for the picture AI</span><textarea id="aiText" rows="9" spellcheck="false"></textarea></label>
+      <ol class="aisteps"><li><button class="btn pri" data-act="aiSave">Save the picture</button></li><li><button class="btn pri" data-act="aiCopy">Copy the instruction</button></li><li>Open your picture AI, add the saved picture, paste the instruction and send.</li><li>Not quite right? Type a small change above and <button class="btn sm" data-act="aiCopyNote">Copy only the change</button> — paste that as your next message in the same chat.</li></ol>
+    </div>
+    <div class="mfoot"><button class="btn" data-act="aiClose">Close</button><div></div></div>
+  </div>
+</div>
+<div class="modal" id="ntm" hidden>
+  <div class="mbox">
+    <div class="mhead"><h2>Notes</h2></div>
+    <div class="mbody" style="display:grid;gap:12px">
+      <p class="hintp" style="margin:0" id="ntFor"></p>
+      <div class="ntadd"><textarea id="ntText" rows="3" placeholder="Write a note — measurements, ideas, questions for the carpenter…"></textarea>
+        <div class="ntbtns"><button class="btn pri" data-act="ntAdd">Add note</button><label class="btn" style="position:relative;overflow:hidden;cursor:pointer">Take a photo<input type="file" accept="image/*" capture="environment" data-ntin style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0"></label><label class="btn" style="position:relative;overflow:hidden;cursor:pointer">Choose a photo<input type="file" accept="image/*" multiple data-ntin style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0"></label></div>
+        <label class="chk"><input type="checkbox" id="ntClean" checked> Make hand-drawn notes easier to read (black and white, more contrast)</label></div>
+      <div id="ntSave"></div>
+      <div id="ntList" class="ntlist"></div>
+    </div>
+    <div class="mfoot"><button class="btn" data-act="ntClose">Close</button><div></div></div>
+  </div>
+</div>
+<div class="ntview" id="ntView" hidden><img id="ntViewImg" alt="Note photo"><button class="btn" data-act="ntViewClose">Close</button></div>
+<div class="modal" id="fpm" hidden>
+  <div class="mbox fpbox">
+    <div class="mhead"><h2>Colour &amp; finish</h2><div class="fprow"><span class="inp" style="flex:1"><input type="search" id="fpSearch" placeholder="Search RAL number or name — e.g. 7016, sage, oak" aria-label="Search colours"></span><span class="fpcur" id="fpCur"></span></div></div>
+    <div class="mbody" id="fpBody"></div>
+    <div class="mfoot"><span class="note">Screen colours are approximate — check a physical RAL fan before ordering.</span><button class="btn" data-act="fpClose">Close</button></div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+<!--@JS@--></script>
