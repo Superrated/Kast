@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.63
+
+- **Workshop mode** (Build guide and Cut list): a full-screen view for your phone that shows one cut or one build step at a time in big letters, with Done ✓ and Back.
+  - Cuts follow the chosen cut order, and it says when to change the saw setting.
+  - Ticks are saved in the design, so you can stop and pick up where you were.
+- **Every drilling hole on the sides.** Box sides, partitions and end panels now carry:
+  - the Ø5 connector-screw holes, centred on every top, bottom and fixed divider;
+  - the shelf-pin holes (Ø5 × 12) under each adjustable shelf, 37 mm from the front and back edges;
+  - the hinge mounting-plate holes (Ø5 × 12, 37 mm from the front edge, 32 mm apart) at the same heights as each door's hinge cups.
+  - They show in Lofting with a hole table and in the cut-list note.
+- **Drag column edges in the front view.** Select a column and drag its left or right edge to make it wider or narrower; the neighbour gives or takes the difference. Level heights could already be dragged.
+- **New collision checks:**
+  - a door hinged right next to the room wall (it can't open fully);
+  - a door hinged next to a level that sticks out further (it hits it before it is fully open).
+  - Doors under the sloped ceiling and sockets behind dividers or drawers were already checked.
+
 ## v0.62
 
 - **Have it cut at Hanssens Hout or Woodcenter.** The Cut list tab has an "Excel for Hanssens Hout" and an "Excel for Woodcenter" button. Each makes a Dutch cut list (zaaglijst):

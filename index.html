@@ -171,6 +171,11 @@ table.ord th:first-child,table.ord td:first-child{text-align:left}
 .pdfc{background:var(--raised);color:var(--ink);border-radius:18px;padding:20px;width:min(420px,100%);display:grid;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,.3)}.pdfc h3{margin:0;font-size:18px}.pdfpre{display:flex;gap:6px;flex-wrap:wrap}.pdfpre .btn.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .pdfl{display:grid;gap:2px}.pdfl label{display:flex;gap:10px;align-items:center;padding:9px 4px;border-bottom:1px solid var(--line);font-size:14px;cursor:pointer}.pdfl input{width:18px;height:18px;accent-color:var(--accent)}.pdfbtn{display:flex;gap:8px;justify-content:flex-end}.pdfbtn .btn{padding:9px 18px}
 .pdfbar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}.pdfbar i{display:block;height:100%;width:0;background:var(--accent);border-radius:99px;transition:width .15s}
+.ws{position:fixed;inset:0;z-index:60;background:var(--bg,#fff);color:var(--ink,#1D1D1F);display:flex;flex-direction:column;padding:max(10px,env(safe-area-inset-top,0px)) max(14px,env(safe-area-inset-right,0px)) max(10px,env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-left,0px))}
+.ws .wsbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.ws .wsbar .seg{flex:1 1 auto}.ws .wscard{flex:1 1 auto;overflow:auto;margin:12px 0;padding:18px;border-radius:16px;background:var(--surface2,#F4F4F2)}
+.ws .wsset{font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent,#3446D6);font-weight:700}.ws .wsbig{font-size:clamp(26px,7vw,44px);line-height:1.15;font-weight:600;margin:8px 0 10px;text-wrap:balance}.ws .wsmid{font-size:clamp(17px,4.4vw,22px);line-height:1.45}
+.ws .wsnav{display:flex;gap:8px}.ws .wsnav .btn{flex:1;min-height:56px;font-size:18px}.ws .wsdone{background:var(--accent,#3446D6);color:#fff;border-color:transparent}.ws .wsprog{height:6px;border-radius:3px;background:var(--line,#ddd);overflow:hidden;margin-top:10px}.ws .wsprog>i{display:block;height:100%;background:var(--accent,#3446D6)}
+.ws .wslist{font-size:14px;margin-top:14px;columns:1}.ws .wslist button{display:block;width:100%;text-align:left;border:0;background:none;padding:6px 0;color:inherit;font:inherit;border-bottom:1px solid var(--line,#e5e5e5)}.ws .wslist .ok{color:#7a7a7a;text-decoration:line-through}.ws .wsfig svg{max-width:100%;height:auto;max-height:42vh}
 .modal{position:fixed;inset:0;background:rgba(10,14,16,.5);display:flex;align-items:center;justify-content:center;z-index:50;padding:max(12px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
 .mbox{background:var(--surface);border-radius:12px;width:min(820px,100%);max-height:100%;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--line);box-shadow:0 20px 60px rgba(0,0,0,.3)}
 #wiz .mbox{width:min(980px,100%)}.steps button{font:inherit;cursor:pointer}.steps button:disabled{opacity:.5;cursor:default}
@@ -525,7 +530,7 @@ details.acc>summary::after{font-family:var(--f-b);font-weight:400;font-size:18px
 .linkbox{display:grid;gap:6px}.linkbox .pbrow{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.linked{margin:0;font-size:12.5px;background:var(--accent-soft);border-radius:10px;padding:8px 10px}.lnk{border:0;background:none;color:var(--accent);font:inherit;font-weight:600;text-decoration:underline;padding:0;cursor:pointer}
 .batches{display:grid;gap:6px}.batch{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:6px 8px;flex-wrap:wrap}.batch.on{border-color:var(--accent)}
 .bname{border:0;background:none;text-align:left;display:grid;font:inherit;color:var(--ink);cursor:pointer;flex:1;min-width:120px}.bname small{color:var(--ink2);font-size:11px}
-.zdrag{cursor:ns-resize;touch-action:none}
+.zdrag{cursor:ns-resize;touch-action:none}.cdrag{cursor:ew-resize;touch-action:none}.cdrag:hover .cdg,.cdrag.act .cdg{fill:var(--accent)}
 .gcomic{background:#FFF8E6!important;border-color:#EAD9A8!important}.gcomic svg{width:100%;max-width:620px;height:auto;justify-self:center}.gcomic p{font-size:13.5px}
 .gexpl svg{max-width:760px;width:100%;height:auto;justify-self:center}.gexpl .btn{justify-self:start}.zdrag:hover .zdg,.zdrag.act .zdg{fill:var(--accent)}
 
@@ -749,14 +754,14 @@ details.mx{grid-column:1/-1}
 @media (prefers-reduced-motion:reduce){#splash{animation-duration:.01s}}
 </style>
 
-<div id="splash" role="status" aria-label="Kast v0.62 is loading"><b>Kast</b><span>v0.62</span></div>
+<div id="splash" role="status" aria-label="Kast v0.63 is loading"><b>Kast</b><span>v0.63</span></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
 
 <div class="app" data-tab="elev">
   <header class="top">
     <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-    <div class="brand" title="Kast v0.62">Kast<small>built-in furniture, drawn and cut · v0.62</small></div>
+    <div class="brand" title="Kast v0.63">Kast<small>built-in furniture, drawn and cut · v0.63</small></div>
     <nav class="tabs" id="tabs">
       <button data-act="tab" data-a="elev" class="on">Elevation</button>
       <button data-act="tab" data-a="3d">3D view</button>
@@ -1130,7 +1135,7 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
     const mx=Math.min(...poly.map(p=>p[0])),my=Math.min(...poly.map(p=>p[1]));
     poly=poly.map(p=>[r1(p[0]-mx),r1(p[1]-my)]);
     let w=Math.max(...poly.map(p=>p[0])),h=Math.max(...poly.map(p=>p[1]));
-    const holes=(o.holes||[]).map(q=>{const r={x:r1(q.x-mx),y:r1(q.y-my),d:q.d};if(q.dp)r.dp=q.dp;if(q.len){r.len=q.len;r.dir=q.dir}if(q.poly)r.poly=q.poly.map(p=>[r1(p[0]-mx),r1(p[1]-my)]);return r});
+    const holes=(o.holes||[]).map(q=>{const r={x:r1(q.x-mx),y:r1(q.y-my),d:q.d};if(q.dp)r.dp=q.dp;if(q.face)r.face=q.face;if(q.len){r.len=q.len;r.dir=q.dir}if(q.poly)r.poly=q.poly.map(p=>[r1(p[0]-mx),r1(p[1]-my)]);return r});
     const role=M[o.role]||M.carcass;
     if((o.matType??role.type)==='mdfmicro'&&o.band==='all'&&poly.length>=3&&!MC_SKIP.test(o.type||'')){const ip=insetPoly(poly,1);if(ip&&ip.length>=3){const ax=Math.min(...ip.map(p=>p[0])),ay=Math.min(...ip.map(p=>p[1]));poly=ip.map(p=>[r1(p[0]-ax),r1(p[1]-ay)]);holes.forEach(q=>{q.x=r1(q.x-ax);q.y=r1(q.y-ay);if(q.poly)q.poly=q.poly.map(p=>[r1(p[0]-ax),r1(p[1]-ay)])});w=Math.max(...poly.map(p=>p[0]));h=Math.max(...poly.map(p=>p[1]));o=Object.assign({},o,{notes:(o.notes||[]).concat('Cut 1 mm smaller all round than the finished front: the microcement adds about 1 mm on every edge')})}}
     panels.push(Object.assign({notes:[],band:'none',bandLen:0},o,{poly,holes,w,h,t:o.t??+role.t,fin:o.fin??role.fin,sheet:o.sheet??role.sheet,matType:o.matType??role.type??'melamine'}));
@@ -1551,9 +1556,9 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
         extraNotes=[...extraNotes];if(rec)extraNotes.push(`Shallow cabinet above the desk: the front sits ${f0(recOff)} mm back, inside the sides, with a 2.5 mm reveal — use inset hinges`);else if(ins)extraNotes.push('Inset — sits inside the cabinet frame with a 2.5 mm reveal; use 0 mm overlay (inset) hinges or runners');
         if(face==='fluted'){extraNotes.push('Fluted / reeded face: 25 mm reeds, 6 mm deep — buy reeded MDF or rout after cutting');H.flute++}const htO=(z.hts||[])[idx]||z.hd||(face==='dots'?'hole':''),htU=htO&&HANDLES.some(h_=>h_[0]===htO)?htO:HT,hs=(z.nh||[])[idx]?{type:'none'}:handleSpec(kind,poly,hinge,htU),dotted=hs.type==='dots'&&!fab&&(kind==='door'||kind==='drawer')&&!z.dog,holes=handleHoles(hs);let dd=DOTSZ[O.dotSize]||38;
         if(hs.type==='dots'&&!dotted){hs.type='none'}
-        {const hcM=kind==='door'&&!/Sliding|Pocket/.test(type)&&(hinge==='L'||hinge==='R')?/(\d+) hinges/.exec(extraNotes.join(' ')):null,hc_=hcM?+hcM[1]:0;
+        let cupYs=null;{const hcM=kind==='door'&&!/Sliding|Pocket/.test(type)&&(hinge==='L'||hinge==='R')?/(\d+) hinges/.exec(extraNotes.join(' ')):null,hc_=hcM?+hcM[1]:0;
           if(hc_>0){const xs_=poly.map(p_=>p_[0]),xl=Math.min(...xs_),xr=Math.max(...xs_),cx=hinge==='L'?xl+21.5:xr-21.5,yb=Math.min(...poly.map(p_=>p_[1])),yt_=polyTopAt(poly,cx),yT=isFinite(yt_)?yt_:Math.max(...poly.map(p_=>p_[1])),mg=Math.max(35,Math.min(100,(yT-yb)/4)),a=yb+mg,b=yT-mg,ys_=hc_===1||b-a<40?[(yb+yT)/2]:Array.from({length:hc_},(_,m)=>a+(b-a)*m/(hc_-1));
-            ys_.forEach(y_=>holes.push({x:cx,y:y_,d:35,dp:13,cup:true}));extraNotes.push(`Hinge cups Ø35 × 13 mm deep in the back face, centre ${21.5} mm from the ${hinge==='L'?'left':'right'} edge, at ${ys_.map(y_=>f0(y_-yb)).join(', ')} mm from the bottom edge. Mounting plates on the cabinet side 37 mm from its front edge, at the same heights`)}}
+            cupYs=ys_.slice();ys_.forEach(y_=>holes.push({x:cx,y:y_,d:35,dp:13,cup:true}));extraNotes.push(`Hinge cups Ø35 × 13 mm deep in the back face, centre ${21.5} mm from the ${hinge==='L'?'left':'right'} edge, at ${ys_.map(y_=>f0(y_-yb)).join(', ')} mm from the bottom edge. Mounting plates on the cabinet side 37 mm from its front edge, at the same heights`)}}
         let dots=null;if(dotted){dots=dotsFor(poly,kind,hinge,O.dotPat||'grid',dd,(+O.dotSeed||0)*7919+i*131+k*17+idx*7,+O.dotSeed||0);dots.forEach(([x_,y_,d_])=>holes.push({x:x_,y:y_,d:d_||dd}));const nBig=dots.filter(p_=>p_[2]>dd).length;extraNotes.push(`${dots.length-nBig} holes Ø${dd}${nBig?` and ${nBig} finger hole Ø${dots.find(p_=>p_[2]>dd)[2]}`:''} drilled through as the handle — drill from the front with a sharp Forstner bit into a backing board, so the back does not splinter`)}let notes=[...extraNotes];const hn=handleNote(hs);if(hn)notes.push(hn);countHandle(hs);
         if(fab){const inner=insetPoly(poly,60);holes.push({poly:inner,x:inner[0][0],y:inner[0][1]});notes.push(`Fabric frame with 60 mm border; wrap in ${FABRICS[fcol].name.toLowerCase()} fabric`);addFabric(poly,fcol,lab)}
         let inner=null;if(!fab&&(face==='cane'||face==='glass')){const bw=face==='cane'?70:45;inner=insetPoly(poly,bw);holes.push({poly:inner,x:inner[0][0],y:inner[0][1]});const xs=inner.map(p=>p[0]),ys=inner.map(p=>p[1]),iw=Math.max(...xs)-Math.min(...xs),ih=Math.max(...ys)-Math.min(...ys);
@@ -1581,7 +1586,7 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
         else if(face==='slat'&&kind==='door')notes.push('Slats are not possible on this front; it is a flat door');
         if(!slat)addPanel({type:fab?type+' (fabric frame)':type,role:'front',fin:ff||undefined,sec:lab,poly,holes,grain:grainU?'w':'h',band:'all',notes});
         const zF=zf!=null?zf:(ins?0:tf);
-        fronts.push({z0:q.z0,kind,poly,hinge,sec:i,zone:k,idx,handle:hs,fabric:fab?fcol:null,fin:ff,inset:ins,face:fab?'flat':face,slats:slat?slat.slats:null,dots,dotD:dd,inner,zF,rear:zf!=null&&zf<=tf+1&&z.doorMode==='slide',rec,dog:z.dog||'',dogCut});
+        fronts.push({z0:q.z0,kind,poly,hinge,cups:cupYs,ins,sec:i,zone:k,idx,handle:hs,fabric:fab?fcol:null,fin:ff,inset:ins,face:fab?'flat':face,slats:slat?slat.slats:null,dots,dotD:dd,inner,zF,rear:zf!=null&&zf<=tf+1&&z.doorMode==='slide',rec,dog:z.dog||'',dogCut});
         if(inner&&face==='glass'){const xs=poly.map(p=>p[0]),ys=poly.map(p=>p[1]),x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),ix=inner.map(p=>p[0]),iy=inner.map(p=>p[1]),ix0=Math.min(...ix),ix1=Math.max(...ix),iy0=Math.min(...iy),iy1=Math.min(...inner.filter(p=>p[1]>iy0+1).map(p=>p[1]));
           [[x0,y0,ix0,iy1+45],[ix1,y0,x1,iy1+45],[ix0,y0,ix1,iy0],[ix0,iy1,ix1,iy1+45]].forEach(([a,b,c,d])=>{if(c-a>1&&d-b>1)items.push(Object.assign(wf(fpq([[a,b],[c,b],[c,d],[a,d]],zF,tf,'front','front'),ff),{sz:i+':'+k}))});
           items.push(Object.assign(fpq(inner,zF-tf/2+2,4,'glass','front'),{sz:i+':'+k}))}
@@ -1879,12 +1884,21 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
     const lab=boxes?`S${own[0].i+1} ${wl.side}`:(Lq?(Rq?`S${Lq.i+1}|S${Rq.i+1}`:'right end'):'left end');
     const spl=own.find(q=>q.splitK>=0),sY=spl?spl.zones[spl.splitK].divY+tc:null;
     const pcs=[];if(spl&&!gIn){pcs.push({y0:yb,y1:sY,ft:'lowerU'});pcs.push({y0:sY,y1:null,ft:'upperU'})}else if(gIn){const LZ=secs[gIn.lead].zones,ko=gIn.ko;if(ko>0)pcs.push({y0:yb,y1:LZ[ko-1].divY,ft:'lower'});const uy=LZ[ko].divY+LZ[ko].divT;if(uy<hF-60){if(spl&&sY>uy+60&&sY<hF-60){pcs.push({y0:uy,y1:sY,ft:'upper'});pcs.push({y0:sY,y1:null,ft:'upperU'})}else pcs.push({y0:uy,y1:null,ft:'upper'})}}else pcs.push({y0:yb,y1:null});
-    pcs.forEach(pc=>{const tF=pc.y1??hF,tB=pc.y1??(hF-drop),poly=[[0,pc.y0],[dW,pc.y0],[dW,tB],[0,tF]];let notes=[...base];if(own.length===2&&Lq.z0!==Rq.z0)notes.push(`Front edge stands ${f0(Math.abs(Lq.z0-Rq.z0))} mm proud of the shallower column — band or cover the exposed face`);
+    // every hole in this side: connector screws for the boards, shelf pins, hinge mounting plates
+    const drill=(y0,y1)=>{const hs=[],near=(u,y)=>hs.some(h=>Math.abs(h.x-u)<12&&Math.abs(h.y-y)<12),put=(u,y,o)=>{if(y<y0+8||y>y1-8||u<5||u>dW-5)return;let uu=u;if(near(uu,y))uu+=25;if(!near(uu,y))hs.push(Object.assign({x:uu,y},o))};
+      own.forEach(q=>{if(q.panel)return;const uF=q.z0-zmn,isL=boxes?wl.side==='left':q===Rq,face=`face towards ${'S'+(q.i+1)}`,us=q.Dh>420?[50,q.Dh/2,q.Dh-50]:[50,q.Dh-50];
+        const boards=[];if(q.zones[0]&&!q.desk)boards.push(q.zones[0].y0-tc/2);q.zones.forEach(zr=>{if(!zr.top&&zr.divT)boards.push(zr.divY+zr.divT/2)});{const t0=q.top(q.xa),t1=q.top(q.xb);if(Math.abs(t0-t1)<2)boards.push(q.top(xL)-tc/2)}
+        boards.forEach(y=>us.forEach(u=>put(uF+u,y,{d:5,cf:1,face:'through · connector screw'})));
+        q.zones.forEach(zr=>(zr.shelvesY||[]).forEach(([y,x0,x1])=>{if(isL?Math.abs(x0-1-q.xa)<3:Math.abs(x1+1-q.xb)<3)[37,q.Dh-37].forEach(u=>put(uF+u,y-4,{d:5,dp:12,face}))}));
+        fronts.filter(f=>f.sec===q.i&&f.cups&&!f.rear&&(isL?f.hinge==='L':f.hinge==='R')).forEach(f=>{const xs=f.poly.map(p_=>p_[0]),he=isL?Math.min(...xs):Math.max(...xs);if(Math.abs(he-(isL?q.xa:q.xb))>40)return;f.cups.forEach(y=>[y-16,y+16].forEach(yy=>put(uF+37,yy,{d:5,dp:12,face,plate:1})))})});
+      return hs};
+    pcs.forEach(pc=>{const tF=pc.y1??hF,tB=pc.y1??(hF-drop),poly=[[0,pc.y0],[dW,pc.y0],[dW,tB],[0,tF]];let notes=[...base];const sideHoles=drill(pc.y0,Math.min(tF,tB));
+      if(sideHoles.length){const nc=sideHoles.filter(h=>h.cf).length,np=sideHoles.filter(h=>h.dp&&!h.plate).length,nh=sideHoles.filter(h=>h.plate).length;notes.push(`Drilling (see Lofting): ${[nc&&`${nc} × Ø5 through for the connector screws, centred on each board`,np&&`${np} shelf-pin holes Ø5 × 12 deep, 37 mm from the front and back edges`,nh&&`${nh} holes Ø5 × 12 deep for the hinge mounting plates, 37 mm from the front edge, 32 mm apart`].filter(Boolean).join(' · ')}`)}if(own.length===2&&Lq.z0!==Rq.z0)notes.push(`Front edge stands ${f0(Math.abs(Lq.z0-Rq.z0))} mm proud of the shallower column — band or cover the exposed face`);
       if(pc.ft==='lower')notes=notes.filter(t=>!t.includes('∠')).concat('Stops under the niche sill');
       if(pc.ft==='upper'&&pc.y1!=null)notes=notes.filter(t=>!t.includes('∠')).concat('Lower unit — the upper unit stands on it');
       if(pc.ft==='upper')notes.push('Stands on the board above the niche; screw down through the header and into the rear rail');
       if(pc.ft==='lowerU')notes=notes.filter(t=>!t.includes('∠')).concat('Lower unit — the upper unit stands on it');if(pc.ft==='upperU')notes.push('Upper unit — screw down into the lower unit through the double panel');
-      addPanel({type:typ+(pc.ft==='lowerU'?' (lower unit)':pc.ft==='upperU'?' (upper unit)':pc.ft?(pc.ft==='upper'?' above opening':' below opening'):''),role:'carcass',fin:dF||undefined,sec:lab,poly,grain:'h',band:'front',bandLen:tF-pc.y0,notes,angled:notes.some(t=>t.includes('∠'))});
+      addPanel({type:typ+(pc.ft==='lowerU'?' (lower unit)':pc.ft==='upperU'?' (upper unit)':pc.ft?(pc.ft==='upper'?' above opening':' below opening'):''),role:'carcass',fin:dF||undefined,sec:lab,poly,holes:sideHoles,grain:'h',band:'front',bandLen:tF-pc.y0,notes,angled:notes.some(t=>t.includes('∠'))});
       items.push({k:'prism',poly,toW:(u,v)=>[xL,v,-(u+zmn)],ext:[tc,0,0],role:'carcass',fin:dF||undefined});parts.push({x:xL,yb:pc.y0,h:tF,fin:dF});if(dF&&(boxes||own.length===1))(H.drench=H.drench||[]).push({fin:dF,area:dW*(tF-pc.y0)/1e6,sec:lab,out:1})});
     if(!boxes&&!nearDesk)H.legs+=2;H.brackets+=boxes?1:2;if(boxes&&wl.side==='left'&&own[0].i>0)H.boxJoins++;
   });
@@ -1988,6 +2002,12 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
       if(miss.length)warns.push(`Book ladder: ${miss.map(q=>'S'+(q.i+1)).join(', ')} ${miss.length>1?'have':'has'} no joint at the rail height (${f0(Hr)} mm) — tap “Line up the cabinets” in the Book ladder card so the rail runs along one straight line.`);
       if(Hr<1500)warns.push(`Book ladder: a rail at ${f0(Hr)} mm is low — a step stool would do.`);
       H.ladder={rail:f0(r1-r0),h:f0(Hr),len:f0(len),foot:f0(foot)}}}
+  // ---- collision checks (the sloped-ceiling swing and sockets behind dividers/drawers are checked where those parts are made)
+  {const lvl=f=>`S${f.sec+1} level ${f.zone+1}`;
+    fronts.forEach(f=>{if(f.kind!=='door'||f.rear||!(f.hinge==='L'||f.hinge==='R'))return;const xs=f.poly.map(p=>p[0]),hx=f.hinge==='L'?Math.min(...xs):Math.max(...xs),fx=f.hinge==='L'?Math.max(...xs):Math.min(...xs),top=Math.max(...f.poly.map(p=>p[1]));
+      {const q=secs[f.sec],nq=secs[f.hinge==='L'?f.sec-1:f.sec+1],y0=Math.min(...f.poly.map(p=>p[1])),myDz=((q.zones.find(z=>z.k===f.zone)||{}).dzV)||0;if(nq&&Math.abs((f.hinge==='L'?q.bL:q.bR)-hx)<45){const st=nq.zones.find(z=>(z.dzV||0)>myDz+5&&z.y0<top&&z.y0+z.h>y0);if(st)warns.push(`${lvl(f)}: the door hinges next to level ${st.k+1} of S${nq.i+1}, which sticks out ${f0(st.dzV-myDz)} mm further — the door hits it before it is fully open. Hinge it on the other side or make that level flush.`)}}
+      if(!f.ins&&(hx<25||hx>W-25))warns.push(`${lvl(f)}: the door is hinged right next to the room wall — it can't open fully and the handle hits the wall. Add a side filler of at least 30 mm or hinge it on the other side.`)});
+    const uq=[...new Set(warns)];warns.length=0;warns.push(...uq)}
   if(GRV)panels.forEach(p=>{if(p.role==='carcass'&&/(Box side|side|Partition|End panel|^Bottom|^Top|Fixed divider|Seat board|Opening top|Opening sill)/i.test(p.type)&&!/Pedestal|Header rail|Vertical divider|Drawer|packer|Screen/.test(p.type)&&!p.notes.some(n_=>/shallower than the sides|Shallow cabinet/.test(n_)))p.notes.push(`Back groove ${GRV_W} × ${GRV_D} mm deep, ${GRV_OFF} mm in from the back edge`)});
   // furniture fasteners
   {const JN=O.joinery||'confirmat',jt=secs.filter(q=>!q.panel&&!q.door);let joints=0;jt.forEach(q=>{const per=(JN==='confirmat'||JN==='screw')?Math.ceil((q.Dc-100)/250)+1:(q.Dc>450?3:2);const nh=1+1+q.zones.filter(zr=>!zr.top&&zr.divY).length;q.jn=nh*2*per;joints+=nh*2*per});
@@ -2382,6 +2402,9 @@ function elevSVG(S,G,o={}){
   }
   if(!mini&&G._dragQ&&G.secs[o.sel]===G._dragQ){const q=G._dragQ;q.zones.forEach(zr=>{if(zr.top||zr.divY==null||!q.s.zones[zr.k+1])return;const by=zr.divY+zr.divT/2,mid=(q.bL+q.bR)/2,gw=foc?Math.min(190,(q.bR-q.bL)*.45):Math.min(fs*2.6,(q.bR-q.bL)*.4),hitH=foc?120:fs*1.1,gh=foc?30:fs*.48;
         push(`<g class="zdrag" data-zd="${q.i}|${zr.k}" data-by="${n1(by)}"><rect x="${n1(q.bL)}" y="${n1(Y(by)-hitH/2)}" width="${n1(q.bR-q.bL)}" height="${n1(hitH)}" fill="#000" fill-opacity="0"/><line class="zdl" x1="${n1(q.bL)}" x2="${n1(q.bR)}" y1="${n1(Y(by))}" y2="${n1(Y(by))}" style="stroke:var(--accent)" stroke-width="${sw*1.5}" stroke-opacity="0"/><rect class="zdg" x="${n1(mid-gw/2)}" y="${n1(Y(by)-gh/2)}" width="${n1(gw)}" height="${n1(gh)}" rx="${n1(gh/2)}" fill="#3C474F" fill-opacity=".85" stroke="#fff" stroke-width="${sw*1.2}"/><text class="zdt" x="${n1(mid)}" y="${n1(Y(by)-fs*.45)}" text-anchor="middle" font-size="${fs*.62}" style="fill:var(--accent);display:none;paint-order:stroke" stroke="#fff" stroke-width="${sw*3}"></text></g>`)})}
+  // column edges of the selected column: drag sideways to make it wider or narrower (the neighbour gives or takes the difference)
+  if(!mini&&o.sel!=null&&G.secs[o.sel]&&!foc){const q=G.secs[o.sel];[['l',o.sel-1,q.bL],['r',o.sel+1,q.bR]].forEach(([sd,j,bx])=>{const nq=G.secs[j];if(!nq||q.follow!=null||nq.follow!=null)return;const ht=Math.min(q.top(Math.max(q.bL+1,Math.min(q.bR-1,bx))),nq.top(Math.max(nq.bL+1,Math.min(nq.bR-1,bx)))),hitW=fs*1.2,gw=fs*.48,gh=Math.min(fs*2.6,ht*.3),my=ht*.5;
+    push(`<g class="cdrag" data-cd="${q.i}|${sd}|${j}" data-bx="${n1(bx)}"><rect x="${n1(bx-hitW/2)}" y="${n1(Y(ht))}" width="${n1(hitW)}" height="${n1(ht)}" fill="#000" fill-opacity="0"/><line class="cdl" x1="${n1(bx)}" x2="${n1(bx)}" y1="${n1(Y(0))}" y2="${n1(Y(ht))}" style="stroke:var(--accent)" stroke-width="${sw*1.5}" stroke-opacity="0"/><rect class="cdg" x="${n1(bx-gw/2)}" y="${n1(Y(my)-gh/2)}" width="${n1(gw)}" height="${n1(gh)}" rx="${n1(gw/2)}" fill="#3C474F" fill-opacity=".85" stroke="#fff" stroke-width="${sw*1.2}"/><text class="cdt" x="${n1(bx)}" y="${n1(Y(my)-gh/2-fs*.4)}" text-anchor="middle" font-size="${fs*.62}" style="fill:var(--accent);display:none;paint-order:stroke" stroke="#fff" stroke-width="${sw*3}"></text></g>`)})}
   push('</svg>');return out.join('');
 }
 
@@ -3566,7 +3589,7 @@ function renderCut(){
   const nest=nestAll(gs),sp=stockPlan(gs);
   let h=`<h2>Cut list</h2><p class="lede">Every panel with its finished size. Painted MDF areas count both faces and the edges. Length runs along the grain. Shaped, drilled and fabric-frame parts are drawn point by point in Lofting. Construction: ${S.opts.construct==='boxes'?'separate boxes':'shared partitions'}.</p>
   <div class="stats"><div class="stat"><b>${total}</b><span>panels · ${gs.length} unique</span></div><a class="stat pstat" href="#price" data-act="toPrice"><b id="pstatv">…</b><span>estimated price ↓</span></a>${nest.map(n=>`<div class="stat"><b>${n.sheets.length}${n.over.length?'+':''}</b><span>${esc(n.name)} mm sheets</span></div>`).join('')}${sp.groups.map(g=>`<div class="stat"><b>${g.bars.length}</b><span>${esc(FIN[g.fin]?.name||'')} ${g.t} mm · ${g.W}×${sp.cfg.L} pre-edged boards</span></div>`).join('')}</div>
-  <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap"><button class="btn" data-act="copyCSV">Copy as CSV</button><button class="btn" data-act="copyText">Copy as text</button><button class="btn" data-act="lblPdf">Part labels (PDF)</button></div>
+  <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap"><button class="btn" data-act="copyCSV">Copy as CSV</button><button class="btn" data-act="copyText">Copy as text</button><button class="btn" data-act="lblPdf">Part labels (PDF)</button><button class="btn" data-act="wsOpen">Workshop mode</button></div>
   <div class="pbud" style="flex-wrap:wrap"><span class="pbok">Have it cut</span><span style="flex:1 1 260px">Send the cut list to a panel shop: they cut (and edge-band) every part for you. The file is an Excel list in Dutch with sizes, board, grain and which edges get edge band.</span>${Object.entries(SHOP_INFO).map(([k,I])=>`<button type="button" class="btn sm" data-act="shopX" data-a="${k}">Excel for ${I.name}</button>`).join('')}</div>
   ${ui.shopMail?`<div class="pbud" style="flex-direction:column;align-items:stretch"><span>Mail it to <b>${SHOP_INFO[ui.shopMail].email}</b> (or call ${SHOP_INFO[ui.shopMail].phone}) with the Excel attached. ${SHOP_INFO[ui.shopMail].how} Text you can use:</span><textarea readonly rows="7" style="width:100%;font:inherit;font-size:12.5px">${esc(shopMail(ui.shopMail))}</textarea><button type="button" class="btn sm" data-act="shopMailCopy" style="align-self:flex-start">Copy the text</button></div>`:''}
   <div class="tw"><table class="cut"><thead><tr><th>#</th><th>Part</th><th>Qty</th><th>Length</th><th>Width</th><th>Shape</th><th>Where</th><th>Notes</th></tr></thead><tbody>`;
@@ -3971,7 +3994,7 @@ function renderLoft(){
     ${p.notes.length?`<div class="note">${esc(p.notes.join(' · '))}</div>`:''}
     <div class="note">${esc(p.secs.join(', '))} · bounding box ${f0(p.w)} × ${f0(p.h)}</div>
     ${p.rect&&!p.holes.length?'':`<table class="ord"><thead><tr><th>Pt</th><th>X</th><th>Y</th><th>Angle</th></tr></thead><tbody>${p.poly.map((q,i)=>`<tr><td>${i+1}</td><td>${q[0].toFixed(1)}</td><td>${q[1].toFixed(1)}</td><td>${vAngle(p.poly,i,ar).toFixed(1)}°</td></tr>`).join('')}</tbody></table>`}
-    ${p.manyHoles?`<p class="note">${p.holes.length} holes on a staggered 200 mm grid — positions shown in the drawing; first hole 100 mm from the left edge.</p>`:''}${!p.manyHoles&&p.holes.some(o=>!o.poly)?`<table class="ord"><thead><tr><th>Hole</th><th>X</th><th>Y</th><th>Size</th></tr></thead><tbody>${p.holes.filter(o=>!o.poly).map((o,i)=>`<tr><td>H${i+1}</td><td>${o.x.toFixed(1)}</td><td>${o.y.toFixed(1)}</td><td>${o.len?o.d+'×'+o.len+(o.dir==='v'?' ↕':' ↔'):'Ø'+o.d+(o.dp?' × '+o.dp+' deep':' through')}</td></tr>`).join('')}</tbody></table>`:''}${p.holes.filter(o=>o.poly).map(o=>`<table class="ord"><thead><tr><th>Cut-out</th><th>X</th><th>Y</th><th></th></tr></thead><tbody>${o.poly.map((q,k)=>`<tr><td>C${k+1}</td><td>${q[0].toFixed(1)}</td><td>${q[1].toFixed(1)}</td><td></td></tr>`).join('')}</tbody></table>`).join('')}
+    ${p.manyHoles?`<p class="note">${p.holes.length} holes on a staggered 200 mm grid — positions shown in the drawing; first hole 100 mm from the left edge.</p>`:''}${!p.manyHoles&&p.holes.some(o=>!o.poly)?`<table class="ord"><thead><tr><th>Hole</th><th>X</th><th>Y</th><th>Size</th></tr></thead><tbody>${p.holes.filter(o=>!o.poly).map((o,i)=>`<tr><td>H${i+1}</td><td>${o.x.toFixed(1)}</td><td>${o.y.toFixed(1)}</td><td>${o.len?o.d+'×'+o.len+(o.dir==='v'?' ↕':' ↔'):'Ø'+o.d+(o.dp?' × '+o.dp+' deep':' through')}${o.face&&o.dp?`<br><small>${esc(o.face)}</small>`:''}</td></tr>`).join('')}</tbody></table>`:''}${p.holes.filter(o=>o.poly).map(o=>`<table class="ord"><thead><tr><th>Cut-out</th><th>X</th><th>Y</th><th></th></tr></thead><tbody>${o.poly.map((q,k)=>`<tr><td>C${k+1}</td><td>${q[0].toFixed(1)}</td><td>${q[1].toFixed(1)}</td><td></td></tr>`).join('')}</tbody></table>`).join('')}
   </div>`}).join('')+'</div>';
   el.innerHTML=partBar()+h;
 }
@@ -4121,6 +4144,41 @@ function duoSVG(g){const K='#26282B',SK='#F2C9A0',W=620,Hh=268,F=252;
   const B={proud:['smile',[[470,F-118],[556,F-118]]],plan:['flat',[[492,F-36],[548,F-112]]]}[g.p]||['flat',[[488,F-34],[548,F-36]]];
   return `<svg viewBox="0 0 ${W} ${Hh}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bolt and Pip get it wrong"><rect width="${W}" height="${Hh}" rx="14" fill="#FFF8E6"/><path d="M0 ${F+2}h${W}v${Hh-F-16}a14 14 0 0 1-14 14H14a14 14 0 0 1-14-14z" fill="#F1E3BF"/><path d="M0 ${F-12}h${W}" stroke="#F3E9CC" stroke-width="6"/><path d="M0 ${F+2}h${W}" stroke="${K}" stroke-width="2.5"/>${P[g.p]||''}${bolt(82,A[0],A[1])}${pip(518,B[0],B[1])}${bub(10,300,g.a,82)}${bub(326,284,g.b,500)}<text x="82" y="${F+14}" text-anchor="middle" font-size="10" font-family="Inter,Arial,sans-serif" fill="#8A7A55">BOLT</text><text x="518" y="${F+14}" text-anchor="middle" font-size="10" font-family="Inter,Arial,sans-serif" fill="#8A7A55">PIP</text></svg>`}
 function gagHTML(t){const g=gagFor(t);return g?`<div class="gsub wide gcomic">${duoSVG(g)}<p><b>Don’t be like Bolt &amp; Pip.</b> ${g.tip}</p></div>`:''}
+/* every cut of every sheet, numbered sheet by sheet or grouped by saw setting (Build guide and Workshop mode) */
+function cutPlan(gs){const {kerf,trim}=sawCfg(),nest=nestAll(gs);
+    // collect every cut of every sheet first, so they can be numbered sheet by sheet or grouped by saw setting
+  const batch=S.opts.cutOrder==='width',ops=[],plans=[],AZ='ABCDEFGHIJKLMNOPQRSTUVWXYZ',KO={rip:0,cross:1,trim:2};
+  nest.forEach((g,gi)=>{if(!g.sheets.length)return;const L=g.sh.L,W=g.sh.W,pl={g,L,W,sheets:[]};plans.push(pl);
+    g.sheets.forEach((sh,si)=>{const strips={};sh.pl.forEach(c=>{(strips[c.y]=strips[c.y]||[]).push(c)});const ys=Object.keys(strips).map(Number).sort((a,b)=>a-b),cuts=[],txt=[],sn=`${g.name} mm sheet ${si+1}`;
+      const mshort=`${MATS[g.mt]?.short||''} ${FIN[g.fin]?.name||''} ${g.t} mm`.trim(),txtC=[],add=(o,t)=>{o.mat=mshort;o.sheet=sn;o.gi=gi;o.si=si;o.ord=ops.length;cuts.push(o);ops.push(o);if(t)(o.kind==='rip'?txt:txtC).push([o,t])};
+      ys.forEach((y,k)=>{const row=strips[y].sort((a,b)=>a.x-b.x),h=Math.max(...row.map(c=>c.ph)),yc=y+h,nm=AZ[k%26]+(k>=26?Math.floor(k/26):'');
+        if(yc<W-trim-1)add({kind:'rip',v:h,x1:0,y1:yc+kerf/2,x2:L,y2:yc+kerf/2,lbl:`strip ${nm}`,tag:nm},`<b>rip</b> strip ${nm}: ${f0(h)} mm wide, off the long edge`);else txt.push([null,`what is left of the sheet is strip ${nm} (${f0(h)} mm wide)`]);
+        row.forEach((c,j)=>{const xc=c.x+c.pw;let o=null,t;if(xc<L-trim-1){o={kind:'cross',v:c.pw,x1:xc+kerf/2,y1:y,x2:xc+kerf/2,y2:yc,lbl:`strip ${nm} → ${c.p.id}`,tag:`${nm}→${c.p.id}`};t=`strip ${nm}: <b>cross-cut</b> at ${f0(c.pw)} mm → ${c.p.id} ${esc(c.p.type)}`}else t=`strip ${nm}: the piece that is left is ${c.p.id} ${esc(c.p.type)} (${f0(c.pw)} mm)`;
+          const tr=c.ph<h-1?{kind:'trim',v:c.ph,x1:c.x,y1:y+c.ph+kerf/2,x2:xc,y2:y+c.ph+kerf/2,lbl:`${c.p.id} (from strip ${nm})`,tag:c.p.id}:null;
+          if(tr)t+=`, then <b>trim</b> it to ${f0(c.ph)} mm wide`;if(!c.p.rect)t+=` — then <b>shape</b> ${c.p.id} from its Lofting points${c.p.angled?' (bevel as noted in the cut list)':''}`;
+          if(o)add(o,t);else txtC.push([null,t]);if(tr)add(tr,null)})});
+      pl.sheets.push({sh,si,cuts,txt:txt.concat(txtC)})})});
+  // numbering: sheet by sheet (rips first on each sheet), or all cuts with the same saw setting one after another
+  const key=v=>Math.round(v*2)/2;
+  if(batch){ops.sort((a,b)=>KO[a.kind]-KO[b.kind]||key(b.v)-key(a.v)||a.ord-b.ord)}
+  else ops.sort((a,b)=>a.gi-b.gi||a.si-b.si||(a.kind==='rip'?0:1)-(b.kind==='rip'?0:1)||a.ord-b.ord);
+  ops.forEach((o,ix)=>o.num=ix+1);
+  const settings=new Set(ops.map(o=>o.kind+key(o.v))).size;let chg=0,prev='';ops.slice().sort((a,b)=>a.gi-b.gi||a.si-b.si||(a.kind==='rip'?0:1)-(b.kind==='rip'?0:1)||a.ord-b.ord).forEach(o=>{const k=o.kind+key(o.v);if(k!==prev)chg++;prev=k});
+  return {batch,ops,plans,settings,chg,key}}
+/* ---------- workshop mode: one cut or one build step at a time, ticks saved in the design ---------- */
+function wsItems(){const gs=groupsCache||(groupsCache=groupPanels(bgeo()));
+  if(ui.ws.tab==='cuts'){const {ops,key}=cutPlan(gs),nm={rip:'Rip',cross:'Cross-cut',trim:'Trim'},how={rip:'Jig / fence',cross:'Stop / mark',trim:'Jig / fence'};
+    return ops.map(o=>({k:`c|${o.sheet}|${o.kind}|${o.lbl}`,set:`${how[o.kind]} at ${f0(o.v)} mm`,setK:o.kind+key(o.v),big:o.kind==='rip'?`Rip strip ${o.tag} off ${o.sheet}`:o.kind==='cross'?`Cross-cut ${f0(o.v)} mm off strip ${o.tag.split('→')[0]} → ${o.tag.split('→')[1]}`:`Trim ${o.tag} to ${f0(o.v)} mm wide`,mid:o.kind==='rip'?`The strip is ${f0(o.v)} mm wide. Write the sheet number and letter ${o.tag} on it.`:(()=>{const id=o.kind==='cross'?o.tag.split('→')[1]:o.tag,pp=gs.find(p=>p.id===id)||{};return `${id} · ${esc(pp.type||'')} · ${f0(pp.L||0)} × ${f0(pp.Wd||0)} mm — write ${id} on its back edge.`})(),num:o.num}))}
+  renderGuide();return [...document.querySelectorAll('#v-guide .gstep')].map(st=>{const t=st.querySelector('h4')?.textContent||'',fig=st.querySelector('.gfig svg');return {k:`s|${t}`,set:`Step ${st.querySelector('.gnum')?.textContent||''}`,big:esc(t),mid:(st.querySelector('.gchips')?`<p>${[...st.querySelectorAll('.gchips > span')].map(c=>esc(c.textContent.trim())).join(' · ')}</p>`:'')+(st.querySelector('.gtxt')?.innerHTML||''),fig:fig?fig.outerHTML:''}})}
+function wsRender(){let m=document.getElementById('wsm');if(!ui.ws){if(m)m.remove();return}if(!m){m=document.createElement('div');m.id='wsm';m.className='ws';document.body.appendChild(m)}
+  const it=wsItems(),done=new Set(S.done?S.done[ui.ws.tab]||[]:[]);let i=Math.max(0,Math.min(it.length-1,ui.ws.i??it.findIndex(x=>!done.has(x.k))));if(i<0)i=0;ui.ws.i=i;const cur=it[i],nDone=it.filter(x=>done.has(x.k)).length;
+  const newSet=cur&&ui.ws.tab==='cuts'&&(i===0||it[i-1].setK!==cur.setK);
+  m.innerHTML=`<div class="wsbar"><div class="seg"><button type="button" class="${ui.ws.tab==='cuts'?'on':''}" data-act="wsTab" data-a="cuts">Cuts</button><button type="button" class="${ui.ws.tab==='steps'?'on':''}" data-act="wsTab" data-a="steps">Build steps</button></div><button type="button" class="btn sm" data-act="wsClose">Close</button></div>
+  <div class="wsprog"><i style="width:${it.length?Math.round(nDone/it.length*100):0}%"></i></div><div class="hintp" style="margin:4px 0 0">${nDone} of ${it.length} done${ui.ws.tab==='cuts'?` · order: ${S.opts.cutOrder==='width'?'same width together':'sheet by sheet'} (change it in the Build guide)`:''}</div>
+  ${cur?`<div class="wscard"><div class="wsset">${newSet?'⚑ Set the saw: ':''}${cur.set}${cur.num?` · cut ${cur.num}`:''}${done.has(cur.k)?' · ✓ done':''}</div><div class="wsbig">${cur.big}</div><div class="wsmid">${cur.mid}</div>${cur.fig?`<div class="wsfig">${cur.fig}</div>`:''}
+    <div class="wslist">${it.slice(i+1,i+6).map((x,j)=>`<button type="button" data-act="wsGo" data-a="${i+1+j}" class="${done.has(x.k)?'ok':''}">${x.num?x.num+'. ':''}${x.big.replace(/<[^>]+>/g,'')}</button>`).join('')}</div></div>
+  <div class="wsnav"><button type="button" class="btn" data-act="wsGo" data-a="${i-1}" ${i?'':'disabled'}>Back</button><button type="button" class="btn wsdone" data-act="wsDone">${done.has(cur.k)?'Next':'Done ✓'}</button></div>`:'<div class="wscard"><div class="wsbig">Nothing to do here</div></div>'}`}
+function wsDone(){const it=wsItems(),cur=it[ui.ws.i];if(!cur)return;S.done=S.done||{};const L=S.done[ui.ws.tab]=S.done[ui.ws.tab]||[];if(!L.includes(cur.k))L.push(cur.k);saveSoon&&saveSoon();ui.ws.i=Math.min(it.length-1,ui.ws.i+1);wsRender()}
 function renderGuide(){
   const G=bgeo(),el=document.getElementById('v-guide');if(!el)return;const gs=groupsCache||(groupsCache=groupPanels(G)),H=G.H,secs=G.secs.filter(q=>!q.panel),boxes=G.boxes,tc=G.tc,tb=G.tb;
   const JN=S.opts.joinery||'confirmat',FJ=FASTEN[JN],GRV=(S.opts.backFix||'groove')==='groove',GO=18,GD=10,GW=Math.round((tb+0.5)*10)/10;
@@ -4144,24 +4202,7 @@ function renderGuide(){
     step('How to cut the panels','',``,hwc('saw',1,'track saw or table saw, fine-tooth blade')+hwc('tape',1,'tape measure + square')+hwc('pencil',1,'pencil for part numbers'),
       `<b>Order of work on every sheet:</b> 1) ${trim?`trim ${trim} mm off the factory edges so you start square`:'check the factory edges are clean and square (set a sheet edge trim under Build if they are not)'}; 2) make all the long <b>rip cuts</b> first, splitting the sheet into strips A, B, C…; 3) <b>cross-cut</b> each strip into its parts, measuring every cut from the freshly cut end; 4) trim any part that is narrower than its strip; 5) cut angles and shapes last. Allow ${kerf} mm for the saw kerf — the plans already do. <b>Melamine chips:</b> with a track or circular saw cut good face <b>down</b>, on a table saw good face <b>up</b>; use a scoring blade or tape over the cut line. Write each part number on its back edge as soon as it is cut.<br><b>Which sheets first:</b> cut the carcass sheets first (sides, tops, bottoms, dividers), then shelves and backs, then the drawer boxes. The doors and drawer fronts are on their own sheets when they are a different board: cut those <b>last</b>, after the carcass stands, so you can measure each opening first and keep the 3 mm gaps even if a box came out a millimetre off.`,
       'Get a second person to support long strips as they come off the saw. Many panel shops cut and edge-band from this cut list for little money.');
-    // collect every cut of every sheet first, so they can be numbered sheet by sheet or grouped by saw setting
-    const batch=S.opts.cutOrder==='width',ops=[],plans=[],AZ='ABCDEFGHIJKLMNOPQRSTUVWXYZ',KO={rip:0,cross:1,trim:2};
-    nest.forEach((g,gi)=>{if(!g.sheets.length)return;const L=g.sh.L,W=g.sh.W,pl={g,L,W,sheets:[]};plans.push(pl);
-      g.sheets.forEach((sh,si)=>{const strips={};sh.pl.forEach(c=>{(strips[c.y]=strips[c.y]||[]).push(c)});const ys=Object.keys(strips).map(Number).sort((a,b)=>a-b),cuts=[],txt=[],sn=`${g.name} mm sheet ${si+1}`;
-        const mshort=`${MATS[g.mt]?.short||''} ${FIN[g.fin]?.name||''} ${g.t} mm`.trim(),txtC=[],add=(o,t)=>{o.mat=mshort;o.sheet=sn;o.gi=gi;o.si=si;o.ord=ops.length;cuts.push(o);ops.push(o);if(t)(o.kind==='rip'?txt:txtC).push([o,t])};
-        ys.forEach((y,k)=>{const row=strips[y].sort((a,b)=>a.x-b.x),h=Math.max(...row.map(c=>c.ph)),yc=y+h,nm=AZ[k%26]+(k>=26?Math.floor(k/26):'');
-          if(yc<W-trim-1)add({kind:'rip',v:h,x1:0,y1:yc+kerf/2,x2:L,y2:yc+kerf/2,lbl:`strip ${nm}`,tag:nm},`<b>rip</b> strip ${nm}: ${f0(h)} mm wide, off the long edge`);else txt.push([null,`what is left of the sheet is strip ${nm} (${f0(h)} mm wide)`]);
-          row.forEach((c,j)=>{const xc=c.x+c.pw;let o=null,t;if(xc<L-trim-1){o={kind:'cross',v:c.pw,x1:xc+kerf/2,y1:y,x2:xc+kerf/2,y2:yc,lbl:`strip ${nm} → ${c.p.id}`,tag:`${nm}→${c.p.id}`};t=`strip ${nm}: <b>cross-cut</b> at ${f0(c.pw)} mm → ${c.p.id} ${esc(c.p.type)}`}else t=`strip ${nm}: the piece that is left is ${c.p.id} ${esc(c.p.type)} (${f0(c.pw)} mm)`;
-            const tr=c.ph<h-1?{kind:'trim',v:c.ph,x1:c.x,y1:y+c.ph+kerf/2,x2:xc,y2:y+c.ph+kerf/2,lbl:`${c.p.id} (from strip ${nm})`,tag:c.p.id}:null;
-            if(tr)t+=`, then <b>trim</b> it to ${f0(c.ph)} mm wide`;if(!c.p.rect)t+=` — then <b>shape</b> ${c.p.id} from its Lofting points${c.p.angled?' (bevel as noted in the cut list)':''}`;
-            if(o)add(o,t);else txtC.push([null,t]);if(tr)add(tr,null)})});
-        pl.sheets.push({sh,si,cuts,txt:txt.concat(txtC)})})});
-    // numbering: sheet by sheet (rips first on each sheet), or all cuts with the same saw setting one after another
-    const key=v=>Math.round(v*2)/2;
-    if(batch){ops.sort((a,b)=>KO[a.kind]-KO[b.kind]||key(b.v)-key(a.v)||a.ord-b.ord)}
-    else ops.sort((a,b)=>a.gi-b.gi||a.si-b.si||(a.kind==='rip'?0:1)-(b.kind==='rip'?0:1)||a.ord-b.ord);
-    ops.forEach((o,ix)=>o.num=ix+1);
-    const settings=new Set(ops.map(o=>o.kind+key(o.v))).size;let chg=0,prev='';ops.slice().sort((a,b)=>a.gi-b.gi||a.si-b.si||(a.kind==='rip'?0:1)-(b.kind==='rip'?0:1)||a.ord-b.ord).forEach(o=>{const k=o.kind+key(o.v);if(k!==prev)chg++;prev=k});
+    const {batch,ops,plans,settings,chg,key}=cutPlan(gs);
     step('Cut order','',`<div class="fld" style="margin:4px 0 0"><span>Cut</span>${seg('opts.cutOrder',[['','Sheet by sheet'],['width','Same width together']],{dflt:''})}</div>`,'',
       batch?`All cuts with the same measurement are done one after the other, across every sheet, so you set your track-saw jig, fence or stop only <b>${settings}</b> times (sheet by sheet would be about ${chg} changes). First all <b>rips</b> (widest first), then all <b>cross-cuts</b> (longest first), then the <b>trims</b>. Keep the strips and pieces on a trolley labelled with their sheet and strip letter, and write the part number on each piece as it comes off. The numbers on the sheet drawings follow this order.`:`Each sheet is cut completely before the next one: rips first, then cross-cuts and trims, numbered on each drawing. Tip: choose “Same width together” to make every cut with the same measurement one after the other, so the jig or fence is set only ${settings} times instead of about ${chg}.`);
     const cutSVG2=(sh,pl,cuts,L,W)=>{const fs=Math.max(36,L/42);let sv=`<svg viewBox="0 0 ${L} ${W}" class="gsheet"><rect width="${L}" height="${W}" fill="#fff" stroke="${GK}" stroke-width="6"/>`;
@@ -4285,7 +4326,7 @@ function renderGuide(){
   if(G.ladder)ex.push('Screw the ladder-rail brackets into the boxes along the rail line, hang the ladder and check it rolls the full length.');
   if(ex.length)step('Finishing touches','','','',ex.join('<br>'));
   step('Done',`<div class="gdone">${elevSVG(S,G,{mini:true})}</div>`,'','','Clean the surfaces, stick on the door bumpers, and fill it up. Enjoy your Kast.');
-  el.innerHTML=partBar()+`<h2>Build guide</h2><p class="lede">${S.opts.noToons?'':'With <b>Bolt &amp; Pip</b>, two builders who get every step wrong first — so you don’t have to. '}Step by step, like flat-pack instructions: prepare, build each cabinet on the floor, install, fit the fronts, finish. Part numbers match the cut list and lofting. ${secs.length} columns · ${total} panels · ≈ ${hours} h for two people.</p><label class="chk" style="margin:-6px 0 14px"><input type="checkbox" data-act="toonsT" ${S.opts.noToons?'':'checked'}> Show Bolt &amp; Pip</label><div class="guide">${out.join('')}</div>`}
+  el.innerHTML=partBar()+`<h2>Build guide</h2><div style="margin:0 0 10px"><button type="button" class="btn" data-act="wsOpen">Workshop mode</button> <span class="hintp" style="display:inline">one cut or step at a time, in big letters, with ticks — for your phone in the workshop</span></div><p class="lede">${S.opts.noToons?'':'With <b>Bolt &amp; Pip</b>, two builders who get every step wrong first — so you don’t have to. '}Step by step, like flat-pack instructions: prepare, build each cabinet on the floor, install, fit the fronts, finish. Part numbers match the cut list and lofting. ${secs.length} columns · ${total} panels · ≈ ${hours} h for two people.</p><label class="chk" style="margin:-6px 0 14px"><input type="checkbox" data-act="toonsT" ${S.opts.noToons?'':'checked'}> Show Bolt &amp; Pip</label><div class="guide">${out.join('')}</div>`}
 
 function renderSheets(){
   const gs=groupsCache||groupPanels(bgeo());const ns=nestAll(gs);const el=document.getElementById('v-sheets');
@@ -4542,7 +4583,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
   return {f,R,C,guessed,asp,fov:2*Math.atan(imgH/2/f)*180/Math.PI}}
 
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.62';
+const APP_VERSION='v0.63';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
@@ -4854,6 +4895,19 @@ function pcalRender(){if(!PH.img){pcalEmpty();return}if(PH.maskEdit){pcalMask();
     z.h=Math.round(dd.zr.h+delta);if(zn&&+zn.h>0&&dd.nxt&&!dd.nxt.top)zn.h=Math.max(120,Math.round(dd.nxt.h-delta));
     ui.sel=dd.i;ui.zsel=dd.k;changed(true);toast(`Level height ${f0(z.h)} mm${dd.src!==dd.i?` (changed on column ${dd.src+1}, which this column follows)`:''}.`)};
   wrap.addEventListener('pointerup',up);wrap.addEventListener('pointercancel',up)})();
+(function(){const wrap=document.getElementById('elevWrap');let d=null;
+  const svgX=e=>{const sv=wrap.querySelector('svg');const pt=sv.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const m=sv.getScreenCTM();return m?pt.matrixTransform(m.inverse()).x:0};
+  wrap.addEventListener('pointerdown',e=>{const g=e.target.closest('.cdrag');if(!g)return;const [i,sd,j]=g.dataset.cd.split('|');const q=geo.secs[+i],nq=geo.secs[+j];if(!q||!nq)return;
+    d={g,i:+i,j:+j,sd,x0:svgX(e),bx:+g.dataset.bx,w0:q.w,w1:nq.w,id:e.pointerId,moved:false,dw:0};e.preventDefault();e.stopPropagation();try{wrap.setPointerCapture(e.pointerId)}catch(_){}g.classList.add('act')},true);
+  wrap.addEventListener('pointermove',e=>{if(!d||e.pointerId!==d.id)return;let dx=svgX(e)-d.x0;if(!d.moved&&Math.abs(dx)<4)return;d.moved=true;
+    let dw=Math.round((d.sd==='r'?dx:-dx)/10)*10;dw=Math.max(150-d.w0,Math.min(d.w1-150,dw));d.dw=dw;const off=d.sd==='r'?dw:-dw;
+    d.g.setAttribute('transform',`translate(${off} 0)`);d.g.querySelector('.cdl').setAttribute('stroke-opacity','1');const t=d.g.querySelector('.cdt');t.style.display='';t.textContent=`S${d.i+1} ${f0(d.w0+dw)} · S${d.j+1} ${f0(d.w1-dw)} mm`;e.preventDefault()});
+  const up=e=>{if(!d)return;const dd=d;d=null;dd.g.classList.remove('act');if(!dd.moved)return;
+    const kill=ev=>{ev.stopPropagation();ev.preventDefault()};addEventListener('click',kill,{capture:true,once:true});setTimeout(()=>removeEventListener('click',kill,{capture:true}),60);
+    if(Math.abs(dd.dw)<1){renderTab('elev');return}const a=S.sections[dd.i],b=S.sections[dd.j],aAuto=!(+a.w>0),bAuto=!(+b.w>0);
+    if(!aAuto||bAuto)a.w=Math.round(dd.w0+dd.dw);if(!bAuto)b.w=Math.round(dd.w1-dd.dw);if(aAuto&&!bAuto){} 
+    ui.sel=dd.i;changed(true);toast(`S${dd.i+1} is now ${f0(geo.secs[dd.i].w)} mm and S${dd.j+1} ${f0(geo.secs[dd.j].w)} mm wide.`)};
+  wrap.addEventListener('pointerup',up);wrap.addEventListener('pointercancel',up)})();
 /* ===== partial builds: only some cabinets in the parts, sheets, lofting, guide and PDF ===== */
 function hDiff(a,b){if(typeof a==='number')return a-(typeof b==='number'?b:0);if(Array.isArray(a))return a.slice(Array.isArray(b)?b.length:0);if(a&&typeof a==='object'){const o={};Object.keys(a).forEach(k=>{o[k]=hDiff(a[k],b?b[k]:undefined)});return o}return a}
 function hAdd(a,b){if(b==null)return a;if(a==null)return JSON.parse(JSON.stringify(b));if(typeof a==='number')return a+(+b||0);if(Array.isArray(a))return a.concat(b||[]);if(typeof a==='object'){const o={...a};Object.keys(b).forEach(k=>{o[k]=hAdd(a[k],b[k])});return o}return b??a}
@@ -5110,6 +5164,11 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'shop':S.opts.shop=a;ui.saver=null;changed(true);break;
     case 'saver':sheetSaver();dirty.cut=true;renderCut();{const t=document.getElementById('price');if(t)t.scrollIntoView({block:'start'})}break;
     case 'evenDoors':evenDoors();break;
+    case 'wsOpen':ui.ws={tab:'cuts'};wsRender();break;
+    case 'wsClose':ui.ws=null;wsRender();break;
+    case 'wsTab':ui.ws={tab:a};wsRender();break;
+    case 'wsGo':ui.ws.i=+a;wsRender();break;
+    case 'wsDone':wsDone();break;
     case 'lblPdf':toast('Making the labels…');exportLabels();break;
     case 'tplPdf':toast('Making the templates…');exportTemplates();break;
     case 'shopX':ui.shopMail=a;exportShop(a);dirty.cut=true;renderCut();break;
