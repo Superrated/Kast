@@ -28,6 +28,10 @@ Fitted is one web page with no server and no framework. `python3 build.py` glues
 - **A new price**: add it to `src/prices.js` (`PRICE_HW` matches hardware names by pattern).
 - **A new language**: see the README.
 
+## Version
+
+The version is `APP_VERSION` in `src/js/81-room-photo.js`. Each update adds 0.001 (v0.1 → v0.101 → v0.102 …); add a line to CHANGELOG.md and the README.
+
 ## Tests
 
 The app has no test files in the repo. The checks used during development load the built page in a headless browser and:

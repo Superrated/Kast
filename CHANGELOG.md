@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.1
+
+- New version numbering: this is **v0.1**, the first release under the Fitted by BRUIS name. From now on every update adds 0.001 (v0.101, v0.102, …). Earlier releases were numbered v0.01–v0.73.
+- Full test run on the cleaned-up code. No errors were found in:
+  - every button on a phone-sized and a desktop-sized screen;
+  - random designs and every column type, fitting and corner angle;
+  - all exports and the PDF.
+
 ## v0.73
 
 - **Code cleanup**: the single 6,000-line source file is split into readable pieces.
