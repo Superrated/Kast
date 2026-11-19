@@ -203,6 +203,7 @@ table.ord th:first-child,table.ord td:first-child{text-align:left}
 .wtgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.wtgrid div{border:1px solid var(--line);border-radius:8px;padding:8px;display:grid;gap:2px;background:var(--raised)}.wtgrid b{font-size:15px}.wtgrid span{font-size:11px;color:var(--ink3)}.wtt{width:100%;margin:8px 0}.wplan{margin:6px 0;padding-left:20px;display:grid;gap:3px;font-size:12.5px}.gplan{display:grid;gap:8px;max-width:640px}
 table.cut small.fin{display:block;font-size:10px;color:var(--ink3);font-weight:400}
 .offc{margin:0 0 12px}.offt{width:100%;margin:6px 0}
+.pjwrap{background:var(--stage);border:1px solid var(--line);border-radius:10px;padding:6px}.pjplan{display:block;width:100%;height:auto;max-height:280px}.pjw{cursor:pointer}.pjlist{display:grid;gap:6px}.pjrow{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:8px}.pjrow.on{border-color:var(--accent)}.pjrow .fld{grid-column:2}.pjrow>.note,.pjrow>.tag,.pjrow>.btn,.pjrow>.rowbtn{grid-column:2;justify-self:start}.pjcor{display:grid;gap:4px;padding-left:12px;border-left:3px solid var(--accent-soft)}.pjcor span{font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em}
 .opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
 .opt{border:1px solid var(--line);background:var(--raised);border-radius:8px;padding:8px;text-align:left;display:grid;gap:6px;font-size:12.5px;font-weight:500}
 .opt.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
@@ -2042,7 +2043,7 @@ function build(S){applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zones||[]).forE
     if(pairs&&H.handles.disc)H.handles.disc-=pairs}
   if(cubCov.length)for(let j=props.length-1;j>=0;j--){const p_=props[j],cx=p_.x+(p_.w||0)/2;if(cubCov.some(b=>b.sec===p_.sec&&b.zone===p_.zone&&cx>b.x0&&cx<b.x1&&p_.y>b.y0-30&&p_.y<b.y1))props.splice(j,1)}
   if(baskets.length)for(let j=props.length-1;j>=0;j--){const p_=props[j],cx=p_.x+(p_.w||0)/2;if(baskets.some(b=>b.sec===p_.sec&&b.zone===p_.zone&&cx>b.x0-4&&cx<b.x1+4&&p_.y>b.y0-30&&p_.y<b.y1+10))props.splice(j,1)}
-  try{accessCheck(result,S)}catch(e){}
+  try{accessCheck(result,S)}catch(e){}try{cornerCheck(result,S)}catch(e){}
   return result;
 }
 
@@ -2104,6 +2105,53 @@ function planHTML(G){const P=planOf(G),r=h=>h<1?Math.round(h*60)+' min':(Math.ro
   <table class="mini wtt"><tr><td class="note">Stage</td><td class="note">Time</td><td class="note"></td></tr>${P.st.map(x=>`<tr><td>${x[1]}</td><td>${r(x[2])}</td><td class="note">${esc(x[3])}</td></tr>`).join('')}</table>
   <ol class="wplan">${P.days.map((d,i)=>`<li><b>${i%2?'Sunday':'Saturday'}${wk>1?' · weekend '+(Math.floor(i/2)+1):''}</b> — ${d.t.join(', ')}</li>`).join('')}</ol>
   <p class="hintp" style="margin:0">A first-timer estimate with a track saw and a drill. Two people go faster for placing the boxes. ${S.opts.shopCut?'':'<label class="chk" style="display:inline-flex"><input type="checkbox" data-p="opts.shopCut" data-re="1"> The shop cuts the boards</label>'}</p>`}
+/* ===== several walls in one room: corners ===== */
+/* S.proj = {walls:[{name,len,D,state}], at, modes:[...]} — the wall at index `at` is S itself (its state is null).
+   Wall k+1 joins the right end of wall k at a right angle (you face wall k; the next wall is on your right).
+   'blind' corner: wall k runs into the corner and its last part sits behind wall k+1; 'dead': both stop and the corner square stays closed. */
+const PJ_MAX=4,PJ_NAMES=['A','B','C','D'];
+function pjWalls(){const P=S.proj;if(!P)return null;return P.walls.map((w,i)=>{const st=i===P.at?S:(()=>{try{return JSON.parse(w.state)}catch(e){return null}})();return {i,name:w.name,len:+w.len||0,D:st?+st.room.D:+w.D||600,st,side:st?+(st.skirt||{}).side||0:30}})}
+function pjEff(ws,k,P){const W=ws[k];let off=0;if(k>0)off+=ws[k-1].D;if(k<ws.length-1&&(P.modes[k]||'blind')==='dead')off+=ws[k+1].D;return Math.max(600,W.len-off)}
+function pjSync(){const P=S.proj;if(!P)return;const ws=pjWalls();ws.forEach((w,k)=>{const eff=pjEff(ws,k,P),cor={};if(k>0)cor.L={name:ws[k-1].name,D:ws[k-1].D,mode:P.modes[k-1]||'blind',side:'L'};if(k<ws.length-1)cor.R={name:ws[k+1].name,D:ws[k+1].D,mode:P.modes[k]||'blind',side:'R',sideN:ws[k+1].side};
+  if(k===P.at){S.room.W=eff;S.room.corner=cor}else if(w.st){w.st.room.W=eff;w.st.room.corner=cor;w.st.proj=undefined;P.walls[k].state=JSON.stringify(w.st);P.walls[k].D=w.st.room.D}})}
+function pjStart(){if(S.proj)return;S.proj={walls:[{name:'Wall A',len:+S.room.W,D:+S.room.D,state:null}],at:0,modes:[]};pjSync();changed(true)}
+function pjAdd(){const P=S.proj;if(!P||P.walls.length>=PJ_MAX)return;const cur=JSON.parse(JSON.stringify(S));delete cur.proj;cur.room.beams=[];cur.room.wobs=[];cur.room.objs=[];delete cur.room.corner;
+  cur.room.ceil=[{x:0,y:+cur.room.H},{x:3000,y:+cur.room.H}];cur.sections=cur.sections.slice(0,Math.max(1,Math.min(3,cur.sections.length))).map(x=>Object.assign(x,{w:null,pinX:null}));
+  const k=P.walls.length;P.walls.push({name:'Wall '+PJ_NAMES[k],len:2400,D:+cur.room.D,state:JSON.stringify(cur)});P.modes[k-1]='blind';pjSync();pjOpen(k)}
+function pjOpen(k){const P=S.proj;if(!P||k===P.at||!P.walls[k])return;const me=JSON.parse(JSON.stringify(S));delete me.proj;P.walls[P.at].state=JSON.stringify(me);P.walls[P.at].D=+S.room.D;
+  let nx;try{nx=fixFins(JSON.parse(P.walls[k].state))}catch(e){toast('That wall could not be opened');return}P.walls[k].state=null;P.at=k;nx.proj=P;S=nx;pjSync();ui.sel=0;ui.zsel=null;groupsCache=null;changed(true);toast(`Now designing ${P.walls[k].name}`)}
+function pjDel(k){const P=S.proj;if(!P||k===P.at||P.walls.length<2)return;P.walls.splice(k,1);P.modes.splice(Math.max(0,k-1),1);if(P.at>k)P.at--;P.walls.forEach((w,i)=>{if(/^Wall [A-D]$/.test(w.name))w.name='Wall '+PJ_NAMES[i]});if(P.walls.length===1){delete S.proj;delete S.room.corner;S.room.W=+P.walls[0].len||S.room.W}else pjSync();changed(true)}
+/* front-blocked parts at a blind corner, doors that hit each other */
+function cornerCheck(G,St){const C=St.room&&St.room.corner;if(!C)return;const W=G.W,fr=G.fronts.filter(f=>f.kind==='door'||f.kind==='drawer'),xr=f=>{const xs=f.poly.map(p=>p[0]);return [Math.min(...xs),Math.max(...xs)]};
+  if(C.R&&C.R.mode==='blind'){const lim=W-C.R.D-(C.R.sideN||30);const bad=fr.filter(f=>xr(f)[1]>lim+2);if(bad.length)G.warns.push(`Corner with ${C.R.name}: ${C.R.name}’s cabinets stand in front of the last ${f0(W-lim)} mm of this wall, so ${bad.length===1?'one front':bad.length+' fronts'} there can’t open. Make the last column a closed “blind” corner box (no door in that part), or switch the corner to “Both stop” in Room → Walls in this room.`);G.cornerLim=lim}
+  ['L','R'].forEach(sd=>{const c=C[sd];if(!c)return;const side=+(St.skirt||{}).side||0;if(side<50&&fr.some(f=>{const[a,b]=xr(f);return sd==='L'?a<side+700:b>W-side-700}))G.warns.push(`Corner with ${c.name}: the side strip is only ${f0(side)} mm — doors and handles in the corner can hit the other wall’s fronts. Make the side strips at least 50 mm (Build → Closing strips).`)})}
+function pjPlanSVG(){const P=S.proj;if(!P)return '';const ws=pjWalls();let x=0,y=0,dir=0;const segs=[];const dv=[[1,0],[0,1],[-1,0],[0,-1]],nv=[[0,1],[-1,0],[0,-1],[1,0]];
+  ws.forEach((w,k)=>{const d=dv[dir],n=nv[dir],s0=k>0?ws[k-1].D:0,s1=w.len-(k<ws.length-1&&(P.modes[k]||'blind')==='dead'?ws[k+1].D:0);segs.push({k,w,o:[x,y],d,n,s0,s1});x+=d[0]*w.len;y+=d[1]*w.len;dir=(dir+1)%4});
+  const pts=[];segs.forEach(g=>{pts.push(g.o,[g.o[0]+g.d[0]*g.w.len,g.o[1]+g.d[1]*g.w.len])});const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]),pad=500,x0=Math.min(...xs)-pad,y0=Math.min(...ys)-pad,W_=Math.max(...xs)-x0+pad,H_=Math.max(...ys)-y0+pad;
+  const P_=(a,b)=>`${n1(a)},${n1(b)}`;let o=`<svg viewBox="${n1(x0)} ${n1(y0)} ${n1(W_)} ${n1(H_)}" class="pjplan" role="img" aria-label="Floor plan of the walls">`;
+  segs.forEach(g=>{const[ox,oy]=g.o,[dx,dy]=g.d,[nx,ny]=g.n,L=g.w.len,D=g.w.D,act=g.k===P.at;
+    o+=`<line x1="${n1(ox)}" y1="${n1(oy)}" x2="${n1(ox+dx*L)}" y2="${n1(oy+dy*L)}" style="stroke:var(--ink)" stroke-width="60" stroke-linecap="square"/>`;
+    const q=[[g.s0,0],[g.s1,0],[g.s1,D],[g.s0,D]].map(([s,t])=>[ox+dx*s+nx*t,oy+dy*s+ny*t]);
+    o+=`<polygon points="${q.map(p=>P_(p[0],p[1])).join(' ')}" style="fill:${act?'var(--accent-soft)':'var(--raised)'};stroke:${act?'var(--accent)':'var(--ink2)'}" stroke-width="${act?24:14}" data-act="pjOpen" data-a="${g.k}" class="pjw"/>`;
+    const c=[ox+dx*(g.s0+g.s1)/2+nx*D/2,oy+dy*(g.s0+g.s1)/2+ny*D/2];o+=`<text x="${n1(c[0])}" y="${n1(c[1]+90)}" text-anchor="middle" font-size="260" font-weight="700" style="fill:${act?'var(--accent)':'var(--ink2)'};pointer-events:none">${esc(g.w.name.replace(/^Wall /,''))}</text>`;
+    // doors: swing arcs, from each wall's own geometry
+    let G_=null;try{G_=g.k===P.at?geo:build(g.w.st)}catch(e){}if(G_){G_.fronts.filter(f=>f.kind==='door').forEach(f=>{const xs_=f.poly.map(p=>p[0]),a=Math.min(...xs_)+g.s0,b=Math.max(...xs_)+g.s0,w_=b-a,hx=f.hinge==='R'?b:a,s_=f.hinge==='R'?-1:1,t=D+20;
+      const H0=[ox+dx*hx+nx*t,oy+dy*hx+ny*t],E=[ox+dx*(hx+s_*w_)+nx*t,oy+dy*(hx+s_*w_)+ny*t],O=[H0[0]+nx*w_,H0[1]+ny*w_],sw=(s_>0)===((dx*ny-dy*nx)>0)?0:1;
+      o+=`<path d="M${P_(...O)} A${n1(w_)} ${n1(w_)} 0 0 ${sw} ${P_(...E)}" fill="none" style="stroke:var(--ink3)" stroke-width="10" stroke-dasharray="40 30"/><line x1="${n1(H0[0])}" y1="${n1(H0[1])}" x2="${n1(O[0])}" y2="${n1(O[1])}" style="stroke:var(--ink3)" stroke-width="14"/>`})}
+    const m=[ox+dx*L/2-nx*260,oy+dy*L/2-ny*260];o+=`<text x="${n1(m[0])}" y="${n1(m[1]+50)}" text-anchor="middle" font-size="150" style="fill:var(--ink3)">${f0(L)}</text>`});
+  return o+'</svg>'}
+function pjHTML(){const P=S.proj;if(!P)return `<p class="hintp">An L- or U-shaped room? Add the wall to the right of this one; Kast keeps the corner right and adds up the whole room.</p><button type="button" class="btn sm" data-act="pjStart">+ Design more walls of this room</button>`;
+  const ws=pjWalls();return `<div class="pjwrap">${pjPlanSVG()}</div><p class="hintp" style="margin:0">Seen from above. Tap a wall to design it. Dashed arcs show how the doors open.</p>
+  <div class="pjlist">${ws.map((w,k)=>`<div class="pjrow ${k===P.at?'on':''}"><b>${esc(w.name)}</b><label class="fld"><span>Wall length</span><span class="inp"><input type="number" inputmode="decimal" data-pj="${k}" value="${w.len}"><em>mm</em></span></label>
+    <span class="note">${f0(w.D)} deep · cabinets ${f0(pjEff(ws,k,P))} mm</span>${k===P.at?'<span class="tag">open now</span>':`<button type="button" class="btn sm" data-act="pjOpen" data-a="${k}">Open</button><button type="button" class="rowbtn" data-act="pjDel" data-a="${k}" aria-label="Remove ${esc(w.name)}">×</button>`}</div>${k<ws.length-1?`<div class="pjcor"><span>Corner ${esc(PJ_NAMES[k])}–${esc(PJ_NAMES[k+1])}</span><div class="seg">${[['blind',`${esc(w.name)} runs into the corner`],['dead','Both stop, corner closed']].map(([m,l])=>`<button type="button" class="${(P.modes[k]||'blind')===m?'on':''}" data-act="pjMode" data-a="${k}:${m}">${l}</button>`).join('')}</div></div>`:''}`).join('')}</div>
+  ${ws.length<PJ_MAX?`<button type="button" class="btn sm" data-act="pjAdd">+ Add the next wall (to the right of ${esc(ws[ws.length-1].name)})</button>`:''}
+  <div id="pjTot">${ui.pjTot&&ui.pjTot.sig===pjSig()?ui.pjTot.html:`<button type="button" class="btn sm" data-act="pjTotal">Add up the whole room</button>`}</div>`}
+function pjSig(){return JSON.stringify([S.proj,S])}
+function pjTotal(){const P=S.proj;if(!P)return;const ws=pjWalls(),st=ws.map(w=>{try{return cmpStats(JSON.parse(JSON.stringify(w.st)))}catch(e){return null}});
+  let gsAll=[];ws.forEach(w=>{const S0=S;try{S=w.st;const G=build(w.st);gsAll=gsAll.concat(groupPanels(G))}catch(e){}S=S0});let sheets=0;try{const S0=S;sheets=nestAll(gsAll).reduce((a,n)=>a+n.sheets.length,0);S=S0}catch(e){}
+  const sum=k=>st.reduce((a,x)=>a+(x?x[k]:0),0),sep=sum('sheets');
+  const html=`<table class="mini wtt"><tr><td class="note">Wall</td><td class="note">Panels</td><td class="note">Price</td></tr>${ws.map((w,i)=>`<tr><td>${esc(w.name)}</td><td>${st[i]?st[i].panels:'—'}</td><td>${st[i]?eur(st[i].total):'—'}</td></tr>`).join('')}<tr><td><b>Whole room</b></td><td><b>${sum('panels')}</b></td><td><b>${eur(sum('total'))}</b></td></tr></table><p class="hintp" style="margin:0">Cut together, the whole room needs about <b>${sheets} sheets</b>${sep>sheets?` — ${sep-sheets} fewer than wall by wall`:''}.</p>`;
+  ui.pjTot={sig:pjSig(),html};const el=document.getElementById('pjTot');if(el)el.innerHTML=html}
 function groupPanels(G){
   const map=new Map();
   G.panels.forEach(p=>{const key=[p.type,p.role,p.matType,p.t,p.fin,JSON.stringify(p.poly),JSON.stringify(p.holes),p.notes.join(';')].join('|');
@@ -2536,7 +2584,7 @@ function handleIcon(k){const w='#B98B57';let h='';switch(k){
   return `<svg viewBox="0 0 34 44"><rect x="3" y="2" width="28" height="40" rx="1.5" style="fill:var(--surface)" stroke="currentColor" stroke-width="1.2"/>${h}</svg>`}
 const openState={stk:true,lad:true,room:true,ceil:true,obs:true,secs:true,mat:true,hd:true,con:true,sk:true};
 const PANES_X=1;
-const PANES=[['room','Room','Wall, slopes and anything in the way.',['room','ceil','site','access','obs','ppl','scr']],['layout','Layout','The columns and what goes in them.',['secs']],['look','Look','Colours, boards, handles.',['mat','hd']],['build','Build','How it goes together.',['con','sk','lad','wt','plan']]];
+const PANES=[['room','Room','Wall, slopes and anything in the way.',['room','walls','ceil','site','access','obs','ppl','scr']],['layout','Layout','The columns and what goes in them.',['secs']],['look','Look','Colours, boards, handles.',['mat','hd']],['build','Build','How it goes together.',['con','sk','lad','wt','plan']]];
 const PANE_ICON={room:'<svg viewBox="0 0 20 20"><path d="M3 17V8l7-5 7 5v9z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',layout:'<svg viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 3v14M13 3v14M8 10h5" stroke="currentColor" stroke-width="1.6"/></svg>',look:'<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="7.5" cy="8" r="1.3" fill="currentColor"/><circle cx="12.5" cy="8" r="1.3" fill="currentColor"/><circle cx="8.5" cy="12.6" r="1.3" fill="currentColor"/></svg>',build:'<svg viewBox="0 0 20 20"><path d="M4 16l6-6m2-2l1.5-1.5a2.5 2.5 0 013.5 3.5L15.5 11.5M10 10l-1.5 1.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M3 13l4 4" stroke="currentColor" stroke-width="1.6"/></svg>'};
 /* ===== Simple / Expert view =====
    Simple shows the handful of controls most people touch; everything else is folded under "More options". Nothing is removed:
@@ -2553,7 +2601,7 @@ function simplifySide(el){const head=el.querySelector('.shead');if(head&&!el.que
 function renderSide(){
   const el=document.getElementById('side'),op=k=>(openState[k]||(k==='secs'&&isSheet()))?'open':'',R=S.room;const pane=PANES.find(x=>x[0]===(ui.pane||'layout'))||PANES[1];
   let h=`<details class="acc" data-k="room" ${op('room')}><summary>Wall</summary><div class="accb">
-    <div class="grid2">${fld('Wall width','room.W')}${fld('Full ceiling height','room.H')}${fld('Cabinet depth','room.D')}${fld('Ceiling lower at the back by','room.drop')}</div>
+    <div class="grid2">${S.proj?`<div class="fld"><span>Wall width</span><span class="note" style="padding:8px 0">${f0(R.W)} mm for cabinets — the wall length is set under “Walls in this room”</span></div>`:fld('Wall width','room.W')}${fld('Full ceiling height','room.H')}${fld('Cabinet depth','room.D')}${fld('Ceiling lower at the back by','room.drop')}</div>
     <div style="display:grid;gap:8px">${chk('The back wall is not parallel to the cabinet front','room.skew.on')}${(R.skew&&R.skew.on)?`<div class="grid2">${fld('Depth available at the left end','room.skew.dL',{ph:String(R.D)})}${fld('Depth available at the right end','room.skew.dR',{ph:String(R.D)})}</div>${skewPlan()}<p class="hintp" style="margin:0">Measure from where the cabinet front will be, straight back to the wall, at both ends. The front stays straight and every column is made as deep as the wall allows at its shallowest corner, rounded down to 10 mm${geo.skew?`: ${geo.secs.filter(q=>!q.panel).map(q=>`S${q.i+1} ${f0(q.D)}`).join(' · ')} mm`:''}. The wedge-shaped gap behind is hidden by the side skirts. Shelves, backs, drawer runners and the price follow each column's own depth.</p>`:''}</div>
     <p class="hintp">Depth includes the back panel; doors add their thickness in front. “Ceiling lower at the back by” is for a roof that also slopes toward the wall (positive = lower at the back).</p></div></details>`;
   h+=`<details class="acc" data-k="ceil" ${op('ceil')}><summary>Ceiling &amp; slopes</summary><div class="accb">
@@ -2575,6 +2623,7 @@ function renderSide(){
     <div class="tchips"><button type="button" class="tchip" data-act="addWob" data-a="socket">+ Socket</button><button type="button" class="tchip" data-act="addWob" data-a="switch">+ Switch</button><button type="button" class="tchip" data-act="addWob" data-a="radiator">+ Radiator</button><button type="button" class="tchip" data-act="addWob" data-a="pipe">+ Pipe</button></div>
     <p class="hintp" style="margin:0">They show as blue outlines on the drawing (orange when something is in the way). Sockets get a cut-out in the back panel; shuffling tries to keep sides, shelves and drawers away from them.</p>
   </div></details>`}
+  h+=`<details class="acc" data-k="walls" ${op('walls')}><summary>Walls in this room${S.proj?` (${S.proj.walls.length})`:''}</summary><div class="accb">${pjHTML()}</div></details>`;
   {const A=R.access||{},ga=geo.access;h+=`<details class="acc" data-k="access" ${op('access')}><summary>Getting it in</summary><div class="accb">
     <p class="hintp">Tick what is on the way from the front door and measure the tightest spot. Kast checks every box and board against it.</p>
     ${ACC_KINDS.map(([k,ic,l])=>{const o=A[k]||{};return `${chk(ic+' '+l,'room.access.'+k+'.on')}${o.on?`<div class="grid2">${fld(k==='stairs'?'Narrowest width':k==='hatch'?'Opening width':'Clear width','room.access.'+k+'.w')}${fld(k==='stairs'?'Lowest headroom':k==='hatch'?'Opening length':'Clear height','room.access.'+k+'.h')}</div>${k==='stairs'?seg('room.access.stairs.turn',[['none','Straight'],['quarter','Quarter turn'],['half','Half turn']],{dflt:'none'}):''}`:''}`}).join('')}
@@ -5177,7 +5226,7 @@ function renderTab(t){
   if(t==='elev'){try{ztbRender()}catch(e){}}
   if(t==='3d')rebuild3D();if(t==='cut')renderCut();if(t==='loft')renderLoft();if(t==='sheets')renderSheets();if(t==='guide')renderGuide();
 }
-function changed(side){geo=build(S);if(side)renderSide();renderViews();saveSoon();snap();priceSoon()}
+function changed(side){if(S.proj){try{pjSync()}catch(e){}}geo=build(S);if(side)renderSide();renderViews();saveSoon();snap();priceSoon()}
 let prT=null;function pchipText(){if(!lastPrice)return '≈ € …';const d=ui.priceD||0;return `≈ ${eur(lastPrice.tot.all)}${Math.abs(d)>=1?` <small>${d<0?'▼':'▲'} ${eur(Math.abs(d)).replace('€ ','€')}</small>`:''}`}
 function priceSoon(){clearTimeout(prT);prT=setTimeout(()=>{try{const prev=ui.priceLast!=null?ui.priceLast:(lastPrice?lastPrice.tot.all:null);if(ui.tab!=='cut'){renderCut();dirty.cut=true}if(!lastPrice)return;ui.priceLast=lastPrice.tot.all;if(prev!=null&&Math.abs(lastPrice.tot.all-prev)>=1)ui.priceD=lastPrice.tot.all-prev;document.querySelectorAll('.pchip').forEach(el=>{el.innerHTML=pchipText()});budChips()}catch(e){}},220)}
 let hist=[],fut=[],lastSnap=null;
@@ -5193,6 +5242,7 @@ function updateSideInfo(){const s=document.getElementById('side');const scr=s.sc
 /* ===== events ===== */
 document.addEventListener('keydown',e=>{const tg=e.target;if(!e.ctrlKey&&!e.metaKey&&!e.altKey&&(e.key==='f'||e.key==='F')&&!(tg&&(tg.tagName==='INPUT'||tg.tagName==='TEXTAREA'||tg.tagName==='SELECT'))&&(ui.tab==='elev'||ui.tab==='3d')){setFm({solid:'glass',glass:'off',off:'solid'}[ui.fm]);return}if(!(e.ctrlKey||e.metaKey))return;const t=e.target;if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'))return;const k=e.key.toLowerCase();if(k==='z'){e.preventDefault();undoRedo(e.shiftKey?1:-1)}else if(k==='y'){e.preventDefault();undoRedo(1)}});
 document.addEventListener('focusin',e=>{const el=e.target;if(el&&el.dataset&&el.dataset.p==='room.W')ui.prevW=+S.room.W});
+document.addEventListener('change',e=>{const el=e.target;if(!el||!el.dataset||el.dataset.pj==null||!S.proj)return;const k=+el.dataset.pj,v=+el.value;if(!(v>=600))return;S.proj.walls[k].len=v;pjSync();changed(true)});
 document.addEventListener('change',e=>{const el=e.target;if(!el||!el.dataset||el.dataset.p!=='room.W')return;const W=+S.room.W,W0=+ui.prevW;if(!(W>=600)||!(W0>=600)||Math.abs(W-W0)<1)return;
   const sd=+S.skirt.side||0,k=(W-2*sd)/Math.max(100,W0-2*sd);let n=0;(S.sections||[]).forEach(sc=>{if(+sc.w>0){sc.w=Math.max(150,Math.round(+sc.w*k));n++}if(sc.pinX!=null&&sc.pinX!==''&&isFinite(+sc.pinX))sc.pinX=Math.round(+sc.pinX*k)});
   const cl=S.room.ceil||[];cl.forEach(c=>{if(+c.x>=W0-1||+c.x>W)c.x=W});S.room.ceil=cl.filter((c,i)=>i===0||+c.x>+cl[i-1].x||i===cl.length-1).filter((c,i,a)=>i===0||+c.x>+a[i-1].x);
@@ -5291,6 +5341,12 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'lblPdf':toast('Making the labels…');exportLabels();break;
     case 'tplPdf':toast('Making the templates…');exportTemplates();break;
     case 'dxfZip':exportDXF();break;
+    case 'pjStart':openState.walls=true;pjStart();break;
+    case 'pjAdd':pjAdd();break;
+    case 'pjOpen':pjOpen(+a);break;
+    case 'pjDel':{const b_=e.target.closest('button');if(b_&&!b_.dataset.armed){b_.dataset.armed='1';b_.textContent='Sure?';break}pjDel(+a);break}
+    case 'pjMode':{const[k,m]=a.split(':');S.proj.modes[+k]=m;pjSync();changed(true);break}
+    case 'pjTotal':{const el=document.getElementById('pjTot');if(el)el.innerHTML='<p class="hintp">Adding up…</p>';setTimeout(pjTotal,30);break}
     case 'offDel':offDel(a).then(()=>{groupsCache=null;renderCut()});break;
     case 'offKeep':{const n_=nestAll(groupsCache||groupPanels(bgeo())),items=n_.flatMap(offLeft);ui.offOpen=true;offAdd(items).then(()=>{toast(items.length+' offcuts kept');renderCut()});break}
     case 'offAdd':{const L=+document.getElementById('offL').value,W=+document.getElementById('offW').value,[mt,fin,t]=document.getElementById('offM').value.split('|');if(!(L>=50&&W>=50)){toast('Type the length and width first');break}ui.offOpen=true;offAdd([{mt,fin,t:+t,L:Math.max(L,W),W:Math.min(L,W),from:'added by hand'}]).then(()=>renderCut());break}
