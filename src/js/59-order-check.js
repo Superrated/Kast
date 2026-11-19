@@ -5,6 +5,7 @@
      - every part has a real size and fits on a sheet,
      - holes are not deeper than the board and sit on the part,
      - hinge cups: enough hinges for the door height, not closer than 40 mm to the door's ends or 90 mm to each other,
+     - hinge mounting plates clear of a front header rail,
      - no front reaches into the ceiling (it would scrape when it opens),
      - a door hinged right against a side wall can open (needs a gap or a filler strip),
      - drilled parts show their holes in 3D (otherwise the exploded views miss them),
@@ -86,6 +87,19 @@ function orderCheck() {
   if (few.length) add('look', 'Few hinges for the door height', few.join(' · ') + '. More hinges keep a tall door straight.');
   if (ends.length) add('look', 'Hinge closer than 40 mm to a door end', ends.join(', ') + ' — the cup would break through the edge or hit the cabinet top or bottom.');
   if (close.length) add('look', 'Hinges closer than 90 mm to each other', close.join(', ') + ' — the mounting plates would touch.');
+
+  // 4b. hinge mounting plates (±25 mm round the cup height, 37 mm behind the front) must clear a front header rail
+  const clash = [];
+  (G.fronts || []).forEach(f => {
+    if (f.kind !== 'door' || !Array.isArray(f.cups) || !f.hinge || !f.poly) return;
+    const xs = f.poly.map(p => p[0]),
+      hx = f.hinge === 'L' ? Math.min(...xs) : Math.max(...xs);
+    (G.hRails || []).forEach(r => {
+      if (r.rear || r.xa > hx + 40 || r.xb < hx - 40) return;
+      if (f.cups.some(c => c - 25 < r.y1 && c + 25 > r.y0)) clash.push(`S${f.sec + 1} door ${f.idx + 1}`);
+    });
+  });
+  if (clash.length) add('stop', 'Hinge plate on a header rail', [...new Set(clash)].join(', ') + ' — move the lowest hinge up so its mounting plate clears the rail.');
 
   // 5. fronts into the ceiling
   const hit = [];

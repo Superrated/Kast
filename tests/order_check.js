@@ -16,5 +16,6 @@
   expect('hinges too close', () => { const f = geo.fronts.find(f => f.kind === 'door' && f.cups && f.cups.length > 1); f.cups[1] = f.cups[0] + 40 }, 'closer than 90');
   expect('front in ceiling', () => { const f = geo.fronts[0]; const c = geo.ceilAt; geo.ceilAt = x => Math.max(...f.poly.map(p => p[1])) - 1 }, 'touching the ceiling');
   expect('door at wall', () => { const f = geo.fronts.find(f => f.kind === 'door'); f.hinge = 'L'; f.poly = f.poly.map(([x, y]) => [x - Math.min(...f.poly.map(p => p[0])), y]) }, 'side wall');
+  expect('hinge plate on header rail', () => { const f = geo.fronts.find(f => f.kind === 'door' && f.cups && f.cups.length && f.hinge); const xs = f.poly.map(p => p[0]), hx = f.hinge === 'L' ? Math.min(...xs) : Math.max(...xs); geo.hRails = (geo.hRails || []).concat([{ xa: hx - 30, xb: hx + 30, y0: f.cups[0] - 10, y1: f.cups[0] + 10, rear: false }]) }, 'header rail');
   return found;
 })

@@ -3678,7 +3678,12 @@ function build(S) {
                 yt_ = polyTopAt(poly, cx),
                 yT = isFinite(yt_) ? yt_ : Math.max(...poly.map(p_ => p_[1])),
                 mg = Math.max(35, Math.min(100, (yT - yb) / 4)),
-                a = yb + mg,
+                // a front header rail at the bottom of this level stands where the hinge mounting plates go
+                // (20–38 mm behind the front, plates 37 mm): keep the lowest hinge's plate (±25 mm) 8 mm above it
+                railTop = hRails
+                  .filter(r_ => !r_.rear && r_.xa < cx + 40 && r_.xb > cx - 40 && r_.y1 > yb - 1 && r_.y0 < yb + mg + 40)
+                  .reduce((m_, r_) => Math.max(m_, r_.y1), -Infinity),
+                a = Math.max(yb + mg, isFinite(railTop) ? railTop + 33 : -Infinity),
                 b = yT - mg,
                 ys_ =
                   hc_ === 1 || b - a < 40

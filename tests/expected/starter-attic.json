@@ -649,8 +649,8 @@
     "37 1748 5 12 face towards S3",
     "37 1780 5 12 face towards S3",
     "37 1812 5 12 face towards S3",
-    "37 1832.8 5 12 face towards S2",
-    "37 1864.8 5 12 face towards S2",
+    "37 1853 5 12 face towards S2",
+    "37 1885 5 12 face towards S2",
     "37 1908 5 12 face towards S3",
     "37 1940 5 12 face towards S3",
     "37 1972 5 12 face towards S3",
@@ -744,9 +744,9 @@
     "562 1652 5 12 face towards S3",
     "62 1396 5 12 face towards S3",
     "62 1428 5 12 face towards S3",
-    "62 1450.5 5 12 face towards S2",
-    "62 1482.5 5 12 face towards S2",
-    "62 1524 5 12 face towards S3",
+    "62 1460 5 12 face towards S3",
+    "62 1491 5 12 face towards S2",
+    "62 1523 5 12 face towards S2",
     "62 1556 5 12 face towards S3",
     "62 1588 5 12 face towards S3",
     "62 1620 5 12 face towards S3",
@@ -2191,8 +2191,8 @@
    "fin": "ral6021",
    "grain": "h",
    "holes": [
-    "384.5 100 35 13 ",
-    "384.5 482.3 35 13 ",
+    "384.5 140.5 35 13 ",
+    "384.5 502.5 35 13 ",
     "384.5 864.5 35 13 "
    ],
    "id": "P54",
@@ -2213,7 +2213,7 @@
    "fin": "ral6021",
    "grain": "h",
    "holes": [
-    "384.5 100 35 13 ",
+    "384.5 140.5 35 13 ",
     "384.5 545 35 13 "
    ],
    "id": "P55",

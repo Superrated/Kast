@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.128
+
+- **Hinges clear the header rail**: the front rail on a header stands 20–38 mm behind the front, right where the hinge mounting plates go (37 mm). The lowest hinge of a door in the level above is now placed so its plate stays 8 mm above the rail (e.g. balder S1: lowest hinge 1566 → 1607 mm; the others spread evenly above it). The door's cup holes, the plate holes in the sides and uprights and the notes follow.
+- **Check before ordering** stops on a hinge plate that would sit on a header rail.
+
 ## v0.127
 
 - **Header rails are one length**: the two rails on edge on top of a header (over a niche, reading nook or TV opening) are the beams that carry the level above over the opening, so they now run the full width in one piece. Before, uprights in the level above cut them into short pieces between the uprights, which carried nothing over the opening. Those uprights are now **notched** at the bottom over the rails (an 18 × 100 mm slot 20 mm behind the front edge and an 18 × 100 mm corner at the back), shown in the cut list, machining drawings and 3D. Drawer stacks above a header still split the rails.
