@@ -61,3 +61,7 @@ The app has no test files in the repo. The checks used during development load t
 
 - `72-workshop-3d.js`: its own small three.js scene for one box (`WX`). Solids come from `tdSolids`/`tdCols`, offsets from `tdOffset`, and letters from `tdPartRows` (all in `52-techdraw.js`), so the 3D and the PDF sheets always match. `wxMatch` links a solid to its cut-list part (for edge banding, grain and holes).
 - Tests with the real three.js r128: clone `mrdoob/three.js` at tag r128 (sparse, `build/`) and inline `three.min.js` in the test page.
+
+## Parts area (v0.109)
+
+- `91-parts-nav.js`: the tabs Parts · Drawings · Workshop. The views are v-cut (List / Shopping / Price, which are `<section data-psec>` blocks of one render), v-sheets, v-draw (Technical drawings via `tdBodyHTML`, plus Labels & files), v-loft and v-work. `pnGo(key)` opens a section, `showTab(tab)` switches the view, and the last place is kept in localStorage `fitted-pn`.

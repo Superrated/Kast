@@ -29,7 +29,12 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
   if(innerWidth<=860){const hp=e.target.closest('aside.side .hintp');if(hp&&!e.target.closest('button,a,input'))hp.classList.toggle('open')}
   const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.a,act=b.dataset.act;const secs=S.sections;
   switch(act){
-    case 'tab':ui.tab=a;document.querySelectorAll('[data-act="tab"]').forEach(x=>x.classList.toggle('on',x.dataset.a===a||(x.closest('#bnav')&&x.dataset.a==='cut'&&(a==='sheets'||a==='loft'))));document.querySelector('.app').dataset.tab=a;if(window.innerWidth<=860)window.scrollTo({top:0});['elev','3d','cut','loft','sheets','guide'].forEach(k=>document.getElementById('v-'+k).hidden=k!==a);renderBar();renderTab(a);if(innerWidth<=860){renderSide();setSheet(null)}if(a==='3d'&&T3){if(PH.keep&&PH.pose&&PH.img&&!ui.photoOn){PH.adjust=false;setPhotoMode(true)}T3.req()}break;
+    case 'tab':if(PN_GROUP[a]){PN.last=a;pnSave()}showTab(a);break;
+    case 'pnTop':if(a==='area')showTab(pnLast());else pnGo(a);break;
+    case 'pnGo':pnGo(a);break;
+    case 'wkCut':ui.ws={tab:'cuts'};lockOn();wsRender();break;
+    case 'wkSteps':ui.ws={tab:'steps'};lockOn();wsRender();break;
+    case 'wkBox':WX.col=+a||0;WX.sel=null;ui.ws={tab:'boxes'};wsRender();break;
     case 'ceilPreset':{const W=+S.room.W,H=+S.room.H,k=Math.min(1200,H*.5),L=Math.min(1600,W*.35);S.room.ceil=a==='flat'?[{x:0,y:H},{x:W,y:H}]:a==='left'?[{x:0,y:k},{x:L,y:H},{x:W,y:H}]:a==='right'?[{x:0,y:H},{x:W-L,y:H},{x:W,y:k}]:[{x:0,y:k},{x:L,y:H},{x:W-L,y:H},{x:W,y:k}];changed(true);break}
     case 'addCeil':{const c=S.room.ceil;const l=c[c.length-1]||{x:0,y:S.room.H};c.push({x:Math.min(+S.room.W,+l.x+500),y:l.y});changed(true);break}
     case 'delCeil':S.room.ceil.splice(+a,1);changed(true);break;
@@ -88,13 +93,13 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'shufPanel':S.opts.shufPanel=S.opts.shufPanel===false;changed(true);toast(S.opts.shufPanel?'Shuffles now also change the panel wall colour and decoration':'Panel wall stays as it is in shuffles');break;
     case 'sideT':{ui.noside=!ui.noside;const ap=document.querySelector('.app');ap.classList.toggle('noside',ui.noside);b.setAttribute('aria-pressed',String(ui.noside));setTimeout(()=>window.dispatchEvent(new Event('resize')),30);break}
     case 'notesOpen':{if(ui.tab!=='elev'&&ui.tab!=='3d'){const tb=document.querySelector('#tabs [data-a="elev"]');if(tb)tb.click()}const d=document.querySelector('#bar details.notes');if(d){ui.notesOpen=!d.open;d.open=ui.notesOpen;d.scrollIntoView({block:'nearest'})}else toast('No design issues found');break}
-    case 'toBudget':{const tb=document.querySelector('#tabs [data-a="cut"]')||document.querySelector('[data-act="tab"][data-a="cut"]');if(tb)tb.click();else{ui.tab='cut';renderViews()}if(isSheet()){try{closeSheet()}catch(e){}}setTimeout(()=>{const t=document.getElementById('budcard');if(t)t.scrollIntoView({block:'start'})},80);break}
+    case 'toBudget':{pnGo('price');if(isSheet()){try{closeSheet()}catch(e){}}setTimeout(()=>{const t=document.getElementById('budcard');if(t)t.scrollIntoView({block:'start'})},80);break}
     case 'budT':{budSwitch(a);ui.saver=null;changed(true);break}
     case 'budGo':{const T=+S.opts.budT,ids=((ui.bud&&ui.bud.rows)||[]).filter(r=>r.sug).map(r=>r.id);if(!(T>0)||!ids.length)break;let n=0;for(const id of ids){const pr=priceOf(S);if(pr&&pr.total<=T)break;budSwitch(id,true);n++}ui.saver=null;changed(true);const pr=priceOf(S);toast(pr?(pr.total<=T?`${n} saving${n===1?'':'s'} switched on — now ${eur(pr.total)}, within your budget`:`${n} saving${n===1?'':'s'} switched on — now ${eur(pr.total)}, still ${eur(pr.total-T)} over`):'Savings switched on');break}
     case 'budClear':delete S.opts.budT;saveSoon();snap();budPaint();budChips();break;
     case 'budMode':if(budgetKind())delete S.opts.budget;else S.opts.budget=S.mat.front.type==='mdfpaint'?'mdf':'mel';changed(true);toast(budgetKind()?'New shuffles will stay cheap':'Shuffles are free again');break;
     case 'budgetCycle':budgetBuild(budgetKind()==='mel'?'mdf':budgetKind()==='mdf'?'off':'mel');break;
-    case 'toPriceTab':{const tb=document.querySelector('#tabs [data-a="cut"]')||document.querySelector('[data-act="tab"][data-a="cut"]');if(tb)tb.click();else{ui.tab='cut';renderViews()}setTimeout(()=>{const t=document.getElementById('price');if(t)t.scrollIntoView({block:'start'})},60);break}
+    case 'toPriceTab':{pnGo('price');setTimeout(()=>{const t=document.getElementById('price');if(t)t.scrollIntoView({block:'start'})},60);break}
     case 'budget':budgetBuild(a);ui.saver=null;dirty.cut=true;if(ui.tab==='cut')renderCut();break;
     case 'phases':planPhases(+a);{const t=document.getElementById('price');if(t)t.scrollIntoView({block:'start'})}break;
     case 'phaseUse':S.opts.part=Object.assign({},S.opts.part||{},{on:'1',secs:a.split(',').map(Number)});changed(true);toast('Showing only this phase — the cut list, sheets, guide and PDF follow. Choose “Everything” at the top to go back.');{const v=document.getElementById('v-cut');if(v)v.scrollTop=0;window.scrollTo(0,0)}break;
@@ -207,7 +212,7 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'ioFile':ioFile();break;
     case 'ioCopyText':ioCopyText();break;
     case 'ioShare':ioShare();break;
-    case 'ioToCut':{document.getElementById('iom').hidden=true;const tb=document.querySelector('#tabs [data-a="cut"]')||document.querySelector('#bnav [data-a="cut"]');if(tb)tb.click();break}
+    case 'ioToCut':{document.getElementById('iom').hidden=true;pnGo('files');break}
     case 'rmSave':rmSave();break;
     case 'rmUse':rmUse(a);break;
     case 'rmNew':rmNew(a);break;
@@ -258,6 +263,7 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'aiOpen':aiOpen();break;
     case 'aiClose':document.getElementById('aim').hidden=true;break;
     case 'aiPick':AI.cur=+a;aiShow();break;
+    case 'aiQ':{const[k,v]=a.split(':');aiQ(k,v);break}
     case 'aiSave':aiSave();break;
     case 'aiCopy':aiCopy(document.getElementById('aiText').value,'Instruction copied — paste it next to the picture in your picture AI');break;
     case 'aiCopyNote':{const n=document.getElementById('aiNote').value.trim();if(!n){toast('Type the small change first');break}aiCopy('Keep everything else exactly the same — same camera angle, same cabinet layout, same room. Change only this: '+n+'.','Change copied — paste it as your next message');break}

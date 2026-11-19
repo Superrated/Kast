@@ -16,9 +16,9 @@
     <nav class="tabs" id="tabs">
       <button data-act="tab" data-a="elev" class="on">Drawing</button>
       <button data-act="tab" data-a="3d">3D</button>
-      <button data-act="tab" data-a="cut">Cut list</button>
-      <button data-act="tab" data-a="sheets">Sheets</button>
-      <button data-act="tab" data-a="loft">Shaped parts</button>
+      <button data-act="pnTop" data-a="parts">Parts</button>
+      <button data-act="pnTop" data-a="drawings">Drawings</button>
+      <button data-act="pnTop" data-a="workshop">Workshop</button>
       <button data-act="tab" data-a="guide">Build guide</button>
     </nav>
     <div class="acts">
@@ -31,7 +31,7 @@
     <section class="stage">
       <div class="bar" id="bar"></div>
       <div class="fmode" id="fmode" role="group" aria-label="Show fronts"></div>
-      <div class="psw phone" id="psw" role="tablist"><button data-act="tab" data-a="cut">Cut list</button><button data-act="tab" data-a="sheets">Sheets</button><button data-act="tab" data-a="loft">Shaped parts</button></div>
+      <div class="psw phone" id="psw" role="tablist"><button data-act="pnTop" data-a="parts">Parts</button><button data-act="pnTop" data-a="drawings">Drawings</button><button data-act="pnTop" data-a="workshop">Workshop</button></div>
       <div class="mfloat phone" id="mfloat"></div>
       <button type="button" class="bigfab mobonly" data-act="bigView" id="bigfab" aria-label="Bigger drawing">⤢</button>
       <div class="view" id="v-elev" data-comment-target><div id="elevWrap"></div></div>
@@ -40,6 +40,8 @@
       <div class="view docview" id="v-cut" hidden></div>
       <div class="view docview" id="v-loft" hidden></div>
       <div class="view docview" id="v-sheets" hidden></div>
+      <div class="view docview" id="v-draw" hidden></div>
+      <div class="view docview" id="v-work" hidden></div>
       <div class="view docview" id="v-guide" hidden></div>
     </section>
   </div>
@@ -48,7 +50,7 @@
 <nav class="bnav" id="bnav" aria-label="Views">
   <button data-act="tab" data-a="elev" class="on"><svg viewBox="0 0 24 24"><path d="M3 21V9l9-6 9 6v12z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 21v-7h8v7M12 14v7" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>Drawing</span></button>
   <button data-act="tab" data-a="3d"><svg viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z M12 12l8-4.5M12 12v9M12 12L4 7.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span>3D</span></button>
-  <button data-act="tab" data-a="cut"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 9h8M8 13h8M8 17h5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>Parts</span></button>
+  <button data-act="pnTop" data-a="area"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 9h8M8 13h8M8 17h5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>Parts</span></button>
   
   
   <button data-act="tab" data-a="guide"><svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="9" cy="9" r="1.6" fill="currentColor"/><path d="M12 9h4M8 14h8M8 17.5h6" stroke="currentColor" stroke-width="1.6"/></svg><span>Guide</span></button>
@@ -79,6 +81,7 @@
       <p class="hintp" style="margin:0">Turn your design into a photo-like picture with a picture AI you already use (ChatGPT, Gemini…). Three steps:</p>
       <div id="aiPick" class="tchips"></div>
       <div class="aishot"><img id="aiImg" alt="The picture Fitted hands to the picture AI"><p class="hintp" id="aiNone" hidden style="margin:0"></p></div>
+      <details class="pf aiqs" open><summary>Your picture — a few questions</summary><div id="aiQs" class="aiqb"></div></details>
       <ol class="aisteps2">
         <li><b>Save this picture</b><button type="button" class="btn pri" data-act="aiSave">Save picture</button></li>
         <li><b>Copy the instruction</b><button type="button" class="btn pri" data-act="aiCopy">Copy instruction</button></li>

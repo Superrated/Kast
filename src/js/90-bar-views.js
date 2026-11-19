@@ -44,7 +44,7 @@ function applyFronts3D(noReq){if(!T3)return;if(!T3.glass)T3.glass={};T3.frontG.v
   if(ui.iso||ui.exT)applyExplode(true);if(!noReq)T3.req()}
 function renderViews(){
   groupsCache=null;renderBar();
-  const t=ui.tab;['elev','3d','cut','loft','sheets','guide'].forEach(k=>dirty[k]=true);
+  const t=ui.tab;['elev','3d','cut','loft','sheets','guide','draw','work'].forEach(k=>dirty[k]=true);
   renderTab(t);
 }
 function zoomWrap(){const w=document.getElementById('elevWrap');w.classList.toggle('fit',!(ui.zoom>1));w.style.width=(100*ui.zoom)+'%';w.style.height=isSheet()&&ui.zoom>1?(100*ui.zoom)+'%':''}
@@ -68,7 +68,7 @@ function renderTab(t){
   if(!dirty[t])return;dirty[t]=false;
   if(t==='elev'){const w=document.getElementById('elevWrap');zoomWrap();w.innerHTML=elevSVG(S,geo,{sel:ui.sel,zsel:ui.zsel,xray:ui.fm==='glass',hide:ui.fm==='off',props:ui.props,peek:ui.peek&&ui.zsel!=null?[ui.sel,ui.zsel]:null,focus:isSheet()&&ui.focus!==false&&flowNow()!=='home'?ui.sel:null})}
   if(t==='elev'){try{ztbRender()}catch(e){}}
-  if(t==='3d')rebuild3D();if(t==='cut')renderCut();if(t==='loft')renderLoft();if(t==='sheets')renderSheets();if(t==='guide')renderGuide();
+  if(t==='3d')rebuild3D();if(t==='cut')renderCut();if(t==='loft')renderLoft();if(t==='sheets')renderSheets();if(t==='guide')renderGuide();if(t==='draw')renderDraw();if(t==='work')renderWork();
 }
 function changed(side){if(lockGuard())side=true;if(S.proj){try{pjSync()}catch(e){}}geo=build(S);if(side)renderSide();renderViews();saveSoon();snap();priceSoon();try{dsAutoSoon()}catch(e){}}
 let prT=null;function pchipText(){if(!lastPrice)return '≈ € …';const d=ui.priceD||0;return `≈ ${eur(lastPrice.tot.all)}${Math.abs(d)>=1?` <small>${d<0?'▼':'▲'} ${eur(Math.abs(d)).replace('€ ','€')}</small>`:''}`}
@@ -110,3 +110,9 @@ function lockGuard(){if(!isLocked())return false;if(ui.lockId!==S.lock.id||!ui.l
   if(lockSig(S)===ui.lockSig){ui.lockSnap=JSON.stringify(S);return false}const done=S.done;S=JSON.parse(ui.lockSnap);if(done)S.done=done;lockToast();return true}
 function lockBanner(){if(!isLocked())return '';let d='';try{d=new Date(S.lock.at||Date.now()).toLocaleDateString(undefined,{day:'numeric',month:'short'})}catch(e){}
   return `<div class="lockban"><b>🔒 Locked for building</b><span>Since ${esc(d)}. Changes are switched off so the parts you cut keep matching the drawings. Ticking cuts and steps as done still works.</span><div class="dbtns"><button type="button" class="btn sm pri" data-act="dsEditCopy">Edit a copy</button><button type="button" class="btn sm" data-act="unlock">Unlock to change the design</button></div></div>`}
+
+/* switch the main view (Drawing, 3D, the Parts area views, Guide) */
+function showTab(a){ui.tab=a;document.querySelector('.app').dataset.tab=a;if(window.innerWidth<=860)window.scrollTo({top:0});
+  ['elev','3d','cut','loft','sheets','guide','draw','work'].forEach(k=>{const v=document.getElementById('v-'+k);if(v)v.hidden=k!==a});
+  document.querySelectorAll('[data-act="tab"]').forEach(x=>x.classList.toggle('on',x.dataset.a===a));try{pnTabsOn(a)}catch(e){}
+  dirty[a]=true;renderBar();renderTab(a);if(innerWidth<=860){renderSide();setSheet(null)}if(a==='3d'&&T3){if(PH.keep&&PH.pose&&PH.img&&!ui.photoOn){PH.adjust=false;setPhotoMode(true)}T3.req()}}

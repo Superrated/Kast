@@ -499,6 +499,25 @@ aside.side.locked>*:not(.shead):not(.lockban):not(.viewsw){pointer-events:none;o
 .wxrow i{font-style:normal;font-weight:700;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--ink);display:grid;place-items:center;font-size:11.5px}.wxrow span{color:var(--ink2);font-variant-numeric:tabular-nums;white-space:nowrap}
 .wxrow.on{background:var(--accent-soft)}.wxrow.on i{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 @media (max-width:860px){.wxmain{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(260px,1fr) auto}.wxlist{max-height:26vh}.wxcard{max-width:none}}
+.aiqb{display:grid;gap:10px;padding-top:8px}
+.aiq{display:grid;gap:4px}.aiq>span{font-size:12px;font-weight:600;color:var(--ink2)}
+.aiqc{display:flex;flex-wrap:wrap;gap:6px}
+@media (max-width:860px){.aiqc{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}.aiqc .tchip{flex:none}}
+#aim .aishot{flex:none;min-height:0}#aim .mbody>*{flex:none}
+#aim .aishot{display:block;text-align:center}#aim .aishot img{display:block;margin:0 auto;width:auto;max-width:100%;height:auto;max-height:46vh}
+@media (max-width:860px){#aim .aishot img{max-height:34vh}}
+#aim .aibody{grid-auto-rows:max-content;align-content:start}#aim .aishot{min-height:fit-content}
+/* Parts area: sections */
+.pnav{display:flex;flex-direction:column;gap:8px;margin:0 0 14px}
+.pnsub{max-width:100%;overflow-x:auto;scrollbar-width:none;align-self:flex-start}.pnsub button{white-space:nowrap}
+#v-cut[data-psub="list"] [data-psec]:not([data-psec="list"]),#v-cut[data-psub="buy"] [data-psec]:not([data-psec="buy"]),#v-cut[data-psub="price"] [data-psec]:not([data-psec="price"]){display:none}
+#v-draw[data-dsub="tech"] [data-dsec]:not([data-dsec="tech"]),#v-draw[data-dsub="files"] [data-dsec]:not([data-dsec="files"]){display:none}
+#v-draw [data-dsec="tech"]{display:grid;gap:14px}
+.wklock{display:grid;gap:6px;padding:14px;border-radius:14px;border:1px solid var(--line);background:var(--raised);margin:0 0 14px}.wklock.on{border-color:var(--accent);background:var(--accent-soft)}.wklock span{font-size:13px;color:var(--ink2);line-height:1.4}
+.wkgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px}
+.wkcard{display:grid;gap:10px;align-content:start;padding:16px;border-radius:16px;border:1px solid var(--line);background:var(--raised)}.wkcard h3{margin:0;font-size:1.1rem}.wkcard p{margin:0;color:var(--ink2);font-size:13.5px;line-height:1.45}.wkcard>.btn{justify-self:start;min-height:44px}
+.wkasm{border-color:var(--accent)}.wkboxes{display:flex;flex-wrap:wrap;gap:6px}.wkboxes .tchip{display:grid;line-height:1.15;text-align:left}.wkboxes small{font-weight:400;opacity:.75;font-size:11px}
+.wkcard .wsprog{height:6px;border-radius:3px;background:var(--line);overflow:hidden}.wkcard .wsprog>i{display:block;height:100%;background:var(--accent)}
 /* ==== 10-look.css — The Fitted look: fonts, tokens for light and dark mode, cards, wizard, dialogs. */
 /* ===== Fitted visual refresh ===== */
 :root{--bg:#F3F3F0;--surface:#FAFAF8;--raised:#FFFFFF;--ink:#17191B;--ink2:#62676B;--ink3:#6A6F74;--line:#E4E5E1;--accent:#3446D6;--accent-ink:#FFFFFF;--accent-soft:rgba(52,70,214,.09);--warn:#B4541A;--warn-soft:rgba(180,84,26,.1);--wall:#E7E7E3;--hatch:#D3D5D1;--stage:#ECEDEA;--paper:#FFFFFF;--shade:rgba(20,22,24,.2);
@@ -729,7 +748,7 @@ details.mx{grid-column:1/-1}
   .psw{gap:4px;margin:10px max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));background:var(--raised);border:1px solid var(--line);border-radius:999px;padding:3px}
   .psw button{flex:1;border:0;background:none;border-radius:999px;padding:8px 4px;font:inherit;font-size:13px;font-weight:600;color:var(--ink2)}
   .psw button.on{background:var(--accent);color:var(--accent-ink)}
-  .app:not([data-tab="cut"]):not([data-tab="sheets"]):not([data-tab="loft"]) .psw{display:none!important}
+  .app:not([data-tab="cut"]):not([data-tab="sheets"]):not([data-tab="loft"]):not([data-tab="draw"]):not([data-tab="work"]) .psw{display:none!important}
   /* elevation: no toolbar, a few floating buttons */
   .app[data-tab="elev"] .bar{display:none!important}
   .mfloat{position:absolute;top:8px;left:max(8px,env(safe-area-inset-left,0px));right:max(8px,env(safe-area-inset-right,0px));z-index:7;gap:6px;align-items:flex-start;pointer-events:none}
@@ -918,20 +937,20 @@ input[type=checkbox],input[type=radio]{accent-color:var(--ink)}
 .chk{min-height:32px}
 </style>
 
-<div id="splash" role="status" aria-label="Fitted by BRUIS v0.108 is loading"><b>Fitted</b><span>v0.108</span></div>
+<div id="splash" role="status" aria-label="Fitted by BRUIS v0.109 is loading"><b>Fitted</b><span>v0.109</span></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
 
 <div class="app" data-tab="elev">
   <header class="top">
     <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-    <div class="brand" title="Fitted by BRUIS v0.108">Fitted<span class="bybr">by BRUIS</span><small>built-in wardrobes & cabinets, drawn and cut · v0.108</small></div>
+    <div class="brand" title="Fitted by BRUIS v0.109">Fitted<span class="bybr">by BRUIS</span><small>built-in wardrobes & cabinets, drawn and cut · v0.109</small></div>
     <nav class="tabs" id="tabs">
       <button data-act="tab" data-a="elev" class="on">Drawing</button>
       <button data-act="tab" data-a="3d">3D</button>
-      <button data-act="tab" data-a="cut">Cut list</button>
-      <button data-act="tab" data-a="sheets">Sheets</button>
-      <button data-act="tab" data-a="loft">Shaped parts</button>
+      <button data-act="pnTop" data-a="parts">Parts</button>
+      <button data-act="pnTop" data-a="drawings">Drawings</button>
+      <button data-act="pnTop" data-a="workshop">Workshop</button>
       <button data-act="tab" data-a="guide">Build guide</button>
     </nav>
     <div class="acts">
@@ -944,7 +963,7 @@ input[type=checkbox],input[type=radio]{accent-color:var(--ink)}
     <section class="stage">
       <div class="bar" id="bar"></div>
       <div class="fmode" id="fmode" role="group" aria-label="Show fronts"></div>
-      <div class="psw phone" id="psw" role="tablist"><button data-act="tab" data-a="cut">Cut list</button><button data-act="tab" data-a="sheets">Sheets</button><button data-act="tab" data-a="loft">Shaped parts</button></div>
+      <div class="psw phone" id="psw" role="tablist"><button data-act="pnTop" data-a="parts">Parts</button><button data-act="pnTop" data-a="drawings">Drawings</button><button data-act="pnTop" data-a="workshop">Workshop</button></div>
       <div class="mfloat phone" id="mfloat"></div>
       <button type="button" class="bigfab mobonly" data-act="bigView" id="bigfab" aria-label="Bigger drawing">⤢</button>
       <div class="view" id="v-elev" data-comment-target><div id="elevWrap"></div></div>
@@ -953,6 +972,8 @@ input[type=checkbox],input[type=radio]{accent-color:var(--ink)}
       <div class="view docview" id="v-cut" hidden></div>
       <div class="view docview" id="v-loft" hidden></div>
       <div class="view docview" id="v-sheets" hidden></div>
+      <div class="view docview" id="v-draw" hidden></div>
+      <div class="view docview" id="v-work" hidden></div>
       <div class="view docview" id="v-guide" hidden></div>
     </section>
   </div>
@@ -961,7 +982,7 @@ input[type=checkbox],input[type=radio]{accent-color:var(--ink)}
 <nav class="bnav" id="bnav" aria-label="Views">
   <button data-act="tab" data-a="elev" class="on"><svg viewBox="0 0 24 24"><path d="M3 21V9l9-6 9 6v12z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 21v-7h8v7M12 14v7" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>Drawing</span></button>
   <button data-act="tab" data-a="3d"><svg viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z M12 12l8-4.5M12 12v9M12 12L4 7.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span>3D</span></button>
-  <button data-act="tab" data-a="cut"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 9h8M8 13h8M8 17h5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>Parts</span></button>
+  <button data-act="pnTop" data-a="area"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 9h8M8 13h8M8 17h5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>Parts</span></button>
   
   
   <button data-act="tab" data-a="guide"><svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="9" cy="9" r="1.6" fill="currentColor"/><path d="M12 9h4M8 14h8M8 17.5h6" stroke="currentColor" stroke-width="1.6"/></svg><span>Guide</span></button>
@@ -992,6 +1013,7 @@ input[type=checkbox],input[type=radio]{accent-color:var(--ink)}
       <p class="hintp" style="margin:0">Turn your design into a photo-like picture with a picture AI you already use (ChatGPT, Gemini…). Three steps:</p>
       <div id="aiPick" class="tchips"></div>
       <div class="aishot"><img id="aiImg" alt="The picture Fitted hands to the picture AI"><p class="hintp" id="aiNone" hidden style="margin:0"></p></div>
+      <details class="pf aiqs" open><summary>Your picture — a few questions</summary><div id="aiQs" class="aiqb"></div></details>
       <ol class="aisteps2">
         <li><b>Save this picture</b><button type="button" class="btn pri" data-act="aiSave">Save picture</button></li>
         <li><b>Copy the instruction</b><button type="button" class="btn pri" data-act="aiCopy">Copy instruction</button></li>
@@ -4194,15 +4216,14 @@ function tdDXF(){const G=build(JSON.parse(JSON.stringify(S))),sol=tdSolids(G),co
 /* ---------- the dialog ---------- */
 const TD_KINDS=[['front','Front view','The whole wall with all sizes'],['setout','Setting out','Where each box goes, measured from the left wall, with a table'],['plan','Plan','Seen from above, cut through the cabinets, with door swings'],['sec','Side sections','A cut through every column, with the height of every board'],['det','Details','Plinth, top strip and side strip at 1:5'],['expl','Exploded views','Each box pulled apart, with its parts list — one sheet per box']];
 function tdOpen(){let m=document.getElementById('tdm');if(!m){m=document.createElement('div');m.id='tdm';m.className='modal';document.body.appendChild(m);m.addEventListener('click',e=>{if(e.target===m)m.hidden=true})}
-  ['mmenu','iom','pdfm'].forEach(id=>{const x=document.getElementById(id);if(x)x.hidden=true});tdRender();m.hidden=false}
-function tdRender(){const m=document.getElementById('tdm');if(!m)return;
-  m.innerHTML=`<div class="mbox" role="dialog" aria-modal="true" aria-label="Technical drawings"><div class="mhead"><h2>Technical drawings</h2></div><div class="mbody" style="display:grid;gap:14px">
-    <p class="hintp" style="margin:0">Drawing sheets for a cabinet maker, a joiner or yourself: true to scale, crisp lines, sizes in millimetres, with a title block on every sheet.</p>
+  ['mmenu','iom','pdfm'].forEach(id=>{const x=document.getElementById(id);if(x)x.hidden=true});m.hidden=false;tdRender()}
+function tdBodyHTML(inline){return `<p class="hintp" style="margin:0">Drawing sheets for a cabinet maker, a joiner or yourself: true to scale, crisp lines, sizes in millimetres, with a title block on every sheet.</p>
     <div class="fld"><span>Paper</span><div class="seg">${['A3','A4'].map(p=>`<button type="button" class="${TD.paper===p?'on':''}" data-act="tdPaper" data-a="${p}">${p}${p==='A3'?' — usual for makers':' — easy to print at home'}</button>`).join('')}</div></div>
     <div class="tdk">${TD_KINDS.map(([k,l,d])=>`<label class="tdkb ${TD.sheets[k]?'on':''}"><input type="checkbox" data-tdk="${k}" ${TD.sheets[k]?'checked':''}><b>${l}</b><small>${d}</small></label>`).join('')}</div>
     <div class="dbtns"><button type="button" class="btn pri" data-act="tdPDF">Download drawings (PDF)</button><button type="button" class="btn" data-act="tdDXF">Download the whole wall (DXF)</button></div>
-    <p class="hintp" style="margin:0">The DXF has the front view, the plan and every section at full size (1 unit = 1 mm), with layers for walls, carcass, fronts, shelves, backs, plinth and dimensions — it opens in AutoCAD, SketchUp, Fusion, LibreCAD and most CAD programs. For CNC files of the separate parts, use the cut list.</p>
-  </div><div class="mfoot"><button type="button" class="btn" data-act="tdClose">Close</button><div></div></div></div>`}
+    <p class="hintp" style="margin:0">The DXF has the front view, the plan and every section at full size (1 unit = 1 mm), with layers for walls, carcass, fronts, shelves, backs, plinth and dimensions — it opens in AutoCAD, SketchUp, Fusion, LibreCAD and most CAD programs. For CNC files of the separate parts, see Labels &amp; files.</p>`}
+function tdRender(){const m=document.getElementById('tdm');if(m&&!m.hidden)m.innerHTML=`<div class="mbox" role="dialog" aria-modal="true" aria-label="Technical drawings"><div class="mhead"><h2>Technical drawings</h2></div><div class="mbody" style="display:grid;gap:14px">${tdBodyHTML()}</div><div class="mfoot"><button type="button" class="btn" data-act="tdClose">Close</button><div></div></div></div>`;
+  if(ui.tab==='draw'){dirty.draw=true;renderTab('draw')}}
 document.addEventListener('change',e=>{const k=e.target&&e.target.dataset&&e.target.dataset.tdk;if(!k)return;TD.sheets[k]=e.target.checked?1:0;const l=e.target.closest('.tdkb');if(l)l.classList.toggle('on',e.target.checked)});
 /* ==== 55-designs.js ====
    Saved designs (shared in the app through the db capability), backups, versions and "compare two designs".
@@ -4631,9 +4652,9 @@ function renderCut(){
   const total=gs.reduce((a,p)=>a+p.qty,0);
   const mats={};gs.forEach(p=>{const k=matName(p);const m=MATS[p.matType]||{};mats[k]=mats[k]||{area:0,band:0,edge:m.edge||'',paint:!!m.paint,micro:!!m.micro,peri:0,vis:0,mA:0};if(m.micro&&!MC_SKIP.test(p.type)){mats[k].vis+=(p.bandM||0)*p.t/1000*p.qty;mats[k].mA+=Math.abs(polyArea(p.poly))*p.qty/1e6}const a=Math.abs(polyArea(p.poly))*p.qty/1e6;mats[k].area+=a;mats[k].band+=p.bandM*p.qty;mats[k].peri+=polyPerim(p.poly)*p.t*p.qty/1e6});
   const nest=nestAll(gs),sp=stockPlan(gs);
-  let h=`<h2>Cut list</h2><p class="lede">Every panel with its finished size. Painted MDF areas count both faces and the edges. Length runs along the grain. Shaped, drilled and fabric-frame parts are drawn point by point under Shaped parts. Construction: ${S.opts.construct==='boxes'?'separate boxes':'shared partitions'}.</p>
+  let h=`<section data-psec="list"><h2>Cut list</h2><p class="lede">Every panel with its finished size. Painted MDF areas count both faces and the edges. Length runs along the grain. Shaped, drilled and fabric-frame parts are drawn point by point under Shaped parts. Construction: ${S.opts.construct==='boxes'?'separate boxes':'shared partitions'}.</p>
   <div class="stats"><div class="stat"><b>${total} <small>parts</small></b><span>${gs.length} different sizes</span></div>${nest.map(n=>`<div class="stat"><b>${n.sheets.length}${n.over.length?'+':''} <small>sheet${n.sheets.length===1?'':'s'}</small></b><span>${esc(MATS[n.mt]?.short||'')} ${n.t} mm<br>${esc(FIN[n.fin]?.name||'')}${n.offUsed&&n.offUsed.length?` · ${n.offUsed.length} from offcuts`:''}</span></div>`).join('')}${sp.groups.map(g=>`<div class="stat"><b>${g.bars.length}</b><span>${esc(FIN[g.fin]?.name||'')} ${g.t} mm · ${g.W}×${sp.cfg.L} pre-edged boards</span></div>`).join('')}</div>
-  <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap"><button class="btn" data-act="copyCSV">Copy as CSV</button><button class="btn" data-act="copyText">Copy as text</button><button class="btn" data-act="lblPdf">Part labels (PDF)</button><button class="btn" data-act="wsOpen">Workshop mode</button></div>${offHTML(nest)}
+  <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap"><button class="btn" data-act="copyCSV">Copy as CSV</button><button class="btn" data-act="copyText">Copy as text</button><button class="btn" data-act="lblPdf">Part labels (PDF)</button><button class="btn" data-act="pnTop" data-a="workshop">Workshop</button></div>${offHTML(nest)}
   <div class="pbud" style="flex-wrap:wrap"><span class="pbok">Have it cut</span><span style="flex:1 1 260px">Send the cut list to a panel shop: they cut (and edge-band) every part for you. The file is an Excel list with sizes, board, grain and which edges get edge band.</span>${Object.entries(SHOP_INFO).map(([k,I])=>`<button type="button" class="btn sm" data-act="shopX" data-a="${k}">Excel for ${I.name}</button>`).join('')}<button type="button" class="btn sm" data-act="dxfZip" title="One drawing per part with every hole — for shops that cut and drill by machine">DXF for CNC</button></div>
   ${ui.shopMail?`<div class="pbud" style="flex-direction:column;align-items:stretch"><span>Mail it to <b>${SHOP_INFO[ui.shopMail].email}</b> (or call ${SHOP_INFO[ui.shopMail].phone}) with the Excel attached. ${SHOP_INFO[ui.shopMail].how} Text you can use:</span><textarea readonly rows="7" style="width:100%;font:inherit;font-size:12.5px">${esc(shopMail(ui.shopMail))}</textarea><button type="button" class="btn sm" data-act="shopMailCopy" style="align-self:flex-start">Copy the text</button></div>`:''}
   <div class="tw"><table class="cut"><thead><tr><th>#</th><th>Part</th><th>Qty</th><th>Length</th><th>Width</th><th>Shape</th><th>Where</th><th>Notes</th></tr></thead><tbody>`;
@@ -4642,7 +4663,7 @@ function renderCut(){
     h+=`<tr><td class="n">${p.id}</td><td>${esc(p.type)}</td><td class="n">${p.qty}</td><td class="n">${f0(p.L)}${p.bandCut&&p.finL!==p.L?`<small class="fin">${f0(p.finL)} fin.</small>`:''}</td><td class="n">${f0(p.Wd)}${p.bandCut&&p.finWd!==p.Wd?`<small class="fin">${f0(p.finWd)} fin.</small>`:''}</td><td>${p.rect&&!p.holes.length?'<span class="note">rect</span>':`<span class="tag">${p.rect?'rect':p.poly.length+' pts'}${nh?' · '+nh+' hole'+(nh>1?'s':''):''}${nc?' · cut-out':''}</span>`}${p.angled?' <span class="tag w">angled</span>':''}</td><td class="note">${esc(p.secs.join(', '))}</td><td class="note">${(()=>{const sf=stockFor(p,sp.cfg);return sf?`<div class="stk">From a ${sf.W}×${sp.cfg.L} pre-edged board${sf.rip?` — rip ${sf.rip} mm off the back edge, keep the factory edge at the front`:' — full board width, both long edges already finished'}${p.band==='all'?'; band the two short ends':''}</div>`:''})()}${esc(p.notes.join(' · '))}${p.band!=='none'&&!stockFor(p,sp.cfg)?`<div>${bandTxt(p)}</div>`:''}</td></tr>`});
   h+=`</tbody></table></div>`;
   if(sp.groups.length)h+=`<p class="lede">Pre-edged boards save about ${sp.saved.toFixed(1)} m of edge banding.</p>`;
-  h+=`<h3>Materials</h3><div class="tw"><table class="cut" style="min-width:480px"><thead><tr><th>Material</th><th>Panel area</th><th>Edges</th><th>Edging / paint</th></tr></thead><tbody>${Object.entries(mats).map(([k,v])=>`<tr><td>${esc(k)}</td><td class="n">${v.area.toFixed(2)} m²</td><td class="note">${esc(v.edge)}</td><td class="n">${v.paint?`${(v.area*2+v.peri).toFixed(2)} m² paint`:v.band>0?`${v.band.toFixed(1)} m`:'—'}</td></tr>`).join('')}</tbody></table></div>`;
+  h+=`</section><section data-psec="buy"><h2>Shopping list</h2><p class="lede">What to buy besides the boards: the board totals, hardware, fabric and inserts. The sheets you need and how the parts sit on them are under Sheets.</p><h3>Materials</h3><div class="tw"><table class="cut" style="min-width:480px"><thead><tr><th>Material</th><th>Panel area</th><th>Edges</th><th>Edging / paint</th></tr></thead><tbody>${Object.entries(mats).map(([k,v])=>`<tr><td>${esc(k)}</td><td class="n">${v.area.toFixed(2)} m²</td><td class="note">${esc(v.edge)}</td><td class="n">${v.paint?`${(v.area*2+v.peri).toFixed(2)} m² paint`:v.band>0?`${v.band.toFixed(1)} m`:'—'}</td></tr>`).join('')}</tbody></table></div>`;
   const H=bgeo().H;
   if(H.fabric.length){const fg={};H.fabric.forEach(f=>{const k=f.col+'|'+f.w+'|'+f.h;(fg[k]=fg[k]||{...f,qty:0,secs:[]}).qty++;if(!fg[k].secs.includes(f.sec))fg[k].secs.push(f.sec)});const area=H.fabric.reduce((a,f)=>a+f.w*f.h/1e6,0);
     h+=`<h3>Fabric</h3><p class="lede">Pieces include ${geo.tf+25} mm on every side to wrap round the frame edge and staple at the back. Use an acoustically transparent fabric over speakers. Total ≈ ${area.toFixed(2)} m² before waste.</p><div class="tw"><table class="cut" style="min-width:480px"><thead><tr><th>Fabric</th><th>Qty</th><th>Size</th><th>Where</th></tr></thead><tbody>${Object.values(fg).map(f=>`<tr><td><span class="sw" style="background:${FABRICS[f.col].c}"></span> ${FABRICS[f.col].name}</td><td class="n">${f.qty}</td><td class="n">${f.w} × ${f.h}</td><td class="note">${esc(f.secs.join(', '))}</td></tr>`).join('')}</tbody></table></div>`}
@@ -4707,7 +4728,7 @@ function renderCut(){
   h+=`<h3>Hardware</h3><div class="tw"><table class="cut hwt" style="min-width:480px"><thead><tr><th>Item</th><th>Qty</th><th>Notes</th></tr></thead><tbody>${hw.map(r=>`<tr><td>${esc(r[0])}</td><td class="n">${r[1]}</td><td class="note">${esc(r[2])}</td></tr>`).join('')}</tbody></table></div>`;
   lastPrice=priceRows(nest,sp,hw,mats);lastPrice.nest=nest;lastPrice.shops=['best',...Object.keys(SHOPS)].map(k=>{const t=k===lastPrice.tot.shop?lastPrice.tot:priceRows(nest,sp,hw,mats,k).tot;return {k,total:t.all,fb:t.fb}});lastAlt=null;
   if(ROLES.some(([k])=>k!=='back'&&S.mat[k].type==='melamine')){const keep=S.opts.stock,was=!!(keep&&keep.on);try{setStockAll(!was);lastAlt={on:!was,total:priceRows(nestAll(gs),stockPlan(gs),hw,mats).tot.all}}catch(e){}S.opts.stock=keep;if(keep===undefined)delete S.opts.stock}
-  h+=priceHTML(lastPrice);
+  h+='</section><section data-psec="price">'+priceHTML(lastPrice)+'</section>';
   if(PRICING)return;
   el.innerHTML=partBar()+h;budSoon();{const pv=document.getElementById('pstatv');if(pv)pv.textContent=eur(lastPrice.tot.all)}
 }
@@ -5483,7 +5504,7 @@ function renderGuide(){
   if(G.ladder)ex.push('Screw the ladder-rail brackets into the boxes along the rail line, hang the ladder and check it rolls the full length.');
   if(ex.length)step('Finishing touches','','','',ex.join('<br>'));
   step('Done',`<div class="gdone">${elevSVG(S,G,{mini:true})}</div>`,'','','Clean the surfaces, stick on the door bumpers, and fill it up. Enjoy your Fitted.');
-  el.innerHTML=partBar()+`<h2>Build guide</h2><div style="margin:0 0 10px"><button type="button" class="btn" data-act="wsOpen">Workshop mode</button> <span class="hintp" style="display:inline">one cut or step at a time, in big letters, with ticks — for your phone in the workshop</span></div><p class="lede">${S.opts.noToons?'':'With <b>Bolt &amp; Pip</b>, two builders who get every step wrong first — so you don’t have to. '}Step by step, like flat-pack instructions: prepare, build each cabinet on the floor, install, fit the fronts, finish. Part numbers match the cut list and the shaped-part drawings. ${secs.length} columns · ${total} parts · about ${hours} hours of work (see “Your plan” below).</p><label class="chk" style="margin:-6px 0 14px"><input type="checkbox" data-act="toonsT" ${S.opts.noToons?'':'checked'}> Show Bolt &amp; Pip</label><div class="guide">${out.join('')}</div>`}
+  el.innerHTML=partBar()+`<h2>Build guide</h2><div style="margin:0 0 10px"><button type="button" class="btn" data-act="pnTop" data-a="workshop">Workshop</button> <span class="hintp" style="display:inline">one cut or step at a time, in big letters, with ticks — for your phone in the workshop</span></div><p class="lede">${S.opts.noToons?'':'With <b>Bolt &amp; Pip</b>, two builders who get every step wrong first — so you don’t have to. '}Step by step, like flat-pack instructions: prepare, build each cabinet on the floor, install, fit the fronts, finish. Part numbers match the cut list and the shaped-part drawings. ${secs.length} columns · ${total} parts · about ${hours} hours of work (see “Your plan” below).</p><label class="chk" style="margin:-6px 0 14px"><input type="checkbox" data-act="toonsT" ${S.opts.noToons?'':'checked'}> Show Bolt &amp; Pip</label><div class="guide">${out.join('')}</div>`}
 
 function renderSheets(){
   const gs=groupsCache||groupPanels(bgeo());const ns=nestAll(gs);const el=document.getElementById('v-sheets');
@@ -5825,7 +5846,7 @@ function room3D(){if(!T3)return;if(!T3.pplG){T3.pplG=new THREE.Group();T3.scene.
     const hd=new THREE.Mesh(new THREE.SphereGeometry(112*u,20,14),m);hd.position.set(0,1625*u,0);hd.castShadow=true;pg.add(hd);cy_(50,180,0,1470,0);
     cy_(42,640,-185,1100,0);const ra=(pn.max-20*u)-1400*u,arm=cy_(42,ra/u,185,(1400*u+ra/2)/u,0);
     const hand=new THREE.Mesh(new THREE.SphereGeometry(40*u,12,10),colMat('#C2603A',.6));hand.position.set(185*u,pn.max,0);pg.add(hand);
-    pg.position.set(pn.x,0,(G.tf||20)+620);g.add(pg)}
+    pg.name='refPerson';pg.position.set(pn.x,0,(G.tf||20)+620);g.add(pg)}
   applyExplode(true)}
 function solveH(src,dst){const n=src.length,A=[],b=[];for(let i=0;i<n;i++){const [X,Y]=src[i],[u,v]=dst[i];A.push([X,Y,1,0,0,0,-u*X,-u*Y]);b.push(u);A.push([0,0,0,X,Y,1,-v*X,-v*Y]);b.push(v)}
   const M=Array.from({length:8},()=>Array(9).fill(0));for(let r=0;r<A.length;r++)for(let i=0;i<8;i++){for(let j=0;j<8;j++)M[i][j]+=A[r][i]*A[r][j];M[i][8]+=A[r][i]*b[r]}
@@ -5845,7 +5866,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
    Lining the design up with a photo of the room.
 */
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.108';
+const APP_VERSION='v0.109';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
@@ -5911,39 +5932,83 @@ document.addEventListener('paste',e=>{const m=document.getElementById('ntm');if(
 */
 /* ===== AI render hand-off: Fitted supplies the picture and the instruction, an outside picture AI makes the photo ===== */
 const AI={shots:[],cur:0,plain:null};
-/* the plain 3D picture: always the whole wall, from slightly right and above, 1600 × 1000 — whatever the screen or the panels in front of the 3D view */
-function aiPlainShot(){try{if(!T3||!T3.renderer||!T3.cam||!window.THREE)return null;const R=T3.renderer,cam=T3.cam,el=R.domElement,W=1600,H=1000;
+/* ===== the questions the AI window asks (answers are remembered in this browser) ===== */
+const AIQ_DEF={room:'auto',floor:'oak',walls:'warm',light:'day',mood:'calm',view:'34r',format:'land',style:'shown',extras:[]};
+const AIQ_OPTS={
+  room:['Room',[['auto','Guess from the design'],['bedroom','Bedroom'],['living','Living room'],['attic','Attic room'],['office','Home office'],['kids','Kids’ room'],['hall','Hallway'],['laundry','Utility room']]],
+  floor:['Floor',[['oak','Light oak boards'],['herring','Oak herringbone'],['dark','Dark wood'],['concrete','Polished concrete'],['tiles','Large stone tiles'],['carpet','Soft carpet']]],
+  walls:['Walls and ceiling',[['warm','Warm white'],['white','Bright white'],['greige','Soft greige'],['lime','Limewash plaster'],['same','Same colour as the cabinet']]],
+  light:['Light',[['day','Soft daylight'],['morning','Morning sun'],['evening','Golden evening'],['night','Lamps at night']]],
+  mood:['Mood',[['calm','Calm and airy'],['warm','Warm and cosy'],['moody','Moody and dramatic'],['fresh','Bright and fresh']]],
+  view:['Camera',[['34r','¾ from the right'],['front','Straight on'],['34l','¾ from the left'],['close','Close-up of the selected column']]],
+  format:['Format',[['land','Landscape 16:10'],['port','Portrait 4:5'],['square','Square']]],
+  style:['Shelves and niches',[['shown','As in the picture'],['clean','Clean and empty'],['light','Lightly styled'],['lived','Lived-in']]],
+  extras:['Add in the room (optional)',[['rug','A rug'],['plant','A big plant'],['bed','End of a bed'],['sofa','A sofa'],['chair','An armchair'],['person','A person']]]};
+let AIQ=Object.assign({},AIQ_DEF);try{const o=JSON.parse(localStorage.getItem('fitted-aiq')||'null');if(o)AIQ=Object.assign({},AIQ_DEF,o,{extras:Array.isArray(o.extras)?o.extras:[]})}catch(e){}
+function aiqSave(){try{localStorage.setItem('fitted-aiq',JSON.stringify(AIQ))}catch(e){}}
+function aiqHTML(onPhoto){const keys=onPhoto?['light','mood','style','extras']:['room','floor','walls','light','mood','view','format','style','extras'];
+  return keys.map(k=>{const[l,opts]=AIQ_OPTS[k],multi=k==='extras';return `<div class="aiq"><span>${l}</span><div class="aiqc">${opts.map(([v,t])=>{const on=multi?AIQ.extras.includes(v):AIQ[k]===v;return `<button type="button" class="tchip ${on?'on':''}" data-act="aiQ" data-a="${k}:${v}" aria-pressed="${on}">${t}</button>`}).join('')}</div></div>`}).join('')+(onPhoto?'<p class="hintp" style="margin:0">On a room photo the room, camera and format stay as in your photo.</p>':'')}
+const AIQ_SIZE={land:[2560,1600],port:[2048,2560],square:[2400,2400]};
+/* hide the stand-in person (height reference) while making AI pictures */
+function aiPerson(show){try{T3&&T3.scene&&T3.scene.traverse(o=>{if(o.name==='refPerson'){if(!show){o.userData.wasV=o.visible;o.visible=false}else if(o.userData.wasV!=null){o.visible=o.userData.wasV;delete o.userData.wasV}}})}catch(e){}}
+/* the plain 3D picture: always the whole wall (or the selected column for a close-up), at a fixed size whatever the screen */
+function aiPlainShot(){try{if(!T3||!T3.renderer||!T3.cam||!window.THREE)return null;const R=T3.renderer,cam=T3.cam,el=R.domElement;let[W,H]=AIQ_SIZE[AIQ.format]||AIQ_SIZE.land;
+  try{const gl=R.getContext(),mx=Math.min(gl.getParameter(gl.MAX_RENDERBUFFER_SIZE),(gl.getParameter(gl.MAX_VIEWPORT_DIMS)||[4096])[0]);const k=Math.min(1,mx/Math.max(W,H));W=Math.floor(W*k);H=Math.floor(H*k)}catch(e){}
   const pr=R.getPixelRatio(),sz=R.getSize(new THREE.Vector2()),asp=cam.aspect,pos=cam.position.clone(),qt=cam.quaternion.clone();
-  const maxC=Math.max(...geo.cps.map(p=>p.y),+S.room.H),tgt=new THREE.Vector3(geo.W/2,maxC*0.48,-geo.D/2),half=((cam.fov||38)*Math.PI/180)/2;
-  const r=Math.max((maxC*0.6)/Math.tan(half),(geo.W*0.6)/(Math.tan(half)*W/H))*1.1,th=0.42,ph=0.14;let shot=null;
+  const maxC=Math.max(...geo.cps.map(p=>p.y),+S.room.H),half=((cam.fov||38)*Math.PI/180)/2,q=geo.secs[ui.sel]||geo.secs[0];let tgt,wFit,hFit;
+  if(AIQ.view==='close'&&q){tgt=new THREE.Vector3((q.bL+q.bR)/2,Math.min(maxC*0.5,1200),-geo.D/2);wFit=(q.bR-q.bL)+700;hFit=Math.min(maxC,2400)}else{tgt=new THREE.Vector3(geo.W/2,maxC*0.48,-geo.D/2);wFit=geo.W;hFit=maxC}
+  const r=Math.max((hFit*0.6)/Math.tan(half),(wFit*0.6)/(Math.tan(half)*W/H))*1.1,th=AIQ.view==='front'?0:AIQ.view==='34l'?-0.42:AIQ.view==='close'?0.3:0.42,ph=AIQ.view==='front'?0.04:0.14;let shot=null;
+  aiPerson(false);
   try{R.setPixelRatio(1);R.setSize(W,H,false);cam.aspect=W/H;cam.updateProjectionMatrix();cam.position.set(tgt.x+r*Math.cos(ph)*Math.sin(th),tgt.y+r*Math.sin(ph),tgt.z+r*Math.cos(ph)*Math.cos(th));cam.lookAt(tgt);R.render(T3.scene,cam);
     const cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d');x.fillStyle=getComputedStyle(document.body).getPropertyValue('--stage').trim()||'#E8EBE7';x.fillRect(0,0,W,H);x.drawImage(el,0,0,W,H);shot=cv}
-  finally{R.setPixelRatio(pr);R.setSize(sz.x,sz.y,false);cam.aspect=asp;cam.updateProjectionMatrix();cam.position.copy(pos);cam.quaternion.copy(qt);try{R.render(T3.scene,cam)}catch(e){}}
+  finally{aiPerson(true);R.setPixelRatio(pr);R.setSize(sz.x,sz.y,false);cam.aspect=asp;cam.updateProjectionMatrix();cam.position.copy(pos);cam.quaternion.copy(qt);try{R.render(T3.scene,cam)}catch(e){}}
   return shot}catch(e){return null}}
-function aiPrompt(note,onPhoto){const M=S.mat,fn=k=>(FIN[k]||{}).name||'',mn=t=>((MATS[t]||{}).name||t||'').toLowerCase(),hl=(HANDLES.find(h=>h[0]===S.opts.handle)||[])[1]||'',zn={closed:'cupboard doors',open:'open shelves',drawers:'drawers',opening:'open niche',seat:'window seat with cushion',speaker:'fabric speaker front',passage:'walk-through opening'};
-  const cols=geo.secs.map((q,i)=>{const sc=S.sections[i];if(!sc)return '';if(q.panel){const f=(Object.assign({},PANEL_DEF,sc.panel||{})).fun;return `${i+1}: wall panel${f==='peg'?' with a wooden peg board, pegs and small shelves':f==='slats'?' of vertical wooden slats':f==='climb'?' with climbing holds':''}`}if(q.door)return `${i+1}: doorway`;
-      const zs=(sc.zones||[]).map(z=>{let t=zn[z.type]||z.type;if(z.type==='opening'){t=z.look==='nook'?`reading nook with mattress and cushions${z.nookFront?' behind a front with '+({arch:'an arched',eyebrow:'a low arched',port:'a round porthole',house:'a house-shaped'}[z.nookFront])+' opening':''}${z.nookCurtain?' and a curtain':''}`:z.look==='art'?'niche with a framed picture':z.look==='dj'?'niche with DJ turntables':z.look==='oven'||z.look==='combi'?'built-in oven':z.look==='washer'||z.look==='dryer'||z.look==='stack'?'washing machine niche':z.look==='bed'?'fold-down bed front':z.look==='none'?'empty niche':'niche with a TV'}
-          if(z.type==='closed'&&z.face==='slat')t='slatted doors';if(z.type==='closed'&&z.face==='glass')t='fluted glass doors';if(z.type==='closed'&&z.face==='cane')t='cane-webbing doors';if(z.type==='closed'&&z.face==='fluted')t='fluted doors';if(z.type==='closed'&&z.face==='curtain')t='fabric curtain';if(z.type==='open'&&z.arch)t='open shelves behind arched openings';if(z.type==='open'&&z.slat)t='shelves behind a fixed slatted screen';
-          const c=FIN[z.fin]?fn(z.fin):FIN[z.inFin]&&(z.type==='open'||z.type==='opening')?fn(z.inFin)+(z.drench?' (all surfaces)':' back'):'';return t+(c?' in '+c:'')}).reverse();return `${i+1}${q.desk?' (desk)':''}: ${zs.join(', ')}`}).filter(Boolean);
-  const lines=['Turn this picture into a photorealistic interior photograph.',
-    onPhoto?'It is a photo of a real room with a 3D model of a built-in cabinet wall placed in it.':'It is a 3D model of a built-in cabinet wall.',
-    'Keep exactly as shown: the camera angle and framing, '+(onPhoto?'the room, ':'')+'and the size, position and layout of the cabinet. Every door, drawer, shelf, niche and gap stays where it is; do not add, remove, move or resize any part, and do not add furniture or people.',
-    'Change only how it looks: real materials with fine edges and thin, even gaps between the fronts; natural light and soft shadows'+(onPhoto?' that match the room in the photo':'')+'; believable reflections.',
-    'The decoration is drawn as simple placeholder shapes'+(ui.props?'':' (if any is shown)')+': books, vases, plants, framed pictures, cushions, baskets, boxes and toys. Make every one of them photorealistic too — real printed book spines of different thickness, glazed ceramic, living plants with real leaves, soft fabric with folds and seams, woven baskets — each the same kind of object, in the same place and about the same size and colour as shown. Do not leave any flat, cartoon-like or plain-coloured object in the picture, and do not add new ones.',
-    `Materials — fronts: ${fn(M.front.fin)} (${mn(M.front.type)}); cabinet body and inside: ${fn(M.carcass.fin)} (${mn(M.carcass.type)})${M.desk&&geo.secs.some(q=>q.desk)?`; desk top: ${fn(M.desk.fin)}`:''}; handles: ${hl.toLowerCase()||'none'}.`,
-    `From left to right, top to bottom — ${cols.join('; ')}.`,
-    'Result: one photo, same proportions as the picture, no text, no labels, no watermark.'];
-  if(note)lines.push('Also change: '+note.trim().replace(/\s+/g,' ')+'.');return lines.join('\n')}
-function aiShow(){const sh=AI.shots[AI.cur],im=document.getElementById('aiImg'),no=document.getElementById('aiNone'),pk=document.getElementById('aiPick');if(sh){im.hidden=false;im.src=sh.url;no.hidden=true}else{im.hidden=true;no.hidden=false;no.textContent='The picture could not be made here. Open the 3D view once and tap AI render again — the instruction below still works with a screenshot.'}
+/* ===== the instruction (written for ChatGPT's image model, works in others too) ===== */
+const AIQ_TXT={room:{bedroom:'a bedroom',living:'a living room',attic:'an attic room under a sloping roof',office:'a home office',kids:'a child’s bedroom',hall:'a hallway',laundry:'a utility and laundry room'},
+  floor:{oak:'wide light-oak floorboards with a matt oiled finish',herring:'light-oak herringbone parquet',dark:'dark smoked-oak floorboards',concrete:'smooth pale-grey polished concrete',tiles:'large-format warm-grey stone tiles',carpet:'soft wall-to-wall carpet in a neutral oatmeal colour'},
+  walls:{warm:'warm white matt walls and ceiling',white:'bright white matt walls and ceiling',greige:'soft greige matt walls with a white ceiling',lime:'textured limewash plaster walls in a warm off-white',same:'walls painted the same colour as the cabinet fronts (colour-drenched), white ceiling'},
+  light:{day:'soft, even daylight from a window on the left, overcast sky, gentle shadows',morning:'low morning sun from a window on the left casting long soft-edged light patches across the floor',evening:'warm golden-hour light from a window on the left, long warm shadows',night:'evening with warm lamps on (2700 K), a soft glow from any lights inside the cabinet, dark window'},
+  mood:{calm:'calm, airy and uncluttered',warm:'warm, cosy and inviting',moody:'moody and dramatic with deep shadows',fresh:'bright, fresh and crisp'},
+  style:{shown:'Keep the objects on shelves and in niches as shown, made photorealistic.',clean:'Shelves and niches are empty and clean; remove the placeholder objects.',light:'Shelves and niches are lightly styled: a few books, one or two ceramics, a small plant — plenty of empty space.',lived:'Shelves and niches look lived-in: books of many sizes, baskets, boxes, ceramics and plants, tidy but full.'},
+  extras:{rug:'a large rug on the floor in front of the cabinet',plant:'one big leafy plant in a pot beside the cabinet',bed:'the foot end of a made bed in the foreground',sofa:'part of a sofa in the foreground',chair:'an armchair to one side',person:'one person in everyday clothes, naturally in the scene, not covering the cabinet'}};
+function aiRoomGuess(){const t=JSON.stringify(S.sections);return /"rail":true/.test(t)?'bedroom':/"tv":[1-9]|"speaker"/.test(t)?'living':/"desk"/.test(t)?'office':/laundry|"stack"|"washer"/.test(t)?'laundry':(S.room.ceil||[]).some(p=>Math.abs(+p.y-+S.room.H)>1)?'attic':'living'}
+function aiFinTxt(k,t){const f=FIN[k]||{},m=MATS[t]||{};const surf=m.paint?'smooth matt lacquer':m.micro?'hand-trowelled microcement':f.kind==='wood'||m.fins==='wood'?'real wood veneer with natural grain running vertically':f.kind==='ply'?'birch plywood with visible layered edges':t==='hpl'?'super-matt laminate':'smooth matt melamine';return `${f.name||k}${f.base?' ('+f.base+')':''}, ${surf}`}
+function aiPrompt(note,onPhoto){const M=S.mat,G=geo,fn=k=>(FIN[k]||{}).name||'',hl=(HANDLES.find(h=>h[0]===S.opts.handle)||[])[1]||'',zn={closed:'cupboard doors',open:'open shelves',drawers:'drawers',opening:'open niche',seat:'window seat with cushion',speaker:'fabric speaker front',passage:'walk-through opening'};
+  const cols=G.secs.map((q,i)=>{const sc=S.sections[i];if(!sc)return '';const w=f0(q.bR-q.bL);if(q.panel){const f=(Object.assign({},PANEL_DEF,sc.panel||{})).fun;return `${i+1} (${w} mm): wall panel${f==='peg'?' with a wooden peg board, pegs and small shelves':f==='slats'?' of vertical wooden slats':f==='climb'?' with climbing holds':''}`}if(q.door)return `${i+1} (${w} mm): doorway`;
+      const zs=(sc.zones||[]).map(z=>{let t=zn[z.type]||z.type;if(z.type==='drawers')t=`${+z.count||3} drawers`;if(z.type==='opening'){t=z.look==='nook'?`reading nook with mattress and cushions${z.nookFront?' behind a front with '+({arch:'an arched',eyebrow:'a low arched',port:'a round porthole',house:'a house-shaped'}[z.nookFront])+' opening':''}${z.nookCurtain?' and a curtain':''}`:z.look==='art'?'niche with a framed picture':z.look==='dj'?'niche with DJ turntables':z.look==='oven'||z.look==='combi'?'built-in oven':z.look==='washer'||z.look==='dryer'||z.look==='stack'?'washing machine niche':z.look==='bed'?'fold-down bed front':z.look==='none'?'empty niche':'niche with a TV'}
+          if(z.type==='closed'&&z.face==='slat')t='slatted doors';if(z.type==='closed'&&z.face==='glass')t='fluted glass doors';if(z.type==='closed'&&z.face==='cane')t='cane-webbing doors';if(z.type==='closed'&&z.face==='fluted')t='fluted (reeded) doors';if(z.type==='closed'&&z.face==='curtain')t='fabric curtain';if(z.type==='open'&&z.arch)t='open shelves behind arched openings';if(z.type==='open'&&z.slat)t='shelves behind a fixed slatted screen';if(z.type==='open'&&+z.shelves>0)t+=` (${z.shelves} shelves)`;
+          const c=FIN[z.fin]?fn(z.fin):FIN[z.inFin]&&(z.type==='open'||z.type==='opening')?fn(z.inFin)+(z.drench?' (all surfaces)':' back'):'';return t+(c?' in '+c:'')}).reverse();return `${i+1} (${w} mm wide${q.desk?', with a desk':''}): ${zs.join(', ')}`}).filter(Boolean);
+  const maxC=Math.max(...G.cps.map(p=>p.y),+S.room.H),slope=(S.room.ceil||[]).some(p=>Math.abs(+p.y-+S.room.H)>1),room=AIQ.room==='auto'?aiRoomGuess():AIQ.room,push=S.opts.handle==='none';
+  const hand=push?'no handles at all — push-to-open, with even 3 mm shadow gaps between the fronts':`${hl.toLowerCase()}${/wood|edge|profile|disc/.test(S.opts.handle)?' in '+((WOODS[S.opts.handleWood]||{}).name||'oak').toLowerCase():''}, all the same and in the same position on every front`;
+  const fmt=onPhoto?'the same size and proportions as the attached photo':{land:'landscape 16:10, the same proportions as the attached picture',port:'portrait 4:5, the same proportions as the attached picture',square:'square, the same proportions as the attached picture'}[AIQ.format];
+  const ex=AIQ.extras.map(k=>AIQ_TXT.extras[k]).filter(Boolean);
+  const L=[];
+  L.push(onPhoto?'Edit the attached photo of a real room: it shows a 3D model of a made-to-measure built-in cabinet wall placed in the room. Make the cabinet look real and built-in, as if photographed in this room.':'Turn the attached 3D picture into a photorealistic interior photograph of a made-to-measure built-in cabinet wall.');
+  L.push('','KEEP EXACTLY (most important)',`- The camera position, angle and framing${onPhoto?', and the whole room, its light and everything in it':''}.`,'- The cabinet’s size, shape and layout: every column, door, drawer, shelf, niche, gap and line stays exactly where it is. Do not add, remove, merge, move or resize any part. Do not add handles, doors or shelves that are not in the picture.','- Straight vertical and horizontal lines; no warping, no fisheye.');
+  L.push('','THE CABINET',`- Fills the wall ${f0(G.W)} mm wide${slope?`, under a sloping ceiling (up to ${f0(maxC)} mm high), following the slope exactly`:`, floor to ceiling (${f0(maxC)} mm)`}${(G.beams||[]).length?', fitted around a ceiling beam':''}; ${f0(+S.room.D)} mm deep.`,
+    `- Columns from left to right, each listed from top to bottom: ${cols.join('; ')}.`,
+    `- Fronts: ${aiFinTxt(M.front.fin,M.front.type)}. Body and inside: ${aiFinTxt(M.carcass.fin,M.carcass.type)}.${M.desk&&G.secs.some(q=>q.desk)?` Desk top: ${aiFinTxt(M.desk.fin,M.desk.type)}.`:''}`,
+    `- Handles: ${hand}.`,
+    `- Built-in details: a plinth set back ${f0(+S.skirt.recess||40)} mm at the bottom; closing strips fitted tight to the ceiling and side walls, no visible gaps to the room; crisp, slightly softened edges; thin, perfectly even gaps between fronts.${S.opts.innerLight?' Warm white LED light strips glow inside the cabinets and niches.':''}`);
+  if(!onPhoto)L.push('','THE ROOM',`- ${({bedroom:'A',living:'A',attic:'An',office:'A',kids:'A',hall:'A',laundry:'A'})[room]||'A'} ${String(AIQ_TXT.room[room]||'room').replace(/^an? /,'')}${slope&&room!=='attic'?' with a sloping ceiling':''}.`,`- Floor: ${AIQ_TXT.floor[AIQ.floor]}.`,`- Walls and ceiling: ${AIQ_TXT.walls[AIQ.walls]}.`);
+  const lt=AIQ_TXT.light[AIQ.light];L.push('','LIGHT AND MOOD',`- ${onPhoto?'Match the light of the photo; ':''}${onPhoto?lt:lt[0].toUpperCase()+lt.slice(1)}.`,`- Overall feel: ${AIQ_TXT.mood[AIQ.mood]}.`);
+  L.push('','STYLING',`- ${AIQ_TXT.style[AIQ.style]}`,'- The decoration in the picture is drawn as simple placeholder shapes; make every object you keep fully photorealistic (real book spines, glazed ceramics, living plants, soft fabric with folds), in the same place and about the same size and colour.',
+    ex.length?`- Add only these, outside the cabinet and without covering more than a small part of it: ${ex.join('; ')}.`:'- Do not add furniture, people or objects outside the cabinet.');
+  if(!onPhoto)L.push('','PHOTOGRAPHY','- Interior magazine photograph: full-frame camera, 24 mm lens, camera at about 1.4 m, two-point perspective with straight verticals, sharp from front to back (f/8), natural colours, soft high dynamic range, no lens flare.');
+  L.push('','RESULT',`- One photo, ${fmt}, as large and sharp as possible.`,'- No text, labels, logos, watermarks or borders. No cartoon or plastic look.');
+  if(note)L.push('','ALSO CHANGE','- '+note.trim().replace(/\s+/g,' ')+'.');
+  return L.join('\n')}
+function aiShow(){const sh=AI.shots[AI.cur],im=document.getElementById('aiImg'),no=document.getElementById('aiNone'),pk=document.getElementById('aiPick');if(sh){im.hidden=false;im.width=sh.cv.width;im.height=sh.cv.height;im.src=sh.url;no.hidden=true}else{im.hidden=true;no.hidden=false;no.textContent='The picture could not be made here. Open the 3D view once and tap AI render again — the instruction below still works with a screenshot.'}
+  {const q=document.getElementById('aiQs');if(q)q.innerHTML=aiqHTML(!!(sh&&sh.photo))}
   pk.innerHTML=AI.shots.length>1?AI.shots.map((s_,j)=>`<button type="button" class="tchip ${j===AI.cur?'on':''}" data-act="aiPick" data-a="${j}">${esc(s_.label)}</button>`).join(''):'';aiText()}
 function aiText(){const t=document.getElementById('aiText'),sh=AI.shots[AI.cur];t.value=aiPrompt(document.getElementById('aiNote').value,!!(sh&&sh.photo))}
 async function aiOpen(){const mm=document.getElementById('mmenu');if(mm)mm.hidden=true;if(ui.tab!=='3d'){const tb=document.querySelector('#tabs [data-a="3d"]')||document.querySelector('[data-act="tab"][data-a="3d"]');if(tb)tb.click();await new Promise(r=>setTimeout(r,600))}
-  toast('Making the picture…');await new Promise(r=>setTimeout(r,30));AI.shots=[];AI.cur=0;const mk=(cv,label,photo)=>{try{AI.shots.push({cv,label,photo,url:cv.toDataURL('image/jpeg',.9)})}catch(e){}};
+  toast('Making the picture…');await new Promise(r=>setTimeout(r,30));AI.shots=[];AI.cur=0;const mk=(cv,label,photo)=>{try{AI.shots.push({cv,label,photo,url:cv.toDataURL('image/jpeg',.85)})}catch(e){}};aiPerson(false);
   try{if(PHS.some(o=>o&&o.img)){const cs=await photoShots();cs.forEach((cv,j)=>mk(cv,`Room photo ${j+1}`,true))}}catch(e){}
-  if(!(ui.photoOn&&AI.shots.length)){const cv=aiPlainShot();if(cv)AI.shots.unshift({cv,label:'3D view',photo:false,url:cv.toDataURL('image/jpeg',.9)})}
-  if(ui.photoOn&&AI.shots.length)AI.cur=Math.min(AI.shots.length-1,AI.shots.findIndex(s_=>s_.photo)+Math.max(0,phCur));if(AI.cur<0)AI.cur=0;
+  if(!(ui.photoOn&&AI.shots.length)){const cv=aiPlainShot();if(cv)AI.shots.unshift({cv,label:'3D view',photo:false,url:cv.toDataURL('image/jpeg',.85)})}
+  aiPerson(true);if(ui.photoOn&&AI.shots.length)AI.cur=Math.min(AI.shots.length-1,AI.shots.findIndex(s_=>s_.photo)+Math.max(0,phCur));if(AI.cur<0)AI.cur=0;
   document.querySelectorAll('.toast').forEach(t=>t.remove());document.getElementById('aim').hidden=false;aiShow()}
-async function aiSave(){const sh=AI.shots[AI.cur];if(!sh){toast('There is no picture to save — take a screenshot of the 3D view instead');return}const blob=await new Promise(r=>sh.cv.toBlob(r,'image/jpeg',.92)),fn='kast-for-ai-render.jpg';if(!blob){toast('Could not make the picture file');return}
+async function aiSave(){const sh=AI.shots[AI.cur];if(!sh){toast('There is no picture to save — take a screenshot of the 3D view instead');return}const blob=await new Promise(r=>sh.cv.toBlob(r,'image/jpeg',.95)),fn=`fitted-for-ai-${slugOf(curName())}-${sh.cv.width}x${sh.cv.height}.jpg`;if(!blob){toast('Could not make the picture file');return}
   let dl=null;try{if(window.claude&&claude.use)dl=await claude.use('downloads')}catch(e){}
   if(dl){try{await dl.save({filename:fn,data:blob});toast('Picture saved — now copy the instruction')}catch(e){toast(e&&e.code==='declined'?'Not saved':'Could not save here — press and hold the picture to save it')}return}
   try{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fn;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);toast('Picture saved — now copy the instruction')}catch(e){toast('Press and hold the picture to save it')}}
@@ -6009,6 +6074,10 @@ function photoCamLook(dSmall,w,h,con){let noise=6,soft=0.5,vig=0.1;try{const n=M
     noise=hp[Math.floor(hp.length*0.5)]*1.5;const top=gr[Math.floor(gr.length*0.985)],rng=Math.max(20,con*255);soft=top<8?0.45:Math.max(0.3,Math.min(0.75,0.85-top/rng*1.6));
     let c=0,nc=0,e=0,ne=0;for(let py=0;py<h;py++)for(let px=0;px<w;px++){const i=(py*w+px)*4,L=(dSmall[i]+dSmall[i+1]+dSmall[i+2])/3,rx=(px/w-0.5)*2,ry=(py/h-0.5)*2,r2=rx*rx+ry*ry;if(r2<0.2){c+=L;nc++}else if(r2>1.3){e+=L;ne++}}if(nc&&ne)vig=Math.max(0,Math.min(0.3,(1-(e/ne)/(c/nc+1e-6))*0.6))}catch(e){}
   return {noise,soft,vig}}
+
+/* a new answer: rewrite the instruction; a new camera or format also makes a new picture */
+function aiQ(k,v){if(k==='extras'){const i=AIQ.extras.indexOf(v);if(i>=0)AIQ.extras.splice(i,1);else AIQ.extras.push(v)}else AIQ[k]=v;aiqSave();
+  if((k==='view'||k==='format')&&AI.shots[AI.cur]&&!AI.shots[AI.cur].photo){const cv=aiPlainShot();if(cv){const j=AI.shots.findIndex(x=>!x.photo);if(j>=0)AI.shots[j]=Object.assign(AI.shots[j],{cv,url:cv.toDataURL('image/jpeg',.85)})}}aiShow()}
 /* ==== 84-3d-light-others.js ====
    3D light presets and the other walls of the room around the open wall.
 */
@@ -6330,7 +6399,7 @@ function applyFronts3D(noReq){if(!T3)return;if(!T3.glass)T3.glass={};T3.frontG.v
   if(ui.iso||ui.exT)applyExplode(true);if(!noReq)T3.req()}
 function renderViews(){
   groupsCache=null;renderBar();
-  const t=ui.tab;['elev','3d','cut','loft','sheets','guide'].forEach(k=>dirty[k]=true);
+  const t=ui.tab;['elev','3d','cut','loft','sheets','guide','draw','work'].forEach(k=>dirty[k]=true);
   renderTab(t);
 }
 function zoomWrap(){const w=document.getElementById('elevWrap');w.classList.toggle('fit',!(ui.zoom>1));w.style.width=(100*ui.zoom)+'%';w.style.height=isSheet()&&ui.zoom>1?(100*ui.zoom)+'%':''}
@@ -6354,7 +6423,7 @@ function renderTab(t){
   if(!dirty[t])return;dirty[t]=false;
   if(t==='elev'){const w=document.getElementById('elevWrap');zoomWrap();w.innerHTML=elevSVG(S,geo,{sel:ui.sel,zsel:ui.zsel,xray:ui.fm==='glass',hide:ui.fm==='off',props:ui.props,peek:ui.peek&&ui.zsel!=null?[ui.sel,ui.zsel]:null,focus:isSheet()&&ui.focus!==false&&flowNow()!=='home'?ui.sel:null})}
   if(t==='elev'){try{ztbRender()}catch(e){}}
-  if(t==='3d')rebuild3D();if(t==='cut')renderCut();if(t==='loft')renderLoft();if(t==='sheets')renderSheets();if(t==='guide')renderGuide();
+  if(t==='3d')rebuild3D();if(t==='cut')renderCut();if(t==='loft')renderLoft();if(t==='sheets')renderSheets();if(t==='guide')renderGuide();if(t==='draw')renderDraw();if(t==='work')renderWork();
 }
 function changed(side){if(lockGuard())side=true;if(S.proj){try{pjSync()}catch(e){}}geo=build(S);if(side)renderSide();renderViews();saveSoon();snap();priceSoon();try{dsAutoSoon()}catch(e){}}
 let prT=null;function pchipText(){if(!lastPrice)return '≈ € …';const d=ui.priceD||0;return `≈ ${eur(lastPrice.tot.all)}${Math.abs(d)>=1?` <small>${d<0?'▼':'▲'} ${eur(Math.abs(d)).replace('€ ','€')}</small>`:''}`}
@@ -6396,6 +6465,60 @@ function lockGuard(){if(!isLocked())return false;if(ui.lockId!==S.lock.id||!ui.l
   if(lockSig(S)===ui.lockSig){ui.lockSnap=JSON.stringify(S);return false}const done=S.done;S=JSON.parse(ui.lockSnap);if(done)S.done=done;lockToast();return true}
 function lockBanner(){if(!isLocked())return '';let d='';try{d=new Date(S.lock.at||Date.now()).toLocaleDateString(undefined,{day:'numeric',month:'short'})}catch(e){}
   return `<div class="lockban"><b>🔒 Locked for building</b><span>Since ${esc(d)}. Changes are switched off so the parts you cut keep matching the drawings. Ticking cuts and steps as done still works.</span><div class="dbtns"><button type="button" class="btn sm pri" data-act="dsEditCopy">Edit a copy</button><button type="button" class="btn sm" data-act="unlock">Unlock to change the design</button></div></div>`}
+
+/* switch the main view (Drawing, 3D, the Parts area views, Guide) */
+function showTab(a){ui.tab=a;document.querySelector('.app').dataset.tab=a;if(window.innerWidth<=860)window.scrollTo({top:0});
+  ['elev','3d','cut','loft','sheets','guide','draw','work'].forEach(k=>{const v=document.getElementById('v-'+k);if(v)v.hidden=k!==a});
+  document.querySelectorAll('[data-act="tab"]').forEach(x=>x.classList.toggle('on',x.dataset.a===a));try{pnTabsOn(a)}catch(e){}
+  dirty[a]=true;renderBar();renderTab(a);if(innerWidth<=860){renderSide();setSheet(null)}if(a==='3d'&&T3){if(PH.keep&&PH.pose&&PH.img&&!ui.photoOn){PH.adjust=false;setPhotoMode(true)}T3.req()}}
+/* ==== 91-parts-nav.js ====
+   The Parts area, split by what you are doing:
+     Parts     — what to cut and buy:  List · Sheets · Shopping · Price
+     Drawings  — everything on paper:  Technical drawings · Shaped parts · Labels & files
+     Workshop  — building it:          lock status · Cut · Assemble (3D per box) · Build steps
+   Views: v-cut (List / Shopping / Price, one render split in sections), v-sheets, v-draw, v-loft, v-work.
+   The last tab you used is remembered.
+*/
+const PN_GROUP={cut:'parts',sheets:'parts',draw:'drawings',loft:'drawings',work:'workshop'};
+const PN_PARTS=[['list','cut','List'],['sheets','sheets','Sheets'],['buy','cut','Shopping'],['price','cut','Price']];
+const PN_DRAW=[['tech','draw','Technical drawings'],['loft','loft','Shaped parts'],['files','draw','Labels & files']];
+let PN={last:'cut',psub:'list',dsub:'tech'};try{const o=JSON.parse(localStorage.getItem('fitted-pn')||'null');if(o)PN=Object.assign(PN,o)}catch(e){}
+function pnSave(){try{localStorage.setItem('fitted-pn',JSON.stringify(PN))}catch(e){}}
+/* open a place in the Parts area: g = 'parts'|'drawings'|'workshop', or a sub key */
+function pnGo(key){let tab='cut';
+  if(key==='parts'){key=PN.psub||'list'}else if(key==='drawings'){key=PN.dsub||'tech'}else if(key==='workshop'){key='work'}
+  const p=PN_PARTS.find(x=>x[0]===key),d=PN_DRAW.find(x=>x[0]===key);if(p){PN.psub=key;tab=p[1]}else if(d){PN.dsub=key;tab=d[1]}else if(key==='work')tab='work';
+  PN.last=tab;pnSave();showTab(tab)}
+function pnLast(){return PN.last&&PN_GROUP[PN.last]?PN.last:'cut'}
+function pnNav(t){const g=PN_GROUP[t];if(!g)return '';const sub=g==='parts'?PN_PARTS:g==='drawings'?PN_DRAW:null,cur=g==='parts'?PN.psub:PN.dsub;
+  return `<nav class="pnav" aria-label="${g==='parts'?'Parts':'Drawings'} sections">${sub?`<div class="pnsub seg" role="tablist">${sub.map(([k,,l])=>`<button type="button" role="tab" class="${k===cur?'on':''}" aria-selected="${k===cur}" data-act="pnGo" data-a="${k}">${l}</button>`).join('')}</div>`:''}</nav>`}
+function pnPut(t){const el=document.getElementById('v-'+t);if(!el)return;const old=el.querySelector(':scope>.pnav');if(old)old.remove();el.insertAdjacentHTML('afterbegin',pnNav(t));if(t==='cut')el.dataset.psub=PN.psub==='sheets'?'list':PN.psub;if(t==='draw')el.dataset.dsub=PN.dsub==='loft'?'tech':PN.dsub;pnTabsOn(t)}
+function pnTabsOn(t){const g=PN_GROUP[t];document.querySelectorAll('[data-act="tab"],[data-act="pnTop"]').forEach(x=>{const a=x.dataset.a;const on=x.dataset.act==='pnTop'?a===g:(a===t||(PN_GROUP[a]&&PN_GROUP[a]===g&&(x.closest('#bnav')||a==='cut'&&g==='parts')));x.classList.toggle('on',!!on)})}
+/* wrap the renders of the views so the section bar is always on top */
+['renderCut','renderSheets','renderLoft'].forEach(fnm=>{const f=window[fnm];if(typeof f!=='function')return;const t={renderCut:'cut',renderSheets:'sheets',renderLoft:'loft'}[fnm];window[fnm]=function(){const r=f.apply(this,arguments);try{if(!PRICING)pnPut(t)}catch(e){}return r}});
+/* ---------- Drawings ---------- */
+function renderDraw(){const el=document.getElementById('v-draw');if(!el)return;
+  el.innerHTML=`<section data-dsec="tech"><h2>Technical drawings</h2>${tdBodyHTML(true)}</section>
+  <section data-dsec="files"><h2>Labels &amp; files</h2><div class="shgrid">
+    <section class="shcard"><h3>Part labels</h3><p class="hintp">One sticker per part: its number, size, board, which edges get edge banding and which way the grain runs. A last page explains how to read them.</p><div class="dbtns"><button type="button" class="btn pri" data-act="lblPdf">Part labels (PDF)</button></div></section>
+    <section class="shcard"><h3>PDF packs</h3><p class="hintp">Front drawing, cut list, price, shaped parts and the build guide — as one PDF for the workshop, the shop or a quote.</p><div class="dbtns"><button type="button" class="btn" data-act="pdf">Choose a PDF pack…</button></div></section>
+    <section class="shcard"><h3>Templates at full size</h3><p class="hintp">Shaped parts printed 1:1 on A4 sheets to tape together and trace.</p><div class="dbtns"><button type="button" class="btn" data-act="tplPdf">Templates (PDF)</button></div></section>
+    <section class="shcard"><h3>CNC files per part</h3><p class="hintp">One DXF per part, with cut-outs and drill holes on their own layers, for a CNC router.</p><div class="dbtns"><button type="button" class="btn" data-act="dxfZip">DXF files (zip)</button></div></section>
+  </div></section>`;pnPut('draw')}
+/* ---------- Workshop ---------- */
+function wsCount(tab){const o=ui.ws;let d=0,n=0;try{ui.ws={tab};const it=wsItems(),done=new Set(((S.done||{})[tab])||[]);n=it.length;d=it.filter(x=>done.has(x.k)).length}catch(e){}ui.ws=o;return [d,n]}
+function renderWork(){const el=document.getElementById('v-work');if(!el)return;const[cd,cn]=wsCount('cuts'),[sd,sn]=wsCount('steps');let cols=[];try{cols=wxCols()}catch(e){}
+  const bar=(d,n)=>`<div class="wsprog"><i style="width:${n?Math.round(d/n*100):0}%"></i></div><span class="hintp" style="margin:0">${d} of ${n} done</span>`;
+  let ld='';try{ld=isLocked()?new Date(S.lock.at||Date.now()).toLocaleDateString(undefined,{day:'numeric',month:'short'}):''}catch(e){}
+  el.innerHTML=`<h2>Workshop</h2><p class="lede">Building it: cut the parts, put each box together, then follow the build steps. Big buttons, one thing at a time — made for a phone in the workshop.</p>
+  <div class="wklock ${isLocked()?'on':''}">${isLocked()?`<b>🔒 Locked for building</b><span>Since ${esc(ld)}. Nothing can change by accident, so the parts you cut keep matching the drawings. Ticking cuts and steps as done still works.</span><div class="dbtns"><button type="button" class="btn sm pri" data-act="dsEditCopy">Edit a copy</button><button type="button" class="btn sm" data-act="unlock">Unlock to change the design</button></div>`
+    :`<b>🔓 Not locked</b><span>When you start cutting, Fitted locks the design so the parts keep matching the drawings. You can lock it now too.</span><div class="dbtns"><button type="button" class="btn sm" data-act="lockOn">🔒 Lock now</button></div>`}</div>
+  <div class="wkgrid">
+    <section class="wkcard"><h3>1 · Cut</h3><p>Every cut at the saw, in order, with the fence setting. Tick each one off.</p>${bar(cd,cn)}<button type="button" class="btn pri" data-act="wkCut">${cd?'Go on cutting':'Start cutting'}</button></section>
+    <section class="wkcard wkasm"><h3>2 · Assemble</h3><p>Each box in 3D: pull it apart with the slider, turn it, tap a part to see its size, edge banding and holes.</p>
+      <div class="wkboxes">${cols.map((c,i)=>`<button type="button" class="tchip" data-act="wkBox" data-a="${i}">Box ${c.n}<small>${f0(c.bx.x1-c.bx.x0)} wide</small></button>`).join('')||'<span class="hintp">No boxes in this design.</span>'}</div><button type="button" class="btn pri" data-act="wkBox" data-a="0">Open in 3D</button></section>
+    <section class="wkcard"><h3>3 · Build steps</h3><p>Fixing to the wall, levelling, doors, strips — step by step.</p>${bar(sd,sn)}<div class="dbtns"><button type="button" class="btn pri" data-act="wkSteps">${sd?'Go on':'Start the steps'}</button><button type="button" class="btn" data-act="tab" data-a="guide">Read the whole guide</button></div></section>
+  </div>`}
 /* ==== 92-events.js ====
    All clicks: one big switch on data-act="…". To add a button: give it data-act="myAction" and add a case here.
 */
@@ -6427,7 +6550,12 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
   if(innerWidth<=860){const hp=e.target.closest('aside.side .hintp');if(hp&&!e.target.closest('button,a,input'))hp.classList.toggle('open')}
   const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.a,act=b.dataset.act;const secs=S.sections;
   switch(act){
-    case 'tab':ui.tab=a;document.querySelectorAll('[data-act="tab"]').forEach(x=>x.classList.toggle('on',x.dataset.a===a||(x.closest('#bnav')&&x.dataset.a==='cut'&&(a==='sheets'||a==='loft'))));document.querySelector('.app').dataset.tab=a;if(window.innerWidth<=860)window.scrollTo({top:0});['elev','3d','cut','loft','sheets','guide'].forEach(k=>document.getElementById('v-'+k).hidden=k!==a);renderBar();renderTab(a);if(innerWidth<=860){renderSide();setSheet(null)}if(a==='3d'&&T3){if(PH.keep&&PH.pose&&PH.img&&!ui.photoOn){PH.adjust=false;setPhotoMode(true)}T3.req()}break;
+    case 'tab':if(PN_GROUP[a]){PN.last=a;pnSave()}showTab(a);break;
+    case 'pnTop':if(a==='area')showTab(pnLast());else pnGo(a);break;
+    case 'pnGo':pnGo(a);break;
+    case 'wkCut':ui.ws={tab:'cuts'};lockOn();wsRender();break;
+    case 'wkSteps':ui.ws={tab:'steps'};lockOn();wsRender();break;
+    case 'wkBox':WX.col=+a||0;WX.sel=null;ui.ws={tab:'boxes'};wsRender();break;
     case 'ceilPreset':{const W=+S.room.W,H=+S.room.H,k=Math.min(1200,H*.5),L=Math.min(1600,W*.35);S.room.ceil=a==='flat'?[{x:0,y:H},{x:W,y:H}]:a==='left'?[{x:0,y:k},{x:L,y:H},{x:W,y:H}]:a==='right'?[{x:0,y:H},{x:W-L,y:H},{x:W,y:k}]:[{x:0,y:k},{x:L,y:H},{x:W-L,y:H},{x:W,y:k}];changed(true);break}
     case 'addCeil':{const c=S.room.ceil;const l=c[c.length-1]||{x:0,y:S.room.H};c.push({x:Math.min(+S.room.W,+l.x+500),y:l.y});changed(true);break}
     case 'delCeil':S.room.ceil.splice(+a,1);changed(true);break;
@@ -6486,13 +6614,13 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'shufPanel':S.opts.shufPanel=S.opts.shufPanel===false;changed(true);toast(S.opts.shufPanel?'Shuffles now also change the panel wall colour and decoration':'Panel wall stays as it is in shuffles');break;
     case 'sideT':{ui.noside=!ui.noside;const ap=document.querySelector('.app');ap.classList.toggle('noside',ui.noside);b.setAttribute('aria-pressed',String(ui.noside));setTimeout(()=>window.dispatchEvent(new Event('resize')),30);break}
     case 'notesOpen':{if(ui.tab!=='elev'&&ui.tab!=='3d'){const tb=document.querySelector('#tabs [data-a="elev"]');if(tb)tb.click()}const d=document.querySelector('#bar details.notes');if(d){ui.notesOpen=!d.open;d.open=ui.notesOpen;d.scrollIntoView({block:'nearest'})}else toast('No design issues found');break}
-    case 'toBudget':{const tb=document.querySelector('#tabs [data-a="cut"]')||document.querySelector('[data-act="tab"][data-a="cut"]');if(tb)tb.click();else{ui.tab='cut';renderViews()}if(isSheet()){try{closeSheet()}catch(e){}}setTimeout(()=>{const t=document.getElementById('budcard');if(t)t.scrollIntoView({block:'start'})},80);break}
+    case 'toBudget':{pnGo('price');if(isSheet()){try{closeSheet()}catch(e){}}setTimeout(()=>{const t=document.getElementById('budcard');if(t)t.scrollIntoView({block:'start'})},80);break}
     case 'budT':{budSwitch(a);ui.saver=null;changed(true);break}
     case 'budGo':{const T=+S.opts.budT,ids=((ui.bud&&ui.bud.rows)||[]).filter(r=>r.sug).map(r=>r.id);if(!(T>0)||!ids.length)break;let n=0;for(const id of ids){const pr=priceOf(S);if(pr&&pr.total<=T)break;budSwitch(id,true);n++}ui.saver=null;changed(true);const pr=priceOf(S);toast(pr?(pr.total<=T?`${n} saving${n===1?'':'s'} switched on — now ${eur(pr.total)}, within your budget`:`${n} saving${n===1?'':'s'} switched on — now ${eur(pr.total)}, still ${eur(pr.total-T)} over`):'Savings switched on');break}
     case 'budClear':delete S.opts.budT;saveSoon();snap();budPaint();budChips();break;
     case 'budMode':if(budgetKind())delete S.opts.budget;else S.opts.budget=S.mat.front.type==='mdfpaint'?'mdf':'mel';changed(true);toast(budgetKind()?'New shuffles will stay cheap':'Shuffles are free again');break;
     case 'budgetCycle':budgetBuild(budgetKind()==='mel'?'mdf':budgetKind()==='mdf'?'off':'mel');break;
-    case 'toPriceTab':{const tb=document.querySelector('#tabs [data-a="cut"]')||document.querySelector('[data-act="tab"][data-a="cut"]');if(tb)tb.click();else{ui.tab='cut';renderViews()}setTimeout(()=>{const t=document.getElementById('price');if(t)t.scrollIntoView({block:'start'})},60);break}
+    case 'toPriceTab':{pnGo('price');setTimeout(()=>{const t=document.getElementById('price');if(t)t.scrollIntoView({block:'start'})},60);break}
     case 'budget':budgetBuild(a);ui.saver=null;dirty.cut=true;if(ui.tab==='cut')renderCut();break;
     case 'phases':planPhases(+a);{const t=document.getElementById('price');if(t)t.scrollIntoView({block:'start'})}break;
     case 'phaseUse':S.opts.part=Object.assign({},S.opts.part||{},{on:'1',secs:a.split(',').map(Number)});changed(true);toast('Showing only this phase — the cut list, sheets, guide and PDF follow. Choose “Everything” at the top to go back.');{const v=document.getElementById('v-cut');if(v)v.scrollTop=0;window.scrollTo(0,0)}break;
@@ -6605,7 +6733,7 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'ioFile':ioFile();break;
     case 'ioCopyText':ioCopyText();break;
     case 'ioShare':ioShare();break;
-    case 'ioToCut':{document.getElementById('iom').hidden=true;const tb=document.querySelector('#tabs [data-a="cut"]')||document.querySelector('#bnav [data-a="cut"]');if(tb)tb.click();break}
+    case 'ioToCut':{document.getElementById('iom').hidden=true;pnGo('files');break}
     case 'rmSave':rmSave();break;
     case 'rmUse':rmUse(a);break;
     case 'rmNew':rmNew(a);break;
@@ -6656,6 +6784,7 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'aiOpen':aiOpen();break;
     case 'aiClose':document.getElementById('aim').hidden=true;break;
     case 'aiPick':AI.cur=+a;aiShow();break;
+    case 'aiQ':{const[k,v]=a.split(':');aiQ(k,v);break}
     case 'aiSave':aiSave();break;
     case 'aiCopy':aiCopy(document.getElementById('aiText').value,'Instruction copied — paste it next to the picture in your picture AI');break;
     case 'aiCopyNote':{const n=document.getElementById('aiNote').value.trim();if(!n){toast('Type the small change first');break}aiCopy('Keep everything else exactly the same — same camera angle, same cabinet layout, same room. Change only this: '+n+'.','Change copied — paste it as your next message');break}

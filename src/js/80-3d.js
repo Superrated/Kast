@@ -230,7 +230,7 @@ function room3D(){if(!T3)return;if(!T3.pplG){T3.pplG=new THREE.Group();T3.scene.
     const hd=new THREE.Mesh(new THREE.SphereGeometry(112*u,20,14),m);hd.position.set(0,1625*u,0);hd.castShadow=true;pg.add(hd);cy_(50,180,0,1470,0);
     cy_(42,640,-185,1100,0);const ra=(pn.max-20*u)-1400*u,arm=cy_(42,ra/u,185,(1400*u+ra/2)/u,0);
     const hand=new THREE.Mesh(new THREE.SphereGeometry(40*u,12,10),colMat('#C2603A',.6));hand.position.set(185*u,pn.max,0);pg.add(hand);
-    pg.position.set(pn.x,0,(G.tf||20)+620);g.add(pg)}
+    pg.name='refPerson';pg.position.set(pn.x,0,(G.tf||20)+620);g.add(pg)}
   applyExplode(true)}
 function solveH(src,dst){const n=src.length,A=[],b=[];for(let i=0;i<n;i++){const [X,Y]=src[i],[u,v]=dst[i];A.push([X,Y,1,0,0,0,-u*X,-u*Y]);b.push(u);A.push([0,0,0,X,Y,1,-v*X,-v*Y]);b.push(v)}
   const M=Array.from({length:8},()=>Array(9).fill(0));for(let r=0;r<A.length;r++)for(let i=0;i<8;i++){for(let j=0;j<8;j++)M[i][j]+=A[r][i]*A[r][j];M[i][8]+=A[r][i]*b[r]}

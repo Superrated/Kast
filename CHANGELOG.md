@@ -1,5 +1,27 @@
 # Changelog
 
+## v0.109
+
+- **The Parts area is now three tabs: Parts · Drawings · Workshop.** On phones they are at the top of the Parts screen; on bigger screens they are in the header. The last tab you used opens again.
+  - **Parts**, what to cut and buy: **List** (the cut list) · **Sheets** · **Shopping** (board totals, hardware, fabric, inserts) · **Price**.
+  - **Drawings**, everything on paper: **Technical drawings** (right on the page, A3/A4, PDF and DXF) · **Shaped parts** · **Labels & files** (part labels, PDF packs, full-size templates, CNC files).
+  - **Workshop**, building it:
+    - the lock status, with **Unlock** and **Edit a copy** (or **Lock now**);
+    - **1 · Cut** (with progress);
+    - **2 · Assemble**: tap a box and it opens in 3D, ready to pull apart;
+    - **3 · Build steps** (with progress), plus a link to the full guide.
+- **AI render asks you first**: room, floor, walls and ceiling, light, mood, camera (¾ right, straight on, ¾ left, or a close-up of the selected column), format (landscape 16:10, portrait 4:5, square), shelves and niches (as shown, empty, lightly styled, lived-in), and what to add in the room (rug, plant, end of a bed, sofa, armchair, person — nothing unless you pick it). Your answers are remembered.
+- **Sharper picture**: 2560 px wide (2048 × 2560 portrait, 2400 square), saved as a high-quality JPEG named after the design. Changing the camera or format makes a new picture straight away.
+- **No stand-in person** in the AI picture any more (the figure that shows the height stays in the 3D view).
+- **A more detailed instruction**, written for ChatGPT, in sections:
+  - keep exactly;
+  - the cabinet, with sizes, column widths and the contents of each column from top to bottom;
+  - materials with colour codes and surface (lacquer, veneer with vertical grain, melamine);
+  - handles, or push-to-open with 3 mm shadow gaps;
+  - plinth, closing strips and LED lights;
+  - the room, light and mood, styling, photography (24 mm lens, straight verticals), result and what to avoid.
+- Fixed: the picture preview in the AI window was squashed to a thin strip.
+
 ## v0.108
 
 - **Workshop mode → Boxes 3D** (new tab next to Cuts and Build steps): one box at a time in interactive 3D.
