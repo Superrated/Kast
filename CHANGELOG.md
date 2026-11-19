@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.113
+
+- **Clearer exploded views** — on the exploded sheets (Drawings → Technical drawings) and in Workshop → Assemble (3D):
+  - **Holes on every board**: hinge cups, mounting-plate holes, shelf-pin holes and connector-screw holes, on the face they are drilled in.
+  - **Hardware in place, numbered**: ① hinges with their mounting plates, ② shelf pins, ③ connector screws, ④ drawer runners, ⑤ hanging rail with its sockets.
+  - **Dashed assembly lines** from each connector screw to the board it goes into.
+  - **Hardware list per box** with the numbers from the drawing, how many, and one line on how it goes in.
+  - **Marks**: front edge (dark strip on paper, orange in 3D), the inside face (a triangle whose tip points to the front) and the grain direction (arrow on paper, lines in 3D).
+  - **Better view**: doors and drawer fronts pulled further out and to the side; letters and numbers no longer sit on top of each other.
+  - In 3D two new switches: **Hardware** and **Holes & marks**.
+
 ## v0.112
 
 - **The shops' own order forms** (Parts → List → Have it cut):

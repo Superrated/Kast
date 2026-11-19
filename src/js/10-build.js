@@ -52,7 +52,7 @@ function build(S){regCustom(S);applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zo
     const mx=Math.min(...poly.map(p=>p[0])),my=Math.min(...poly.map(p=>p[1]));
     poly=poly.map(p=>[r1(p[0]-mx),r1(p[1]-my)]);
     let w=Math.max(...poly.map(p=>p[0])),h=Math.max(...poly.map(p=>p[1]));
-    const holes=(o.holes||[]).map(q=>{const r={x:r1(q.x-mx),y:r1(q.y-my),d:q.d};if(q.dp)r.dp=q.dp;if(q.face)r.face=q.face;if(q.len){r.len=q.len;r.dir=q.dir}if(q.poly)r.poly=q.poly.map(p=>[r1(p[0]-mx),r1(p[1]-my)]);return r});
+    const holes=(o.holes||[]).map(q=>{const r={x:r1(q.x-mx),y:r1(q.y-my),d:q.d};if(q.dp)r.dp=q.dp;if(q.face)r.face=q.face;if(q.plate)r.plate=1;if(q.cf)r.cf=1;if(q.len){r.len=q.len;r.dir=q.dir}if(q.poly)r.poly=q.poly.map(p=>[r1(p[0]-mx),r1(p[1]-my)]);return r});
     const role=M[o.role]||M.carcass;
     if((o.matType??role.type)==='mdfmicro'&&o.band==='all'&&poly.length>=3&&!MC_SKIP.test(o.type||'')){const ip=insetPoly(poly,1);if(ip&&ip.length>=3){const ax=Math.min(...ip.map(p=>p[0])),ay=Math.min(...ip.map(p=>p[1]));poly=ip.map(p=>[r1(p[0]-ax),r1(p[1]-ay)]);holes.forEach(q=>{q.x=r1(q.x-ax);q.y=r1(q.y-ay);if(q.poly)q.poly=q.poly.map(p=>[r1(p[0]-ax),r1(p[1]-ay)])});w=Math.max(...poly.map(p=>p[0]));h=Math.max(...poly.map(p=>p[1]));o=Object.assign({},o,{notes:(o.notes||[]).concat('Cut 1 mm smaller all round than the finished front: the microcement adds about 1 mm on every edge')})}}
     panels.push(Object.assign({notes:[],band:'none',bandLen:0},o,{poly,holes,w,h,t:o.t??+role.t,fin:o.fin??role.fin,sheet:o.sheet??role.sheet,matType:o.matType??role.type??'melamine'}));
@@ -1002,6 +1002,10 @@ function build(S){regCustom(S);applyLinks(S);(S.sections||[]).forEach(sc=>(sc.zo
   if(cubCov.length)for(let j=props.length-1;j>=0;j--){const p_=props[j],cx=p_.x+(p_.w||0)/2;if(cubCov.some(b=>b.sec===p_.sec&&b.zone===p_.zone&&cx>b.x0&&cx<b.x1&&p_.y>b.y0-30&&p_.y<b.y1))props.splice(j,1)}
   if(baskets.length)for(let j=props.length-1;j>=0;j--){const p_=props[j],cx=p_.x+(p_.w||0)/2;if(baskets.some(b=>b.sec===p_.sec&&b.zone===p_.zone&&cx>b.x0-4&&cx<b.x1+4&&p_.y>b.y0-30&&p_.y<b.y1+10))props.splice(j,1)}
   try{accessCheck(result,S)}catch(e){}try{roomCheck(result,S,{bumps,cobjs})}catch(e){}try{cornerCheck(result,S)}catch(e){}
+  // link each cut-list panel to its 3D board (same outline, same role), so holes and hardware can be placed in 3D
+  {const key=(P_,sw)=>{const xs=P_.map(p_=>sw?p_[1]:p_[0]),ys=P_.map(p_=>sw?p_[0]:p_[1]),ax=Math.min(...xs),ay=Math.min(...ys);return xs.map((x_,i_)=>Math.round(x_-ax)+','+Math.round(ys[i_]-ay)).sort().join(';')},rk=r_=>/^fabric/.test(r_||'')?'front':r_,pool={};
+    items.forEach(it=>{if(it.k!=='prism'||!it.poly||it.poly.length<3)return;try{(pool[key(it.poly,0)]=pool[key(it.poly,0)]||[]).push(it)}catch(e){}});
+    panels.forEach(pn=>{for(const sw of [0,1]){const L_=pool[key(pn.poly,sw)];if(!L_)continue;const j=L_.findIndex(it=>!it.pan&&rk(it.role)===rk(pn.role));if(j<0)continue;const it=L_[j];it.pan=pn;it.panSw=sw;return}})}
   return result;
 }
 

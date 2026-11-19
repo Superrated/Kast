@@ -521,3 +521,16 @@ aside.side.locked>*:not(.shead):not(.lockban):not(.viewsw){pointer-events:none;o
 .sfgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
 .sfgrid label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--ink2);min-width:0}
 .sfgrid input{font:inherit;font-size:13px;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--raised);color:var(--ink);min-width:0}
+/* Assemble 3D: hardware numbers, hardware list and the key */
+.wxhwn{position:absolute;transform:translate(-50%,-50%);min-width:22px;height:22px;padding:0 5px;border-radius:5px;background:#8E8E8A;color:#fff;font:700 12px/22px var(--f-b),system-ui,sans-serif;text-align:center;pointer-events:none;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.wxlh2{margin-top:10px}
+.wxhwrow{display:flex;gap:10px;align-items:flex-start;padding:7px 4px;border-bottom:1px solid var(--line);font-size:12.5px}
+.wxhwrow i{flex:0 0 22px;height:22px;border-radius:5px;background:#8E8E8A;color:#fff;font:700 12px/22px var(--f-b),system-ui,sans-serif;font-style:normal;text-align:center}
+.wxhwrow div{display:flex;flex-direction:column;gap:2px;min-width:0}.wxhwrow span{color:var(--ink2);font-size:12px}.wxhwrow small{font-weight:400;color:var(--ink2)}
+.wxkey{font-size:11.5px;color:var(--ink2);line-height:1.9;margin:10px 0 0}
+.wxkey span{display:inline-block;vertical-align:middle;margin:0 4px 0 8px}.wxkey span:first-child{margin-left:0}
+.wxkey .k1{width:16px;height:4px;background:#E8772E;border-radius:2px}
+.wxkey .k2{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:10px solid #E8772E}
+.wxkey .k3{width:16px;height:0;border-top:2px solid #8A5A1C}
+.wxkey .k4{width:9px;height:9px;border-radius:50%;background:#2b2b2b}
+.wxkey .k5{width:16px;height:0;border-top:2px dashed #3446D6}

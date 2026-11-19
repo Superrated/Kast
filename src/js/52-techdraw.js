@@ -19,7 +19,7 @@ function tdSolids(G){const out=[];(G.items||[]).forEach((it,idx)=>{if(it.k!=='pr
   const e=it.ext||[0,0,0],A=it.poly.map(([u,v])=>it.toW(u,v)),B=A.map(p=>[p[0]+e[0],p[1]+e[1],p[2]+e[2]]),all=A.concat(B);
   if(all.some(p=>p.some(v=>!isFinite(v))))return;const bb=[0,1,2].map(i=>[Math.min(...all.map(p=>p[i])),Math.max(...all.map(p=>p[i]))]);
   const ax=Math.abs(e[0])>Math.abs(e[1])?(Math.abs(e[0])>Math.abs(e[2])?0:2):(Math.abs(e[1])>Math.abs(e[2])?1:2);
-  out.push({A,B,e,bb,ax,t:Math.hypot(...e),role:String(it.role||''),tag:it.tag||'',sz:it.sz||'',fin:it.fin||'',idx})});return out}
+  out.push({A,B,e,bb,ax,t:Math.hypot(...e),role:String(it.role||''),tag:it.tag||'',sz:it.sz||'',fin:it.fin||'',idx,toW:it.toW,pan:it.pan||null,panSw:it.panSw||0,mu:Math.min(...it.poly.map(p=>p[0])),mv:Math.min(...it.poly.map(p=>p[1]))})});return out}
 const tdLy=s=>/^fabric/.test(s.role)?'FRONTS':({carcass:'CARCASS',shelf:'SHELVES',back:'BACKS',front:'FRONTS',skirt:'STRIPS_PLINTH',desk:'DESK'})[s.role]||'OTHER';
 /* cut a solid with the plane coord[ax]=c; returns 3D section polygons */
 function tdCut(s,ax,c){const e=s.e;if(s.bb[ax][0]>c+1e-6||s.bb[ax][1]<c-1e-6)return [];
@@ -113,27 +113,52 @@ function tdPartName(s,c){const ax=s.ax,bx=c.bx;if(s.role==='front'||/^fabric/.te
   if(s.role==='carcass'){if(ax===0)return Math.abs(s.bb[0][0]-bx.x0)<3||Math.abs(s.bb[0][1]-bx.x1)<3?'Side':'Divider';if(ax===1)return Math.abs(s.bb[1][1]-bx.y1)<3?'Top':Math.abs(s.bb[1][0]-bx.y0)<30?'Bottom':'Fixed shelf';return 'Rail / batten'}return 'Part'}
 /* how far a part moves when its box is pulled apart (EX = step in mm) */
 function tdOffset(s,c,EX){const bx=c.bx,cc=[(bx.x0+bx.x1)/2,(bx.y0+bx.y1)/2,(bx.z0+bx.z1)/2],m=[0,1,2].map(k=>(s.bb[k][0]+s.bb[k][1])/2);
-  if(s.role==='front'||/^fabric/.test(s.role))return [0,0,EX*1.6];if(s.role==='back')return [0,0,-EX];if(s.role==='shelf')return [0,0,EX*0.8];if(s.role==='skirt')return [0,-EX*0.5,EX*0.9];
+  if(s.role==='front'||/^fabric/.test(s.role)){const sd=Math.sign(m[0]-cc[0]);return [Math.abs(m[0]-cc[0])>20?sd*EX*0.45:0,0,EX*2.3]}if(s.role==='back')return [0,0,-EX*1.2];if(s.role==='shelf')return [0,0,EX*0.8];if(s.role==='skirt')return [0,-EX*0.5,EX*0.9];
   if(s.ax===0)return [Math.sign(m[0]-cc[0]||1)*EX*((Math.abs(s.bb[0][0]-bx.x0)<3||Math.abs(s.bb[0][1]-bx.x1)<3)?1:0.2),0,0];
   if(s.ax===1){const top=Math.abs(s.bb[1][1]-bx.y1)<3,bot=Math.abs(s.bb[1][0]-bx.y0)<30;return [0,top?EX:bot?-EX*0.6:0,top||bot?0:EX*0.5]}return [0,0,0]}
 /* parts of a box with names, sizes and letters (same name and size = same letter) */
 function tdPartRows(c){const list=c.cs.map((s,i)=>{const ex=[0,1,2].map(k=>s.bb[k][1]-s.bb[k][0]),t=s.t||Math.min(...ex),o=ex.filter((x,k)=>k!==s.ax).sort((a,b)=>b-a);return {i,s,name:tdPartName(s,c),L:o[0],W:o[1],t,role:s.role}});
   const grp={};list.forEach(r=>{const k=r.name+'|'+f0(r.L)+'|'+f0(r.W)+'|'+f0(r.t);(grp[k]=grp[k]||{name:r.name,L:r.L,W:r.W,t:r.t,role:r.role,q:0,idx:[]}).q++;grp[k].idx.push(r.i)});
   const rows=Object.values(grp).sort((a,b)=>a.idx[0]-b.idx[0]);rows.forEach((r,j)=>{r.tag=j<26?String.fromCharCode(65+j):'Z'+(j-25)});const tagOf={};rows.forEach(r=>r.idx.forEach(i=>tagOf[i]=r));return {rows,tagOf}}
-function tdExploded(c){const bx=c.bx,cc=[(bx.x0+bx.x1)/2,(bx.y0+bx.y1)/2,(bx.z0+bx.z1)/2],EX=Math.max(180,Math.min(420,(bx.y1-bx.y0)*0.12));
+function tdExploded(c,G){G=G||geo;const bx=c.bx,EX=asEX(c),ctr=asCtr(c);
   const v=[0.95,0.75,1.25],vl=Math.hypot(...v),f=v.map(a=>-a/vl),up0=[0,1,0],cr=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],nm=a=>{const l=Math.hypot(...a);return a.map(x=>x/l)};
   const rt=nm(cr(f,up0)),up=cr(rt,f),dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],P=p=>[dot(p,rt),dot(p,up)];
-  const parts=c.cs.map(s=>{const m=[0,1,2].map(k=>(s.bb[k][0]+s.bb[k][1])/2);const o=tdOffset(s,c,EX);
-    const mv=p=>[p[0]+o[0],p[1]+o[1],p[2]+o[2]];return {s,A:s.A.map(mv),B:s.B.map(mv),m:mv(m)}});
-  const faces=[];parts.forEach((pt,i)=>{const n=pt.A.length,fs=[pt.A.slice(),pt.B.slice().reverse()];for(let j=0;j<n;j++)fs.push([pt.A[j],pt.A[(j+1)%n],pt.B[(j+1)%n],pt.B[j]]);
-    fs.forEach(F=>{const a=F[0],b=F[1],c3=F[2];let nrm=nm(cr([b[0]-a[0],b[1]-a[1],b[2]-a[2]],[c3[0]-a[0],c3[1]-a[1],c3[2]-a[2]]));if(!nrm.every(isFinite))return;const ctr=[0,1,2].map(k=>F.reduce((s_,p)=>s_+p[k],0)/F.length);
-      if(dot(nrm,[ctr[0]-pt.m[0],ctr[1]-pt.m[1],ctr[2]-pt.m[2]])<0)nrm=nrm.map(x=>-x);if(dot(nrm,f)>=-1e-6)return;const sh=Math.abs(nrm[1])>0.7?.97:Math.abs(nrm[0])>0.7?.84:.91;faces.push({p:F.map(P),d:dot(ctr,f),g:pt.s.role==='front'||/^fabric/.test(pt.s.role)?sh-.06:sh,i})})});
-  faces.sort((a,b)=>b.d-a.d);const E=faces.map(F=>tdPg(F.p,{f:F.g,w:'thin',ly:'PARTS'}));
-  const list=parts.map((pt,i)=>{const s=pt.s,ex=[0,1,2].map(k=>s.bb[k][1]-s.bb[k][0]),t=s.t||Math.min(...ex),o=ex.filter((x,k)=>k!==s.ax).sort((a,b)=>b-a);return {no:i+1,name:tdPartName(s,c),L:o[0],W:o[1],t,role:s.role,lab:P(pt.m)}});
+  let H={hw:[],lines:[],types:[]};try{H=asHW(c,G)}catch(e){console.warn(e)}
+  const mk=(s,o,hw)=>{const m=[0,1,2].map(k=>(s.bb[k][0]+s.bb[k][1])/2),mv=p=>[p[0]+o[0],p[1]+o[1],p[2]+o[2]];return {s,o,hw,A:s.A.map(mv),B:s.B.map(mv),m:mv(m),mk:hw?{}:asMarks(s,c)}};
+  const parts=c.cs.map(s=>mk(s,tdOffset(s,c,EX),0)).concat(H.hw.map(h=>mk(h,asOff(h,c,EX),1)));
+  const boardOf=new Map();parts.forEach(pt=>{if(!pt.hw)boardOf.set(pt.s,pt)});
+  const faces=[];parts.forEach(pt=>{if(pt.hw)return;const n=pt.n=nm(pt.s.e);pt.dA=dot(pt.A.reduce((a,p)=>[a[0]+p[0]/pt.A.length,a[1]+p[1]/pt.A.length,a[2]+p[2]/pt.A.length],[0,0,0]),f);pt.dB=dot(pt.B.reduce((a,p)=>[a[0]+p[0]/pt.B.length,a[1]+p[1]/pt.B.length,a[2]+p[2]/pt.B.length],[0,0,0]),f)});
+  // hardware sitting on a board is painted together with the face it sits on
+  parts.forEach(pt=>{if(!pt.hw||!pt.s.host||V3.l(pt.s.extra||[0,0,0])>1)return;const hp=boardOf.get(pt.s.host);if(!hp)return;const n=hp.n,sA=dot(V3.s(pt.m,hp.A[0]),n);pt.hd=(sA>hp.s.t/2?hp.dB:hp.dA)-0.005;pt.hc=dot(pt.m,f)});
+  parts.forEach((pt,i)=>{const n=pt.A.length,fs=[pt.A.slice(),pt.B.slice().reverse()];for(let j=0;j<n;j++)fs.push([pt.A[j],pt.A[(j+1)%n],pt.B[(j+1)%n],pt.B[j]]);
+    fs.forEach((F,fi)=>{const a=F[0],b=F[1],c3=F[2];let nrm=nm(cr([b[0]-a[0],b[1]-a[1],b[2]-a[2]],[c3[0]-a[0],c3[1]-a[1],c3[2]-a[2]]));if(!nrm.every(isFinite))return;const ctrF=[0,1,2].map(k=>F.reduce((s_,p)=>s_+p[k],0)/F.length);
+      if(dot(nrm,[ctrF[0]-pt.m[0],ctrF[1]-pt.m[1],ctrF[2]-pt.m[2]])<0)nrm=nrm.map(x=>-x);const dd=dot(ctrF,f);if(dot(nrm,f)>=-1e-6)return;
+      const sh=Math.abs(nrm[1])>0.7?.97:Math.abs(nrm[0])>0.7?.84:.91;let g=pt.hw?(Math.abs(nrm[1])>0.7?.72:.6):pt.s.role==='front'||/^fabric/.test(pt.s.role)?sh-.06:sh;
+      if(!pt.hw&&pt.mk.edge&&fi>1&&nrm[2]>0.9)g=.5;faces.push({e:tdPg(F.map(P),{f:g,w:pt.hw?'xthin':'thin',ly:pt.hw?'HARDWARE':'PARTS'}),d:pt.hd!=null?pt.hd+(dd-pt.hc)*1e-5:dd})})});
+  // holes, grain arrows and the inside-face triangle ride on their face
+  const ring=(cen,n,r)=>{const k=Math.abs(n[0])<0.9?[1,0,0]:[0,1,0],u=nm(cr(n,k)),w=cr(n,u),o=[];for(let i=0;i<12;i++){const t=i/12*Math.PI*2;o.push([0,1,2].map(j=>cen[j]+u[j]*r*Math.cos(t)+w[j]*r*Math.sin(t)))}return o};
+  parts.forEach(pt=>{if(pt.hw)return;const s=pt.s,o=pt.o,n=nm(s.e);let HS=[];try{HS=asHoles(s,ctr,G)}catch(e){}
+    const vis=out=>dot(out,f)<0,dep=isB=>(isB?pt.dB:pt.dA)-0.01;
+    HS.forEach(hh=>{(hh.face==='T'?['A','B']:[hh.face]).forEach(F=>{const isB=F==='B',out=isB?n:n.map(x=>-x);if(!vis(out))return;const cen=(isB?hh.B:hh.A).map((x,k)=>x+o[k]+out[k]*0.3);
+      faces.push({e:tdPg(ring(cen,n,Math.max(hh.d/2,2.5)).map(P),{f:hh.kind==='cup'?.45:.2,w:'xthin',ly:'HOLES'}),d:dep(isB)})})});
+    const M=pt.mk;if(M.grain){const isB=vis(n),out=isB?n:n.map(x=>-x);if(vis(out)){const base=(isB?pt.B:pt.A),cen=[0,1,2].map(k=>base.reduce((a,p)=>a+p[k],0)/base.length).map((x,k)=>x+out[k]*0.3),ext=[0,1,2].reduce((a,k)=>a+Math.abs(M.grain[k])*(s.bb[k][1]-s.bb[k][0]),0)*0.3,
+      a=cen.map((x,k)=>x-M.grain[k]*ext),b=cen.map((x,k)=>x+M.grain[k]*ext),side=nm(cr(n,M.grain)),hd=Math.min(25,ext*0.25),head=(p,dir)=>[p.map((x,k)=>x-dir*M.grain[k]*hd+side[k]*hd*0.5),p,p.map((x,k)=>x-dir*M.grain[k]*hd-side[k]*hd*0.5)];
+      faces.push({e:tdPg([a,b].map(P),{c:false,w:'thin',ly:'GRAIN'}),d:dep(isB)},{e:tdPg(head(b,1).map(P),{c:false,w:'thin',ly:'GRAIN'}),d:dep(isB)},{e:tdPg(head(a,-1).map(P),{c:false,w:'thin',ly:'GRAIN'}),d:dep(isB)})}}
+    if(M.tri&&vis(M.tri.out)){const isB=dot(M.tri.out,n)>0;faces.push({e:tdPg(M.tri.pts.map(p=>P(p.map((x,k)=>x+o[k]))),{f:.35,w:'xthin',ly:'MARKS'}),d:dep(isB)})}});
+  // assembly lines: screw → the board it goes into (painted at the depth of the screw, so nearer boards cover them)
+  H.lines.forEach(L=>{const oa=V3.a(tdOffset(L.ah,c,EX),L.ax||[0,0,0]),ob=tdOffset(L.bh,c,EX),a=V3.a(L.a,oa),b=V3.a(L.b,ob);faces.push({e:tdPg([P(a),P(b)],{c:false,d:1,w:'xthin',ly:'ASSEMBLY'}),d:Math.min(dot(a,f),dot(b,f))-1})});
+  faces.sort((a,b)=>b.d-a.d);const E=faces.map(F=>F.e);
+  const list=parts.filter(pt=>!pt.hw).map((pt,i)=>{const s=pt.s,ex=[0,1,2].map(k=>s.bb[k][1]-s.bb[k][0]),t=s.t||Math.min(...ex),o=ex.filter((x,k)=>k!==s.ax).sort((a,b)=>b-a);return {no:i+1,name:tdPartName(s,c),L:o[0],W:o[1],t,role:s.role,lab:P(pt.m)}});
   const grp={};list.forEach(r=>{const k=r.name+'|'+f0(r.L)+'|'+f0(r.W)+'|'+f0(r.t);(grp[k]=grp[k]||{...r,q:0,nos:[]}).q++;grp[k].nos.push(r.no)});
-  const rows=Object.values(grp).sort((a,b)=>a.nos[0]-b.nos[0]).map((r,j)=>Object.assign(r,{tag:String.fromCharCode(65+j)}));
-  rows.forEach(r=>list.filter(l=>r.nos.includes(l.no)).forEach(l=>{E.push(tdArc(l.lab,1,0,360,{w:'thin',ly:'TEXT',lab:r.tag}))}));
-  const all=E.flatMap(e=>e.p||[]);const bb=[[Math.min(...all.map(p=>p[0])),Math.min(...all.map(p=>p[1]))],[Math.max(...all.map(p=>p[0])),Math.max(...all.map(p=>p[1]))]];return {E,bb,rows}}
+  const rows=Object.values(grp).sort((a,b)=>a.nos[0]-b.nos[0]).map((r,j)=>Object.assign(r,{tag:j<26?String.fromCharCode(65+j):'Z'+(j-25)}));
+  rows.forEach(r=>list.filter(l=>r.nos.includes(l.no)).forEach(l=>E.push({t:'lab',p:l.lab.slice(),a:l.lab.slice(),s:r.tag,ly:'TEXT'})));
+  H.types.forEach(T=>{const pt=parts.filter(p=>p.hw&&p.s.hw===T.k);if(!pt.length)return;const one=pt.reduce((a,b)=>P(b.m)[1]>P(a.m)[1]?b:a),a=P(one.m);E.push({t:'lab',p:a.slice(),a,s:String(T.no),hw:1,ly:'TEXT'})});
+  const all=E.flatMap(e=>e.t==='lab'?[e.p]:(e.p||[]));const bb=[[Math.min(...all.map(p=>p[0])),Math.min(...all.map(p=>p[1]))],[Math.max(...all.map(p=>p[0])),Math.max(...all.map(p=>p[1]))]];
+  const pad=Math.max(bb[1][0]-bb[0][0],bb[1][1]-bb[0][1])*0.05;bb[0][0]-=pad;bb[0][1]-=pad;bb[1][0]+=pad;bb[1][1]+=pad;return {E,bb,rows,hw:H.types}}
+/* spread the letters and numbers so they don't sit on top of each other (den = scale) */
+function tdRelax(V,den){const L=V.E.filter(e=>e.t==='lab');if(!L.length)return;const r=2.6*den;L.forEach(l=>{if(l.hw){l.p=[l.a[0]+6*den,l.a[1]+6*den]}});
+  for(let it=0;it<60;it++){let mv=0;for(let i=0;i<L.length;i++)for(let j=i+1;j<L.length;j++){const a=L[i],b=L[j],dx=b.p[0]-a.p[0],dy=b.p[1]-a.p[1],d=Math.hypot(dx,dy)||0.01,need=2*r+0.6*den;if(d<need){const k=(need-d)/2,ux=d>0.02?dx/d:(i%2?1:-1),uy=d>0.02?dy/d:0.3;a.p[0]-=ux*k;a.p[1]-=uy*k;b.p[0]+=ux*k;b.p[1]+=uy*k;mv=1}}if(!mv)break}
+  L.forEach(l=>{V.bb[0][0]=Math.min(V.bb[0][0],l.p[0]-r);V.bb[0][1]=Math.min(V.bb[0][1],l.p[1]-r);V.bb[1][0]=Math.max(V.bb[1][0],l.p[0]+r);V.bb[1][1]=Math.max(V.bb[1][1],l.p[1]+r)})}
 /* ---------- sheets ---------- */
 function tdScaleFor(w,h,aw,ah,max){for(const d of TD_SCALES){if(max&&d<max)continue;if(w/d<=aw&&h/d<=ah)return d}return TD_SCALES[TD_SCALES.length-1]}
 function tdSheets(){const G=build(JSON.parse(JSON.stringify(S))),sol=tdSolids(G),cols=tdCols(G,sol).filter(c=>c.cs.length),[PW,PH]=TD_PAPER[TD.paper],M=10,TB=TD.paper==='A3'?20:16,aw=PW-2*M-6,ah=PH-2*M-TB-14,sheets=[],O=TD.sheets;
@@ -152,7 +177,7 @@ function tdSheets(){const G=build(JSON.parse(JSON.stringify(S))),sol=tdSolids(G)
       win(SV,Dw-260,top-200,Dw+fz+70,cH+70,`Detail 2 — top strip (column ${c.n})`,E=>{if(cH-top>1)tdDim(E,[Dw+fz+5,top],[Dw+fz+5,cH],'v',Dw+fz+40,5)}),
       win(PV,-70,-fz-110,260,Math.min(PV.Dw,300),'Detail 3 — side strip at the left wall',E=>{if(c.bx.x0>1&&cols[0])tdDim(E,[0,-fz],[cols[0].bx.x0,-fz],'h',-fz-60,5)})];
     sheets.push({title:'Details',views})}
-  if(O.expl){cols.filter(c=>c.q&&!c.q.panel).forEach(c=>{const X=tdExploded(c),w=X.bb[1][0]-X.bb[0][0],h=X.bb[1][1]-X.bb[0][1],tw=TD.paper==='A3'?150:112,d=tdScaleFor(w,h,aw-tw-8,ah,10);sheets.push({title:`Exploded view — column ${c.n}`,views:[{V:X,den:d,label:`Box ${c.n}, pulled apart — letters match the parts list`}],parts:X.rows,c})})}
+  if(O.expl){cols.filter(c=>c.q&&!c.q.panel).forEach(c=>{const X=tdExploded(c,G),tw=TD.paper==='A3'?150:112;let w=X.bb[1][0]-X.bb[0][0],h=X.bb[1][1]-X.bb[0][1],d=tdScaleFor(w,h,aw-tw-8,ah-8,10);tdRelax(X,d);w=X.bb[1][0]-X.bb[0][0];h=X.bb[1][1]-X.bb[0][1];const d2=tdScaleFor(w,h,aw-tw-8,ah-8,10);if(d2!==d){d=d2}sheets.push({title:`Exploded view — box ${c.n}`,views:[{V:X,den:d,label:`Box ${c.n}, pulled apart — letters = parts, numbers = hardware`}],parts:X.rows,hw:X.hw,c})})}
   return {sheets,cols,G}}
 function tdSetoutTable(G,cols){return cols.map(c=>{const q=c.q,t=q.panel?'Panel wall':q.door?'Door':q.desk?'Desk':'Cabinet';return [String(c.n),t,f0(c.bx.x0),f0(c.bx.x1),f0(c.bx.x1-c.bx.x0),f0(tdTopAt(c.cs,c.bx.x0+2)),f0(tdTopAt(c.cs,c.bx.x1-2)),f0(c.bx.z1-c.bx.z0),f0(c.bx.y0)]})}
 /* ---------- vector PDF ---------- */
@@ -165,7 +190,7 @@ function tdOps(){const o=[];return {o,
   raw(s){o.push(s)}}}
 function tdRenderView(R,V,den,x0,y0){const bx=V.bb[0][0],by=V.bb[0][1],T=p=>[x0+(p[0]-bx)/den,y0+(p[1]-by)/den];
   if(V.clip){const w=(V.bb[1][0]-bx)/den,h=(V.bb[1][1]-by)/den;R.raw(`q ${tdN(x0*TD_K)} ${tdN(y0*TD_K)} ${tdN(w*TD_K)} ${tdN(h*TD_K)} re W n`)}
-  V.E.forEach(e=>{if(e.t==='pg'){R.pg(e.p.map(T),e.c,e.f,TD_LW[e.w]||.15,e.d);if(e.lab){const p=T(e.p[0]);R.pg(tdArc([p[0]-1,p[1]],2.2,0,360).p,true,1,.15);R.tx(p[0]-1,p[1]-1.05,e.lab,2.2,'c',0,1)}}else if(e.t==='tx'){const p=T(e.p);R.tx(p[0],p[1],e.s,e.h,e.al,e.r,e.b)}});
+  V.E.forEach(e=>{if(e.t==='lab'){const p=T(e.p),a=e.a?T(e.a):p;if(Math.hypot(p[0]-a[0],p[1]-a[1])>2.6){R.pg([a,p],false,null,.12);R.pg(tdArc(a,0.5,0,360).p,true,0,.1)}R.pg(tdArc(p,2.2,0,360).p,true,e.hw?.82:1,e.hw?.25:.15);R.tx(p[0],p[1]-1.05,e.s,2.2,'c',0,1);return}if(e.t==='pg'){R.pg(e.p.map(T),e.c,e.f,TD_LW[e.w]||.15,e.d);if(e.lab){const p=T(e.p[0]);R.pg(tdArc([p[0]-1,p[1]],2.2,0,360).p,true,1,.15);R.tx(p[0]-1,p[1]-1.05,e.lab,2.2,'c',0,1)}}else if(e.t==='tx'){const p=T(e.p);R.tx(p[0],p[1],e.s,e.h,e.al,e.r,e.b)}});
   if(V.clip){R.raw('Q');const w=(V.bb[1][0]-bx)/den,h=(V.bb[1][1]-by)/den;R.pg([[x0,y0],[x0+w,y0],[x0+w,y0+h],[x0,y0+h]],true,null,.3)}}
 function tdSheetOps(sh,no,tot,meta){const[PW,PH]=TD_PAPER[TD.paper],M=10,TB=TD.paper==='A3'?20:16,R=tdOps();R.raw('1 J 1 j 0 G');
   R.pg([[M,M],[PW-M,M],[PW-M,PH-M],[M,PH-M]],true,null,.5);R.pg([[M,M+TB],[PW-M,M+TB]],false,null,.35);
@@ -184,7 +209,10 @@ function tdPartsTable(R,sh,x,ytop,w){const M=S.mat,mn=role=>{const k=/^fabric/.t
   R.tx(x,ytop-4,`Parts of box ${sh.c.n}`,3.2,'l',0,1);let y=ytop-9;const cols=[[0,'Part'],[10,'Name'],[42,'Qty'],[52,'Length'],[72,'Width'],[92,'Thick'],[106,'Board']],sc=w/150;
   cols.forEach(([cx,h])=>R.tx(x+cx*sc,y-4,h,2.1,'l',0,1));y-=6;R.pg([[x,y],[x+w,y]],false,null,.3);
   sh.parts.forEach(r=>{R.pg(tdArc([x+2.6,y-3.1],2.2,0,360).p,true,1,.15);R.tx(x+2.6,y-4.15,r.tag,2.1,'c',0,1);[[10,r.name],[42,String(r.q)],[52,f0(r.L)],[72,f0(r.W)],[92,f0(r.t)],[106,mn(r.role)]].forEach(([cx,v])=>R.tx(x+cx*sc,y-4.2,v,2.2,'l'));y-=6.2;R.pg([[x,y],[x+w,y]],false,null,.1)});
-  R.tx(x,y-5,'Exact sizes, edge banding and drilling: see the cut list.',2,'l')}
+  R.tx(x,y-5,'Exact sizes, edge banding and drilling: see the cut list.',2,'l');y-=12;
+  if(sh.hw&&sh.hw.length){R.tx(x,y-4,`Hardware for box ${sh.c.n}`,3.2,'l',0,1);y-=9;[[0,'No.'],[10,'What'],[96,'Qty']].forEach(([cx,h])=>R.tx(x+cx*sc,y-4,h,2.1,'l',0,1));y-=6;R.pg([[x,y],[x+w,y]],false,null,.3);
+    sh.hw.forEach(r=>{R.pg(tdArc([x+2.6,y-3.1],2.2,0,360).p,true,.82,.25);R.tx(x+2.6,y-4.15,String(r.no),2.1,'c',0,1);R.tx(x+10*sc,y-4.2,r.name,2.2,'l');R.tx(x+96*sc,y-4.2,String(r.q),2.2,'l');y-=4.6;R.tx(x+10*sc,y-3.4,r.how,1.8,'l');y-=4.4;R.pg([[x,y],[x+w,y]],false,null,.1)});y-=4}
+  const lg=['Dark strip = the front edge (gets edge band)','Dark triangle = the inside face, its tip points to the front','Arrow on a board = the grain direction','Grey rings = holes  ·  dashed line = what goes into what'];lg.forEach(t=>{R.tx(x,y-4,t,2,'l');y-=4.4});return y}
 function pdfVec(pages){const objs=[null,null,'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>','<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>'],kids=[];
   pages.forEach(pg=>{objs.push(`<< /Length ${pg.ops.length} >>\nstream\n${pg.ops}\nendstream`);const cid=objs.length;objs.push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${tdN(pg.w)} ${tdN(pg.h)}] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents ${cid} 0 R >>`);kids.push(objs.length)});
   objs[0]='<< /Type /Catalog /Pages 2 0 R >>';objs[1]=`<< /Type /Pages /Kids [${kids.map(k=>k+' 0 R').join(' ')}] /Count ${kids.length} >>`;

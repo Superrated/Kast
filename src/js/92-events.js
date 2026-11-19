@@ -118,6 +118,8 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'wxCol':WX.col=+a;WX.sel=null;wsRender();break;
     case 'wxDims':WX.dims=!WX.dims;e.target.closest('button').classList.toggle('on',WX.dims);wxApplyT();wxDraw();break;
     case 'wxLabs':WX.labels=!WX.labels;e.target.closest('button').classList.toggle('on',WX.labels);wxDraw();break;
+    case 'wxHw':WX.hw=!WX.hw;wxSave();e.target.closest('button').classList.toggle('on',WX.hw);wxApplyT();wxDraw();break;
+    case 'wxMarks':WX.marks=!WX.marks;wxSave();e.target.closest('button').classList.toggle('on',WX.marks);wxApplyT();wxDraw();break;
     case 'wxReset':if(WX.r&&WX.r.home){Object.assign(WX.r.ctl,WX.r.home);WX.r.zoomed=0;wxDraw()}break;
     case 'wxSel':wxSelect(WX.sel&&WX.sel.tag===a?null:(a||null));break;
     case 'wsDone':wsDone();break;
