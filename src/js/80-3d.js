@@ -1324,6 +1324,7 @@ function rebuild3D() {
           o.receiveShadow = true;
           if (it.sz) o.userData.sz = it.sz;
           o.userData.pk = pk;
+          o.userData.it = it; // for the size readout (32-sizes.js)
         }
       });
       /* dark line in the gaps round each door and drawer, like the real shadow there */

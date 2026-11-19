@@ -2,14 +2,18 @@
    The toolbar above the drawing, the status bar and switching views.
 */
 /* ===== bar, views ===== */
+/* Design tab: the Front / 3D switch, first in the toolbar (and in the floating row on phones) */
+function dswHTML() {
+  return `<span class="dsw" role="tablist" aria-label="Design view"><button type="button" data-act="tab" data-a="elev" role="tab" class="${ui.tab === 'elev' ? 'on' : ''}">Front</button><button type="button" data-act="tab" data-a="3d" role="tab" class="${ui.tab === '3d' ? 'on' : ''}">3D</button></span>`;
+}
 function renderBar() {
   const b = document.getElementById('bar');
   const w = geo.warns;
-  let h = '';
+  let h = ui.tab === 'elev' || ui.tab === '3d' ? dswHTML() : '';
   if (ui.tab === 'elev')
     h += `<button class="btn sm ${ui.props ? 'on' : ''}" data-act="props" title="Show books, clothes, boxes and decoration at real size">Show items</button>${fmodeHTML()}<button class="btn sm" data-act="zoom" data-a="-1" aria-label="Zoom out">−</button><button class="btn sm" data-act="zoom" data-a="1" aria-label="Zoom in">+</button>`;
   if (ui.tab === '3d')
-    h += `<button class="btn sm ${ui.photoOn ? 'on' : ''}" data-act="photo" title="Line the design up with a photo of your room">${ui.photoOn ? 'Photo on' : PH.img ? 'Room photo' : '+ Room photo'}</button>${S.proj ? `<button class="btn sm ${ui.others3D === false ? '' : 'on'}" data-act="others3D" title="Show the other walls of the room around this one">Other walls</button>` : ''}<button class="btn sm" data-act="light3d" title="Change the light: daylight, morning, evening, lamps">Light: ${(LIGHTS[ui.light || ''] || LIGHTS[''])[1]}</button><button class="btn sm" data-act="cam" data-a="front">Front</button><button class="btn sm" data-act="cam" data-a="angle">Right ¾</button><button class="btn sm" data-act="cam" data-a="left">Left ¾</button><button class="btn sm ${ui.props ? 'on' : ''}" data-act="props" title="Show books, clothes, boxes and decoration at real size">Show items</button>${fmodeHTML()}<button class="btn sm" data-act="aiOpen" title="Hand this picture to a picture AI to make it look like a photo">🪄 AI render</button><button class="btn sm ${ui.see && ui.see.size ? 'on' : ''}" data-act="seeClear" title="Tap any door, panel or shelf in the 3D view to see through it">${ui.see && ui.see.size ? `Solid again (${ui.see.size})` : 'Tap a piece to see through'}</button><button class="btn sm ${ui.room3D ? 'on' : ''}" data-act="room3D">Room</button><button class="btn sm ${ui.exOn ? 'on' : ''}" data-act="explode" title="Pull every column and every part apart">Exploded</button><button class="btn sm ${ui.iso ? 'on' : ''}" data-act="iso" title="Show one column on its own">${ui.iso ? 'Column ' + (ui.sel + 1) : 'One column'}</button>${ui.iso ? `<button class="btn sm" data-act="isoSec" data-a="-1" aria-label="Previous column">◀</button><button class="btn sm" data-act="isoSec" data-a="1" aria-label="Next column">▶</button>` : ''}`;
+    h += `<button class="btn sm ${ui.photoOn ? 'on' : ''}" data-act="photo" title="Line the design up with a photo of your room">${ui.photoOn ? 'Photo on' : PH.img ? 'Room photo' : '+ Room photo'}</button>${S.proj ? `<button class="btn sm ${ui.others3D === false ? '' : 'on'}" data-act="others3D" title="Show the other walls of the room around this one">Other walls</button>` : ''}<button class="btn sm" data-act="light3d" title="Change the light: daylight, morning, evening, lamps">Light: ${(LIGHTS[ui.light || ''] || LIGHTS[''])[1]}</button><button class="btn sm" data-act="cam" data-a="front">Straight on</button><button class="btn sm" data-act="cam" data-a="angle">Right ¾</button><button class="btn sm" data-act="cam" data-a="left">Left ¾</button><button class="btn sm ${ui.props ? 'on' : ''}" data-act="props" title="Show books, clothes, boxes and decoration at real size">Show items</button>${fmodeHTML()}<button class="btn sm" data-act="aiOpen" title="Hand this picture to a picture AI to make it look like a photo">🪄 AI render</button><button class="btn sm ${ui.see && ui.see.size ? 'on' : ''}" data-act="seeClear" title="Tap any door, panel or shelf in the 3D view to see through it">${ui.see && ui.see.size ? `Solid again (${ui.see.size})` : 'Tap a piece to see through'}</button><button class="btn sm ${ui.room3D ? 'on' : ''}" data-act="room3D">Room</button><button class="btn sm ${ui.exOn ? 'on' : ''}" data-act="explode" title="Pull every column and every part apart">Exploded</button><button class="btn sm ${ui.iso ? 'on' : ''}" data-act="iso" title="Show one column on its own">${ui.iso ? 'Column ' + (ui.sel + 1) : 'One column'}</button>${ui.iso ? `<button class="btn sm" data-act="isoSec" data-a="-1" aria-label="Previous column">◀</button><button class="btn sm" data-act="isoSec" data-a="1" aria-label="Next column">▶</button>` : ''}`;
   if (ui.tab === 'elev' || ui.tab === '3d')
     h += `<span class="sp"></span><span class="note" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">Fronts ${finSel('front')} Carcass ${finSel('carcass')}</span>`;
   else h += '<span class="sp"></span>';
@@ -31,7 +35,7 @@ function renderBar() {
     if (mf) {
       const wn = [...new Set(w)];
       const fmN = { solid: 'Doors', glass: 'See-through', off: 'No doors' }[ui.fm] || 'Doors';
-      mf.innerHTML = `${wn.length ? `<button type="button" class="mfb warn" data-act="mnotes">⚠ ${wn.length}</button>` : ''}<button type="button" class="mfb pchip" data-act="toPriceTab" aria-label="Estimated price">${pchipText()}</button><span class="sp"></span><button type="button" class="mfb" data-act="fmCycle" aria-label="Fronts: ${fmN}">${FM_ICON[ui.fm] || ''}${fmN}</button>${isLocked() ? '<button type="button" class="mfb" data-act="lockInfo" aria-label="Locked while you build">🔒</button>' : ''}<button type="button" class="mfb ${ui.props ? 'on' : ''}" data-act="props" aria-pressed="${!!ui.props}" title="Show books, clothes and boxes at real size">🪴 Items</button>${S.opts.screen && S.opts.screen.on ? `<button type="button" class="mfb ${S.opts.screen.show === 'down' ? 'on' : ''}" data-act="scrT">Screen</button>` : ''}${flowNow() !== 'home' ? `<button type="button" class="mfb" data-act="focusT">${ui.focus === false ? 'Zoom in' : 'Whole wall'}</button>` : ''}`;
+      mf.innerHTML = `${ui.tab === 'elev' || ui.tab === '3d' ? dswHTML() : ''}${wn.length ? `<button type="button" class="mfb warn" data-act="mnotes">⚠ ${wn.length}</button>` : ''}<button type="button" class="mfb pchip" data-act="toPriceTab" aria-label="Estimated price">${pchipText()}</button><span class="sp"></span><button type="button" class="mfb" data-act="fmCycle" aria-label="Fronts: ${fmN}">${FM_ICON[ui.fm] || ''}${fmN}</button>${isLocked() ? '<button type="button" class="mfb" data-act="lockInfo" aria-label="Locked while you build">🔒</button>' : ''}<button type="button" class="mfb ${ui.props ? 'on' : ''}" data-act="props" aria-pressed="${!!ui.props}" title="Show books, clothes and boxes at real size">🪴 Items</button>${S.opts.screen && S.opts.screen.on ? `<button type="button" class="mfb ${S.opts.screen.show === 'down' ? 'on' : ''}" data-act="scrT">Screen</button>` : ''}${flowNow() !== 'home' ? `<button type="button" class="mfb" data-act="focusT">${ui.focus === false ? 'Zoom in' : 'Whole wall'}</button>` : ''}`;
       mnotesPanel(wn);
     }
   }
@@ -558,7 +562,10 @@ function showTab(a) {
     const v = document.getElementById('v-' + k);
     if (v) v.hidden = k !== a;
   });
-  document.querySelectorAll('[data-act="tab"]').forEach(x => x.classList.toggle('on', x.dataset.a === a));
+  if (a === 'elev' || a === '3d') ui.dmode = a; // Design tab: Front or 3D
+  document.querySelectorAll('[data-act="tab"]').forEach(x =>
+    x.classList.toggle('on', x.dataset.a === a || (x.dataset.a === 'design' && (a === 'elev' || a === '3d')))
+  );
   try {
     pnTabsOn(a);
   } catch (e) {

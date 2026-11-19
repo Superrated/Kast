@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.120
+
+- **One Design tab**: Drawing and 3D are now one tab, **Design**, with a **Front / 3D** switch at the start of the toolbar (on phones in the floating row). The Design tab opens whichever you used last. On phones the bottom bar is Design · Parts · Guide. The 3D camera button "Front" is now "Straight on".
+- **Sizes on demand**: point at a part to see how big it is — hover with the mouse, or touch and hold on a phone.
+  - **Front**: a door or drawer front shows width × height × thickness, and for doors the hinge side and number of hinges; an open space or compartment shows its inside width × height (between the boards above and below) and depth; a panel wall or column shows its width.
+  - **3D**: any board shows its name, cut size, thickness and its number in the cut list (e.g. "Door · 2462 × 525.5 mm · Cut list P21").
+  - Holding a part on a phone shows its size without also selecting it.
+
 ## v0.119
 
 - **Doors in front of uprights are always even**: in a level whose doors sit in front of its uprights, the spacing presets (Even, ⅓ · ⅔, Golden, Wide middle, Shifted) now space the **doors**, not the compartments. Before, "Even" gave equal compartments, and because the outer doors also cover the side panels they came out about 9 mm wider than the middle ones (e.g. 523 / 514 / 523 mm); now they are 520 / 520 / 520. The compartments behind come out a little different instead (496 / 505 / 496 mm).

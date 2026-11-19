@@ -82,7 +82,9 @@ function pnTabsOn(t) {
     const on =
       x.dataset.act === 'pnTop'
         ? a === g
-        : a === t || (PN_GROUP[a] && PN_GROUP[a] === g && (x.closest('#bnav') || (a === 'cut' && g === 'parts')));
+        : a === t ||
+          (a === 'design' && (t === 'elev' || t === '3d')) ||
+          (PN_GROUP[a] && PN_GROUP[a] === g && (x.closest('#bnav') || (a === 'cut' && g === 'parts')));
     x.classList.toggle('on', !!on);
   });
 }

@@ -62,6 +62,7 @@ try {
 } catch (e) {
   oops('boot #3', e);
 }
+szInit(); // sizes on hover / touch and hold (32-sizes.js)
 syncInit(); // your settings on every device (58-sync-settings.js)
 document.addEventListener(
   'click',

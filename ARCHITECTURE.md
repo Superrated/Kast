@@ -102,3 +102,8 @@ The version is `APP_VERSION` in `src/js/81-room-photo.js`. Each update adds 0.00
 ## Uprights spaced by the doors (v0.119)
 
 - `vdPosDoors(n, mode, span)` (`00-core-data.js`) and `doorVd(q, z)` / `doorVdLead(z)` (`10-build.js`, next to `autoVd`): a closed, hinged level without its own door count, with uprights and a `vdMode`, spaces the uprights over the door span `q.bL…q.bR`; levels of the same column with the same count and mode use the same positions.
+
+## Design tab and sizes (v0.120)
+
+- Header/bottom bar have one `data-a="design"` tab; the 'tab' action turns it into `ui.dmode` ('elev' or '3d', set in `showTab`). `dswHTML()` (`90-bar-views.js`) draws the Front / 3D switch in the toolbar and in `#mfloat`. Internally the views are still `elev` and `3d`.
+- `32-sizes.js`: `sizeAt(x, y)` (mm) for the front view, `sz3D(e)` raycasts the 3D meshes (`userData.it`, set in `80-3d.js`, with `.pan` = linked cut-list part). `szWire()` handles mouse hover and touch-and-hold (450 ms). `ELEV_T` comes from `elevSVG`.

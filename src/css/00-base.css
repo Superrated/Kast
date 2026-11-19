@@ -4187,3 +4187,11 @@ aside.side.locked > *:not(.shead):not(.lockban):not(.viewsw) {
 .evfar>span{flex:1 1 220px}.evfar small{color:var(--ink2)}.evfarb{display:flex;gap:6px}
 .evnear{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:12.5px;padding:8px 10px;border-radius:10px;background:var(--surface2,rgba(52,70,214,.06));border-color:transparent}
 .evnear>span{flex:1 1 220px}.evnear small,.evfar small{color:var(--ink2)}
+/* Design tab: Front / 3D switch (90-bar-views.js dswHTML) */
+.dsw{display:inline-flex;flex:none;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:2px;gap:2px}
+.dsw button{border:0;background:none;border-radius:999px;padding:5px 14px;font-weight:600;font-size:13px;color:var(--ink2);min-height:30px}
+.dsw button.on{background:var(--ink);color:var(--raised)}
+/* sizes on hover / touch and hold (32-sizes.js) */
+.sztip{position:fixed;z-index:60;pointer-events:none;display:flex;flex-direction:column;gap:2px;padding:8px 11px;border-radius:10px;background:var(--ink);color:var(--raised);font-size:12.5px;line-height:1.35;box-shadow:0 6px 20px rgba(0,0,0,.22);max-width:260px}
+.sztip em{font-style:normal;font-size:11px;opacity:.75;letter-spacing:.02em}
+.sztip b{font-weight:700}

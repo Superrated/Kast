@@ -238,13 +238,15 @@ document.addEventListener('click', e => {
     act = b.dataset.act;
   const secs = S.sections;
   switch (act) {
-    case 'tab':
-      if (PN_GROUP[a]) {
-        PN.last = a;
+    case 'tab': {
+      const t = a === 'design' ? ui.dmode || 'elev' : a; // the Design tab opens Front or 3D, whichever was used last
+      if (PN_GROUP[t]) {
+        PN.last = t;
         pnSave();
       }
-      showTab(a);
+      showTab(t);
       break;
+    }
     case 'pnTop':
       if (a === 'area') showTab(pnLast());
       else pnGo(a);
@@ -802,7 +804,7 @@ document.addEventListener('click', e => {
     }
     case 'notesOpen': {
       if (ui.tab !== 'elev' && ui.tab !== '3d') {
-        const tb = document.querySelector('#tabs [data-a="elev"]');
+        const tb = document.querySelector('[data-act="tab"][data-a="elev"]');
         if (tb) tb.click();
       }
       const d = document.querySelector('#bar details.notes');
@@ -1661,7 +1663,7 @@ document.addEventListener('click', e => {
       ui.exOn = true;
       ui.exT = 1;
       if (ui.photoOn) setPhotoMode(false);
-      document.querySelector('#tabs [data-act="tab"][data-a="3d"]').click();
+      document.querySelector('[data-act="tab"][data-a="3d"]').click();
       setTimeout(() => {
         applyExplode();
         isoFrame();

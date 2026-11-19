@@ -508,7 +508,7 @@ async function aiOpen() {
   const mm = document.getElementById('mmenu');
   if (mm) mm.hidden = true;
   if (ui.tab !== '3d') {
-    const tb = document.querySelector('#tabs [data-a="3d"]') || document.querySelector('[data-act="tab"][data-a="3d"]');
+    const tb = document.querySelector('[data-act="tab"][data-a="3d"]');
     if (tb) tb.click();
     await new Promise(r => setTimeout(r, 600));
   }

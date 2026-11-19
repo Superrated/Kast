@@ -9,6 +9,21 @@
   await step('views', () => { renderSide(); renderViews() });
   for (const t of ['elev', '3d', 'guide', 'cut', 'sheets', 'draw', 'loft', 'work'])
     await step('tab ' + t, () => showTab(t));
+  await step('design tab', () => {
+    showTab('3d');
+    pnGo('cut');
+    document.querySelector('[data-act=tab][data-a=design]').click();
+    if (ui.tab !== '3d') throw new Error('Design did not return to 3D, got ' + ui.tab);
+    showTab('elev');
+  });
+  await step('sizes', () => {
+    const f = geo.fronts.find(f => f.kind === 'door');
+    if (f) {
+      const xs = f.poly.map(p => p[0]), ys = f.poly.map(p => p[1]);
+      const s = sizeAt((Math.min(...xs) + Math.max(...xs)) / 2, (Math.min(...ys) + Math.max(...ys)) / 2);
+      if (!s || !/Door/.test(s.title)) throw new Error('no door size: ' + JSON.stringify(s));
+    }
+  });
   await step('workshop boxes', () => { wxOpen(); WX.t = 1; wxApplyT(); wxDraw(); ui.ws = null; wsRender() });
   await step('drawing sheets', () => { const r = tdSheets(); if (!r.sheets.length) throw new Error('no sheets') });
   await step('dxf', () => tdDXF());

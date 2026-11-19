@@ -838,6 +838,7 @@ function elevSVG(S, G, o = {}) {
   const maxC = Math.max(...G.cps.map(p => p.y), +S.room.H, ...G.beams.map(b => b.bottom + 100));
   const T = maxC + (mini ? 50 : 150),
     Y = y => T - y;
+  if (!mini && !o.noSizes) ELEV_T = T; // the size readout (32-sizes.js) turns screen points back into mm with it
   const hasPin = G.secs.some(q => q.pin != null),
     CRN = (S.room && S.room.corner) || {},
     exL = CRN.L && CRN.L.dproj ? Math.max(0, -Math.min(CRN.L.dproj.x0, CRN.L.dproj.x1)) : 0,
