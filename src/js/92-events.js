@@ -2151,6 +2151,15 @@ document.addEventListener('click', e => {
     case 'setv': {
       const [pth, val, t] = a.split('|');
       {
+        // a level's shelf spacing applies to all its compartments: clear their own spacing
+        const ms = /^(sections\.\d+\.zones\.\d+)\.space$/.exec(pth),
+          zz = ms ? getP(ms[1]) : null;
+        if (zz && Array.isArray(zz.vsp) && zz.vsp.some(Boolean)) {
+          zz.vsp = [];
+          setTimeout(() => toast('Every compartment of this level now uses this spacing'), 30);
+        }
+      }
+      {
         const mz = /^(sections\.\d+\.zones\.\d+)\.type$/.exec(pth);
         if (mz && val === 'opening') {
           const z0 = getP(mz[1]);

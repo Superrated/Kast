@@ -81,6 +81,92 @@ function mdCutInfo(poly) {
   }
   return { kind: 'shape', x0, y0, w, h, text: `Shape ${mdFmt(w)} × ${mdFmt(h)} — corners in the shaped-parts list` };
 }
+/* every size of the cut-outs of a part:
+   - a chain of dimensions under the part through every left and right edge (and the centre of round holes),
+   - a chain left of the part through every bottom, start of the round top, and top (and centre of round holes),
+   - each round top: its radius with a leader (R…), or for a flatter top its width and rise (½ ellipse …),
+   - each round hole: Ø with a leader and a centre cross.
+   Chains measure from 0 (the part's corner) to the part's far edge, so every opening can be set out with a rule. */
+function mdCutDims(E, p, W, H, den, at) {
+  const cuts = (p.holes || []).filter(h => h.poly && h.poly.length > 2).map(h => mdCutInfo(h.poly));
+  if (!cuts.length) return;
+  const r1 = v => Math.round(v * 10) / 10;
+  // the reference point of each measured value: where its extension line starts
+  const xs = new Map([[0, 0], [r1(W), 0]]),
+    ys = new Map([[0, 0], [r1(H), 0]]);
+  const addX = (x, y) => {
+      const k = r1(x);
+      if (!xs.has(k) || y < xs.get(k)) xs.set(k, y);
+    },
+    addY = (y, x) => {
+      const k = r1(y);
+      if (!ys.has(k) || x < ys.get(k)) ys.set(k, x);
+    };
+  cuts.forEach(c => {
+    addX(c.x0, c.y0);
+    addX(c.x0 + c.w, c.y0);
+    addY(c.y0, c.x0);
+    addY(c.y0 + c.h, c.x0);
+    if (c.kind === 'round') {
+      addX(c.cx, c.y0);
+      addY(c.cy, c.x0);
+    }
+    if (c.kind === 'arch') addY(c.ys, c.x0);
+  });
+  const chain = (m, dir, base) => {
+    const vs = [...m.keys()].sort((a, b) => a - b).filter((v, i, a) => !i || v - a[i - 1] > 0.4);
+    // short pieces (where the number does not fit between the arrows) go on their own line further out,
+    // two lines taking turns, so their numbers never sit on top of the longer pieces' numbers
+    let alt = 0;
+    for (let i = 1; i < vs.length; i++) {
+      const a = vs[i - 1],
+        b = vs[i],
+        small = b - a < tdTW(f0(b - a), 2.2) * den + 3 * den,
+        o = small ? base - (alt++ % 2 ? 7 : 3.6) * den : base;
+      if (dir === 'h') tdDim(E, [a, m.get(a)], [b, m.get(b)], 'h', o, den);
+      else tdDim(E, [m.get(a), a], [m.get(b), b], 'v', o, den);
+    }
+  };
+  chain(xs, 'h', at.below);
+  chain(ys, 'v', at.left);
+  // radius / Ø, once per different size (the first one of each)
+  const done = new Set();
+  cuts.forEach(c => {
+    if (c.kind === 'round') {
+      const r = c.d / 2,
+        a = Math.PI / 4,
+        e = [c.cx + Math.cos(a) * r, c.cy + Math.sin(a) * r],
+        o = [c.cx + Math.cos(a) * (r + 7 * den), c.cy + Math.sin(a) * (r + 7 * den)];
+      E.push(
+        tdLn([c.cx - 2 * den, c.cy], [c.cx + 2 * den, c.cy], { w: 'xthin', ly: 'DIMENSIONS' }),
+        tdLn([c.cx, c.cy - 2 * den], [c.cx, c.cy + 2 * den], { w: 'xthin', ly: 'DIMENSIONS' })
+      );
+      const key = 'd' + r1(c.d);
+      if (done.has(key)) return;
+      done.add(key);
+      E.push(tdLn([c.cx, c.cy], o, { w: 'xthin', ly: 'DIMENSIONS' }), tdTx([o[0] + 1 * den, o[1] + 0.6 * den], `Ø${mdFmt(c.d)}`, { h: 2.4, b: 1, al: 'l', ly: 'DIMENSIONS' }));
+      return;
+    }
+    if (c.kind !== 'arch') return;
+    const rx = c.w / 2,
+      ry = c.ry,
+      circ = Math.abs(rx - ry) < 1,
+      key = 'a' + r1(c.w) + '|' + r1(ry);
+    if (done.has(key)) return;
+    done.add(key);
+    const a = Math.PI / 4,
+      e = [c.cx + Math.cos(a) * rx, c.ys + Math.sin(a) * ry],
+      o = [e[0] + 5 * den, e[1] + 5 * den];
+    E.push(
+      tdLn([c.cx, c.ys], e, { w: 'xthin', ly: 'DIMENSIONS' }),
+      tdLn(e, o, { w: 'xthin', ly: 'DIMENSIONS' }),
+      Object.assign(tdArc([c.cx, c.ys], 0.5 * den, 0, 360, { w: 'thin', ly: 'DIMENSIONS' }), { c: true, f: 0 }),
+      tdTx([o[0] + 1 * den, o[1] + 0.6 * den], circ ? `R${mdFmt(rx)}` : `½ ellipse ${mdFmt(rx)} × ${mdFmt(ry)}`, { h: 2.4, b: 1, al: 'l', ly: 'DIMENSIONS' })
+    );
+    if (!circ)
+      E.push(tdTx([o[0] + 1 * den, o[1] - 2.4 * den], `${mdFmt(rx)} across · ${mdFmt(ry)} up`, { h: 1.9, al: 'l', ly: 'DIMENSIONS' }));
+  });
+}
 /* the cut-outs of a part, the same ones grouped: what, how many, where (lowest-left corner) */
 function mdCutRows(p) {
   const g = {};
@@ -220,24 +306,9 @@ function mdPart(p, den) {
     if (h.poly) {
       E.push(tdPg(h.poly, { f: 0.85, w: 'med', ly: 'CUT_INSIDE' }));
       try {
-        const c = mdCutInfo(h.poly),
-          tx = c.kind === 'round' ? c.cx : c.x0 + c.w / 2,
-          ty = c.kind === 'round' ? c.cy : c.y0 + c.h * 0.45,
-          big = Math.min(c.w, c.h) > 14 * den;
-        if (big) {
-          E.push(tdTx([tx, ty + 1.5 * den], c.kind === 'round' ? `Ø${mdFmt(c.d)}` : `${mdFmt(c.w)} × ${mdFmt(c.h)}`, { h: 2.2, al: 'c', ly: 'DIMENSIONS' }));
-          E.push(
-            tdTx(
-              [tx, ty - 2 * den],
-              c.kind === 'round' ? `centre ${mdFmt(c.cx)}, ${mdFmt(c.cy)}` : c.kind === 'arch' ? `top R ${mdFmt(c.ry)} from ${mdFmt(c.ys - c.y0)}` : 'see corners',
-              { h: 1.8, al: 'c', ly: 'DIMENSIONS' }
-            )
-          );
-        }
-        if (c.kind !== 'round') {
+        const c = mdCutInfo(h.poly);
+        if (c.kind === 'shape')
           E.push(Object.assign(tdArc([c.x0, c.y0], 0.6 * den, 0, 360, { w: 'thin', ly: 'DIMENSIONS' }), { c: true, f: 0 }));
-          if (big) E.push(tdTx([c.x0 + 1.2 * den, c.y0 + 1 * den], `${mdFmt(c.x0)}, ${mdFmt(c.y0)}`, { h: 1.8, al: 'l', ly: 'DIMENSIONS' }));
-        }
       } catch (e) {
         oops('machining: cut-out sizes', e);
       }
@@ -287,6 +358,12 @@ function mdPart(p, den) {
         tdTx([x + 1.2 * den, y + 1 * den], `${mdFmt(x)}, ${mdFmt(y)}`, { h: 2, al: 'l', ly: 'DIMENSIONS' })
       );
     });
+  // cut-outs: every size drawn — chains along the bottom and the left, radius / Ø with a leader
+  try {
+    mdCutDims(E, p, W, H, den, { below: -((on.y0 ? 7 : 5) + (fe === 'y0' ? 9 : 5)) * den, left: -((fe === 'x0' ? 9 : 0) + 12) * den });
+  } catch (e) {
+    oops('machining: cut-out dimensions', e);
+  }
   // overall sizes, origin, front edge, grain
   tdDim(E, [0, 0], [W, 0], 'h', -(on.y0 ? 7 : 5) * den, den);
   tdDim(E, [W, 0], [W, H], 'v', W + (on.xW ? 14 : 11) * den + (gv && fe === 'y0' ? 8 * den : 0), den);
@@ -324,9 +401,29 @@ function mdPart(p, den) {
         })
       );
   });
+  // the drawing's edges: at least the usual margins, and wide enough for everything drawn (e.g. cut-out dimension chains)
+  let mnx = -16 * den,
+    mny = -17 * den,
+    mxx = W + 24 * den,
+    mxy = top + 12 * den;
+  E.forEach(e => {
+    const pts = e.t === 'tx' ? [e.p] : Array.isArray(e.p) ? e.p : [];
+    pts.forEach(q => {
+      if (!q || !isFinite(q[0]) || !isFinite(q[1])) return;
+      const tw = e.t === 'tx' ? tdTW(e.s, e.h || 2.5) * den : 0,
+        m = 2 * den,
+        rot = e.r === 90,
+        wl = e.al === 'l' ? 0 : e.al === 'r' ? tw : tw / 2,
+        wr = e.al === 'l' ? tw : e.al === 'r' ? 0 : tw / 2;
+      mnx = Math.min(mnx, q[0] - (rot ? 3 * den : wl) - m);
+      mxx = Math.max(mxx, q[0] + (rot ? 3 * den : wr) + m);
+      mny = Math.min(mny, q[1] - (rot ? wl : 3 * den) - m);
+      mxy = Math.max(mxy, q[1] + (rot ? wr : 3 * den) + m);
+    });
+  });
   const bb = [
-    [-16 * den, -17 * den],
-    [W + 24 * den, top + 12 * den]
+    [mnx, mny],
+    [mxx, mxy]
   ];
   return { E, bb, rows, on, fe, gv };
 }

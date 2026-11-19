@@ -2,7 +2,7 @@
    Lining the design up with a photo of the room.
 */
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION = 'v0.123';
+const APP_VERSION = 'v0.124';
 const PH = {
   src: null,
   iw: 0,

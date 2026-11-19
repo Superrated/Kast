@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.124
+
+- **Cut-outs fully dimensioned** in the machining drawings (screen and PDF), for arched front frames, porthole and other nook fronts:
+  - a chain of dimensions under the part through every left and right edge of every opening (and the centre of round ones), from 0 to the far edge,
+  - a chain left of the part through every bottom, every start of a round top, every top (and centre of round ones),
+  - each round top's **radius** with a leader (R…), or for a flatter top its half-width and rise (½ ellipse …),
+  - each round opening's **Ø** with a leader and a centre cross,
+  - short pieces get their own dimension line so no numbers overlap; the drawing grows to fit everything.
+- **Shelf spacing per level works in split levels**: choosing a spacing (Even, Top, Middle, Bottom) for a level now applies it to every compartment of that level, clearing a compartment's own spacing — before, a compartment with its own spacing ignored the level's choice. You can still give one compartment its own spacing afterwards.
+
 ## v0.123
 
 - **Arched front, your openings** (an open level with "Arched tops"): the arched front is one board in front of the open cabinet; now you choose
