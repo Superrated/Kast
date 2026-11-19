@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.69
+
+- **Space in front · hallway** (Room): enter the free floor in front of the cabinet, and tick "hallway" to keep a 900 mm walking path.
+  - Fitted checks doors that can't open fully, drawers you can't stand in front of, the ironing board (1100 mm), the fold-down bed, and the washing machine.
+  - Where it's tight it suggests narrower or sliding doors or shallower columns.
+  - A plan from above shows the cabinet, how the doors open, side-wall doors and the walking path.
+- **Bumps in the back wall** (Room → Floor, walls & things on the wall): chimney breast, pillar or boxed-in pipes.
+  - The columns in front become shallower, front kept flush, or the parts around it get notched (with notes in the hardware list).
+  - Warnings for hanging clothes that no longer fit, and for bumps that cover only part of a column.
+- **Things in the ceiling** (Room → Beams & things in the ceiling): roof purlin along the wall, dormer window (raises the ceiling and warns when columns block its sill), ceiling light, smoke detector (the 500 mm rule), loft hatch (blocked, or its ladder needs room). All are marked in the drawing.
+- **Doors and windows in the side walls**: warnings when a doorway or window ends up behind the end of the cabinet, when the door trim clashes with the closing strip, when the room door swings against the cabinet, and when an end door and the room door open into each other. You can set which way the room door opens and where its hinges are.
+- **Keep reachable** (Room): fuse box, meter, boiler, stopcock/tap and inspection hatch.
+  - Fitted makes sure no shelf, drawer or side ends up in front of them, and cuts the back panel open.
+  - For a boiler it asks for vents and enough depth.
+  - The build guide gets a "Keep these reachable" step, and the shuffle avoids them.
+
 ## v0.68
 
 - **Fitted by BRUIS**: the name now carries BRUIS (header, page title, PDF cover and footer, installed app).
