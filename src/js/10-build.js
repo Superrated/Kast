@@ -498,6 +498,23 @@ function build(S) {
     const f = zs[0].inFin;
     return FIN[f] && zs.every(z => z.type === 'open' && z.drench && z.inFin === f) ? f : null;
   };
+  /* shelf-support holes: "needed" = at each shelf; "some" = plus two 32 mm steps above and below;
+     "rows" = a 32 mm row through the level, lined up with the shelves (default). holeYs = the holes for the shelves now. */
+  const pinMode = q => (q && q.s && ['needed', 'some', 'rows'].includes(q.s.pinHoles) ? q.s.pinHoles : ['needed', 'some', 'rows'].includes(O.pinHoles) ? O.pinHoles : 'rows');
+  const pinYsFor = (holeYs, lo, hi, mode) => {
+    const r = v => Math.round(v * 10) / 10,
+      set = new Set();
+    if (!holeYs.length) return [];
+    const extra = [];
+    if (mode === 'some') holeYs.forEach(y => [-2, -1, 1, 2].forEach(j => (y + j * 32 >= lo + 20 && y + j * 32 <= hi - 20 ? extra.push(y + j * 32) : 0)));
+    // full rows: one 32 mm grid from the bottom of the level, the same on every side and upright of the
+    // level, so holes on both faces of an upright line up
+    if (mode === 'rows') for (let v = lo + 24; v <= hi - 20; v += 32) extra.push(v);
+    // the hole each shelf sits on wins over a grid hole closer than 10 mm
+    extra.filter(v => !holeYs.some(y => Math.abs(y - v) < 10)).forEach(v => set.add(r(v)));
+    holeYs.forEach(y => set.add(r(y)));
+    return [...set].sort((x, y) => x - y);
+  };
   /* uprights spaced by the DOORS (vdPosDoors): for a level whose doors sit in front of its uprights
      (closed, hinged, no door count of its own) with a spacing preset. Other levels of the same column with
      the same number of uprights and the same preset get the same positions, so the uprights stay in line.
@@ -3211,11 +3228,31 @@ function build(S) {
               yt = (zr.top ? Math.min(underAt(q, x), underAt(q, x + tc)) : zr.y0 + zr.h) - lb;
             const y0v = zr.y0 + lb;
             if (yt - y0v < 100) return;
+            // shelf-support holes in this upright: shelves resting on its left face and on its right face.
+            // Where both sides have a hole at the same height, one hole goes right through (two 12 mm holes
+            // from both faces would meet in an 18 mm board); otherwise 8 mm deep from that face.
+            const vdHoles = [];
+            {
+              const xl = x,
+                xr = x + tc,
+                mode = pinMode(q),
+                L_ = (zr.shelvesY || []).filter(([y, x0, x1]) => Math.abs(x1 + 1 - xl) < 3 && y > y0v && y < yt),
+                R_ = (zr.shelvesY || []).filter(([y, x0, x1]) => Math.abs(x0 - 1 - xr) < 3 && y > y0v && y < yt),
+                ci = (zr.comps || []).findIndex(c => Math.abs(c[1] - xl) < 2),
+                ly = L_.length ? pinYsFor(L_.map(([y]) => y - 4), y0v, yt, mode) : [],
+                ry = R_.length ? pinYsFor(R_.map(([y]) => y - 4), y0v, yt, mode) : [];
+              const both = ly.filter(y => ry.some(v => Math.abs(v - y) < 2));
+              const add_ = (y, o) => [37, q.Dh - 37].forEach(u => vdHoles.push(Object.assign({ x: u, y: y - y0v, d: 5 }, o)));
+              both.forEach(y => add_(y, { face: 'through · shelf pins from both sides' }));
+              ly.filter(y => !both.includes(y)).forEach(y => add_(y, { dp: 8, face: `face towards compartment ${ci + 1}` }));
+              ry.filter(y => !both.some(b => Math.abs(b - y) < 2)).forEach(y => add_(y, { dp: 8, face: `face towards compartment ${ci + 2}` }));
+            }
             addPanel({
               type: 'Vertical divider',
               role: 'carcass',
               fin: dren || undefined,
               sec: lab,
+              holes: vdHoles,
               poly: rect(q.Dh, yt - y0v),
               grain: 'h',
               band: 'front',
@@ -6549,13 +6586,25 @@ function build(S) {
             t1 = q.top(q.xb);
           if (Math.abs(t0 - t1) < 2) boards.push(q.top(xL) - tc / 2);
         }
-        boards.forEach(y => us.forEach(u => put(uF + u, y, { d: 5, cf: 1, face: 'through · connector screw' })));
-        q.zones.forEach(zr =>
-          (zr.shelvesY || []).forEach(([y, x0, x1]) => {
-            if (isL ? Math.abs(x0 - 1 - q.xa) < 3 : Math.abs(x1 + 1 - q.xb) < 3)
-              [37, q.Dh - 37].forEach(u => put(uF + u, y - 4, { d: 5, dp: 12, face }));
+        // the joints with the fixed boards, as chosen under Build → joinery
+        const JN = O.joinery || 'confirmat';
+        boards.forEach(y =>
+          us.forEach(u => {
+            if (JN === 'dowel') put(uF + u, y, { d: 8, dp: 12, face: face + ' · dowel', dw: 1 });
+            else if (JN === 'minifix') {
+              put(uF + u, y, { d: 5, dp: 11, face: face + ' · Minifix bolt', cf: 1 });
+              put(uF + u + (u > q.Dh / 2 ? -32 : 32), y, { d: 8, dp: 12, face: face + ' · dowel', dw: 1 });
+            } else put(uF + u, y, { d: 5, cf: 1, face: 'through · connector screw' });
           })
         );
+        // shelf-support holes, per level, by this column's setting
+        const mode = pinMode(q);
+        q.zones.forEach(zr => {
+          const mine = (zr.shelvesY || []).filter(([y, x0, x1]) => (isL ? Math.abs(x0 - 1 - q.xa) < 3 : Math.abs(x1 + 1 - q.xb) < 3));
+          if (!mine.length) return;
+          const hi = zr.y0 + zr.h;
+          pinYsFor(mine.map(([y]) => y - 4), zr.y0, hi, mode).forEach(y => [37, q.Dh - 37].forEach(u => put(uF + u, y, { d: 5, dp: 12, face })));
+        });
         fronts
           .filter(f => f.sec === q.i && f.cups && !f.rear && (isL ? f.hinge === 'L' : f.hinge === 'R'))
           .forEach(f => {

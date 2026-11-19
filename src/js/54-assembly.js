@@ -69,7 +69,7 @@ function asHoles(s, ctr, G) {
           ? 'screw'
           : h.plate
             ? 'plate'
-            : h.dp && d <= 5.5
+            : (h.dp && d <= 5.5) || /shelf pins/.test(h.face || '')
               ? 'pin'
               : 'hole';
     out.push({ h, d, A, B, n, face, kind, pt: face === 'B' ? B : A, out: face === 'B' ? n : V3.m(n, -1) });

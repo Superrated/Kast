@@ -118,3 +118,8 @@ The version is `APP_VERSION` in `src/js/81-room-photo.js`. Each update adds 0.00
 - `mdCutInfo(poly)` / `mdCutRows(p)` (`53-machining.js`): a cut-out (`hole.poly`) as round / arch / shape with sizes; used on the drawing, the cut-out table and the shop Excel note.
 - Arched front frame (`10-build.js`, open level with `z.arch`): `z.archOpen` ('' | 'tall'), `z.archTop` ('' | 'flat' | 'square'), `z.archBorder` (mm). Cells become the board's cut-outs; the frame around them is built from pieces (`pieces`) for 3D and the technical drawings.
 - Porthole: `z.portD`, `z.portX`, `z.portY` (reading nook with `nookFront: 'port'`).
+
+## Shelf-support and joint holes (v0.126)
+
+- `pinMode(q)` (column `s.pinHoles`, else `opts.pinHoles`, else 'rows') and `pinYsFor(holeYs, lo, hi, mode)` in `10-build.js`. Sides (`drill()` in the side code) and uprights (`Vertical divider`, `vdHoles`) use them; upright holes shared by both faces are through holes (`face: 'through · shelf pins from both sides'`).
+- Side holes for the fixed boards follow `opts.joinery`: 'dowel' (Ø8×12, `dw`), 'minifix' (Ø5×11 bolt `cf` + Ø8×12 dowel), else Ø5 through (`cf`).

@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.126
+
+- **Shelf-pin holes in uprights**: shelves that rest against an upright (a level split side by side) now get their support holes in the upright too — before, only the outer sides were drilled, so that end of the shelf had nothing to sit on. Where shelves on both sides of an upright sit on the same height, one Ø5 hole goes right through (two 12 mm holes from both faces would meet in an 18 mm board); otherwise Ø5 × 8 mm from that face. The 3D assembly shows the pins in them.
+- **"Holes for shelf supports" now really drills what it says** (cut list, machining drawings, shop forms — before only the build guide followed it): only where needed / a few to adjust (±2 steps of 32 mm) / full rows. Full rows follow one 32 mm grid from the bottom of the level, the same on every side and upright, so the holes on both faces of an upright line up; the hole each shelf sits on is always included.
+- **Per cabinet**: each column has its own "Holes for shelf supports in this column" (Like the rest / Only where needed / A few to adjust / Full rows).
+- **Joint holes follow your joinery** (Build → joinery): glued dowels → Ø8 × 12 dowel holes in the sides; Minifix → Ø5 × 11 bolt holes plus Ø8 × 12 dowel holes; Confirmat / screws → Ø5 through as before.
+
 ## v0.125
 
 - **Header rail shown in the front view**: a level standing on a header (e.g. above a wide niche or reading nook) has a 100 mm rail on edge at its front. It is now drawn at the bottom of that level (when you look inside or the doors are hidden). Shelves are spaced evenly above it, so the spaces now also look even in the drawing — before, the bottom space looked 100 mm taller because the rail was not drawn.

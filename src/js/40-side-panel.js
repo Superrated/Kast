@@ -1098,7 +1098,12 @@ function secEditorFull() {
     }${
       !isSheet() || s.base === 'panel'
         ? ''
-        : `<div class="fld"><span>Back panel</span>${seg(p + '.back', [
+        : `<div class="fld"><span>Holes for shelf supports in this column</span>${seg(p + '.pinHoles', [
+            ['', 'Like the rest'],
+            ['needed', 'Only where needed'],
+            ['some', 'A few to adjust'],
+            ['rows', 'Full rows']
+          ], { dflt: '' })}</div><div class="fld"><span>Back panel</span>${seg(p + '.back', [
             ['full', 'One piece'],
             ['split', 'One per level'],
             ['none', 'No back']
@@ -1239,7 +1244,12 @@ function secEditorFull() {
     ${
       s.base === 'panel' || isSheet()
         ? ''
-        : `<div class="fld"><span>Back panel</span>${seg(p + '.back', [
+        : `<div class="fld"><span>Holes for shelf supports in this column</span>${seg(p + '.pinHoles', [
+            ['', 'Like the rest'],
+            ['needed', 'Only where needed'],
+            ['some', 'A few to adjust'],
+            ['rows', 'Full rows']
+          ], { dflt: '' })}</div><div class="fld"><span>Back panel</span>${seg(p + '.back', [
             ['full', 'One piece'],
             ['split', 'One per level'],
             ['none', 'No back']
