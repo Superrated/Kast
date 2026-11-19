@@ -73,19 +73,26 @@
 </div>
 
 <div class="modal" id="aim" hidden>
-  <div class="mbox">
+  <div class="mbox" role="dialog" aria-modal="true" aria-label="AI render">
     <div class="mhead"><h2>AI render</h2></div>
-    <div class="mbody" style="display:grid;gap:12px">
-      <p class="hintp" style="margin:0">Fitted makes the picture and the instruction; a picture AI you already use (ChatGPT, Gemini or another one) turns them into a photo. The result is a mood picture — the AI may shift small details, so the drawing and the cut list stay the truth.</p>
+    <div class="mbody aibody">
+      <p class="hintp" style="margin:0">Turn your design into a photo-like picture with a picture AI you already use (ChatGPT, Gemini…). Three steps:</p>
       <div id="aiPick" class="tchips"></div>
       <div class="aishot"><img id="aiImg" alt="The picture Fitted hands to the picture AI"><p class="hintp" id="aiNone" hidden style="margin:0"></p></div>
-      <label class="fld"><span>Small changes — optional, in your own words</span><span class="inp"><input type="text" id="aiNote" placeholder="e.g. warmer evening light, no handles, darker floor" maxlength="300"></span></label>
-      <label class="fld"><span>Instruction for the picture AI</span><textarea id="aiText" rows="9" spellcheck="false"></textarea></label>
-      <ol class="aisteps"><li><button class="btn pri" data-act="aiSave">Save the picture</button></li><li><button class="btn pri" data-act="aiCopy">Copy the instruction</button></li><li>Open your picture AI, add the saved picture, paste the instruction and send.</li><li>Not quite right? Type a small change above and <button class="btn sm" data-act="aiCopyNote">Copy only the change</button> — paste that as your next message in the same chat.</li></ol>
+      <ol class="aisteps2">
+        <li><b>Save this picture</b><button type="button" class="btn pri" data-act="aiSave">Save picture</button></li>
+        <li><b>Copy the instruction</b><button type="button" class="btn pri" data-act="aiCopy">Copy instruction</button></li>
+        <li><b>Open your picture AI</b><span class="aitxt">Add the saved picture, paste the instruction and send.</span><span class="ailinks"><a class="btn sm" href="https://chatgpt.com/" target="_blank" rel="noopener">ChatGPT</a><a class="btn sm" href="https://gemini.google.com/" target="_blank" rel="noopener">Gemini</a></span></li>
+      </ol>
+      <label class="fld"><span>Want something different? Say it in your own words (optional)</span><span class="inp"><input type="text" id="aiNote" placeholder="e.g. warmer evening light, darker floor" maxlength="300"></span></label>
+      <p class="hintp" style="margin:0">Already sent the picture? <button type="button" class="btn sm" data-act="aiCopyNote">Copy only the change</button> and paste it as your next message in the same chat.</p>
+      <details class="pf aiinst"><summary>See or edit the instruction</summary><textarea id="aiText" rows="8" spellcheck="false"></textarea></details>
+      <p class="hintp" style="margin:0">The AI may shift small details — the drawing and the cut list stay the truth.</p>
     </div>
     <div class="mfoot"><button class="btn" data-act="aiClose">Close</button><div></div></div>
   </div>
 </div>
+
 <div class="modal" id="ntm" hidden>
   <div class="mbox">
     <div class="mhead"><h2>Notes</h2></div>

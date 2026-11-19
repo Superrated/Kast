@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.105
+
+- **AI render on phones**:
+  - three clear numbered steps with big buttons: Save picture, Copy instruction, and open ChatGPT or Gemini;
+  - the long instruction is folded away under "See or edit the instruction", in normal readable text;
+  - the picture is shown whole.
+- **AI render picture**: always the whole wall, seen from slightly right and above at 1600 × 1000. Before, it copied the screen, so on a phone the panel at the bottom cut it off.
+
 ## v0.104
 
 - **Design notes on phones**: tapping ⚠ now opens a proper panel from the bottom of the screen. It has readable notes, a "Fix what Fitted can" button with a count, and Close. Before, the list was squeezed into the button row over the drawing and could not be used.

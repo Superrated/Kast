@@ -454,6 +454,19 @@ details.pf .grid2{margin-top:6px}
 .mnpfix{display:grid;gap:6px;margin-bottom:10px}.mnpfix .btn{justify-self:start}.mnpfix span{font-size:12px;color:var(--ink2)}
 .mnpl{margin:0;padding:0 0 0 20px;overflow:auto;display:grid;gap:10px;font-size:14px;line-height:1.45}
 .mnpl li p{margin:0 0 6px}.mnpl .fixb{margin-left:0;font-size:13px;padding:5px 12px}
+/* AI render window */
+.aibody{display:grid;gap:12px}
+#aim .aishot img{width:100%;height:auto;max-height:46vh;object-fit:contain}
+.aisteps2{margin:0;padding:0;list-style:none;counter-reset:ai;display:grid;gap:8px}
+.aisteps2 li{counter-increment:ai;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px 10px 44px;position:relative;border:1px solid var(--line);border-radius:12px;background:var(--raised);font-size:14px;line-height:1.4}
+.aisteps2 li::before{content:counter(ai);position:absolute;left:12px;top:10px;width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:12px;font-weight:700}
+.aisteps2 li b{flex:1 1 140px}
+.ailinks{display:flex;gap:6px;flex-wrap:wrap;width:100%}
+.aiinst textarea{width:100%;font:inherit;font-size:13px;line-height:1.45;margin-top:8px;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--surface);color:var(--ink)}
+@media (max-width:860px){#aim .aishot img{max-height:32vh}}
+#aim #aiText{font:13px/1.45 var(--f-b),system-ui,sans-serif;margin-top:8px}
+@media (max-width:860px){#aim #aiText{font-size:16px}}
+.aitxt{width:100%;color:var(--ink2);font-size:13.5px}.ailinks a{text-decoration:none}
 /* ==== 10-look.css — The Fitted look: fonts, tokens for light and dark mode, cards, wizard, dialogs. */
 /* ===== Fitted visual refresh ===== */
 :root{--bg:#F3F3F0;--surface:#FAFAF8;--raised:#FFFFFF;--ink:#17191B;--ink2:#62676B;--ink3:#6A6F74;--line:#E4E5E1;--accent:#3446D6;--accent-ink:#FFFFFF;--accent-soft:rgba(52,70,214,.09);--warn:#B4541A;--warn-soft:rgba(180,84,26,.1);--wall:#E7E7E3;--hatch:#D3D5D1;--stage:#ECEDEA;--paper:#FFFFFF;--shade:rgba(20,22,24,.2);
@@ -873,14 +886,14 @@ input[type=checkbox],input[type=radio]{accent-color:var(--ink)}
 .chk{min-height:32px}
 </style>
 
-<div id="splash" role="status" aria-label="Fitted by BRUIS v0.104 is loading"><b>Fitted</b><span>v0.104</span></div>
+<div id="splash" role="status" aria-label="Fitted by BRUIS v0.105 is loading"><b>Fitted</b><span>v0.105</span></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
 
 <div class="app" data-tab="elev">
   <header class="top">
     <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-    <div class="brand" title="Fitted by BRUIS v0.104">Fitted<span class="bybr">by BRUIS</span><small>built-in wardrobes & cabinets, drawn and cut · v0.104</small></div>
+    <div class="brand" title="Fitted by BRUIS v0.105">Fitted<span class="bybr">by BRUIS</span><small>built-in wardrobes & cabinets, drawn and cut · v0.105</small></div>
     <nav class="tabs" id="tabs">
       <button data-act="tab" data-a="elev" class="on">Drawing</button>
       <button data-act="tab" data-a="3d">3D</button>
@@ -941,19 +954,26 @@ input[type=checkbox],input[type=radio]{accent-color:var(--ink)}
 </div>
 
 <div class="modal" id="aim" hidden>
-  <div class="mbox">
+  <div class="mbox" role="dialog" aria-modal="true" aria-label="AI render">
     <div class="mhead"><h2>AI render</h2></div>
-    <div class="mbody" style="display:grid;gap:12px">
-      <p class="hintp" style="margin:0">Fitted makes the picture and the instruction; a picture AI you already use (ChatGPT, Gemini or another one) turns them into a photo. The result is a mood picture — the AI may shift small details, so the drawing and the cut list stay the truth.</p>
+    <div class="mbody aibody">
+      <p class="hintp" style="margin:0">Turn your design into a photo-like picture with a picture AI you already use (ChatGPT, Gemini…). Three steps:</p>
       <div id="aiPick" class="tchips"></div>
       <div class="aishot"><img id="aiImg" alt="The picture Fitted hands to the picture AI"><p class="hintp" id="aiNone" hidden style="margin:0"></p></div>
-      <label class="fld"><span>Small changes — optional, in your own words</span><span class="inp"><input type="text" id="aiNote" placeholder="e.g. warmer evening light, no handles, darker floor" maxlength="300"></span></label>
-      <label class="fld"><span>Instruction for the picture AI</span><textarea id="aiText" rows="9" spellcheck="false"></textarea></label>
-      <ol class="aisteps"><li><button class="btn pri" data-act="aiSave">Save the picture</button></li><li><button class="btn pri" data-act="aiCopy">Copy the instruction</button></li><li>Open your picture AI, add the saved picture, paste the instruction and send.</li><li>Not quite right? Type a small change above and <button class="btn sm" data-act="aiCopyNote">Copy only the change</button> — paste that as your next message in the same chat.</li></ol>
+      <ol class="aisteps2">
+        <li><b>Save this picture</b><button type="button" class="btn pri" data-act="aiSave">Save picture</button></li>
+        <li><b>Copy the instruction</b><button type="button" class="btn pri" data-act="aiCopy">Copy instruction</button></li>
+        <li><b>Open your picture AI</b><span class="aitxt">Add the saved picture, paste the instruction and send.</span><span class="ailinks"><a class="btn sm" href="https://chatgpt.com/" target="_blank" rel="noopener">ChatGPT</a><a class="btn sm" href="https://gemini.google.com/" target="_blank" rel="noopener">Gemini</a></span></li>
+      </ol>
+      <label class="fld"><span>Want something different? Say it in your own words (optional)</span><span class="inp"><input type="text" id="aiNote" placeholder="e.g. warmer evening light, darker floor" maxlength="300"></span></label>
+      <p class="hintp" style="margin:0">Already sent the picture? <button type="button" class="btn sm" data-act="aiCopyNote">Copy only the change</button> and paste it as your next message in the same chat.</p>
+      <details class="pf aiinst"><summary>See or edit the instruction</summary><textarea id="aiText" rows="8" spellcheck="false"></textarea></details>
+      <p class="hintp" style="margin:0">The AI may shift small details — the drawing and the cut list stay the truth.</p>
     </div>
     <div class="mfoot"><button class="btn" data-act="aiClose">Close</button><div></div></div>
   </div>
 </div>
+
 <div class="modal" id="ntm" hidden>
   <div class="mbox">
     <div class="mhead"><h2>Notes</h2></div>
@@ -5455,7 +5475,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
    Lining the design up with a photo of the room.
 */
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.104';
+const APP_VERSION='v0.105';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
@@ -5521,7 +5541,15 @@ document.addEventListener('paste',e=>{const m=document.getElementById('ntm');if(
 */
 /* ===== AI render hand-off: Fitted supplies the picture and the instruction, an outside picture AI makes the photo ===== */
 const AI={shots:[],cur:0,plain:null};
-function aiPlainShot(){try{if(!T3)return null;const el=T3.renderer.domElement,w=el.width,h=el.height;if(!w||!h)return null;T3.renderer.render(T3.scene,T3.cam);const cv=document.createElement('canvas'),k=Math.min(1,1600/w);cv.width=Math.round(w*k);cv.height=Math.round(h*k);const x=cv.getContext('2d');x.fillStyle=getComputedStyle(document.body).getPropertyValue('--stage').trim()||'#E8EBE7';x.fillRect(0,0,cv.width,cv.height);x.drawImage(el,0,0,cv.width,cv.height);return cv}catch(e){return null}}
+/* the plain 3D picture: always the whole wall, from slightly right and above, 1600 × 1000 — whatever the screen or the panels in front of the 3D view */
+function aiPlainShot(){try{if(!T3||!T3.renderer||!T3.cam||!window.THREE)return null;const R=T3.renderer,cam=T3.cam,el=R.domElement,W=1600,H=1000;
+  const pr=R.getPixelRatio(),sz=R.getSize(new THREE.Vector2()),asp=cam.aspect,pos=cam.position.clone(),qt=cam.quaternion.clone();
+  const maxC=Math.max(...geo.cps.map(p=>p.y),+S.room.H),tgt=new THREE.Vector3(geo.W/2,maxC*0.48,-geo.D/2),half=((cam.fov||38)*Math.PI/180)/2;
+  const r=Math.max((maxC*0.6)/Math.tan(half),(geo.W*0.6)/(Math.tan(half)*W/H))*1.1,th=0.42,ph=0.14;let shot=null;
+  try{R.setPixelRatio(1);R.setSize(W,H,false);cam.aspect=W/H;cam.updateProjectionMatrix();cam.position.set(tgt.x+r*Math.cos(ph)*Math.sin(th),tgt.y+r*Math.sin(ph),tgt.z+r*Math.cos(ph)*Math.cos(th));cam.lookAt(tgt);R.render(T3.scene,cam);
+    const cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d');x.fillStyle=getComputedStyle(document.body).getPropertyValue('--stage').trim()||'#E8EBE7';x.fillRect(0,0,W,H);x.drawImage(el,0,0,W,H);shot=cv}
+  finally{R.setPixelRatio(pr);R.setSize(sz.x,sz.y,false);cam.aspect=asp;cam.updateProjectionMatrix();cam.position.copy(pos);cam.quaternion.copy(qt);try{R.render(T3.scene,cam)}catch(e){}}
+  return shot}catch(e){return null}}
 function aiPrompt(note,onPhoto){const M=S.mat,fn=k=>(FIN[k]||{}).name||'',mn=t=>((MATS[t]||{}).name||t||'').toLowerCase(),hl=(HANDLES.find(h=>h[0]===S.opts.handle)||[])[1]||'',zn={closed:'cupboard doors',open:'open shelves',drawers:'drawers',opening:'open niche',seat:'window seat with cushion',speaker:'fabric speaker front',passage:'walk-through opening'};
   const cols=geo.secs.map((q,i)=>{const sc=S.sections[i];if(!sc)return '';if(q.panel){const f=(Object.assign({},PANEL_DEF,sc.panel||{})).fun;return `${i+1}: wall panel${f==='peg'?' with a wooden peg board, pegs and small shelves':f==='slats'?' of vertical wooden slats':f==='climb'?' with climbing holds':''}`}if(q.door)return `${i+1}: doorway`;
       const zs=(sc.zones||[]).map(z=>{let t=zn[z.type]||z.type;if(z.type==='opening'){t=z.look==='nook'?`reading nook with mattress and cushions${z.nookFront?' behind a front with '+({arch:'an arched',eyebrow:'a low arched',port:'a round porthole',house:'a house-shaped'}[z.nookFront])+' opening':''}${z.nookCurtain?' and a curtain':''}`:z.look==='art'?'niche with a framed picture':z.look==='dj'?'niche with DJ turntables':z.look==='oven'||z.look==='combi'?'built-in oven':z.look==='washer'||z.look==='dryer'||z.look==='stack'?'washing machine niche':z.look==='bed'?'fold-down bed front':z.look==='none'?'empty niche':'niche with a TV'}
@@ -5549,7 +5577,7 @@ async function aiSave(){const sh=AI.shots[AI.cur];if(!sh){toast('There is no pic
   let dl=null;try{if(window.claude&&claude.use)dl=await claude.use('downloads')}catch(e){}
   if(dl){try{await dl.save({filename:fn,data:blob});toast('Picture saved — now copy the instruction')}catch(e){toast(e&&e.code==='declined'?'Not saved':'Could not save here — press and hold the picture to save it')}return}
   try{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fn;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);toast('Picture saved — now copy the instruction')}catch(e){toast('Press and hold the picture to save it')}}
-async function aiCopy(t,ok){try{await navigator.clipboard.writeText(t);toast(ok)}catch(e){const ta=document.getElementById('aiText');ta.value=t;ta.focus();ta.select();toast('Could not copy by itself — the text is selected, copy it by hand')}}
+async function aiCopy(t,ok){try{await navigator.clipboard.writeText(t);toast(ok)}catch(e){const ta=document.getElementById('aiText');const d=ta.closest('details');if(d)d.open=true;ta.value=t;ta.focus();ta.select();toast('Could not copy by itself — the text is selected, copy it by hand')}}
 document.addEventListener('input',e=>{if(e.target&&e.target.id==='aiNote')aiText()});
 function photoRefs(){const G=geo,W=G.W,r=[{x:0,y:0,t:'Floor, left',h:'Where the cabinet wall meets the floor on the left.'},{x:W,y:0,t:'Floor, right',h:'Where the cabinet wall meets the floor on the right.'},{x:W,y:G.ceilAt(W),t:'Top right corner',h:`Where the wall meets the ceiling on the right — ${f0(G.ceilAt(W))} mm up.`},{x:0,y:G.ceilAt(0),t:'Top left corner',h:`Where the wall meets the ceiling on the left — ${f0(G.ceilAt(0))} mm up.`}];
   G.cps.filter(p=>p.x>20&&p.x<W-20).forEach(p=>r.push({x:p.x,y:p.y,t:`Ceiling bend at ${f0(p.x)} mm`,h:`Optional — where the ceiling line bends, ${f0(p.x)} mm from the left wall, ${f0(p.y)} mm up. Makes the fit more exact.`,opt:true}));return r}
