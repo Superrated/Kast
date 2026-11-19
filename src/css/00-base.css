@@ -4157,3 +4157,14 @@ aside.side.locked > *:not(.shead):not(.lockban):not(.viewsw) {
   height: 0;
   border-top: 2px dashed #3446d6;
 }
+/* check before ordering (59-order-check.js) */
+.occard{border:1px solid var(--line);border-radius:12px;background:var(--raised);padding:12px 14px;margin:10px 0;display:grid;gap:8px}
+.occard.stop{border-color:var(--warn);background:var(--warn-soft)}
+.ochead{display:flex;gap:10px;align-items:flex-start}
+.ochead i{flex:0 0 26px;height:26px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:700;color:#fff;background:#2E7D50}
+.occard.look .ochead i{background:var(--ink2)}.occard.stop .ochead i{background:var(--warn)}
+.ochead div{display:flex;flex-direction:column;gap:2px}.ochead span{color:var(--ink2);font-size:12.5px}
+.occard ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.occard li{display:flex;flex-direction:column;gap:2px;padding:7px 9px;border-radius:8px;background:var(--surface);font-size:12.5px;border-left:3px solid var(--ink3)}
+.occard li.stop{border-left-color:var(--warn)}.occard li span{color:var(--ink2)}
+.ocgo{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--ink2)}

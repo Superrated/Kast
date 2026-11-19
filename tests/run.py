@@ -16,6 +16,7 @@ upd = "--update" in sys.argv
 D, E = ROOT / "tests" / "designs", ROOT / "tests" / "expected"; E.mkdir(exist_ok=True)
 snap = (ROOT / "tests" / "snapshot.js").read_text()
 screens = (ROOT / "tests" / "screens.js").read_text()
+order_check = (ROOT / "tests" / "order_check.js").read_text()
 fails = 0
 with sync_playwright() as pw:
     b, p = open_page(pw)
@@ -39,6 +40,8 @@ with sync_playwright() as pw:
         if f.stem.startswith("starter-"):  # screens and exports, on the starter designs
             sc = p.evaluate(screens, json.loads(f.read_text()))
             problems += ["on screen: " + x for x in sc["problems"]]
+        if f.stem == "starter-oak":  # the order check finds each problem made on purpose
+            problems += ["order check missed: " + n for n, ok in p.evaluate(order_check, json.loads(f.read_text())) if not ok]
         if p.errors:
             problems.append("page errors: " + " | ".join(p.errors[:3])); p.errors.clear()
         print(("FAIL " if problems else "ok   ") + f.stem + "".join("\n  - " + x for x in problems))

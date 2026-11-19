@@ -1149,7 +1149,19 @@ document.addEventListener('click', e => {
       offAdd([{ mt, fin, t: +t, L: Math.max(L, W), W: Math.min(L, W), from: 'added by hand' }]).then(() => renderCut());
       break;
     }
+    case 'ocAnyway': {
+      const shop = ui.ocPending;
+      if (!shop) break;
+      ui.shopMail = shop;
+      exportShop(shop);
+      ui.ocPending = null;
+      dirty.cut = true;
+      renderCut();
+      break;
+    }
     case 'shopX':
+      if (!ocBeforeShop(a)) break;
+      ui.ocPending = null;
       ui.shopMail = a;
       exportShop(a);
       dirty.cut = true;

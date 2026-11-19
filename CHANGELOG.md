@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.115
+
+- **Check before ordering** (Parts → List, above "Have it cut"): a last look at what will actually be cut and drilled.
+  - **Stop**: parts without a proper size, parts too big for their sheet, holes as deep as the board or off the part, fronts touching the ceiling.
+  - **Look at**: too few hinges for the door height (2 up to 900 mm, 3 up to 1600, 4 up to 2000, 5 up to 2400), hinges closer than 40 mm to a door end or 90 mm to each other, a door hinged right against a side wall (needs 30–50 mm), drilled parts missing from the 3D views, open design notes, your details for the shop forms.
+  - Pressing a shop button while something says "stop" shows the list first; **Order anyway** makes the file regardless.
+- Tests: each check is triggered on purpose and must be found.
+
 ## v0.114
 
 Under the hood: sturdier, easier to work on. The cut lists, prices and drawings are unchanged (checked by the new tests).
