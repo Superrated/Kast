@@ -920,6 +920,13 @@ document.addEventListener('click', e => {
         if (t) t.scrollIntoView({ block: 'start' });
       }
       break;
+    case 'evenDoorsFar':
+      evenDoors(true);
+      break;
+    case 'evenFarOff':
+      ui.evenFarOff = true;
+      renderSide();
+      break;
     case 'evenDoors':
       evenDoors();
       break;

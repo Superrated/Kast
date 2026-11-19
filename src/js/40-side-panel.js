@@ -1005,8 +1005,9 @@ const presetOpts = () =>
   Object.entries(PRESETS)
     .map(([k, p]) => `<option value="${k}">${p.label}</option>`)
     .join('');
-/* doors that are almost the same width: nudge the column widths so they become exactly the same */
-function doorGroups(G) {
+/* doors that are almost the same width: nudge the column widths so they become exactly the same.
+   far = true: group every door column in the same stretch of wall, however different (the "further apart" option) */
+function doorGroups(G, far) {
   G = G || geo;
   const reps = [];
   let run = 0;
@@ -1034,7 +1035,7 @@ function doorGroups(G) {
     rs.sort((a, b) => a.d - b.d);
     let g = [];
     rs.forEach(r => {
-      if (g.length && r.d - g[0].d > Math.max(12, g[0].d * 0.05)) {
+      if (g.length && !far && r.d - g[0].d > Math.max(12, g[0].d * 0.05)) {
         if (g.length > 1) groups.push(g);
         g = [];
       }
@@ -1044,8 +1045,9 @@ function doorGroups(G) {
   });
   return groups.filter(g => Math.max(...g.map(r => r.d)) - Math.min(...g.map(r => r.d)) > 0.4);
 }
-function evenDoors() {
-  const g0 = doorGroups(geo);
+function evenDoors(far) {
+  const g0 = doorGroups(geo, far),
+    notes0 = new Set(geo.warns || []);
   if (!g0.length) {
     toast('The door widths are already even');
     return;
@@ -1096,7 +1098,15 @@ function evenDoors() {
     maxMove = Math.max(maxMove, Math.abs(q.w - (w0[i] || q.w)));
   });
   changed(true);
-  const left = doorGroups(geo);
+  const left = doorGroups(geo, far),
+    newNotes = [...new Set(geo.warns || [])].filter(w => !notes0.has(w)).length;
+  if (far) {
+    toast(
+      `${left.length ? 'Most doors are even now; some could not be matched exactly.' : 'All these doors are the same width now.'} Columns moved by up to ${Math.max(1, Math.round(maxMove))} mm.${newNotes ? ` ⚠ ${newNotes} new design note${newNotes > 1 ? 's — check them' : ' — check it'}; Undo puts it back.` : ' Check that drawers, rails and fittings still suit the new widths; Undo puts it back.'}`,
+      9000
+    );
+    return;
+  }
   toast(
     left.length
       ? 'Most doors are even now; some could not be matched exactly'
@@ -1137,6 +1147,33 @@ function evenDoorsUI() {
     )
     .join(' ')}</span><button type="button" class="btn sm" data-act="evenDoors">Make them the same</button></div>`;
 }
+/* doors further apart: same idea, with a warning how far the columns move */
+function evenDoorsFarUI() {
+  if (ui.evenFarOff) return '';
+  let g = [];
+  try {
+    const near = new Set(doorGroups(geo).flat().map(r => r.i));
+    g = doorGroups(geo, true).filter(x => x.some(r => !near.has(r.i)));
+  } catch (e) {
+    oops('side-panel: doors further apart', e);
+  }
+  if (!g.length) return '';
+  const f1 = v => Math.round(v);
+  const move = Math.max(
+    ...g.map(x => {
+      const T = x.reduce((a, r) => a + r.n * r.d, 0) / x.reduce((a, r) => a + r.n, 0);
+      return Math.max(...x.map(r => Math.abs(r.n * (T - r.d))));
+    })
+  );
+  const txt = g
+    .map(x => {
+      const xs = x.slice().sort((a, b) => a.i - b.i),
+        T = x.reduce((a, r) => a + r.n * r.d, 0) / x.reduce((a, r) => a + r.n, 0);
+      return `${xs.map(r => `S${r.i + 1} ${r.n}× ${f1(r.d)}`).join(', ')} mm → all ${f1(T)} mm`;
+    })
+    .join('; ');
+  return `<div class="gwarn evfar"><span><b>Doors of different widths</b> ${txt}.<br><small>⚠ This moves columns by up to ${f1(move)} mm, so inside fittings (drawers, rails, shelves) change size too. Undo puts it back.</small></span><div class="evfarb"><button type="button" class="btn sm" data-act="evenDoorsFar">Make them the same anyway</button><button type="button" class="btn sm" data-act="evenFarOff" aria-label="Hide this">Hide</button></div></div>`;
+}
 function secEditorFull() {
   const secs = S.sections;
   let h = isSheet() ? '' : shufBar();
@@ -1151,7 +1188,7 @@ function secEditorFull() {
     q = geo.secs[i],
     p = 'sections.' + i;
   h += `<div class="chips dskchips">${secs.map((x, j) => `<button class="chip ${j === i ? 'on' : ''}" data-act="selSec" data-a="${j}">S${j + 1}${x.base === 'panel' ? ' ▦' : ''}<small>${geo.secs[j] ? f0(geo.secs[j].w) : ''}</small></button>`).join('')}</div>
-  ${evenDoorsUI()}<details class="quickadd pf"${ui.qaOpen ? ' open' : ''} data-qa="1"><summary>+ Add a column next to S${i + 1}</summary><div class="qag">${[
+  ${evenDoorsUI()}${evenDoorsFarUI()}<details class="quickadd pf"${ui.qaOpen ? ' open' : ''} data-qa="1"><summary>+ Add a column next to S${i + 1}</summary><div class="qag">${[
     [
       'Storage',
       [

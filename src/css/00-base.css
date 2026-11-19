@@ -4182,3 +4182,6 @@ aside.side.locked > *:not(.shead):not(.lockban):not(.viewsw) {
 .buyit.here i{border-color:#2E7D50;background:#2E7D50}
 .buyit span{flex:1;display:flex;flex-direction:column;gap:1px;min-width:0}.buyit small{color:var(--ink2);font-size:12px}
 .buyit em{font-style:normal;font-size:11.5px;color:var(--ink2)}.buyit.here b{color:var(--ink2);text-decoration:line-through}
+/* doors further apart (40-side-panel.js evenDoorsFarUI) */
+.evfar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:12.5px;padding:8px 10px;border-radius:10px;background:var(--warn-soft);border-color:transparent}
+.evfar>span{flex:1 1 220px}.evfar small{color:var(--ink2)}.evfarb{display:flex;gap:6px}

@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.117
+
+- **Doors of different widths → the same** (Layout, top of the column editor): besides "almost the same" doors, Fitted now also offers to even out doors that are further apart, e.g. a 3-door column next to a 2-door column. It shows the widths now and after ("S1 3× 439, S2 2× 504 mm → all 465 mm") and warns how far the columns move, because inside fittings change size too. **Make them the same anyway** does it; afterwards it says how far the columns moved and whether new design notes appeared. Undo puts it back; **Hide** hides the suggestion for this session.
+
 ## v0.116
 
 - **Order checklist** (Parts → Shopping, at the top): everything to buy, grouped per shop (Hanssens Hout, Pierard, Hornbach, Hubo, Gamma, webshops…), with what it costs there.
