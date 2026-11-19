@@ -19,7 +19,7 @@ function tdSolids(G){const out=[];(G.items||[]).forEach((it,idx)=>{if(it.k!=='pr
   const e=it.ext||[0,0,0],A=it.poly.map(([u,v])=>it.toW(u,v)),B=A.map(p=>[p[0]+e[0],p[1]+e[1],p[2]+e[2]]),all=A.concat(B);
   if(all.some(p=>p.some(v=>!isFinite(v))))return;const bb=[0,1,2].map(i=>[Math.min(...all.map(p=>p[i])),Math.max(...all.map(p=>p[i]))]);
   const ax=Math.abs(e[0])>Math.abs(e[1])?(Math.abs(e[0])>Math.abs(e[2])?0:2):(Math.abs(e[1])>Math.abs(e[2])?1:2);
-  out.push({A,B,e,bb,ax,t:Math.hypot(...e),role:String(it.role||''),tag:it.tag||'',sz:it.sz||'',idx})});return out}
+  out.push({A,B,e,bb,ax,t:Math.hypot(...e),role:String(it.role||''),tag:it.tag||'',sz:it.sz||'',fin:it.fin||'',idx})});return out}
 const tdLy=s=>/^fabric/.test(s.role)?'FRONTS':({carcass:'CARCASS',shelf:'SHELVES',back:'BACKS',front:'FRONTS',skirt:'STRIPS_PLINTH',desk:'DESK'})[s.role]||'OTHER';
 /* cut a solid with the plane coord[ax]=c; returns 3D section polygons */
 function tdCut(s,ax,c){const e=s.e;if(s.bb[ax][0]>c+1e-6||s.bb[ax][1]<c-1e-6)return [];
@@ -50,7 +50,8 @@ function tdDim(E,a,b,dir,at,den,o){o=o||{};const L=dir==='h'?Math.abs(b[0]-a[0])
 const TD_HW=(()=>{const w={};' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~'.split('').forEach((c,i)=>{w[c]=[278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584][i]});return w})();
 function tdTW(s,hmm){let u=0;for(const c of String(s))u+=TD_HW[c]||600;return u/1000*hmm/0.72}
 /* ---------- which solids belong to a column, and its box ---------- */
-function tdCol(sol,q){const xa=q.xa,xb=q.xb;return sol.filter(s=>{const[x0,x1]=s.bb[0];if(/^\d+:/.test(s.sz))return +s.sz.split(':')[0]===q.i;
+const TD_BOARD=/^(carcass|shelf|back|front|skirt|desk|fabric:.*)$/;
+function tdCol(sol,q){const xa=q.xa,xb=q.xb;return sol.filter(s=>{if(!TD_BOARD.test(s.role))return false;const[x0,x1]=s.bb[0];if(/^\d+:/.test(s.sz))return +s.sz.split(':')[0]===q.i;
   if(s.role==='skirt')return x0>=xa-120&&x1<=xb+120;const ov=Math.min(x1,xb)-Math.max(x0,xa);if(ov>1)return true;return s.ax===0&&(Math.abs(x1-xa)<3||Math.abs(x0-xb)<3)})}
 function tdBox(cs){const c=cs.filter(s=>s.role==='carcass');const a=c.length?c:cs;if(!a.length)return null;return {x0:Math.min(...a.map(s=>s.bb[0][0])),x1:Math.max(...a.map(s=>s.bb[0][1])),y0:Math.min(...a.map(s=>s.bb[1][0])),y1:Math.max(...a.map(s=>s.bb[1][1])),z0:Math.min(...a.map(s=>s.bb[2][0])),z1:Math.max(...a.map(s=>s.bb[2][1]))}}
 function tdCols(G,sol){return G.secs.map(q=>{const cs=tdCol(sol,q),bx=tdBox(cs);return bx?{q,cs,bx,n:q.i+1}:null}).filter(Boolean)}
@@ -110,12 +111,19 @@ function tdSection(G,sol,c,den){const E=[],Dw=-tdWallZ(),pr=p=>[p[2]+Dw,p[1]],wb
 function tdPartName(s,c){const ax=s.ax,bx=c.bx;if(s.role==='front'||/^fabric/.test(s.role))return s.bb[1][1]-s.bb[1][0]<450&&s.bb[0][1]-s.bb[0][0]>s.bb[1][1]-s.bb[1][0]?'Drawer front':'Door';
   if(s.role==='back')return 'Back panel';if(s.role==='shelf')return 'Shelf';if(s.role==='skirt')return 'Plinth / strip';if(s.role==='desk')return 'Desk top';
   if(s.role==='carcass'){if(ax===0)return Math.abs(s.bb[0][0]-bx.x0)<3||Math.abs(s.bb[0][1]-bx.x1)<3?'Side':'Divider';if(ax===1)return Math.abs(s.bb[1][1]-bx.y1)<3?'Top':Math.abs(s.bb[1][0]-bx.y0)<30?'Bottom':'Fixed shelf';return 'Rail / batten'}return 'Part'}
+/* how far a part moves when its box is pulled apart (EX = step in mm) */
+function tdOffset(s,c,EX){const bx=c.bx,cc=[(bx.x0+bx.x1)/2,(bx.y0+bx.y1)/2,(bx.z0+bx.z1)/2],m=[0,1,2].map(k=>(s.bb[k][0]+s.bb[k][1])/2);
+  if(s.role==='front'||/^fabric/.test(s.role))return [0,0,EX*1.6];if(s.role==='back')return [0,0,-EX];if(s.role==='shelf')return [0,0,EX*0.8];if(s.role==='skirt')return [0,-EX*0.5,EX*0.9];
+  if(s.ax===0)return [Math.sign(m[0]-cc[0]||1)*EX*((Math.abs(s.bb[0][0]-bx.x0)<3||Math.abs(s.bb[0][1]-bx.x1)<3)?1:0.2),0,0];
+  if(s.ax===1){const top=Math.abs(s.bb[1][1]-bx.y1)<3,bot=Math.abs(s.bb[1][0]-bx.y0)<30;return [0,top?EX:bot?-EX*0.6:0,top||bot?0:EX*0.5]}return [0,0,0]}
+/* parts of a box with names, sizes and letters (same name and size = same letter) */
+function tdPartRows(c){const list=c.cs.map((s,i)=>{const ex=[0,1,2].map(k=>s.bb[k][1]-s.bb[k][0]),t=s.t||Math.min(...ex),o=ex.filter((x,k)=>k!==s.ax).sort((a,b)=>b-a);return {i,s,name:tdPartName(s,c),L:o[0],W:o[1],t,role:s.role}});
+  const grp={};list.forEach(r=>{const k=r.name+'|'+f0(r.L)+'|'+f0(r.W)+'|'+f0(r.t);(grp[k]=grp[k]||{name:r.name,L:r.L,W:r.W,t:r.t,role:r.role,q:0,idx:[]}).q++;grp[k].idx.push(r.i)});
+  const rows=Object.values(grp).sort((a,b)=>a.idx[0]-b.idx[0]);rows.forEach((r,j)=>{r.tag=j<26?String.fromCharCode(65+j):'Z'+(j-25)});const tagOf={};rows.forEach(r=>r.idx.forEach(i=>tagOf[i]=r));return {rows,tagOf}}
 function tdExploded(c){const bx=c.bx,cc=[(bx.x0+bx.x1)/2,(bx.y0+bx.y1)/2,(bx.z0+bx.z1)/2],EX=Math.max(180,Math.min(420,(bx.y1-bx.y0)*0.12));
   const v=[0.95,0.75,1.25],vl=Math.hypot(...v),f=v.map(a=>-a/vl),up0=[0,1,0],cr=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],nm=a=>{const l=Math.hypot(...a);return a.map(x=>x/l)};
   const rt=nm(cr(f,up0)),up=cr(rt,f),dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],P=p=>[dot(p,rt),dot(p,up)];
-  const parts=c.cs.filter(s=>s.role!=='skirt'||true).map(s=>{const m=[0,1,2].map(k=>(s.bb[k][0]+s.bb[k][1])/2);let o=[0,0,0];
-    if(s.role==='front'||/^fabric/.test(s.role))o=[0,0,EX*1.6];else if(s.role==='back')o=[0,0,-EX];else if(s.role==='shelf')o=[0,0,EX*0.8];else if(s.role==='skirt')o=[0,-EX*0.5,EX*0.9];
-    else if(s.ax===0)o=[Math.sign(m[0]-cc[0]||1)*EX*((Math.abs(s.bb[0][0]-bx.x0)<3||Math.abs(s.bb[0][1]-bx.x1)<3)?1:0.2),0,0];else if(s.ax===1)o=[0,Math.abs(s.bb[1][1]-bx.y1)<3?EX:Math.abs(s.bb[1][0]-bx.y0)<30?-EX*0.6:0,Math.abs(s.bb[1][1]-bx.y1)<3||Math.abs(s.bb[1][0]-bx.y0)<30?0:EX*0.5];
+  const parts=c.cs.map(s=>{const m=[0,1,2].map(k=>(s.bb[k][0]+s.bb[k][1])/2);const o=tdOffset(s,c,EX);
     const mv=p=>[p[0]+o[0],p[1]+o[1],p[2]+o[2]];return {s,A:s.A.map(mv),B:s.B.map(mv),m:mv(m)}});
   const faces=[];parts.forEach((pt,i)=>{const n=pt.A.length,fs=[pt.A.slice(),pt.B.slice().reverse()];for(let j=0;j<n;j++)fs.push([pt.A[j],pt.A[(j+1)%n],pt.B[(j+1)%n],pt.B[j]]);
     fs.forEach(F=>{const a=F[0],b=F[1],c3=F[2];let nrm=nm(cr([b[0]-a[0],b[1]-a[1],b[2]-a[2]],[c3[0]-a[0],c3[1]-a[1],c3[2]-a[2]]));if(!nrm.every(isFinite))return;const ctr=[0,1,2].map(k=>F.reduce((s_,p)=>s_+p[k],0)/F.length);

@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.108
+
+- **Workshop mode → Boxes 3D** (new tab next to Cuts and Build steps): one box at a time in interactive 3D.
+  - **Closed ↔ Apart slider**: the box comes apart in assembly order (fronts forward, shelves out, back away, top up, sides out).
+  - **Letters** on every part; the same letters as the exploded sheets in the technical drawings.
+  - **Tap a part** (or its row in the list): it lights up and the rest fades. A card shows its name, size, cut-list number, board and colour, which edges get edge banding (the same picture as on the labels), the grain direction, and hinge cups, holes and cut-outs.
+  - **Measurements**: width, height and depth of the box, and the height of every shelf from the floor, drawn in 3D.
+  - **Parts list** beside the 3D (below it on a phone). Drag to turn, pinch or scroll to zoom, Reset view.
+- Technical drawings: LED strips no longer appear as parts in the exploded views.
+- Tested with the real 3D engine this time (it can now be loaded in the test setup), including the AI render picture of v0.105.
+
 ## v0.107
 
 - **Save as a locked design**: under My designs, a new design has **Save and lock for building**, and a saved one has **Lock for building**. Locked designs show 🔒 in the list.

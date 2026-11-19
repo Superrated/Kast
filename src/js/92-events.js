@@ -110,6 +110,11 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'wsClose':ui.ws=null;wsRender();break;
     case 'wsTab':ui.ws={tab:a};wsRender();break;
     case 'wsGo':ui.ws.i=+a;wsRender();break;
+    case 'wxCol':WX.col=+a;WX.sel=null;wsRender();break;
+    case 'wxDims':WX.dims=!WX.dims;e.target.closest('button').classList.toggle('on',WX.dims);wxApplyT();wxDraw();break;
+    case 'wxLabs':WX.labels=!WX.labels;e.target.closest('button').classList.toggle('on',WX.labels);wxDraw();break;
+    case 'wxReset':if(WX.r&&WX.r.home){Object.assign(WX.r.ctl,WX.r.home);WX.r.zoomed=0;wxDraw()}break;
+    case 'wxSel':wxSelect(WX.sel&&WX.sel.tag===a?null:(a||null));break;
     case 'wsDone':wsDone();break;
     case 'lblPdf':toast('Making the labels…');exportLabels();break;
     case 'tplPdf':toast('Making the templates…');exportTemplates();break;

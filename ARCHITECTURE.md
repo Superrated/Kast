@@ -56,3 +56,8 @@ The app has no test files in the repo. The checks used during development load t
 
 - `52-techdraw.js`: `tdSolids(G)` turns `G.items` prisms into 3D solids. Views (`tdFront`, `tdPlan`, `tdSection`, `tdExploded`) are entity lists in mm. `tdSheets()` lays them out on A3/A4 at standard scales. `pdfVec()` writes a vector PDF (Helvetica, WinAnsi), and `tdDXF()` writes the whole wall at 1:1 with layers.
 - Build lock (`90-bar-views.js`): `S.lock={on,id,at}`. `lockGuard()` runs at the start of `changed()` and puts back any change except `S.done` (workshop progress). `lockOn()` is called by Workshop mode, and `lockOff()` is the Unlock button.
+
+## Workshop Boxes 3D (v0.108)
+
+- `72-workshop-3d.js`: its own small three.js scene for one box (`WX`). Solids come from `tdSolids`/`tdCols`, offsets from `tdOffset`, and letters from `tdPartRows` (all in `52-techdraw.js`), so the 3D and the PDF sheets always match. `wxMatch` links a solid to its cut-list part (for edge banding, grain and holes).
+- Tests with the real three.js r128: clone `mrdoob/three.js` at tag r128 (sparse, `build/`) and inline `three.min.js` in the test page.

@@ -476,6 +476,29 @@ details.pf .grid2{margin-top:6px}
 .lockban b{font-size:14px}.lockban span{font-size:12.5px;color:var(--ink2);line-height:1.4}.lockban .btn{justify-self:start}
 aside.side.locked>*:not(.shead):not(.lockban):not(.viewsw){pointer-events:none;opacity:.45;user-select:none}
 .dslock{font-size:12.5px;line-height:1.4;padding:8px 10px;border-radius:10px;background:var(--accent-soft);color:var(--ink)}
+/* workshop: boxes in 3D */
+.wxchips{display:flex;gap:6px;overflow-x:auto;padding:10px 0 6px;scrollbar-width:none}.wxchips .tchip{flex:none;display:grid;line-height:1.15;text-align:left}.wxchips .tchip small{font-weight:400;opacity:.75;font-size:11px}
+.wxmain{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,320px);gap:12px}
+.wxstage{position:relative;min-height:0;border-radius:16px;background:var(--stage,var(--raised));overflow:hidden;touch-action:none}
+.wxstage canvas{display:block;position:absolute;inset:0}
+.wxlabs{position:absolute;inset:0;pointer-events:none}
+.wxtag{position:absolute;transform:translate(-50%,-50%);min-width:22px;height:22px;padding:0 5px;border-radius:11px;background:var(--surface);color:var(--ink);border:1.5px solid var(--ink);font:700 12px/19px var(--f-b),system-ui,sans-serif;text-align:center;pointer-events:auto;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.wxtag.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.wxdim{position:absolute;transform:translate(-50%,-130%);padding:1px 6px;border-radius:6px;background:var(--accent);color:var(--accent-ink);font:600 11.5px/1.5 var(--f-b),system-ui,sans-serif;white-space:nowrap}.wxdim.sm{transform:translate(4px,-50%);background:var(--surface);color:var(--accent);border:1px solid var(--accent);font-size:10.5px}
+.wxhint{position:absolute;left:10px;top:8px;font-size:11.5px;color:var(--ink2);pointer-events:none}
+.wxcard{position:absolute;left:10px;right:10px;bottom:10px;max-width:420px;padding:12px 14px;border-radius:14px;background:var(--surface);color:var(--ink);border:1px solid var(--line);box-shadow:0 8px 24px rgba(0,0,0,.18);display:grid;gap:8px;font-size:13px}
+.wxcard p{margin:0;color:var(--ink2)}.wxch{display:flex;gap:10px;align-items:center;padding-right:24px}.wxch span{display:block;color:var(--ink2);font-size:12.5px}.wxbig{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:16px;flex:none}
+.wxedge{display:flex;gap:10px;align-items:center}.wxedge span{display:block;font-size:12px;color:var(--ink2)}.wxedge svg{flex:none;border-radius:4px}
+.wxx{position:absolute;right:8px;top:6px;border:0;background:none;color:var(--ink2);font-size:22px;cursor:pointer;line-height:1}
+.wxside{display:flex;flex-direction:column;gap:10px;min-height:0}
+.wxctl{display:grid;gap:8px}.wxsl{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink2)}.wxsl input{flex:1;accent-color:var(--accent);height:28px}
+.wxtg{display:flex;flex-wrap:wrap;gap:6px}
+.wxlist{overflow:auto;min-height:0;border:1px solid var(--line);border-radius:12px;background:var(--raised)}
+.wxlh{display:flex;justify-content:space-between;padding:8px 10px;border-bottom:1px solid var(--line);font-size:13px}.wxlh span{color:var(--ink2)}
+.wxrow{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:8px;align-items:center;width:100%;padding:8px 10px;border:0;border-bottom:1px solid var(--line);background:none;color:var(--ink);font:inherit;font-size:13px;text-align:left;cursor:pointer}
+.wxrow i{font-style:normal;font-weight:700;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--ink);display:grid;place-items:center;font-size:11.5px}.wxrow span{color:var(--ink2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.wxrow.on{background:var(--accent-soft)}.wxrow.on i{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+@media (max-width:860px){.wxmain{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(260px,1fr) auto}.wxlist{max-height:26vh}.wxcard{max-width:none}}
 /* ==== 10-look.css — The Fitted look: fonts, tokens for light and dark mode, cards, wizard, dialogs. */
 /* ===== Fitted visual refresh ===== */
 :root{--bg:#F3F3F0;--surface:#FAFAF8;--raised:#FFFFFF;--ink:#17191B;--ink2:#62676B;--ink3:#6A6F74;--line:#E4E5E1;--accent:#3446D6;--accent-ink:#FFFFFF;--accent-soft:rgba(52,70,214,.09);--warn:#B4541A;--warn-soft:rgba(180,84,26,.1);--wall:#E7E7E3;--hatch:#D3D5D1;--stage:#ECEDEA;--paper:#FFFFFF;--shade:rgba(20,22,24,.2);
@@ -895,14 +918,14 @@ input[type=checkbox],input[type=radio]{accent-color:var(--ink)}
 .chk{min-height:32px}
 </style>
 
-<div id="splash" role="status" aria-label="Fitted by BRUIS v0.107 is loading"><b>Fitted</b><span>v0.107</span></div>
+<div id="splash" role="status" aria-label="Fitted by BRUIS v0.108 is loading"><b>Fitted</b><span>v0.108</span></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
 
 <div class="app" data-tab="elev">
   <header class="top">
     <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-    <div class="brand" title="Fitted by BRUIS v0.107">Fitted<span class="bybr">by BRUIS</span><small>built-in wardrobes & cabinets, drawn and cut · v0.107</small></div>
+    <div class="brand" title="Fitted by BRUIS v0.108">Fitted<span class="bybr">by BRUIS</span><small>built-in wardrobes & cabinets, drawn and cut · v0.108</small></div>
     <nav class="tabs" id="tabs">
       <button data-act="tab" data-a="elev" class="on">Drawing</button>
       <button data-act="tab" data-a="3d">3D</button>
@@ -3978,7 +4001,7 @@ function tdSolids(G){const out=[];(G.items||[]).forEach((it,idx)=>{if(it.k!=='pr
   const e=it.ext||[0,0,0],A=it.poly.map(([u,v])=>it.toW(u,v)),B=A.map(p=>[p[0]+e[0],p[1]+e[1],p[2]+e[2]]),all=A.concat(B);
   if(all.some(p=>p.some(v=>!isFinite(v))))return;const bb=[0,1,2].map(i=>[Math.min(...all.map(p=>p[i])),Math.max(...all.map(p=>p[i]))]);
   const ax=Math.abs(e[0])>Math.abs(e[1])?(Math.abs(e[0])>Math.abs(e[2])?0:2):(Math.abs(e[1])>Math.abs(e[2])?1:2);
-  out.push({A,B,e,bb,ax,t:Math.hypot(...e),role:String(it.role||''),tag:it.tag||'',sz:it.sz||'',idx})});return out}
+  out.push({A,B,e,bb,ax,t:Math.hypot(...e),role:String(it.role||''),tag:it.tag||'',sz:it.sz||'',fin:it.fin||'',idx})});return out}
 const tdLy=s=>/^fabric/.test(s.role)?'FRONTS':({carcass:'CARCASS',shelf:'SHELVES',back:'BACKS',front:'FRONTS',skirt:'STRIPS_PLINTH',desk:'DESK'})[s.role]||'OTHER';
 /* cut a solid with the plane coord[ax]=c; returns 3D section polygons */
 function tdCut(s,ax,c){const e=s.e;if(s.bb[ax][0]>c+1e-6||s.bb[ax][1]<c-1e-6)return [];
@@ -4009,7 +4032,8 @@ function tdDim(E,a,b,dir,at,den,o){o=o||{};const L=dir==='h'?Math.abs(b[0]-a[0])
 const TD_HW=(()=>{const w={};' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~'.split('').forEach((c,i)=>{w[c]=[278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584][i]});return w})();
 function tdTW(s,hmm){let u=0;for(const c of String(s))u+=TD_HW[c]||600;return u/1000*hmm/0.72}
 /* ---------- which solids belong to a column, and its box ---------- */
-function tdCol(sol,q){const xa=q.xa,xb=q.xb;return sol.filter(s=>{const[x0,x1]=s.bb[0];if(/^\d+:/.test(s.sz))return +s.sz.split(':')[0]===q.i;
+const TD_BOARD=/^(carcass|shelf|back|front|skirt|desk|fabric:.*)$/;
+function tdCol(sol,q){const xa=q.xa,xb=q.xb;return sol.filter(s=>{if(!TD_BOARD.test(s.role))return false;const[x0,x1]=s.bb[0];if(/^\d+:/.test(s.sz))return +s.sz.split(':')[0]===q.i;
   if(s.role==='skirt')return x0>=xa-120&&x1<=xb+120;const ov=Math.min(x1,xb)-Math.max(x0,xa);if(ov>1)return true;return s.ax===0&&(Math.abs(x1-xa)<3||Math.abs(x0-xb)<3)})}
 function tdBox(cs){const c=cs.filter(s=>s.role==='carcass');const a=c.length?c:cs;if(!a.length)return null;return {x0:Math.min(...a.map(s=>s.bb[0][0])),x1:Math.max(...a.map(s=>s.bb[0][1])),y0:Math.min(...a.map(s=>s.bb[1][0])),y1:Math.max(...a.map(s=>s.bb[1][1])),z0:Math.min(...a.map(s=>s.bb[2][0])),z1:Math.max(...a.map(s=>s.bb[2][1]))}}
 function tdCols(G,sol){return G.secs.map(q=>{const cs=tdCol(sol,q),bx=tdBox(cs);return bx?{q,cs,bx,n:q.i+1}:null}).filter(Boolean)}
@@ -4069,12 +4093,19 @@ function tdSection(G,sol,c,den){const E=[],Dw=-tdWallZ(),pr=p=>[p[2]+Dw,p[1]],wb
 function tdPartName(s,c){const ax=s.ax,bx=c.bx;if(s.role==='front'||/^fabric/.test(s.role))return s.bb[1][1]-s.bb[1][0]<450&&s.bb[0][1]-s.bb[0][0]>s.bb[1][1]-s.bb[1][0]?'Drawer front':'Door';
   if(s.role==='back')return 'Back panel';if(s.role==='shelf')return 'Shelf';if(s.role==='skirt')return 'Plinth / strip';if(s.role==='desk')return 'Desk top';
   if(s.role==='carcass'){if(ax===0)return Math.abs(s.bb[0][0]-bx.x0)<3||Math.abs(s.bb[0][1]-bx.x1)<3?'Side':'Divider';if(ax===1)return Math.abs(s.bb[1][1]-bx.y1)<3?'Top':Math.abs(s.bb[1][0]-bx.y0)<30?'Bottom':'Fixed shelf';return 'Rail / batten'}return 'Part'}
+/* how far a part moves when its box is pulled apart (EX = step in mm) */
+function tdOffset(s,c,EX){const bx=c.bx,cc=[(bx.x0+bx.x1)/2,(bx.y0+bx.y1)/2,(bx.z0+bx.z1)/2],m=[0,1,2].map(k=>(s.bb[k][0]+s.bb[k][1])/2);
+  if(s.role==='front'||/^fabric/.test(s.role))return [0,0,EX*1.6];if(s.role==='back')return [0,0,-EX];if(s.role==='shelf')return [0,0,EX*0.8];if(s.role==='skirt')return [0,-EX*0.5,EX*0.9];
+  if(s.ax===0)return [Math.sign(m[0]-cc[0]||1)*EX*((Math.abs(s.bb[0][0]-bx.x0)<3||Math.abs(s.bb[0][1]-bx.x1)<3)?1:0.2),0,0];
+  if(s.ax===1){const top=Math.abs(s.bb[1][1]-bx.y1)<3,bot=Math.abs(s.bb[1][0]-bx.y0)<30;return [0,top?EX:bot?-EX*0.6:0,top||bot?0:EX*0.5]}return [0,0,0]}
+/* parts of a box with names, sizes and letters (same name and size = same letter) */
+function tdPartRows(c){const list=c.cs.map((s,i)=>{const ex=[0,1,2].map(k=>s.bb[k][1]-s.bb[k][0]),t=s.t||Math.min(...ex),o=ex.filter((x,k)=>k!==s.ax).sort((a,b)=>b-a);return {i,s,name:tdPartName(s,c),L:o[0],W:o[1],t,role:s.role}});
+  const grp={};list.forEach(r=>{const k=r.name+'|'+f0(r.L)+'|'+f0(r.W)+'|'+f0(r.t);(grp[k]=grp[k]||{name:r.name,L:r.L,W:r.W,t:r.t,role:r.role,q:0,idx:[]}).q++;grp[k].idx.push(r.i)});
+  const rows=Object.values(grp).sort((a,b)=>a.idx[0]-b.idx[0]);rows.forEach((r,j)=>{r.tag=j<26?String.fromCharCode(65+j):'Z'+(j-25)});const tagOf={};rows.forEach(r=>r.idx.forEach(i=>tagOf[i]=r));return {rows,tagOf}}
 function tdExploded(c){const bx=c.bx,cc=[(bx.x0+bx.x1)/2,(bx.y0+bx.y1)/2,(bx.z0+bx.z1)/2],EX=Math.max(180,Math.min(420,(bx.y1-bx.y0)*0.12));
   const v=[0.95,0.75,1.25],vl=Math.hypot(...v),f=v.map(a=>-a/vl),up0=[0,1,0],cr=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],nm=a=>{const l=Math.hypot(...a);return a.map(x=>x/l)};
   const rt=nm(cr(f,up0)),up=cr(rt,f),dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],P=p=>[dot(p,rt),dot(p,up)];
-  const parts=c.cs.filter(s=>s.role!=='skirt'||true).map(s=>{const m=[0,1,2].map(k=>(s.bb[k][0]+s.bb[k][1])/2);let o=[0,0,0];
-    if(s.role==='front'||/^fabric/.test(s.role))o=[0,0,EX*1.6];else if(s.role==='back')o=[0,0,-EX];else if(s.role==='shelf')o=[0,0,EX*0.8];else if(s.role==='skirt')o=[0,-EX*0.5,EX*0.9];
-    else if(s.ax===0)o=[Math.sign(m[0]-cc[0]||1)*EX*((Math.abs(s.bb[0][0]-bx.x0)<3||Math.abs(s.bb[0][1]-bx.x1)<3)?1:0.2),0,0];else if(s.ax===1)o=[0,Math.abs(s.bb[1][1]-bx.y1)<3?EX:Math.abs(s.bb[1][0]-bx.y0)<30?-EX*0.6:0,Math.abs(s.bb[1][1]-bx.y1)<3||Math.abs(s.bb[1][0]-bx.y0)<30?0:EX*0.5];
+  const parts=c.cs.map(s=>{const m=[0,1,2].map(k=>(s.bb[k][0]+s.bb[k][1])/2);const o=tdOffset(s,c,EX);
     const mv=p=>[p[0]+o[0],p[1]+o[1],p[2]+o[2]];return {s,A:s.A.map(mv),B:s.B.map(mv),m:mv(m)}});
   const faces=[];parts.forEach((pt,i)=>{const n=pt.A.length,fs=[pt.A.slice(),pt.B.slice().reverse()];for(let j=0;j<n;j++)fs.push([pt.A[j],pt.A[(j+1)%n],pt.B[(j+1)%n],pt.B[j]]);
     fs.forEach(F=>{const a=F[0],b=F[1],c3=F[2];let nrm=nm(cr([b[0]-a[0],b[1]-a[1],b[2]-a[2]],[c3[0]-a[0],c3[1]-a[1],c3[2]-a[2]]));if(!nrm.every(isFinite))return;const ctr=[0,1,2].map(k=>F.reduce((s_,p)=>s_+p[k],0)/F.length);
@@ -5292,10 +5323,11 @@ function wsItems(){const gs=groupsCache||(groupsCache=groupPanels(bgeo()));
   if(ui.ws.tab==='cuts'){const {ops,key}=cutPlan(gs),nm={rip:'Rip',cross:'Cross-cut',trim:'Trim'},how={rip:'Jig / fence',cross:'Stop / mark',trim:'Jig / fence'};
     return ops.map(o=>({k:`c|${o.sheet}|${o.kind}|${o.lbl}`,set:`${how[o.kind]} at ${f0(o.v)} mm`,setK:o.kind+key(o.v),big:o.kind==='rip'?`Rip strip ${o.tag} off ${o.sheet}`:o.kind==='cross'?`Cross-cut ${f0(o.v)} mm off strip ${o.tag.split('→')[0]} → ${o.tag.split('→')[1]}`:`Trim ${o.tag} to ${f0(o.v)} mm wide`,mid:o.kind==='rip'?`The strip is ${f0(o.v)} mm wide. Write the sheet number and letter ${o.tag} on it.`:(()=>{const id=o.kind==='cross'?o.tag.split('→')[1]:o.tag,pp=gs.find(p=>p.id===id)||{};return `${id} · ${esc(pp.type||'')} · ${f0(pp.L||0)} × ${f0(pp.Wd||0)} mm — write ${id} on its back edge.`})(),num:o.num}))}
   renderGuide();return [...document.querySelectorAll('#v-guide .gstep')].map(st=>{const t=st.querySelector('h4')?.textContent||'',fig=st.querySelector('.gfig svg');return {k:`s|${t}`,set:`Step ${st.querySelector('.gnum')?.textContent||''}`,big:esc(t),mid:(st.querySelector('.gchips')?`<p>${[...st.querySelectorAll('.gchips > span')].map(c=>esc(c.textContent.trim())).join(' · ')}</p>`:'')+(st.querySelector('.gtxt')?.innerHTML||''),fig:fig?fig.outerHTML:''}})}
-function wsRender(){let m=document.getElementById('wsm');if(!ui.ws){if(m)m.remove();return}if(!m){m=document.createElement('div');m.id='wsm';m.className='ws';document.body.appendChild(m)}
+function wsRender(){let m=document.getElementById('wsm');if(!ui.ws){try{wxDispose()}catch(e){}if(m)m.remove();return}if(!m){m=document.createElement('div');m.id='wsm';m.className='ws';document.body.appendChild(m)}
+  if(ui.ws.tab==='boxes'){wxRender(m);return}try{wxDispose()}catch(e){}
   const it=wsItems(),done=new Set(S.done?S.done[ui.ws.tab]||[]:[]);let i=Math.max(0,Math.min(it.length-1,ui.ws.i??it.findIndex(x=>!done.has(x.k))));if(i<0)i=0;ui.ws.i=i;const cur=it[i],nDone=it.filter(x=>done.has(x.k)).length;
   const newSet=cur&&ui.ws.tab==='cuts'&&(i===0||it[i-1].setK!==cur.setK);
-  m.innerHTML=`<div class="wsbar"><div class="seg"><button type="button" class="${ui.ws.tab==='cuts'?'on':''}" data-act="wsTab" data-a="cuts">Cuts</button><button type="button" class="${ui.ws.tab==='steps'?'on':''}" data-act="wsTab" data-a="steps">Build steps</button></div><button type="button" class="btn sm" data-act="wsClose">Close</button></div>
+  m.innerHTML=`<div class="wsbar"><div class="seg"><button type="button" class="${ui.ws.tab==='cuts'?'on':''}" data-act="wsTab" data-a="cuts">Cuts</button><button type="button" class="${ui.ws.tab==='steps'?'on':''}" data-act="wsTab" data-a="steps">Build steps</button><button type="button" data-act="wsTab" data-a="boxes">Boxes 3D</button></div><button type="button" class="btn sm" data-act="wsClose">Close</button></div>
   <div class="wsprog"><i style="width:${it.length?Math.round(nDone/it.length*100):0}%"></i></div><div class="hintp" style="margin:4px 0 0">${nDone} of ${it.length} done${ui.ws.tab==='cuts'?` · order: ${S.opts.cutOrder==='width'?'same width together':'sheet by sheet'} (change it in the Build guide)`:''}</div>
   ${cur?`<div class="wscard"><div class="wsset">${newSet?'⚑ Set the saw: ':''}${cur.set}${cur.num?` · cut ${cur.num}`:''}${done.has(cur.k)?' · ✓ done':''}</div><div class="wsbig">${cur.big}</div><div class="wsmid">${cur.mid}</div>${cur.fig?`<div class="wsfig">${cur.fig}</div>`:''}
     <div class="wslist">${it.slice(i+1,i+6).map((x,j)=>`<button type="button" data-act="wsGo" data-a="${i+1+j}" class="${done.has(x.k)?'ok':''}">${x.num?x.num+'. ':''}${x.big.replace(/<[^>]+>/g,'')}</button>`).join('')}</div></div>
@@ -5477,6 +5509,90 @@ function renderSheets(){
   el.innerHTML=partBar()+h;
 }
 
+/* ==== 72-workshop-3d.js ====
+   Workshop mode → "Boxes 3D": one box at a time in 3D, with a slider that pulls it apart.
+   - Letters on the parts match the exploded sheets in the technical drawings (tdPartRows in 52-techdraw.js).
+   - Tap a part: its card shows the size, board, edge banding (same picture as the labels), grain and holes,
+     matched to the cut list part number (P12).
+   - "Measurements" draws the box's width, height and depth and the height of every shelf from the floor.
+   It has its own small three.js scene, so the main 3D view is not touched.
+*/
+const WX={col:0,t:0.55,dims:true,labels:true,sel:null,r:null};
+function wxCols(){const G=geo,sol=tdSolids(G);return tdCols(G,sol).filter(c=>c.q&&!c.q.panel&&c.cs.length)}
+/* find the cut-list part for a solid: same column, same thickness, same size */
+function wxMatch(gs,s,n,row){const ex=[row.L,row.W],re=new RegExp('^S'+n+'(\\D|$)');const ok=p=>Math.abs(p.t-row.t)<1.2&&Math.abs(Math.max(p.L,p.Wd)-ex[0])<4.5&&Math.abs(Math.min(p.L,p.Wd)-ex[1])<4.5;
+  return gs.filter(p=>p.secs.some(x=>re.test(x))&&ok(p))[0]||gs.filter(ok)[0]||null}
+function wxColour(s){if(/^fabric:/.test(s.role)){const k=s.role.slice(7);return (FABRICS[k]||{}).c||'#555'}
+  const k=s.fin||(S.mat[{front:'front',back:'back',shelf:'shelf',skirt:'skirt',desk:'desk'}[s.role]||'carcass']||{}).fin;return (FIN[k]||FIN.ral9010||{base:'#ddd'}).base}
+/* triangles for one solid (flat-shaded prism) */
+function wxGeo(s){const A=s.A,B=s.B,n=A.length,o=[0,1,2].filter(k=>k!==s.ax),p2=A.map(p=>new THREE.Vector2(p[o[0]],p[o[1]]));let tri=[];try{tri=THREE.ShapeUtils.triangulateShape(p2,[])}catch(e){}
+  if(!tri.length)for(let i=1;i+1<n;i++)tri.push([0,i,i+1]);const v=[],push=(...ps)=>ps.forEach(p=>v.push(p[0],p[1],p[2]));
+  tri.forEach(([a,b,c])=>{push(A[a],A[b],A[c]);push(B[c],B[b],B[a])});for(let i=0;i<n;i++){const j=(i+1)%n;push(A[i],A[j],B[j]);push(A[i],B[j],B[i])}
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(v,3));g.computeVertexNormals();return g}
+function wxOpen(){ui.ws=ui.ws||{};ui.ws.tab='boxes';wsRender()}
+function wxRender(m){const cols=wxCols();if(WX.col>=cols.length)WX.col=0;const c=cols[WX.col];
+  const tabs=`<div class="wsbar"><div class="seg"><button type="button" data-act="wsTab" data-a="cuts">Cuts</button><button type="button" data-act="wsTab" data-a="steps">Build steps</button><button type="button" class="on" data-act="wsTab" data-a="boxes">Boxes 3D</button></div><button type="button" class="btn sm" data-act="wsClose">Close</button></div>`;
+  if(!c){m.innerHTML=tabs+'<div class="wscard"><div class="wsbig">There are no boxes in this design</div></div>';return}
+  m.innerHTML=tabs+`<div class="wxchips">${cols.map((x,i)=>`<button type="button" class="tchip ${i===WX.col?'on':''}" data-act="wxCol" data-a="${i}">Box ${x.n}<small>${f0(x.bx.x1-x.bx.x0)} wide</small></button>`).join('')}</div>
+  <div class="wxmain"><div class="wxstage" id="wxStage"><div class="wxlabs" id="wxLabs"></div><div class="wxcard" id="wxCard" hidden></div><div class="wxhint" id="wxHint">Drag to turn · pinch or scroll to zoom · tap a part</div></div>
+    <div class="wxside"><div class="wxctl"><label class="wxsl"><span>Closed</span><input type="range" id="wxT" min="0" max="1" step="0.01" value="${WX.t}" aria-label="Pull the box apart"><span>Apart</span></label>
+      <div class="wxtg"><button type="button" class="tchip ${WX.dims?'on':''}" data-act="wxDims" aria-pressed="${WX.dims}">Measurements</button><button type="button" class="tchip ${WX.labels?'on':''}" data-act="wxLabs" aria-pressed="${WX.labels}">Letters</button><button type="button" class="tchip" data-act="wxReset">Reset view</button></div></div>
+      <div class="wxlist" id="wxList"></div></div></div>`;
+  wxScene(c);wxListRender()}
+function wxDispose(){const R=WX.r;if(!R)return;try{cancelAnimationFrame(R.raf);R.ro&&R.ro.disconnect();R.scene.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose())}});R.renderer.dispose();R.renderer.domElement.remove()}catch(e){}WX.r=null}
+function wxScene(c){wxDispose();const st=document.getElementById('wxStage');if(!st)return;
+  if(!window.THREE){st.insertAdjacentHTML('beforeend','<p class="hintp" style="padding:16px">The 3D library could not load here. The parts list on the right still works.</p>');WX.r={c,parts:[],rows:tdPartRows(c),noGL:1};return}
+  let renderer;try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:true})}catch(e){st.insertAdjacentHTML('beforeend','<p class="hintp" style="padding:16px">3D is not available on this device. The parts list still works.</p>');WX.r={c,parts:[],rows:tdPartRows(c),noGL:1};return}
+  renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));st.prepend(renderer.domElement);
+  const scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(35,1,10,100000);scene.add(new THREE.HemisphereLight(0xffffff,0x8a8a80,0.85));const sun=new THREE.DirectionalLight(0xffffff,0.75);sun.position.set(1,1.6,1.3);scene.add(sun);
+  const bx=c.bx,EX=Math.max(180,Math.min(420,(bx.y1-bx.y0)*0.12)),ctr=new THREE.Vector3((bx.x0+bx.x1)/2,(bx.y0+bx.y1)/2,(bx.z0+bx.z1)/2),{rows,tagOf}=tdPartRows(c);
+  const gs=groupsCache||(groupsCache=groupPanels(bgeo()));
+  const parts=c.cs.map((s,i)=>{const g=wxGeo(s),mat=new THREE.MeshStandardMaterial({color:new THREE.Color(wxColour(s)),roughness:.7,metalness:0,polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1,transparent:true,opacity:1});
+    const mesh=new THREE.Mesh(g,mat),edges=new THREE.LineSegments(new THREE.EdgesGeometry(g,20),new THREE.LineBasicMaterial({color:0x2a2a2a,transparent:true,opacity:.55}));const grp=new THREE.Group();grp.add(mesh,edges);scene.add(grp);
+    const row=tagOf[i],mid=new THREE.Vector3(...[0,1,2].map(k=>(s.bb[k][0]+s.bb[k][1])/2));return {s,i,grp,mesh,row,off:tdOffset(s,c,EX),mid,cut:wxMatch(gs,s,c.n,row)}});
+  // measurements: drawn around the closed box
+  const dims=new THREE.Group();scene.add(dims);const dm=new THREE.LineBasicMaterial({color:0x3446D6});const L=(a,b)=>{const g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(...a),new THREE.Vector3(...b)]);dims.add(new THREE.Line(g,dm))};
+  const o=60,fz=bx.z1+o;L([bx.x0,bx.y0-o,fz],[bx.x1,bx.y0-o,fz]);L([bx.x0,bx.y0-o-30,fz],[bx.x0,bx.y0-o+30,fz]);L([bx.x1,bx.y0-o-30,fz],[bx.x1,bx.y0-o+30,fz]);
+  L([bx.x1+o,0,fz],[bx.x1+o,bx.y1,fz]);L([bx.x1+o-30,bx.y1,fz],[bx.x1+o+30,bx.y1,fz]);L([bx.x1+o-30,0,fz],[bx.x1+o+30,0,fz]);
+  L([bx.x1+o,bx.y0-o,bx.z0],[bx.x1+o,bx.y0-o,bx.z1]);
+  const hz=[...new Set(c.cs.filter(s=>s.ax===1&&s.role!=='front').map(s=>Math.round(s.bb[1][1])))].sort((a,b)=>a-b);hz.forEach(y=>L([bx.x1+o-15,y,fz],[bx.x1+o+15,y,fz]));
+  const dimLabs=[{p:[(bx.x0+bx.x1)/2,bx.y0-o,fz],t:f0(bx.x1-bx.x0)+' wide'},{p:[bx.x1+o,bx.y1/2,fz],t:f0(bx.y1)+' high'},{p:[bx.x1+o,bx.y0-o,(bx.z0+bx.z1)/2],t:f0(bx.z1-bx.z0)+' deep'}].concat(hz.map(y=>({p:[bx.x1+o+20,y,fz],t:'↑ '+f0(y),sm:1})));
+  const size=Math.max(bx.x1-bx.x0,bx.y1-bx.y0,bx.z1-bx.z0)+EX*2.2,ctl={theta:0.62,phi:0.32,r:size*1.55,tx:ctr.x,ty:ctr.y,tz:ctr.z+EX*0.4};
+  const R=WX.r={c,renderer,scene,cam,parts,rows:{rows,tagOf},dims,dimLabs,ctl,home:Object.assign({},ctl),ro:null,raf:0};
+  const place=()=>{cam.position.set(ctl.tx+ctl.r*Math.cos(ctl.phi)*Math.sin(ctl.theta),ctl.ty+ctl.r*Math.sin(ctl.phi),ctl.tz+ctl.r*Math.cos(ctl.phi)*Math.cos(ctl.theta));cam.lookAt(ctl.tx,ctl.ty,ctl.tz)};R.place=place;
+  const fit=()=>{const w=st.clientWidth||300,h=st.clientHeight||300;renderer.setSize(w,h,false);renderer.domElement.style.width=w+'px';renderer.domElement.style.height=h+'px';cam.aspect=w/h;cam.updateProjectionMatrix();
+    const rr=size*1.55*Math.max(1,0.95/cam.aspect);if(!R.zoomed){ctl.r=rr}R.home.r=rr;wxDraw()};
+  try{R.ro=new ResizeObserver(fit);R.ro.observe(st)}catch(e){}wxApplyT();fit();
+  // turn, zoom, tap
+  const el=renderer.domElement,pts=new Map();let moved=0,d0=0,r0=0;
+  el.addEventListener('pointerdown',e=>{el.setPointerCapture(e.pointerId);pts.set(e.pointerId,[e.clientX,e.clientY]);moved=0;if(pts.size===2){const[a,b]=[...pts.values()];d0=Math.hypot(a[0]-b[0],a[1]-b[1]);r0=ctl.r}});
+  el.addEventListener('pointermove',e=>{const p=pts.get(e.pointerId);if(!p)return;const dx=e.clientX-p[0],dy=e.clientY-p[1];pts.set(e.pointerId,[e.clientX,e.clientY]);moved+=Math.abs(dx)+Math.abs(dy);
+    if(pts.size===2){const[a,b]=[...pts.values()];const d=Math.hypot(a[0]-b[0],a[1]-b[1]);if(d0>0){ctl.r=Math.max(size*0.35,Math.min(size*5,r0*d0/d));R.zoomed=1}}else{ctl.theta-=dx*0.008;ctl.phi=Math.max(-0.2,Math.min(1.45,ctl.phi+dy*0.008))}wxDraw()});
+  const up=e=>{const was=pts.has(e.pointerId);pts.delete(e.pointerId);if(was&&moved<8&&pts.size===0)wxPick(e)};el.addEventListener('pointerup',up);el.addEventListener('pointercancel',e=>pts.delete(e.pointerId));
+  el.addEventListener('wheel',e=>{e.preventDefault();ctl.r=Math.max(size*0.35,Math.min(size*5,ctl.r*(1+Math.sign(e.deltaY)*0.1)));R.zoomed=1;wxDraw()},{passive:false});
+  el.addEventListener('dblclick',()=>{Object.assign(ctl,R.home);R.zoomed=0;wxDraw()});el.style.touchAction='none'}
+function wxApplyT(){const R=WX.r;if(!R||R.noGL)return;const t=WX.t,e=t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2;R.parts.forEach(p=>p.grp.position.set(p.off[0]*e,p.off[1]*e,p.off[2]*e));R.dims.visible=!!WX.dims}
+function wxDraw(){const R=WX.r;if(!R||R.noGL)return;R.place();R.parts.forEach(p=>{const on=WX.sel==null||p.row===WX.sel,hi=WX.sel!=null&&p.row===WX.sel,ed=p.grp.children[1].material;p.mesh.material.opacity=on?1:0.18;p.mesh.material.depthWrite=on;ed.color.set(hi?0x3446D6:0x2a2a2a);ed.opacity=hi?1:on?.55:.1});
+  R.renderer.render(R.scene,R.cam);wxLabels()}
+function wxLabels(){const R=WX.r,box=document.getElementById('wxLabs'),st=document.getElementById('wxStage');if(!R||!box||!st||R.noGL)return;const w=st.clientWidth,h=st.clientHeight,v=new THREE.Vector3();let o='';
+  const at=(p,cls,txt,act)=>{v.set(p[0],p[1],p[2]).project(R.cam);if(v.z>1)return;const x=(v.x+1)/2*w,y=(1-v.y)/2*h;if(x<-40||x>w+40||y<-20||y>h+20)return;o+=`<span class="${cls}" style="left:${x.toFixed(0)}px;top:${y.toFixed(0)}px"${act?` data-act="wxSel" data-a="${act}"`:''}>${esc(txt)}</span>`};
+  if(WX.labels){const seen={};R.parts.forEach(p=>{const t=WX.t<0.5?2*WX.t*WX.t:1-Math.pow(-2*WX.t+2,2)/2;at([p.mid.x+p.off[0]*t,p.mid.y+p.off[1]*t,p.mid.z+p.off[2]*t],'wxtag'+(WX.sel===p.row?' on':''),p.row.tag,p.row.tag)})}
+  if(WX.dims)R.dimLabs.forEach(d=>at(d.p,'wxdim'+(d.sm?' sm':''),d.t));box.innerHTML=o}
+function wxPick(e){const R=WX.r;if(!R||R.noGL)return;const r=R.renderer.domElement.getBoundingClientRect(),m=new THREE.Vector2((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1),rc=new THREE.Raycaster();rc.setFromCamera(m,R.cam);
+  const hit=rc.intersectObjects(R.parts.map(p=>p.mesh),false)[0],p=hit&&R.parts.find(x=>x.mesh===hit.object);wxSelect(p?p.row.tag:null)}
+function wxSelect(tag){const R=WX.r;if(!R)return;const row=tag?R.rows.rows.find(r=>r.tag===tag):null;WX.sel=row||null;wxDraw();wxCard();wxListRender()}
+function wxEdgeSVG(bs,gr){const W=120,H=54,x=6,y=6,w=W-12,h=H-12;let s=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" aria-hidden="true"><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${gr?'#EAD7B7':'#EEEEEC'}"/>`;
+  if(gr)for(let k=1;k<5;k++)s+=`<path d="M${x+3} ${y+h*k/5} q${w/4} 2 ${w/2} 0 t${w/2-6} 0" fill="none" stroke="rgba(138,90,28,.5)" stroke-width="1"/>`;
+  [[x,y+h,x+w,y+h,bs[0]],[x,y,x+w,y,bs[1]],[x,y,x,y+h,bs[2]],[x+w,y,x+w,y+h,bs[3]]].forEach(([a,b,c,d,on])=>{s+=`<line x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke="${on?'#1D1D1F':'#9A9A9A'}" stroke-width="${on?5:1.2}" ${on?'':'stroke-dasharray="4 3"'}/>`});return s+'</svg>'}
+function wxCard(){const R=WX.r,el=document.getElementById('wxCard');if(!el||!R)return;const row=WX.sel;if(!row){el.hidden=true;return}
+  const p=R.parts.find(x=>x.row===row),cut=p&&p.cut,bs=cut?bandSides(cut):['','','',''],gr=cut?grainMatters(cut):false,holes=cut?(cut.holes||[]):[],cups=holes.filter(h=>h.dp&&(+h.d||0)>=30).length,pins=holes.filter(h=>(+h.d||0)<=6&&!h.len).length,ins=holes.filter(h=>h.poly).length;
+  const mat=cut?`${(MATS[cut.matType]||{}).name||cut.matType} · ${(FIN[cut.fin]||{}).name||cut.fin}`:'';
+  el.innerHTML=`<button type="button" class="wxx" data-act="wxSel" data-a="" aria-label="Close">×</button><div class="wxch"><b class="wxbig">${row.tag}</b><div><b>${esc(row.name)}${row.q>1?` <small>× ${row.q}</small>`:''}</b><span>${f0(row.L)} × ${f0(row.W)} × ${f0(row.t)} mm${cut?` · cut list <b>${cut.id}</b>`:''}</span></div></div>
+    ${mat?`<p>${esc(mat)}</p>`:''}${cut?`<div class="wxedge">${wxEdgeSVG(bs,gr)}<div><b>${esc(bandWords(cut,bs))}</b><span>${gr?`Grain runs along the ${f0(cut.L)} side`:'No grain — may be turned'}</span></div></div>`:''}
+    ${cups||pins||ins?`<p>${[cups?`${cups} hinge cup${cups>1?'s':''}`:'',pins?`${pins} small hole${pins>1?'s':''} (shelf pins / screws)`:'',ins?`${ins} cut-out${ins>1?'s':''}`:''].filter(Boolean).join(' · ')} — see the cut list drawing</p>`:''}`;el.hidden=false}
+function wxListRender(){const R=WX.r,el=document.getElementById('wxList');if(!el||!R)return;const rows=R.rows.rows;
+  el.innerHTML=`<div class="wxlh"><b>Parts of box ${R.c.n}</b><span>${rows.reduce((a,r)=>a+r.q,0)} parts</span></div>${rows.map(r=>`<button type="button" class="wxrow ${WX.sel===r?'on':''}" data-act="wxSel" data-a="${r.tag}"><i>${r.tag}</i><b>${esc(r.name)}</b><span>${r.q>1?r.q+' × ':''}${f0(r.L)} × ${f0(r.W)} × ${f0(r.t)}</span></button>`).join('')}`}
+document.addEventListener('input',e=>{if(e.target&&e.target.id==='wxT'){WX.t=+e.target.value;wxApplyT();wxDraw()}});
 /* ==== 80-3d.js ====
    The 3D view (three.js): scene, materials, meshes from G.items, camera.
 */
@@ -5729,7 +5845,7 @@ function poseFromH(H,imgH,fFix){const a=H;let f2a=-(a[0][0]*a[0][1]+a[1][0]*a[1]
    Lining the design up with a photo of the room.
 */
 /* ===== room photo, lined up in 3D ===== */
-const APP_VERSION='v0.107';
+const APP_VERSION='v0.108';
 const PH={src:null,iw:0,ih:0,pts:[],edges:{},pose:null,op:1,lens:1,cur:0,k1:0,f35:0,light:true};
 /* up to three photos of the room, each with its own line-up; PH always holds the one in use */
 const PHF=['src','src0','img','img0','iw','ih','pts','edges','manual','fAuto','autoN','k1','f35','lens','occ'],PHS=[];let phCur=0;
@@ -6392,6 +6508,11 @@ document.addEventListener('click',e=>{{const mm=document.getElementById('mmenu')
     case 'wsClose':ui.ws=null;wsRender();break;
     case 'wsTab':ui.ws={tab:a};wsRender();break;
     case 'wsGo':ui.ws.i=+a;wsRender();break;
+    case 'wxCol':WX.col=+a;WX.sel=null;wsRender();break;
+    case 'wxDims':WX.dims=!WX.dims;e.target.closest('button').classList.toggle('on',WX.dims);wxApplyT();wxDraw();break;
+    case 'wxLabs':WX.labels=!WX.labels;e.target.closest('button').classList.toggle('on',WX.labels);wxDraw();break;
+    case 'wxReset':if(WX.r&&WX.r.home){Object.assign(WX.r.ctl,WX.r.home);WX.r.zoomed=0;wxDraw()}break;
+    case 'wxSel':wxSelect(WX.sel&&WX.sel.tag===a?null:(a||null));break;
     case 'wsDone':wsDone();break;
     case 'lblPdf':toast('Making the labels…');exportLabels();break;
     case 'tplPdf':toast('Making the templates…');exportTemplates();break;
