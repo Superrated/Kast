@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.122
+
+- **Reading nook height note**: the design note now says who the nook suits, measured above an 80 mm cushion — under 700 mm too low to sit upright; 700–800 mm fine for children up to about 7 (and how much taller it needs to be for children up to about 12). From 800 mm above the cushion there is no note.
+- **Porthole size and place**: for a reading nook with a porthole front, set the **diameter** and move it **sideways** (from the middle, − = left) and **up** (from the lowest place). Leave empty for the automatic porthole. Notes when it is smaller than 500 mm (hard to climb in), larger than fits, or had to be moved back inside the front.
+- **Number boxes** no longer get so narrow that a size is cut off.
+
 ## v0.121
 
 - **Assemble 3D: step by step** (Workshop → Assemble, "Step by step"): the box builds up in building order — bottom · sides (with connector screws) · fixed shelves and uprights · top and rails · back (check the diagonals) · hardware inside · loose shelves · doors and drawer fronts (with hinges) · closing strips. Each step's parts fly into place with a short animation; earlier steps stay, later ones are hidden. ◀ ▶ go one step, **Play all** runs through by itself. Every step says what to do and lists its parts (letters) and hardware (numbers).

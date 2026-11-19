@@ -5108,10 +5108,20 @@ function build(S) {
               q: `${nw > 1000 ? 3 : 2}`,
               sec: ol
             });
-            if (nh < 800)
-              warns.push(
-                `${ol}: the reading nook is ${f0(nh)} mm high inside — a child sits upright from about 850 mm. Make this level taller.`
-              );
+            // sitting height above an 80 mm cushion: 700 mm for small children, 800+ up to about 12 (900+ for teenagers and adults: no note)
+            {
+              const sh = nh - 80,
+                need = (age, mm) => `${age} need about ${f0(mm + 80)} mm inside (${f0(mm)} mm above an 80 mm cushion)`;
+              if (sh < 700)
+                warns.push(
+                  `${ol}: the reading nook is ${f0(nh)} mm high inside — about ${f0(sh)} mm above a cushion, too low to sit upright even for small children. ${need('Young children', 750)}; make this level taller.`
+                );
+              else if (sh < 800)
+                warns.push(
+                  `${ol}: the reading nook is ${f0(nh)} mm high inside — about ${f0(sh)} mm above a cushion: fine for children up to about 7, tight from about 8. ${need('Children up to about 12', 870)}.`
+                );
+
+            }
             if (iy0 > (z.nookStep ? 800 : 550))
               warns.push(
                 `${ol}: the reading nook starts ${f0(iy0)} mm above the floor — 250 to 450 mm is easy for a child to climb into. Lower the level below it, or plan a step.`
@@ -5159,7 +5169,22 @@ function build(S) {
               // smaller opening with more covered front around it: size scales the width (and a little of the height), position puts it left / middle / right
               const osz = [0.8, 0.65, 0.5].includes(+z.nookSize) ? +z.nookSize : 1,
                 small = osz < 1;
-              if (small) {
+              // porthole with your own size and/or position (portD = diameter, portX = sideways from the middle, portY = up from the lowest place)
+              const ownPort = nf === 'port' && (+z.portD > 0 || +z.portX || +z.portY);
+              if (ownPort) {
+                const rMax = Math.max(120, Math.min(Wi, Hi) / 2 - 20),
+                  r_ = +z.portD > 0 ? Math.max(120, Math.min(rMax, +z.portD / 2)) : Math.max(120, Math.min(Wi, Hi) / 2 - 30),
+                  pcx = Math.max(ix0 + r_ + 20, Math.min(ix1 - r_ - 20, cx + (+z.portX || 0))),
+                  pcy = Math.max(iy0 + r_ + 20, Math.min(iy1 - r_ - 20, iy0 + 30 + r_ + (+z.portY || 0)));
+                holes.push(arc(pcx, pcy, r_, r_, 0, Math.PI * 2, 48).slice(0, -1));
+                zr.port = { cx: pcx, cy: pcy, r: r_ };
+                if (+z.portD > 0 && Math.abs(r_ * 2 - +z.portD) > 2)
+                  warns.push(`${ol}: the porthole can be at most ${f0(rMax * 2)} mm across here (and at least 240 mm) — it is ${f0(r_ * 2)} mm now.`);
+                if (r_ * 2 < 500)
+                  warns.push(`${ol}: the porthole is ${f0(r_ * 2)} mm across — a child climbs in easily from about 500 mm.`);
+                if (Math.abs(pcx - (cx + (+z.portX || 0))) > 1 || Math.abs(pcy - (iy0 + 30 + r_ + (+z.portY || 0))) > 1)
+                  warns.push(`${ol}: the porthole was moved back inside the front — it needs 20 mm of board around it.`);
+              } else if (small) {
                 const ow = Math.min(Wi, Math.max(450, Wi * osz)),
                   oh = Math.min(Hi, Math.max(600, Hi * (0.55 + 0.45 * osz))),
                   side = Math.max(0, Math.min(120, (Wi - ow) / 2)),
