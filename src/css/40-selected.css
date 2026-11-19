@@ -1,6 +1,33 @@
 /* ==== 40-selected.css — One look for "selected", tap-target sizes. */
 /* ===== one look for "selected" everywhere: dark fill. Blue (accent) is kept for actions. ===== */
-.btn.on,.pbsec.on,.mfb.on,.psw button.on,.steps button.on,.wdep .btn.on,.spane button.on,.chip.on,.tchip.on,.seg button.on,.fmode button.on,.ztg button.on,.lockchip.on,.pdfpre .btn.on,.splitrow .tchip.on{background:var(--ink)!important;color:var(--bg)!important;border-color:var(--ink)!important;box-shadow:none}
-.bnav button.on{background:var(--ink)!important;color:var(--bg)!important}
-input[type=checkbox],input[type=radio]{accent-color:var(--ink)}
-.chk{min-height:32px}
+.btn.on,
+.pbsec.on,
+.mfb.on,
+.psw button.on,
+.steps button.on,
+.wdep .btn.on,
+.spane button.on,
+.chip.on,
+.tchip.on,
+.seg button.on,
+.fmode button.on,
+.ztg button.on,
+.lockchip.on,
+.pdfpre .btn.on,
+.splitrow .tchip.on {
+  background: var(--ink) !important;
+  color: var(--bg) !important;
+  border-color: var(--ink) !important;
+  box-shadow: none;
+}
+.bnav button.on {
+  background: var(--ink) !important;
+  color: var(--bg) !important;
+}
+input[type='checkbox'],
+input[type='radio'] {
+  accent-color: var(--ink);
+}
+.chk {
+  min-height: 32px;
+}

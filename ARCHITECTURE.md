@@ -34,12 +34,24 @@ The version is `APP_VERSION` in `src/js/81-room-photo.js`. Each update adds 0.00
 
 ## Tests
 
-The app has no test files in the repo. The checks used during development load the built page in a headless browser and:
-- click every button;
-- build random designs and every column type, fitting, niche, corner angle and room restriction, checking that no part or price is invalid;
-- export every file type.
+`python3 build.py && python3 tests/run.py` — run after every change. It opens the built page in headless Chrome (Playwright).
 
-`python3 build.py --source` prints the assembled source for such checks.
+- `tests/designs/*.json`: the test designs (9 starters + 14 random walls, made once by `tests/make_designs.py`).
+- `tests/snapshot.js`: per design, the cut list, hardware (`G.H`), design notes, price and how 3D boards link to parts.
+  Compared with `tests/expected/*.json`; any difference fails and is shown. When a change is meant to change
+  results, check the differences, then `python3 tests/run.py --update`.
+- `tests/screens.js`: on the starters, every tab, workshop 3D, drawing sheets, DXF and both shop forms.
+- A test fails on any page error, any problem reported with `oops()`, or a drilled part without a 3D board.
+- Offline: set `THREE_JS=/path/to/three.min.js` (e.g. from `npm i three@0.159.0`) and the page gets that copy.
+
+## Code layout and errors (v0.114)
+
+- Source is formatted with prettier (`.prettierrc.json`, 120 columns). Keep it that way: `npx prettier --write "src/js/*.js" "src/css/*.css"`. `src/prices.js` and `src/lang.js` are not formatted (the price task edits prices.js by pattern).
+- `build.py` shrinks the program with terser (local names only, every global keeps its name) and strips spaces from the CSS. `--plain` builds it unshrunk. Markers may have spaces after them (`/*@FORMS@*/ null`).
+- Never write `catch(e){}`. Call `oops(where, e)` (`30-ui-helpers.js`); add `1` as third argument for things allowed to fail (storage, clipboard).
+- `10-build.js` `linkPanels()` links each part to its 3D board (`item.pan`, `item.panSw`, `item.panOff` for framed doors).
+- `58-sync-settings.js`: settings in `SYNC` are kept in localStorage and in `data/users/<id>/fitted/settings`. To sync another setting, add its key with an `apply()`.
+- three.js r159 from jsDelivr; `srgb(texture)` and `threeOut(renderer, sRGB)` (`80-3d.js`) keep the r128 look. r160+ has no `three.min.js`; moving on needs ES modules.
 
 ## Starter designs and custom boards/colours (v0.102)
 
@@ -60,7 +72,6 @@ The app has no test files in the repo. The checks used during development load t
 ## Workshop Boxes 3D (v0.108)
 
 - `72-workshop-3d.js`: its own small three.js scene for one box (`WX`). Solids come from `tdSolids`/`tdCols`, offsets from `tdOffset`, and letters from `tdPartRows` (all in `52-techdraw.js`), so the 3D and the PDF sheets always match. `wxMatch` links a solid to its cut-list part (for edge banding, grain and holes).
-- Tests with the real three.js r128: clone `mrdoob/three.js` at tag r128 (sparse, `build/`) and inline `three.min.js` in the test page.
 
 ## Parts area (v0.109)
 

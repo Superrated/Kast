@@ -1,0 +1,252 @@
+{
+ "name": "Attic wall",
+ "room": {
+  "W": 1800,
+  "H": 2400,
+  "D": 600,
+  "drop": 0,
+  "ceil": [
+   {
+    "x": 0,
+    "y": 2400
+   },
+   {
+    "x": 1800,
+    "y": 2400
+   }
+  ],
+  "beams": [],
+  "wallFin": ""
+ },
+ "skirt": {
+  "top": 40,
+  "side": 30,
+  "plinth": 90,
+  "recess": 40,
+  "beamGap": 10,
+  "scribe": 10
+ },
+ "mat": {
+  "carcass": {
+   "type": "melamine",
+   "t": 18,
+   "sheet": "2800x2070",
+   "fin": "ral7044"
+  },
+  "shelf": {
+   "type": "melamine",
+   "t": 25,
+   "sheet": "2800x2070",
+   "fin": "ral7044"
+  },
+  "back": {
+   "type": "hdf",
+   "t": 8,
+   "sheet": "2800x2070",
+   "fin": "ral7044"
+  },
+  "front": {
+   "type": "mdfpaint",
+   "t": 19,
+   "sheet": "2440x1220",
+   "fin": "ral7044"
+  },
+  "desk": {
+   "type": "solid",
+   "t": 30,
+   "sheet": "2500x1250",
+   "fin": "walnut"
+  },
+  "skirt": {
+   "type": "mdfpaint",
+   "t": 19,
+   "sheet": "2440x1220",
+   "fin": "ral7044"
+  }
+ },
+ "opts": {
+  "gap": 3,
+  "setback": 20,
+  "kerf": 4,
+  "trim": 10,
+  "handle": "groove",
+  "handleSize": "M",
+  "handleWood": "walnut",
+  "construct": "boxes",
+  "two": {
+   "on": false,
+   "y": 800,
+   "fin": "ral7044"
+  },
+  "innerLight": true
+ },
+ "sections": [
+  {
+   "id": "i603xg7z",
+   "w": 397,
+   "base": "cab",
+   "back": "full",
+   "deskH": 740,
+   "over": 20,
+   "zones": [
+    {
+     "id": "i6106m0g",
+     "type": "closed",
+     "h": null,
+     "shelves": 4,
+     "doors": 1,
+     "rail": false,
+     "hinge": "L",
+     "count": 3,
+     "tv": 0,
+     "header": true,
+     "grommet": true,
+     "woofer": 145,
+     "nw": 1,
+     "tweeter": 52,
+     "grille": false,
+     "fabric": false,
+     "fabricCol": "charcoal",
+     "span": 0,
+     "box": false,
+     "boxT": null,
+     "boxFin": "front",
+     "fin": "",
+     "fins": [],
+     "inFin": "",
+     "face": "flat"
+    }
+   ]
+  },
+  {
+   "id": "i6063az3",
+   "w": 856,
+   "base": "cab",
+   "back": "full",
+   "deskH": 740,
+   "over": 20,
+   "zones": [
+    {
+     "id": "i611ocol",
+     "type": "drawers",
+     "h": 672,
+     "shelves": 0,
+     "doors": 0,
+     "rail": false,
+     "hinge": "L",
+     "count": 3,
+     "tv": 0,
+     "header": true,
+     "grommet": true,
+     "woofer": 145,
+     "nw": 1,
+     "tweeter": 52,
+     "grille": false,
+     "fabric": false,
+     "fabricCol": "charcoal",
+     "span": 0,
+     "box": false,
+     "boxT": null,
+     "boxFin": "front",
+     "fin": "",
+     "fins": [],
+     "inFin": ""
+    },
+    {
+     "id": "i612gkko",
+     "type": "open",
+     "h": 550,
+     "shelves": 0,
+     "doors": 0,
+     "rail": false,
+     "hinge": "L",
+     "count": 3,
+     "tv": 0,
+     "header": true,
+     "grommet": true,
+     "woofer": 145,
+     "nw": 1,
+     "tweeter": 52,
+     "grille": false,
+     "fabric": false,
+     "fabricCol": "charcoal",
+     "span": 0,
+     "box": false,
+     "boxT": null,
+     "boxFin": "front",
+     "fin": "",
+     "fins": [],
+     "inFin": "walnut",
+     "drench": true
+    },
+    {
+     "id": "i613z0jw",
+     "type": "closed",
+     "h": null,
+     "shelves": 1,
+     "doors": 2,
+     "rail": false,
+     "hinge": "R",
+     "count": 3,
+     "tv": 0,
+     "header": true,
+     "grommet": true,
+     "woofer": 145,
+     "nw": 1,
+     "tweeter": 52,
+     "grille": false,
+     "fabric": false,
+     "fabricCol": "charcoal",
+     "span": 0,
+     "box": false,
+     "boxT": null,
+     "boxFin": "front",
+     "fin": "",
+     "fins": [],
+     "inFin": "",
+     "face": "flat"
+    }
+   ]
+  },
+  {
+   "id": "i608jrti",
+   "w": null,
+   "base": "cab",
+   "back": "full",
+   "deskH": 740,
+   "over": 20,
+   "zones": [
+    {
+     "id": "i614aw61",
+     "type": "closed",
+     "h": null,
+     "shelves": 4,
+     "doors": 1,
+     "rail": false,
+     "hinge": "L",
+     "count": 3,
+     "tv": 0,
+     "header": true,
+     "grommet": true,
+     "woofer": 145,
+     "nw": 1,
+     "tweeter": 52,
+     "grille": false,
+     "fabric": false,
+     "fabricCol": "charcoal",
+     "span": 0,
+     "box": false,
+     "boxT": null,
+     "boxFin": "front",
+     "fin": "",
+     "fins": [],
+     "inFin": "",
+     "face": "flat"
+    }
+   ]
+  }
+ ],
+ "ladder": {
+  "on": false
+ }
+}

@@ -1,0 +1,1154 @@
+{
+ "cut": [
+  {
+   "L": 1200,
+   "W": 600,
+   "band": "1000",
+   "fin": "ral3012",
+   "grain": "w",
+   "holes": [],
+   "id": "P1",
+   "mat": "melamine",
+   "qty": 1,
+   "role": "carcass",
+   "secs": [
+    "S3"
+   ],
+   "shape": "0,0 1200,0 1200,600 0,600",
+   "t": 18,
+   "type": "Bottom"
+  },
+  {
+   "L": 558,
+   "W": 600,
+   "band": "1000",
+   "fin": "ral3012",
+   "grain": "w",
+   "holes": [],
+   "id": "P2",
+   "mat": "melamine",
+   "qty": 4,
+   "role": "carcass",
+   "secs": [
+    "S1",
+    "S2",
+    "S4",
+    "S5"
+   ],
+   "shape": "0,0 558,0 558,600 0,600",
+   "t": 18,
+   "type": "Bottom"
+  },
+  {
+   "L": 2370,
+   "W": 600,
+   "band": "1000",
+   "fin": "ral3012",
+   "grain": "h",
+   "holes": [
+    "287 2361 5 0 through · connector screw",
+    "287 847 5 0 through · connector screw",
+    "287 9 5 0 through · connector screw",
+    "37 117.5 5 12 face towards S1",
+    "37 1212.5 5 12 face towards S1",
+    "37 1591 5 12 face towards S1",
+    "37 1969.5 5 12 face towards S1",
+    "37 415 5 12 face towards S1",
+    "37 729.5 5 12 face towards S1",
+    "37 761.5 5 12 face towards S1",
+    "37 85.5 5 12 face towards S1",
+    "50 2361 5 0 through · connector screw",
+    "50 847 5 0 through · connector screw",
+    "50 9 5 0 through · connector screw",
+    "524 2361 5 0 through · connector screw",
+    "524 847 5 0 through · connector screw",
+    "524 9 5 0 through · connector screw",
+    "537 1212.5 5 12 face towards S1",
+    "537 1591 5 12 face towards S1",
+    "537 1969.5 5 12 face towards S1",
+    "537 415 5 12 face towards S1"
+   ],
+   "id": "P3",
+   "mat": "melamine",
+   "qty": 1,
+   "role": "carcass",
+   "secs": [
+    "left end"
+   ],
+   "shape": "0,0 600,0 600,2370 0,2370",
+   "t": 18,
+   "type": "End panel"
+  },
+  {
+   "L": 2370,
+   "W": 600,
+   "band": "1000",
+   "fin": "ral3012",
+   "grain": "h",
+   "holes": [
+    "287 2361 5 0 through · connector screw",
+    "287 847 5 0 through · connector screw",
+    "287 9 5 0 through · connector screw",
+    "37 1212.5 5 12 face towards S5",
+    "37 1591 5 12 face towards S5",
+    "37 1969.5 5 12 face towards S5",
+    "37 415 5 12 face towards S5",
+    "50 2361 5 0 through · connector screw",
+    "50 847 5 0 through · connector screw",
+    "50 9 5 0 through · connector screw",
+    "524 2361 5 0 through · connector screw",
+    "524 847 5 0 through · connector screw",
+    "524 9 5 0 through · connector screw",
+    "537 1212.5 5 12 face towards S5",
+    "537 1591 5 12 face towards S5",
+    "537 1969.5 5 12 face towards S5",
+    "537 415 5 12 face towards S5"
+   ],
+   "id": "P4",
+   "mat": "melamine",
+   "qty": 1,
+   "role": "carcass",
+   "secs": [
+    "right end"
+   ],
+   "shape": "0,0 600,0 600,2370 0,2370",
+   "t": 18,
+   "type": "End panel"
+  },
+  {
+   "L": 1200,
+   "W": 574,
+   "band": "1000",
+   "fin": "ral3012",
+   "grain": "w",
+   "holes": [],
+   "id": "P5",
+   "mat": "melamine",
+   "qty": 1,
+   "role": "carcass",
+   "secs": [
+    "S3"
+   ],
+   "shape": "0,0 1200,0 1200,574 0,574",
+   "t": 18,
+   "type": "Fixed divider"
+  },
+  {
+   "L": 558,
+   "W": 574,
+   "band": "1000",
+   "fin": "ral3012",
+   "grain": "w",
+   "holes": [],
+   "id": "P6",
+   "mat": "melamine",
+   "qty": 4,
+   "role": "carcass",
+   "secs": [
+    "S1",
+    "S2",
+    "S4",
+    "S5"
+   ],
+   "shape": "0,0 558,0 558,574 0,574",
+   "t": 18,
+   "type": "Fixed divider"
+  },
+  {
+   "L": 2370,
+   "W": 600,
+   "band": "1000",
+   "fin": "ral3012",
+   "grain": "h",
+   "holes": [
+    "287 2361 5 0 through · connector screw",
+    "287 847 5 0 through · connector screw",
+    "287 9 5 0 through · connector screw",
+    "312 2361 5 0 through · connector screw",
+    "312 847 5 0 through · connector screw",
+    "312 9 5 0 through · connector screw",
+    "37 117.5 5 12 face towards S2",
+    "37 1212.5 5 12 face towards S1",
+    "37 1591 5 12 face towards S1",
+    "37 1969.5 5 12 face towards S1",
+    "37 415 5 12 face towards S1",
+    "37 729.5 5 12 face towards S2",
+    "37 761.5 5 12 face towards S2",
+    "37 85.5 5 12 face towards S2",
+    "50 2361 5 0 through · connector screw",
+    "50 847 5 0 through · connector screw",
+    "50 9 5 0 through · connector screw",
+    "524 2361 5 0 through · connector screw",
+    "524 847 5 0 through · connector screw",
+    "524 9 5 0 through · connector screw",
+    "537 1212.5 5 12 face towards S1",
+    "537 1591 5 12 face towards S1",
+    "537 1969.5 5 12 face towards S1",
+    "537 415 5 12 face towards S1",
+    "549 2361 5 0 through · connector screw",
+    "549 847 5 0 through · connector screw",
+    "549 9 5 0 through · connector screw",
+    "562 1212.5 5 12 face towards S2",
+    "562 1591 5 12 face towards S2",
+    "562 1969.5 5 12 face towards S2",
+    "562 415 5 12 face towards S2",
+    "62 1212.5 5 12 face towards S2",
+    "62 1591 5 12 face towards S2",
+    "62 1969.5 5 12 face towards S2",
+    "62 415 5 12 face towards S2",
+    "75 2361 5 0 through · connector screw",
+    "75 847 5 0 through · connector screw",
+    "75 9 5 0 through · connector screw"
+   ],
+   "id": "P7",
+   "mat": "melamine",
+   "qty": 1,
+   "role": "carcass",
+   "secs": [
+    "S1|S2"
+   ],
+   "shape": "0,0 600,0 600,2370 0,2370",
+   "t": 18,
+   "type": "Partition"
+  },
+  {
+   "L": 2370,
+   "W": 600,
+   "band": "1000",
+   "fin": "ral3012",
+   "grain": "h",
+   "holes": [
+    "287 1185 5 0 through · connector screw",
+    "287 2361 5 0 through · connector screw",
+    "287 467 5 0 through · connector screw",
+    "287 847 5 0 through · connector screw",
+    "287 9 5 0 through · connector screw",
+    "312 2361 5 0 through · connector screw",
+    "312 9 5 0 through · connector screw",
+    "37 1212.5 5 12 face towards S2",
+    "37 1270.5 5 12 face towards S3",
+    "37 1302.5 5 12 face towards S3",
+    "37 1591 5 12 face towards S2",
+    "37 1760 5 12 face towards S3",
+    "37 1793.5 5 12 face towards S3",
+    "37 1969.5 5 12 face towards S2",
+    "37 2252.5 5 12 face towards S3",
+    "37 2284.5 5 12 face towards S3",
+    "37 415 5 12 face towards S2",
+    "50 1185 5 0 through · connector screw",
+    "50 2361 5 0 through · connector screw",
+    "50 467 5 0 through · connector screw",
+    "50 847 5 0 through · connector screw",
+    "50 9 5 0 through · connector screw",
+    "524 1185 5 0 through · connector screw",
+    "524 2361 5 0 through · connector screw",
+    "524 467 5 0 through · connector screw",
+    "524 847 5 0 through · connector screw",
+    "524 9 5 0 through · connector screw",
+    "537 1212.5 5 12 face towards S2",
+    "537 1591 5 12 face towards S2",
+    "537 1760 5 12 face towards S3",
+    "537 1969.5 5 12 face towards S2",
+    "537 415 5 12 face towards S2",
+    "549 2361 5 0 through · connector screw",
+    "549 9 5 0 through · connector screw",
+    "62 1761.5 5 12 face towards S3",
+    "75 2361 5 0 through · connector screw",
+    "75 9 5 0 through · connector screw"
+   ],
+   "id": "P8",
+   "mat": "melamine",
+   "qty": 1,
+   "role": "carcass",
+   "secs": [
+    "S2|S3"
+   ],
+   "shape": "0,0 600,0 600,2370 0,2370",
+   "t": 18,
+   "type": "Partition"
+  },
+  {
+   "L": 2370,
+   "W": 600,
+   "band": "1000",
+   "fin": "ral3012",
+   "grain": "h",
+   "holes": [
+    "287 1185 5 0 through · connector screw",
+    "287 2361 5 0 through · connector screw",
+    "287 467 5 0 through · connector screw",
+    "287 847 5 0 through · connector screw",
+    "287 9 5 0 through · connector screw",
+    "312 2361 5 0 through · connector screw",
+    "312 9 5 0 through · connector screw",
+    "37 117.5 5 12 face towards S4",
+    "37 1212.5 5 12 face towards S4",
+    "37 1270.5 5 12 face towards S3",
+    "37 1302.5 5 12 face towards S3",
+    "37 1591 5 12 face towards S4",
+    "37 1760 5 12 face towards S3",
+    "37 1793.5 5 12 face towards S3",
+    "37 1969.5 5 12 face towards S4",
+    "37 2252.5 5 12 face towards S3",
+    "37 2284.5 5 12 face towards S3",
+    "37 415 5 12 face towards S4",
+    "37 729.5 5 12 face towards S4",
+    "37 761.5 5 12 face towards S4",
+    "37 85.5 5 12 face towards S4",
+    "50 1185 5 0 through · connector screw",
+    "50 2361 5 0 through · connector screw",
+    "50 467 5 0 through · connector screw",
+    "50 847 5 0 through · connector screw",
+    "50 9 5 0 through · connector screw",
+    "524 1185 5 0 through · connector screw",
+    "524 2361 5 0 through · connector screw",
+    "524 467 5 0 through · connector screw",
+    "524 847 5 0 through · connector screw",
+    "524 9 5 0 through · connector screw",
+    "537 1212.5 5 12 face towards S4",
+    "537 1591 5 12 face towards S4",
+    "537 1760 5 12 face towards S3",
+    "537 1969.5 5 12 face towards S4",
+    "537 415 5 12 face towards S4",
+    "549 2361 5 0 through · connector screw",
+    "549 9 5 0 through · connector screw",
+    "62 1761.5 5 12 face towards S3",
+    "75 2361 5 0 through · connector screw",
+    "75 9 5 0 through · connector screw"
+   ],
+   "id": "P9",
+   "mat": "melamine",
+   "qty": 1,
+   "role": "carcass",
+   "secs": [
+    "S3|S4"
+   ],
+   "shape": "0,0 600,0 600,2370 0,2370",
+   "t": 18,
+   "type": "Partition"
+  },
+  {
+   "L": 2370,
+   "W": 600,
+   "band": "1000",
+   "fin": "ral3012",
+   "grain": "h",
+   "holes": [
+    "287 2361 5 0 through · connector screw",
+    "287 847 5 0 through · connector screw",
+    "287 9 5 0 through · connector screw",
+    "312 2361 5 0 through · connector screw",
+    "312 847 5 0 through · connector screw",
+    "312 9 5 0 through · connector screw",
+    "37 117.5 5 12 face towards S5",
+    "37 1212.5 5 12 face towards S4",
+    "37 1591 5 12 face towards S4",
+    "37 1969.5 5 12 face towards S4",
+    "37 415 5 12 face towards S4",
+    "37 729.5 5 12 face towards S5",
+    "37 761.5 5 12 face towards S5",
+    "37 85.5 5 12 face towards S5",
+    "50 2361 5 0 through · connector screw",
+    "50 847 5 0 through · connector screw",
+    "50 9 5 0 through · connector screw",
+    "524 2361 5 0 through · connector screw",
+    "524 847 5 0 through · connector screw",
+    "524 9 5 0 through · connector screw",
+    "537 1212.5 5 12 face towards S4",
+    "537 1591 5 12 face towards S4",
+    "537 1969.5 5 12 face towards S4",
+    "537 415 5 12 face towards S4",
+    "549 2361 5 0 through · connector screw",
+    "549 847 5 0 through · connector screw",
+    "549 9 5 0 through · connector screw",
+    "562 1212.5 5 12 face towards S5",
+    "562 1591 5 12 face towards S5",
+    "562 1969.5 5 12 face towards S5",
+    "562 415 5 12 face towards S5",
+    "62 1212.5 5 12 face towards S5",
+    "62 1591 5 12 face towards S5",
+    "62 1969.5 5 12 face towards S5",
+    "62 415 5 12 face towards S5",
+    "75 2361 5 0 through · connector screw",
+    "75 847 5 0 through · connector screw",
+    "75 9 5 0 through · connector screw"
+   ],
+   "id": "P10",
+   "mat": "melamine",
+   "qty": 1,
+   "role": "carcass",
+   "secs": [
+    "S4|S5"
+   ],
+   "shape": "0,0 600,0 600,2370 0,2370",
+   "t": 18,
+   "type": "Partition"
+  },
+  {
+   "L": 1200,
+   "W": 574,
+   "band": "1000",
+   "fin": "ral3012",
+   "grain": "w",
+   "holes": [],
+   "id": "P11",
+   "mat": "melamine",
+   "qty": 1,
+   "role": "carcass",
+   "secs": [
+    "S3"
+   ],
+   "shape": "0,0 1200,0 1200,574 0,574",
+   "t": 18,
+   "type": "Seat board"
+  },
+  {
+   "L": 1200,
+   "W": 600,
+   "band": "1000",
+   "fin": "ral3012",
+   "grain": "w",
+   "holes": [],
+   "id": "P12",
+   "mat": "melamine",
+   "qty": 1,
+   "role": "carcass",
+   "secs": [
+    "S3"
+   ],
+   "shape": "0,0 1200,0 1200,600 0,600",
+   "t": 18,
+   "type": "Top"
+  },
+  {
+   "L": 558,
+   "W": 600,
+   "band": "1000",
+   "fin": "ral3012",
+   "grain": "w",
+   "holes": [],
+   "id": "P13",
+   "mat": "melamine",
+   "qty": 4,
+   "role": "carcass",
+   "secs": [
+    "S1",
+    "S2",
+    "S4",
+    "S5"
+   ],
+   "shape": "0,0 558,0 558,600 0,600",
+   "t": 18,
+   "type": "Top"
+  },
+  {
+   "L": 1158,
+   "W": 574,
+   "band": "1000",
+   "fin": "ral3012",
+   "grain": "h",
+   "holes": [],
+   "id": "P14",
+   "mat": "melamine",
+   "qty": 1,
+   "role": "carcass",
+   "secs": [
+    "S3"
+   ],
+   "shape": "0,0 574,0 574,1158 0,1158",
+   "t": 18,
+   "type": "Vertical divider"
+  },
+  {
+   "L": 440,
+   "W": 574,
+   "band": "1000",
+   "fin": "ral3012",
+   "grain": "h",
+   "holes": [],
+   "id": "P15",
+   "mat": "melamine",
+   "qty": 1,
+   "role": "carcass",
+   "secs": [
+    "S3"
+   ],
+   "shape": "0,0 574,0 574,440 0,440",
+   "t": 18,
+   "type": "Vertical divider"
+  },
+  {
+   "L": 589,
+   "W": 554,
+   "band": "1000",
+   "fin": "ral3012",
+   "grain": "w",
+   "holes": [],
+   "id": "P16",
+   "mat": "melamine",
+   "qty": 2,
+   "role": "shelf",
+   "secs": [
+    "S3"
+   ],
+   "shape": "0,0 589,0 589,554 0,554",
+   "t": 18,
+   "type": "Shelf"
+  },
+  {
+   "L": 556,
+   "W": 574,
+   "band": "1000",
+   "fin": "ral3012",
+   "grain": "w",
+   "holes": [],
+   "id": "P17",
+   "mat": "melamine",
+   "qty": 12,
+   "role": "shelf",
+   "secs": [
+    "S1",
+    "S2",
+    "S4",
+    "S5"
+   ],
+   "shape": "0,0 556,0 556,574 0,574",
+   "t": 18,
+   "type": "Shelf"
+  },
+  {
+   "L": 556,
+   "W": 554,
+   "band": "1000",
+   "fin": "ral3012",
+   "grain": "w",
+   "holes": [],
+   "id": "P18",
+   "mat": "melamine",
+   "qty": 4,
+   "role": "shelf",
+   "secs": [
+    "S1",
+    "S2",
+    "S4",
+    "S5"
+   ],
+   "shape": "0,0 556,0 556,554 0,554",
+   "t": 18,
+   "type": "Shelf"
+  },
+  {
+   "L": 1514,
+   "W": 576,
+   "band": "0000",
+   "fin": "ral3012",
+   "grain": "h",
+   "holes": [],
+   "id": "P19",
+   "mat": "hdf",
+   "qty": 4,
+   "role": "back",
+   "secs": [
+    "S1",
+    "S2",
+    "S4",
+    "S5"
+   ],
+   "shape": "0,0 576,0 576,1514 0,1514",
+   "t": 8,
+   "type": "Back (compartment)"
+  },
+  {
+   "L": 458,
+   "W": 1218,
+   "band": "0000",
+   "fin": "ral3012",
+   "grain": "h",
+   "holes": [],
+   "id": "P20",
+   "mat": "hdf",
+   "qty": 1,
+   "role": "back",
+   "secs": [
+    "S3"
+   ],
+   "shape": "0,0 1218,0 1218,458 0,458",
+   "t": 8,
+   "type": "Back (compartment)"
+  },
+  {
+   "L": 1176,
+   "W": 1218,
+   "band": "0000",
+   "fin": "ral3012",
+   "grain": "h",
+   "holes": [],
+   "id": "P21",
+   "mat": "hdf",
+   "qty": 1,
+   "role": "back",
+   "secs": [
+    "S3"
+   ],
+   "shape": "0,0 1218,0 1218,1176 0,1176",
+   "t": 8,
+   "type": "Back (compartment)"
+  },
+  {
+   "L": 838,
+   "W": 576,
+   "band": "0000",
+   "fin": "ral3012",
+   "grain": "h",
+   "holes": [],
+   "id": "P22",
+   "mat": "hdf",
+   "qty": 4,
+   "role": "back",
+   "secs": [
+    "S1",
+    "S2",
+    "S4",
+    "S5"
+   ],
+   "shape": "0,0 576,0 576,838 0,838",
+   "t": 8,
+   "type": "Back (compartment)"
+  },
+  {
+   "L": 531,
+   "W": 563,
+   "band": "0000",
+   "fin": "ral3012",
+   "grain": "h",
+   "holes": [],
+   "id": "P23",
+   "mat": "hdf",
+   "qty": 2,
+   "role": "back",
+   "secs": [
+    "S3"
+   ],
+   "shape": "0,0 563,0 563,531 0,531",
+   "t": 8,
+   "type": "Drawer bottom"
+  },
+  {
+   "L": 718,
+   "W": 1218,
+   "band": "0000",
+   "fin": "oak",
+   "grain": "h",
+   "holes": [],
+   "id": "P24",
+   "mat": "hdf",
+   "qty": 1,
+   "role": "back",
+   "secs": [
+    "S3"
+   ],
+   "shape": "0,0 1218,0 1218,718 0,718",
+   "t": 8,
+   "type": "Back (compartment)"
+  },
+  {
+   "L": 549,
+   "W": 228,
+   "band": "1000",
+   "fin": "ral3012",
+   "grain": "w",
+   "holes": [],
+   "id": "P25",
+   "mat": "melamine",
+   "qty": 2,
+   "role": "carcass",
+   "secs": [
+    "S3"
+   ],
+   "shape": "0,0 549,0 549,228 0,228",
+   "t": 16,
+   "type": "Drawer box back"
+  },
+  {
+   "L": 549,
+   "W": 250,
+   "band": "1000",
+   "fin": "ral3012",
+   "grain": "w",
+   "holes": [],
+   "id": "P26",
+   "mat": "melamine",
+   "qty": 2,
+   "role": "carcass",
+   "secs": [
+    "S3"
+   ],
+   "shape": "0,0 549,0 549,250 0,250",
+   "t": 16,
+   "type": "Drawer box front (inner)"
+  },
+  {
+   "L": 540,
+   "W": 250,
+   "band": "1000",
+   "fin": "ral3012",
+   "grain": "w",
+   "holes": [],
+   "id": "P27",
+   "mat": "melamine",
+   "qty": 4,
+   "role": "carcass",
+   "secs": [
+    "S3"
+   ],
+   "shape": "0,0 540,0 540,250 0,250",
+   "t": 16,
+   "type": "Drawer box side"
+  },
+  {
+   "L": 1520,
+   "W": 582,
+   "band": "0000",
+   "fin": "ral3012",
+   "grain": "h",
+   "holes": [
+    "16.5 1143  0 ",
+    "16.5 386  0 ",
+    "16.5 7.5  0 ",
+    "16.5 764.5  0 "
+   ],
+   "id": "P28",
+   "mat": "mdfpaint",
+   "qty": 1,
+   "role": "front",
+   "secs": [
+    "S1"
+   ],
+   "shape": "0,0 582,0 582,1520 0,1520",
+   "t": 19,
+   "type": "Arched front frame"
+  },
+  {
+   "L": 1520,
+   "W": 573,
+   "band": "0000",
+   "fin": "ral3012",
+   "grain": "h",
+   "holes": [
+    "7.5 1143  0 ",
+    "7.5 386  0 ",
+    "7.5 7.5  0 ",
+    "7.5 764.5  0 "
+   ],
+   "id": "P29",
+   "mat": "mdfpaint",
+   "qty": 2,
+   "role": "front",
+   "secs": [
+    "S2",
+    "S4"
+   ],
+   "shape": "0,0 573,0 573,1520 0,1520",
+   "t": 19,
+   "type": "Arched front frame"
+  },
+  {
+   "L": 1520,
+   "W": 582,
+   "band": "0000",
+   "fin": "ral3012",
+   "grain": "h",
+   "holes": [
+    "7.5 1143  0 ",
+    "7.5 386  0 ",
+    "7.5 7.5  0 ",
+    "7.5 764.5  0 "
+   ],
+   "id": "P30",
+   "mat": "mdfpaint",
+   "qty": 1,
+   "role": "front",
+   "secs": [
+    "S5"
+   ],
+   "shape": "0,0 582,0 582,1520 0,1520",
+   "t": 19,
+   "type": "Arched front frame"
+  },
+  {
+   "L": 606,
+   "W": 464,
+   "band": "0000",
+   "fin": "ral3012",
+   "grain": "w",
+   "holes": [],
+   "id": "P31",
+   "mat": "mdfpaint",
+   "qty": 2,
+   "role": "front",
+   "secs": [
+    "S3"
+   ],
+   "shape": "0,0 606,0 606,464 0,464",
+   "t": 19,
+   "type": "Bench drawer front"
+  },
+  {
+   "L": 1182,
+   "W": 606,
+   "band": "0000",
+   "fin": "ral3012",
+   "grain": "h",
+   "holes": [
+    "21.5 100 35 13 ",
+    "21.5 1082 35 13 ",
+    "21.5 591 35 13 "
+   ],
+   "id": "P32",
+   "mat": "mdfpaint",
+   "qty": 1,
+   "role": "front",
+   "secs": [
+    "S3"
+   ],
+   "shape": "0,0 606,0 606,1182 0,1182",
+   "t": 19,
+   "type": "Door"
+  },
+  {
+   "L": 1182,
+   "W": 606,
+   "band": "0000",
+   "fin": "ral3012",
+   "grain": "h",
+   "holes": [
+    "584.5 100 35 13 ",
+    "584.5 1082 35 13 ",
+    "584.5 591 35 13 "
+   ],
+   "id": "P33",
+   "mat": "mdfpaint",
+   "qty": 1,
+   "role": "front",
+   "secs": [
+    "S3"
+   ],
+   "shape": "0,0 606,0 606,1182 0,1182",
+   "t": 19,
+   "type": "Door"
+  },
+  {
+   "L": 844,
+   "W": 582,
+   "band": "0000",
+   "fin": "ral3012",
+   "grain": "h",
+   "holes": [
+    "21.5 100 35 13 ",
+    "21.5 744 35 13 "
+   ],
+   "id": "P34",
+   "mat": "mdfpaint",
+   "qty": 1,
+   "role": "front",
+   "secs": [
+    "S1"
+   ],
+   "shape": "0,0 582,0 582,844 0,844",
+   "t": 19,
+   "type": "Door"
+  },
+  {
+   "L": 844,
+   "W": 573,
+   "band": "0000",
+   "fin": "ral3012",
+   "grain": "h",
+   "holes": [
+    "21.5 100 35 13 ",
+    "21.5 744 35 13 "
+   ],
+   "id": "P35",
+   "mat": "mdfpaint",
+   "qty": 2,
+   "role": "front",
+   "secs": [
+    "S2",
+    "S4"
+   ],
+   "shape": "0,0 573,0 573,844 0,844",
+   "t": 19,
+   "type": "Door"
+  },
+  {
+   "L": 844,
+   "W": 582,
+   "band": "0000",
+   "fin": "ral3012",
+   "grain": "h",
+   "holes": [
+    "21.5 100 35 13 ",
+    "21.5 744 35 13 "
+   ],
+   "id": "P36",
+   "mat": "mdfpaint",
+   "qty": 1,
+   "role": "front",
+   "secs": [
+    "S5"
+   ],
+   "shape": "0,0 582,0 582,844 0,844",
+   "t": 19,
+   "type": "Door"
+  },
+  {
+   "L": 2379,
+   "W": 90,
+   "band": "0000",
+   "fin": "ral3012",
+   "grain": "w",
+   "holes": [],
+   "id": "P37",
+   "mat": "mdfpaint",
+   "qty": 1,
+   "role": "skirt",
+   "secs": [
+    "base"
+   ],
+   "shape": "0,0 2379,0 2379,90 0,90",
+   "t": 19,
+   "type": "Plinth"
+  },
+  {
+   "L": 1161,
+   "W": 90,
+   "band": "0000",
+   "fin": "ral3012",
+   "grain": "w",
+   "holes": [],
+   "id": "P38",
+   "mat": "mdfpaint",
+   "qty": 1,
+   "role": "skirt",
+   "secs": [
+    "base"
+   ],
+   "shape": "0,0 1161,0 1161,90 0,90",
+   "t": 19,
+   "type": "Plinth"
+  },
+  {
+   "L": 2210,
+   "W": 40,
+   "band": "0000",
+   "fin": "ral3012",
+   "grain": "h",
+   "holes": [],
+   "id": "P39",
+   "mat": "mdfpaint",
+   "qty": 2,
+   "role": "skirt",
+   "secs": [
+    "left wall",
+    "right wall"
+   ],
+   "shape": "0,0 40,0 40,2210 0,2210",
+   "t": 19,
+   "type": "Side closing strip"
+  },
+  {
+   "L": 300,
+   "W": 40,
+   "band": "0000",
+   "fin": "ral3012",
+   "grain": "h",
+   "holes": [],
+   "id": "P40",
+   "mat": "mdfpaint",
+   "qty": 2,
+   "role": "skirt",
+   "secs": [
+    "left wall",
+    "right wall"
+   ],
+   "shape": "40,0 40,300 0,300 0,0",
+   "t": 19,
+   "type": "Side closing strip"
+  },
+  {
+   "L": 1794,
+   "W": 48.5,
+   "band": "0000",
+   "fin": "ral3012",
+   "grain": "w",
+   "holes": [],
+   "id": "P41",
+   "mat": "mdfpaint",
+   "qty": 1,
+   "role": "skirt",
+   "secs": [
+    "top"
+   ],
+   "shape": "0,0 1218,0 1794,0 1794,48.5 0,48.5",
+   "t": 19,
+   "type": "Top closing strip"
+  },
+  {
+   "L": 1161,
+   "W": 48.5,
+   "band": "0000",
+   "fin": "ral3012",
+   "grain": "w",
+   "holes": [],
+   "id": "P42",
+   "mat": "mdfpaint",
+   "qty": 1,
+   "role": "skirt",
+   "secs": [
+    "top"
+   ],
+   "shape": "0,0 585,0 1161,0 1161,48.5 0,48.5",
+   "t": 19,
+   "type": "Top closing strip"
+  },
+  {
+   "L": 585,
+   "W": 48.5,
+   "band": "0000",
+   "fin": "ral3012",
+   "grain": "w",
+   "holes": [],
+   "id": "P43",
+   "mat": "mdfpaint",
+   "qty": 1,
+   "role": "skirt",
+   "secs": [
+    "top"
+   ],
+   "shape": "0,0 585,0 585,48.5 0,48.5",
+   "t": 19,
+   "type": "Top closing strip"
+  },
+  {
+   "L": 593,
+   "W": 662,
+   "band": "0000",
+   "fin": "oak",
+   "grain": "h",
+   "holes": [],
+   "id": "P44",
+   "mat": "mdfpaint",
+   "qty": 2,
+   "role": "front",
+   "secs": [
+    "S3"
+   ],
+   "shape": "0,0 662,0 662,593 0,593",
+   "t": 19,
+   "type": "Open box (side)"
+  },
+  {
+   "L": 1200,
+   "W": 593,
+   "band": "0000",
+   "fin": "oak",
+   "grain": "w",
+   "holes": [],
+   "id": "P45",
+   "mat": "mdfpaint",
+   "qty": 2,
+   "role": "front",
+   "secs": [
+    "S3"
+   ],
+   "shape": "0,0 1200,0 1200,593 0,593",
+   "t": 19,
+   "type": "Open box (top/bottom)"
+  }
+ ],
+ "hardware": {
+  "angles": [],
+  "baffles": 0,
+  "battens": [],
+  "boxJoins": 0,
+  "brackets": 12,
+  "cane": [],
+  "climb": 0,
+  "curtain": [],
+  "cushion": [
+   {
+    "col": "oatmeal",
+    "d": 554,
+    "sec": "S3",
+    "w": 1190
+   }
+  ],
+  "drawerBoxes": 2,
+  "drench": [
+   {
+    "area": 2.4,
+    "fin": "ral3012",
+    "sec": "S1"
+   },
+   {
+    "area": 2.4,
+    "fin": "ral3012",
+    "sec": "S2"
+   },
+   {
+    "area": 2.4,
+    "fin": "ral3012",
+    "sec": "S4"
+   },
+   {
+    "area": 2.4,
+    "fin": "ral3012",
+    "sec": "S5"
+   }
+  ],
+  "fabric": [],
+  "fit": [],
+  "flute": 6,
+  "funParts": [],
+  "glass": [],
+  "grommets": 0,
+  "handles": {
+   "none": 8
+  },
+  "hatches": 0,
+  "hinges": 14,
+  "hk": {
+   "half": 12,
+   "std": 2
+  },
+  "join": {
+   "dowels": 0,
+   "groove": true,
+   "joints": 96,
+   "type": "confirmat"
+  },
+  "led": [],
+  "ledges": 0,
+  "legs": 14,
+  "paint": [],
+  "ped": 0,
+  "pins": 72,
+  "pocket": 0,
+  "rails": [],
+  "slide": [],
+  "slides": {
+   "550": 2
+  },
+  "stacked": 0,
+  "tnuts": 0,
+  "wallHang": 10
+ },
+ "link": {
+  "boards": 282,
+  "holesOnLinked": 12,
+  "linked": 67,
+  "unlinkedWithHoles": 0
+ },
+ "notes": [],
+ "price": 1677.1
+}

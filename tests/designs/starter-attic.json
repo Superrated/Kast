@@ -1,0 +1,402 @@
+{
+ "name": "Attic under the slopes",
+ "room": {
+  "W": 4200,
+  "H": 2500,
+  "D": 600,
+  "drop": 0,
+  "ceil": [
+   {
+    "x": 0,
+    "y": 1250
+   },
+   {
+    "x": 1600,
+    "y": 2500
+   },
+   {
+    "x": 3300,
+    "y": 2500
+   },
+   {
+    "x": 4200,
+    "y": 1800
+   }
+  ],
+  "beams": [
+   {
+    "x": 1950,
+    "w": 200,
+    "bottom": 2300,
+    "depth": 300
+   }
+  ]
+ },
+ "skirt": {
+  "top": 40,
+  "side": 30,
+  "plinth": 90,
+  "recess": 40,
+  "beamGap": 10,
+  "scribe": 10
+ },
+ "mat": {
+  "carcass": {
+   "type": "melamine",
+   "t": 18,
+   "sheet": "2800x2070",
+   "fin": "ral1013"
+  },
+  "shelf": {
+   "type": "melamine",
+   "t": 25,
+   "sheet": "2800x2070",
+   "fin": "ral1013"
+  },
+  "back": {
+   "type": "hdf",
+   "t": 8,
+   "sheet": "2800x2070",
+   "fin": "ral1013"
+  },
+  "front": {
+   "type": "mdfpaint",
+   "t": 19,
+   "sheet": "2440x1220",
+   "fin": "ral6021"
+  },
+  "desk": {
+   "type": "solid",
+   "t": 30,
+   "sheet": "2500x1250",
+   "fin": "walnut"
+  },
+  "skirt": {
+   "type": "mdfpaint",
+   "t": 19,
+   "sheet": "2440x1220",
+   "fin": "ral6021"
+  }
+ },
+ "opts": {
+  "gap": 3,
+  "setback": 20,
+  "kerf": 4,
+  "trim": 10,
+  "handle": "woodcup",
+  "handleSize": "M",
+  "handleWood": "oak",
+  "construct": "shared",
+  "innerLight": false,
+  "two": {
+   "on": false,
+   "y": 1000,
+   "fin": "ral6021"
+  }
+ },
+ "sections": [
+  {
+   "id": "i152tu44",
+   "w": 700,
+   "base": "cab",
+   "back": "full",
+   "deskH": 740,
+   "over": 20,
+   "zones": [
+    {
+     "id": "i151vih5",
+     "type": "closed",
+     "h": null,
+     "shelves": 1,
+     "doors": 0,
+     "rail": false,
+     "hinge": "L",
+     "count": 3,
+     "tv": 0,
+     "header": true,
+     "grommet": true,
+     "woofer": 145,
+     "nw": 1,
+     "tweeter": 52,
+     "grille": false,
+     "fabric": false,
+     "fabricCol": "charcoal",
+     "span": 0,
+     "box": false,
+     "boxT": null,
+     "boxFin": "front",
+     "fin": "",
+     "fins": [],
+     "inFin": "",
+     "vdMode": null,
+     "vd": [
+      350
+     ]
+    }
+   ]
+  },
+  {
+   "id": "i1562bpc",
+   "w": 800,
+   "base": "cab",
+   "back": "full",
+   "deskH": 740,
+   "over": 20,
+   "zones": [
+    {
+     "id": "i1537h8i",
+     "type": "drawers",
+     "h": 420,
+     "shelves": 0,
+     "doors": 0,
+     "rail": false,
+     "hinge": "L",
+     "count": 2,
+     "tv": 0,
+     "header": true,
+     "grommet": true,
+     "woofer": 145,
+     "nw": 1,
+     "tweeter": 52,
+     "grille": false,
+     "fabric": false,
+     "fabricCol": "charcoal",
+     "span": 0,
+     "box": false,
+     "boxT": null,
+     "boxFin": "front",
+     "fin": "",
+     "fins": [],
+     "inFin": ""
+    },
+    {
+     "id": "i154qerc",
+     "type": "opening",
+     "h": 900,
+     "shelves": 0,
+     "doors": 0,
+     "rail": false,
+     "hinge": "L",
+     "count": 3,
+     "tv": 0,
+     "header": true,
+     "grommet": true,
+     "woofer": 145,
+     "nw": 1,
+     "tweeter": 52,
+     "grille": false,
+     "fabric": false,
+     "fabricCol": "sage",
+     "span": 0,
+     "box": false,
+     "boxT": null,
+     "boxFin": "front",
+     "fin": "",
+     "fins": [],
+     "inFin": "",
+     "look": "nook",
+     "nookPad": true,
+     "nookLedges": true
+    },
+    {
+     "id": "i15531xo",
+     "type": "closed",
+     "h": null,
+     "shelves": 1,
+     "doors": 0,
+     "rail": false,
+     "hinge": "L",
+     "count": 3,
+     "tv": 0,
+     "header": true,
+     "grommet": true,
+     "woofer": 145,
+     "nw": 1,
+     "tweeter": 52,
+     "grille": false,
+     "fabric": false,
+     "fabricCol": "charcoal",
+     "span": 0,
+     "box": false,
+     "boxT": null,
+     "boxFin": "front",
+     "fin": "",
+     "fins": [],
+     "inFin": "",
+     "vdMode": null,
+     "vd": [
+      400
+     ]
+    }
+   ]
+  },
+  {
+   "id": "i1590pkp",
+   "w": 800,
+   "base": "cab",
+   "back": "full",
+   "deskH": 740,
+   "over": 20,
+   "zones": [
+    {
+     "id": "i157lmi6",
+     "type": "drawers",
+     "h": 600,
+     "shelves": 0,
+     "doors": 0,
+     "rail": false,
+     "hinge": "L",
+     "count": 3,
+     "tv": 0,
+     "header": true,
+     "grommet": true,
+     "woofer": 145,
+     "nw": 1,
+     "tweeter": 52,
+     "grille": false,
+     "fabric": false,
+     "fabricCol": "charcoal",
+     "span": 0,
+     "box": false,
+     "boxT": null,
+     "boxFin": "front",
+     "fin": "",
+     "fins": [],
+     "inFin": ""
+    },
+    {
+     "id": "i158ev51",
+     "type": "closed",
+     "h": null,
+     "shelves": 1,
+     "doors": 0,
+     "rail": true,
+     "hinge": "L",
+     "count": 3,
+     "tv": 0,
+     "header": true,
+     "grommet": true,
+     "woofer": 145,
+     "nw": 1,
+     "tweeter": 52,
+     "grille": false,
+     "fabric": false,
+     "fabricCol": "charcoal",
+     "span": 0,
+     "box": false,
+     "boxT": null,
+     "boxFin": "front",
+     "fin": "",
+     "fins": [],
+     "inFin": ""
+    }
+   ]
+  },
+  {
+   "id": "i161d0vz",
+   "w": null,
+   "base": "cab",
+   "back": "full",
+   "deskH": 740,
+   "over": 20,
+   "zones": [
+    {
+     "id": "i160iiea",
+     "type": "closed",
+     "h": null,
+     "shelves": 1,
+     "doors": 0,
+     "rail": true,
+     "hinge": "L",
+     "count": 3,
+     "tv": 0,
+     "header": true,
+     "grommet": true,
+     "woofer": 145,
+     "nw": 1,
+     "tweeter": 52,
+     "grille": false,
+     "fabric": false,
+     "fabricCol": "charcoal",
+     "span": 0,
+     "box": false,
+     "boxT": null,
+     "boxFin": "front",
+     "fin": "",
+     "fins": [],
+     "inFin": "",
+     "vdMode": null,
+     "vd": [
+      566
+     ]
+    }
+   ]
+  },
+  {
+   "id": "i164truc",
+   "w": 600,
+   "base": "cab",
+   "back": "full",
+   "deskH": 740,
+   "over": 20,
+   "zones": [
+    {
+     "id": "i162f263",
+     "type": "drawers",
+     "h": 600,
+     "shelves": 0,
+     "doors": 0,
+     "rail": false,
+     "hinge": "L",
+     "count": 3,
+     "tv": 0,
+     "header": true,
+     "grommet": true,
+     "woofer": 145,
+     "nw": 1,
+     "tweeter": 52,
+     "grille": false,
+     "fabric": false,
+     "fabricCol": "charcoal",
+     "span": 0,
+     "box": false,
+     "boxT": null,
+     "boxFin": "front",
+     "fin": "",
+     "fins": [],
+     "inFin": ""
+    },
+    {
+     "id": "i163pgta",
+     "type": "closed",
+     "h": null,
+     "shelves": 1,
+     "doors": 0,
+     "rail": false,
+     "hinge": "L",
+     "count": 3,
+     "tv": 0,
+     "header": true,
+     "grommet": true,
+     "woofer": 145,
+     "nw": 1,
+     "tweeter": 52,
+     "grille": false,
+     "fabric": false,
+     "fabricCol": "charcoal",
+     "span": 0,
+     "box": false,
+     "boxT": null,
+     "boxFin": "front",
+     "fin": "",
+     "fins": [],
+     "inFin": "",
+     "vdMode": null,
+     "vd": [
+      300
+     ]
+    }
+   ]
+  }
+ ]
+}

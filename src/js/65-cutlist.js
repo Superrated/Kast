@@ -2,91 +2,534 @@
    The cut list tab and the sheet cutting plans.
 */
 /* ===== Cut list / lofting / sheets ===== */
-let groupsCache=null;
-const bandTxt=p=>{const m=MATS[p.matType]||{},w=/Drawer box/.test(p.type)?'top edge':p.band==='all'?'all edges':'front edge';return (m.micro?'Microcement on: ':m.paint?'Paint: ':'Edge band: ')+w};
-const matName=p=>`${MATS[p.matType]?.name||'Board'} · ${FIN[p.fin]?.name||p.fin} · ${p.t} mm`;
-function renderCut(){
-  const gs=groupsCache=groupPanels(bgeo());const el=document.getElementById('v-cut');
-  const total=gs.reduce((a,p)=>a+p.qty,0);
-  const mats={};gs.forEach(p=>{const k=matName(p);const m=MATS[p.matType]||{};mats[k]=mats[k]||{area:0,band:0,edge:m.edge||'',paint:!!m.paint,micro:!!m.micro,peri:0,vis:0,mA:0};if(m.micro&&!MC_SKIP.test(p.type)){mats[k].vis+=(p.bandM||0)*p.t/1000*p.qty;mats[k].mA+=Math.abs(polyArea(p.poly))*p.qty/1e6}const a=Math.abs(polyArea(p.poly))*p.qty/1e6;mats[k].area+=a;mats[k].band+=p.bandM*p.qty;mats[k].peri+=polyPerim(p.poly)*p.t*p.qty/1e6});
-  const nest=nestAll(gs),sp=stockPlan(gs);
-  let h=`<section data-psec="list"><h2>Cut list</h2><p class="lede">Every panel with its finished size. Painted MDF areas count both faces and the edges. Length runs along the grain. Shaped, drilled and fabric-frame parts are drawn point by point under Shaped parts. Construction: ${S.opts.construct==='boxes'?'separate boxes':'shared partitions'}.</p>
-  <div class="stats"><div class="stat"><b>${total} <small>parts</small></b><span>${gs.length} different sizes</span></div>${nest.map(n=>`<div class="stat"><b>${n.sheets.length}${n.over.length?'+':''} <small>sheet${n.sheets.length===1?'':'s'}</small></b><span>${esc(MATS[n.mt]?.short||'')} ${n.t} mm<br>${esc(FIN[n.fin]?.name||'')}${n.offUsed&&n.offUsed.length?` · ${n.offUsed.length} from offcuts`:''}</span></div>`).join('')}${sp.groups.map(g=>`<div class="stat"><b>${g.bars.length}</b><span>${esc(FIN[g.fin]?.name||'')} ${g.t} mm · ${g.W}×${sp.cfg.L} pre-edged boards</span></div>`).join('')}</div>
+let groupsCache = null;
+const bandTxt = p => {
+  const m = MATS[p.matType] || {},
+    w = /Drawer box/.test(p.type) ? 'top edge' : p.band === 'all' ? 'all edges' : 'front edge';
+  return (m.micro ? 'Microcement on: ' : m.paint ? 'Paint: ' : 'Edge band: ') + w;
+};
+const matName = p => `${MATS[p.matType]?.name || 'Board'} · ${FIN[p.fin]?.name || p.fin} · ${p.t} mm`;
+function renderCut() {
+  const gs = (groupsCache = groupPanels(bgeo()));
+  const el = document.getElementById('v-cut');
+  const total = gs.reduce((a, p) => a + p.qty, 0);
+  const mats = {};
+  gs.forEach(p => {
+    const k = matName(p);
+    const m = MATS[p.matType] || {};
+    mats[k] = mats[k] || {
+      area: 0,
+      band: 0,
+      edge: m.edge || '',
+      paint: !!m.paint,
+      micro: !!m.micro,
+      peri: 0,
+      vis: 0,
+      mA: 0
+    };
+    if (m.micro && !MC_SKIP.test(p.type)) {
+      mats[k].vis += (((p.bandM || 0) * p.t) / 1000) * p.qty;
+      mats[k].mA += (Math.abs(polyArea(p.poly)) * p.qty) / 1e6;
+    }
+    const a = (Math.abs(polyArea(p.poly)) * p.qty) / 1e6;
+    mats[k].area += a;
+    mats[k].band += p.bandM * p.qty;
+    mats[k].peri += (polyPerim(p.poly) * p.t * p.qty) / 1e6;
+  });
+  const nest = nestAll(gs),
+    sp = stockPlan(gs);
+  let h = `<section data-psec="list"><h2>Cut list</h2><p class="lede">Every panel with its finished size. Painted MDF areas count both faces and the edges. Length runs along the grain. Shaped, drilled and fabric-frame parts are drawn point by point under Shaped parts. Construction: ${S.opts.construct === 'boxes' ? 'separate boxes' : 'shared partitions'}.</p>
+  <div class="stats"><div class="stat"><b>${total} <small>parts</small></b><span>${gs.length} different sizes</span></div>${nest.map(n => `<div class="stat"><b>${n.sheets.length}${n.over.length ? '+' : ''} <small>sheet${n.sheets.length === 1 ? '' : 's'}</small></b><span>${esc(MATS[n.mt]?.short || '')} ${n.t} mm<br>${esc(FIN[n.fin]?.name || '')}${n.offUsed && n.offUsed.length ? ` · ${n.offUsed.length} from offcuts` : ''}</span></div>`).join('')}${sp.groups.map(g => `<div class="stat"><b>${g.bars.length}</b><span>${esc(FIN[g.fin]?.name || '')} ${g.t} mm · ${g.W}×${sp.cfg.L} pre-edged boards</span></div>`).join('')}</div>
   <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap"><button class="btn" data-act="copyCSV">Copy as CSV</button><button class="btn" data-act="copyText">Copy as text</button><button class="btn" data-act="lblPdf">Part labels (PDF)</button><button class="btn" data-act="pnTop" data-a="workshop">Workshop</button></div>${offHTML(nest)}
-  <div class="pbud" style="flex-wrap:wrap"><span class="pbok">Have it cut</span><span style="flex:1 1 260px">Send the cut list to a panel shop: they cut (and edge-band) every part for you. Fitted fills in the shop's own order form (their Excel, their codes): sizes, board, grain, which edges get edge band and what to drill.</span>${Object.entries(SHOP_INFO).map(([k,I])=>`<button type="button" class="btn sm" data-act="shopX" data-a="${k}">${k==='hh'?'Invulblad for Hanssens Hout':k==='wc'?'Houtlijst for Woodcenter':'Excel for '+I.name}</button>`).join('')}<button type="button" class="btn sm" data-act="dxfZip" title="One drawing per part with every hole — for shops that cut and drill by machine">DXF for CNC</button>${shopFormHTML()}</div>
-  ${ui.shopMail?`<div class="pbud" style="flex-direction:column;align-items:stretch"><span>Mail it to <b>${SHOP_INFO[ui.shopMail].email}</b> (or call ${SHOP_INFO[ui.shopMail].phone}) with the Excel attached. ${SHOP_INFO[ui.shopMail].how} Text you can use:</span><textarea readonly rows="7" style="width:100%;font:inherit;font-size:12.5px">${esc(shopMail(ui.shopMail))}</textarea><button type="button" class="btn sm" data-act="shopMailCopy" style="align-self:flex-start">Copy the text</button></div>`:''}
+  <div class="pbud" style="flex-wrap:wrap"><span class="pbok">Have it cut</span><span style="flex:1 1 260px">Send the cut list to a panel shop: they cut (and edge-band) every part for you. Fitted fills in the shop's own order form (their Excel, their codes): sizes, board, grain, which edges get edge band and what to drill.</span>${Object.entries(
+    SHOP_INFO
+  )
+    .map(
+      ([k, I]) =>
+        `<button type="button" class="btn sm" data-act="shopX" data-a="${k}">${k === 'hh' ? 'Invulblad for Hanssens Hout' : k === 'wc' ? 'Houtlijst for Woodcenter' : 'Excel for ' + I.name}</button>`
+    )
+    .join(
+      ''
+    )}<button type="button" class="btn sm" data-act="dxfZip" title="One drawing per part with every hole — for shops that cut and drill by machine">DXF for CNC</button>${shopFormHTML()}</div>
+  ${ui.shopMail ? `<div class="pbud" style="flex-direction:column;align-items:stretch"><span>Mail it to <b>${SHOP_INFO[ui.shopMail].email}</b> (or call ${SHOP_INFO[ui.shopMail].phone}) with the Excel attached. ${SHOP_INFO[ui.shopMail].how} Text you can use:</span><textarea readonly rows="7" style="width:100%;font:inherit;font-size:12.5px">${esc(shopMail(ui.shopMail))}</textarea><button type="button" class="btn sm" data-act="shopMailCopy" style="align-self:flex-start">Copy the text</button></div>` : ''}
   <div class="tw"><table class="cut"><thead><tr><th>#</th><th>Part</th><th>Qty</th><th>Length</th><th>Width</th><th>Shape</th><th>Where</th><th>Notes</th></tr></thead><tbody>`;
-  let last='';gs.forEach(p=>{const m=matName(p);if(m!==last){h+=`<tr class="grp"><td colspan="8"><span class="sw" style="background:${FIN[p.fin]?.base}"></span> ${esc(m)}</td></tr>`;last=m}
-    const nh=p.holes.filter(o=>!o.poly).length,nc=p.holes.filter(o=>o.poly).length;
-    h+=`<tr><td class="n">${p.id}</td><td>${esc(p.type)}</td><td class="n">${p.qty}</td><td class="n">${f0(p.L)}${p.bandCut&&p.finL!==p.L?`<small class="fin">${f0(p.finL)} fin.</small>`:''}</td><td class="n">${f0(p.Wd)}${p.bandCut&&p.finWd!==p.Wd?`<small class="fin">${f0(p.finWd)} fin.</small>`:''}</td><td>${p.rect&&!p.holes.length?'<span class="note">rect</span>':`<span class="tag">${p.rect?'rect':p.poly.length+' pts'}${nh?' · '+nh+' hole'+(nh>1?'s':''):''}${nc?' · cut-out':''}</span>`}${p.angled?' <span class="tag w">angled</span>':''}</td><td class="note">${esc(p.secs.join(', '))}</td><td class="note">${(()=>{const sf=stockFor(p,sp.cfg);return sf?`<div class="stk">From a ${sf.W}×${sp.cfg.L} pre-edged board${sf.rip?` — rip ${sf.rip} mm off the back edge, keep the factory edge at the front`:' — full board width, both long edges already finished'}${p.band==='all'?'; band the two short ends':''}</div>`:''})()}${esc(p.notes.join(' · '))}${p.band!=='none'&&!stockFor(p,sp.cfg)?`<div>${bandTxt(p)}</div>`:''}</td></tr>`});
-  h+=`</tbody></table></div>`;
-  if(sp.groups.length)h+=`<p class="lede">Pre-edged boards save about ${sp.saved.toFixed(1)} m of edge banding.</p>`;
-  h+=`</section><section data-psec="buy"><h2>Shopping list</h2><p class="lede">What to buy besides the boards: the board totals, hardware, fabric and inserts. The sheets you need and how the parts sit on them are under Sheets.</p><h3>Materials</h3><div class="tw"><table class="cut" style="min-width:480px"><thead><tr><th>Material</th><th>Panel area</th><th>Edges</th><th>Edging / paint</th></tr></thead><tbody>${Object.entries(mats).map(([k,v])=>`<tr><td>${esc(k)}</td><td class="n">${v.area.toFixed(2)} m²</td><td class="note">${esc(v.edge)}</td><td class="n">${v.paint?`${(v.area*2+v.peri).toFixed(2)} m² paint`:v.band>0?`${v.band.toFixed(1)} m`:'—'}</td></tr>`).join('')}</tbody></table></div>`;
-  const H=bgeo().H;
-  if(H.fabric.length){const fg={};H.fabric.forEach(f=>{const k=f.col+'|'+f.w+'|'+f.h;(fg[k]=fg[k]||{...f,qty:0,secs:[]}).qty++;if(!fg[k].secs.includes(f.sec))fg[k].secs.push(f.sec)});const area=H.fabric.reduce((a,f)=>a+f.w*f.h/1e6,0);
-    h+=`<h3>Fabric</h3><p class="lede">Pieces include ${geo.tf+25} mm on every side to wrap round the frame edge and staple at the back. Use an acoustically transparent fabric over speakers. Total ≈ ${area.toFixed(2)} m² before waste.</p><div class="tw"><table class="cut" style="min-width:480px"><thead><tr><th>Fabric</th><th>Qty</th><th>Size</th><th>Where</th></tr></thead><tbody>${Object.values(fg).map(f=>`<tr><td><span class="sw" style="background:${FABRICS[f.col].c}"></span> ${FABRICS[f.col].name}</td><td class="n">${f.qty}</td><td class="n">${f.w} × ${f.h}</td><td class="note">${esc(f.secs.join(', '))}</td></tr>`).join('')}</tbody></table></div>`}
-  const wn=(WOODS[S.opts.handleWood]||WOODS.oak).name,szl={S:'S',M:'M',L:'L',XL:'XL',F:'full length'}[S.opts.handleSize||'M'],HN={bar:`Metal bar handles (${szl})`,knob:`Metal knobs (${szl})`,woodbar:`${wn} bar handles (${szl})`,woodpull:`${wn} D-pulls (${szl})`,woodknob:`${wn} knobs (${szl})`,woodblock:`${wn} block knobs (${szl})`,woodcup:`${wn} cup pulls (${szl})`,edge:`${wn} edge pulls (${szl})`,profile:`${wn} J-profiles`,disc:`${wn} disc pulls (${szl})${S.opts.discSeam?' — one disc per door pair, sawn in half':''}`,stick:`Painted wooden stick pulls, ${(HCOL[S.opts.handleCol]||HCOL.blue)[0].toLowerCase()} (${szl})`,cross:`Painted wooden cross knobs, ${(HCOL[S.opts.handleCol]||HCOL.blue)[0].toLowerCase()} (${szl})`,ring:`Painted wooden ring pulls, ${(HCOL[S.opts.handleCol]||HCOL.blue)[0].toLowerCase()} (${szl})`,dots:'Finger holes (dot pattern)',leather:`Leather strap pulls (${szl})`,hole:`Finger holes (${szl})`,slot:`Routed finger slots (${szl})`,groove:'Bevelled finger grooves',none:'Push-to-open latches'};
-  const HNote={dots:'Drilled through the front — no hardware',disc:'Fixed with one screw from the back (two for a half disc)',stick:'Fixed with two screws from the back',hole:'Drilled through the front — no hardware',slot:'Routed through — no hardware',groove:'Machined on the edge — no hardware',edge:'Glue + pin on the opening edge',profile:'Glued along the opening edge — order by the metre, sizes per front in the cut list',leather:'Fixed with two brass screws'};
-  const hw=[];
-  {const J=H.join||{};const JN=J.type||'confirmat';if(J.joints){if(JN==='minifix'){hw.push(['Minifix 15 cam housing + connecting bolt 34 mm',J.joints,'Ø15 × 12.5 in the horizontal panel, 34 mm from the end; bolt into a Ø5 hole in the side']);hw.push(['Beech dowels Ø8 × 30',J.dowels,'Next to each cam, 32 mm away'])}
-    else if(JN==='screw'){hw.push(['Chipboard screws 4.5 × 50, countersunk + cover caps',J.joints,'Ø4.5 clearance hole + countersink through the side, Ø3 × 40 pilot into the edge'])}
-    else if(JN==='confirmat'){hw.push(['Confirmat screws 7 × 50 + cover caps',J.joints,'Ø7 + countersink through the side, Ø5 pilot into the edge'])}else hw.push(['Beech dowels Ø8 × 35 + wood glue',J.joints*2,'Ø8 × 12 in the side, Ø8 × 25 in the edge'])}
-    hw.push([J.groove?'Back panel in groove (no fixings)':'Back nails 1.4 × 25 / screws 3.5 × 16',J.groove?'—':Math.round(geo.secs.length*40),J.groove?'Groove 8.5 × 10, 18 mm from the back edge':'Every 150 mm round the back'])}
-  const HWo=S.opts.hw||{},BLUM=(HWo.brand||'blum')==='blum';
-  if(H.hinges&&BLUM){const hk=H.hk||{},std=Math.max(0,(hk.std||0)),ins=hk.inset||0,wide=hk.wide||0,half=hk.half||0,rest=Math.max(0,H.hinges-std-ins-wide-half),cup='Cup Ø35 × 13 mm deep, 4 mm from the door edge (cup centre 21.5 mm), 100 mm from top and bottom';
-    if(std+rest)hw.push(HWo.hinge==='155'?['Blum CLIP top 155° zero-protrusion hinge, screw-on · 71T7550',std+rest,cup+'. Opens wide and clears inner drawers. Add a BLUMOTION adapter for soft close.']:(S.opts.handle==='none'?['Blum CLIP top 110° hinge, unsprung (for TIP-ON), full overlay',std+rest,cup+'. Push-to-open doors need hinges without a closing spring — ask for the unsprung CLIP top version; no soft close.']:['Blum CLIP top BLUMOTION 110° hinge, full overlay, screw-on · 71B3550',std+rest,cup+'. Soft close built in.']));
-    if(half)hw.push([S.opts.handle==='none'?'Blum CLIP top 110° hinge, unsprung (for TIP-ON), half overlay':'Blum CLIP top BLUMOTION 110° hinge, half overlay, screw-on · 71B3650',half,cup+'. For two doors that share one 18 mm upright: each door covers half of its edge.']);
-    if(ins)hw.push(['Blum CLIP top BLUMOTION 110° hinge, inset · 71B3750',ins,cup+'. For fronts that sit inside the cabinet.']);
-    if(wide)hw.push(['Blum CLIP top 155° zero-protrusion hinge, screw-on · 71T7550',wide,'Desk doors — fold back almost flat against the next cabinet. '+cup]);
-    hw.push(['Blum CLIP mounting plate, straight, 0 mm · 173L6100',H.hinges,'One per hinge. 37 mm from the front edge, 2 screws at 32 mm']);}
-  else if(H.hinges&&HWo.brand==='blumeco'){const ins=(H.hk||{}).inset||0,half=(H.hk||{}).half||0;if(half)hw.push(['Blum MODUL 100° slide-on hinge, half overlay (no soft close)',half,'For two doors that share one upright: each door covers half of its edge. Same drilling as the full-overlay hinge']);if(H.hinges-ins-half)hw.push(['Blum MODUL 100° slide-on hinge, full overlay (no soft close)',H.hinges-ins-half,'Cup Ø35 × 13 mm deep, 4 mm from the door edge, 100 mm from top and bottom. Take the article number from the Blum MODUL sheet for your door thickness']);if(ins)hw.push(['Blum MODUL 100° slide-on hinge, inset (no soft close)',ins,'For fronts that sit inside the cabinet']);hw.push(['Blum MODUL mounting plate, screw-on, 0 mm',H.hinges,'One per hinge. 37 mm from the front edge, 2 screws at 32 mm'])}
-  else if(H.hinges)hw.push([((H.hk||{}).half?`Clip-top hinges 110° + mounting plates (${(H.hk||{}).half} half overlay, the rest full overlay)`:'Clip-top hinges 110°, full overlay + mounting plates'),H.hinges,'Cup Ø35 × 13 mm, 4 mm from the door edge; plate 37 mm from the front, 2 × Ø5 at 32 mm']);
-  if(BLUM){const MOV=HWo.runner==='movento',NL=[270,300,350,400,450,500,550,600];let pairs=0;
-    Object.entries(H.slides).forEach(([l,c])=>{const nl=[...NL].reverse().find(v=>v<=+l+20);pairs+=c;hw.push(nl?[MOV?`Blum MOVENTO 760H full-extension runners with BLUMOTION, NL ${nl} (pairs)`:`Blum TANDEM 550H full-extension runners with BLUMOTION, NL ${nl} (pairs)`,c,MOV?'40 kg, smooth synchronised run. Fix with the system holes 37 mm from the front, 32 mm pitch':'30 kg, soft close. Fix with the system holes 37 mm from the front, 32 mm pitch']:[`Drawer runners ${l} mm (too shallow for Blum NL 270 — use a short runner)`,c,'']);});
-    if(pairs)hw.push([MOV?'Blum MOVENTO locking devices (left + right)':'Blum TANDEM locking devices (left + right)',pairs,'Screw under the drawer box at the front; the drawer clips on and off']);
-    const ph=(H.handles||{}).none||0;if(ph)hw.push(['Blum TIP-ON push-to-open (doors) / TIP-ON BLUMOTION (drawers)',ph,'For the handleless fronts: press to open. Use TIP-ON with the 155° or a hinge without BLUMOTION']);}
-  else if(HWo.brand==='blumeco')Object.entries(H.slides).forEach(([l,c])=>{const nl=[250,300,350,400,450,500,550,600].reverse().find(v=>v<=+l);hw.push([`Blum STANDARD 230M roller runners, single extension, NL ${nl||l} (pairs)`,c,'25 kg, self-closing over the last few cm, no soft close. Cabinet part 37 mm from the front on the system holes; the drawer part screws under the lower edge of the box side. The box is 26 mm narrower than the opening'])});
-  else Object.entries(H.slides).forEach(([l,c])=>hw.push([`Full-extension runners ${l} mm, soft-close (pairs)`,c,'System holes 37 mm from the front, 32 mm pitch']));
-  Object.entries(H.handles).forEach(([k,c])=>hw.push([HN[k]||k,c,HNote[k]||'']));
-  if(H.pins)hw.push(['Shelf supports Ø5 (metal, with sleeve)',H.pins,'4 per shelf; '+({needed:'holes drilled only where each shelf sits',some:'holes at each shelf ± two 32 mm steps',rows:'full rows 37 mm from front and back, 32 mm pitch'})[S.opts.pinHoles||'rows']]);
-  H.battens.forEach(b=>hw.push(['Battens 45×45 for the panel wall',b.n,`${b.sec}: up to ${b.L} mm each, max 400 mm centres, fixed into the shaft framing or wall`]));
-  if(H.hatches)hw.push(['Magnetic push latches (access hatch)',H.hatches*2,'Keep the shaft reachable without tools']);
-  if(H.tnuts){hw.push(['M10 hammer-in T-nuts',H.tnuts,'Fit from the back before the panels go up']);hw.push(['Kids climbing holds + M10 bolts',Math.round(H.tnuts*0.4),'Start with about 40% of the T-nuts; move holds around later']);hw.push(['Crash mat',H.climb?1:0,'At least 1 m deep in front of the wall, full width of the climbing area'])}
-  H.funParts.forEach(f=>hw.push([f.n,f.q,f.sec]));
-  if(H.ladder){hw.push([`Library ladder rail Ø28 + end stops + wall brackets`,`${H.ladder.rail} mm`,`At ${H.ladder.h} mm; brackets every 600 mm into partitions or the top rail`]);hw.push([`${(WOODS[(S.ladder||{}).wood||'oak']||WOODS.oak).name} library ladder with rail hooks + floor wheels`,1,`≈${H.ladder.len} mm long at 75°, foot ${H.ladder.foot} mm out from the rail`])}
-  H.paint.forEach(p=>hw.push([p.k==='chalk'?'Chalkboard paint':p.k==='magnet'?'Magnetic primer + chalkboard paint':'Pegboard pegs & hooks',p.k==='peg'?'set':`${p.area.toFixed(2)} m²`,`${p.sec}`]));
-  H.rails.forEach(r=>{hw.push(['Wardrobe rail Ø25 + 2 end sockets',1,`${r.sec}: ${r.L} mm`]);if(+String(r.L).replace(/[^\d]/g,'')>1000)hw.push(['Centre support for the wardrobe rail',1,`${r.sec}: a rail over 1 m bends under a full load of clothes — screw the support to the shelf or top above, in the middle`])});
-  (H.fit||[]).forEach(f=>{const F=FITS[f.kind],nm=F.hw(f.w);if(nm)hw.push([nm,f.n,`${f.sec}: inside width ${f0(f.w)} mm — ${F.note}`])});
-  if(H.legs)hw.push(['Adjustable plinth legs + kick clips',H.legs,`Plinth ${S.skirt.plinth} mm`]);
-  if(H.noLegs)hw.push(['Levelling shims / packers (hardwood or plastic)','set',+S.skirt.plinth>0?`Under the ${S.skirt.plinth} mm base frame (2 rails 45 × ${S.skirt.plinth} mm on edge per box — buy as planed timber)`:'Under the boxes, to level them on the floor']);
-  {const nv=gs.filter(p=>p.type==='Vertical divider').reduce((a,p)=>a+p.qty,0);if(nv&&(H.join||{}).type!=='dowel')hw.push(['Beech dowels Ø8 × 35 + wood glue (vertical dividers)',nv*4,'2 at the top and 2 at the bottom of each vertical divider'])}
-  if(H.wallHang||H.brackets)hw.push(['Adjustable cabinet hangers + wall rail (e.g. Camar 807)',H.wallHang||H.brackets,'2 per box, top-back corners; rail into studs or masonry plugs']);
-  if(H.boxJoins)hw.push(['Cabinet connector bolts Ø5 (sleeve + screw, 30–37 mm)',H.boxJoins*4,'4 per joint, 37 mm in from front and back']);
-  (H.drench||[]).forEach(d=>hw.push([d.cub?`Paint ${FIN[d.fin].name} (inside of the contrast cubbies)`:d.out?`Paint ${FIN[d.fin].name} (colour-drenched level: the outside of this side panel)`:`Paint ${FIN[d.fin].name} (colour-drenched level: inside of sides, top and bottom — the underside of the cabinet top too)`,`${d.area.toFixed(2)} m²`,`${d.sec}: sand the melamine and use a bonding primer first`]));
-  H.angles.forEach(a=>hw.push(['Steel angle 40×40×4 under rear header rail',1,`${a.sec}: ${a.L} mm, screwed to wall every 400 mm`]));
-  if(H.grommets)hw.push(['Cable grommet Ø60–80',H.grommets,'Behind the TV / in the desk top']);
-  H.slide.forEach(r=>hw.push(['Top-hung sliding door track + runners',1,`${r.sec}: ${r.L} mm track, ${r.n} doors, soft-close`]));
-  if(H.pocket)hw.push(['Pocket door system (pair of slides)',Math.ceil(H.pocket/2),'Doors open, then slide back into the cabinet sides']);
-  if(H.screen){hw.push([`Projector screen, electric roll-down, ${H.screen.diag}″ 16:9 (picture ${H.screen.w} × ${H.screen.h} mm)`,1,`Cassette up to ${H.screen.cas} × ${H.screen.cas} mm and about ${H.screen.cl} mm long, with ceiling brackets — it hangs under the carrier board of the screen drawer. Tab-tensioned keeps the picture flat`]);hw.push([`Heavy-duty full-extension runners ${H.screen.rl} mm, 45 kg (pair)`,1,`For the ${H.screen.len} mm wide screen drawer; fit a stop so it comes out ${H.screen.pull} mm`]);hw.push(['Flexible cable chain or coiled power lead',1,'Lets the motor cable follow the drawer in and out']);hw.push(['Power socket inside the housing',1,'For the screen motor — have it fitted before the cabinets go in'])}
-  (H.dog||[]).forEach(d=>{hw.push([`Dog cushion ${d.w} × ${d.d} mm, washable cover`,1,`${d.sec}: lay a wipe-clean mat or vinyl under it`]);});
-  H.led.forEach(r=>hw.push(['LED strip 24 V warm white (2700 K) in aluminium profile',1,`${r.sec}: ${r.L} mm — ${r.why}`]));if(H.led.length)hw.push(['LED driver 24 V + switch/door sensor',Math.max(1,Math.ceil(H.led.length/4)),'One driver feeds about 4 strips']);
-  if(H.flegs)hw.push(['Furniture legs (tapered)',H.flegs,'Screw-on mounting plates under the bottom panel']);
-  if(H.cleats)hw.push(['French cleat / hanging rail',H.cleats,'Wall-hung units — into studs or masonry plugs']);
-  if(H.ped)hw.push(['Pedestal levelling feet',H.ped*2,'Under the front of the desk pedestal']);
-  if(H.ledges)hw.push(['Lip strip 30 × 12 mm',H.ledges,'Along the front of each picture ledge']);
-  H.curtain.forEach(c=>hw.push(['Curtain track + gliders',1,`${c.sec}: ${f0(c.w/2.2)} mm track`]));
-  if(H.baffles)hw.push(['Speaker baffles',H.baffles,'Drivers not included; check cut-out Ø on the driver datasheet']);
-  (H.passage||[]).forEach(d=>hw.push([d.style==='open'?'Open doorway (lined)':d.style==='hidden'?'Hidden door: 40 mm solid-core blank + 3 concealed door hinges + magnetic push latch':d.style==='hallway'?'Door at the wall end of the hallway: 40 mm solid-core blank, 3 butt hinges, lever + latch':'Door: 40 mm solid-core blank, 3 butt hinges, lever + latch',1,`${d.sec}: leaf ${d.w}×${d.h} mm`]));
-  if(H.noBack)hw.push(['Wall fixing cleats (no-back columns)',H.noBack*2,'Columns without a back need a rear cleat top and bottom; paint or finish the wall first']);
-  if(H.cane.length||H.glass.length||H.curtain.length||H.cushion.length){h+=`<h3>Inserts &amp; soft parts</h3><div class="tw"><table class="cut" style="min-width:480px"><thead><tr><th>Item</th><th>Size</th><th>Where</th></tr></thead><tbody>`
-    +H.cane.map(c=>`<tr><td>Cane webbing (pre-woven, soak before fitting)</td><td class="n">${c.w} × ${c.h}</td><td class="note">${c.sec}</td></tr>`).join('')
-    +H.glass.map(c=>`<tr><td>Fluted (reeded) glass 4 mm, toughened</td><td class="n">${c.w} × ${c.h}</td><td class="note">${c.sec}</td></tr>`).join('')
-    +H.curtain.map(c=>`<tr><td><span class="sw" style="background:${FABRICS[c.col].c}"></span> Curtain, ${FABRICS[c.col].name} (2.2× fullness)</td><td class="n">${c.w} × ${c.h}</td><td class="note">${c.sec}</td></tr>`).join('')
-    +H.cushion.map(c=>`<tr><td><span class="sw" style="background:${FABRICS[c.col].c}"></span> Seat cushion 80 mm foam, ${FABRICS[c.col].name} cover</td><td class="n">${c.w} × ${c.d}</td><td class="note">${c.sec}</td></tr>`).join('')+`</tbody></table></div>`}
-  h+=`<h3>Hardware</h3><div class="tw"><table class="cut hwt" style="min-width:480px"><thead><tr><th>Item</th><th>Qty</th><th>Notes</th></tr></thead><tbody>${hw.map(r=>`<tr><td>${esc(r[0])}</td><td class="n">${r[1]}</td><td class="note">${esc(r[2])}</td></tr>`).join('')}</tbody></table></div>`;
-  lastPrice=priceRows(nest,sp,hw,mats);lastPrice.nest=nest;lastPrice.shops=['best',...Object.keys(SHOPS)].map(k=>{const t=k===lastPrice.tot.shop?lastPrice.tot:priceRows(nest,sp,hw,mats,k).tot;return {k,total:t.all,fb:t.fb}});lastAlt=null;
-  if(ROLES.some(([k])=>k!=='back'&&S.mat[k].type==='melamine')){const keep=S.opts.stock,was=!!(keep&&keep.on);try{setStockAll(!was);lastAlt={on:!was,total:priceRows(nestAll(gs),stockPlan(gs),hw,mats).tot.all}}catch(e){}S.opts.stock=keep;if(keep===undefined)delete S.opts.stock}
-  h+='</section><section data-psec="price">'+priceHTML(lastPrice)+msHTML(nest)+'</section>';
-  if(PRICING)return;
-  el.innerHTML=partBar()+h;budSoon();{const pv=document.getElementById('pstatv');if(pv)pv.textContent=eur(lastPrice.tot.all)}
+  let last = '';
+  gs.forEach(p => {
+    const m = matName(p);
+    if (m !== last) {
+      h += `<tr class="grp"><td colspan="8"><span class="sw" style="background:${FIN[p.fin]?.base}"></span> ${esc(m)}</td></tr>`;
+      last = m;
+    }
+    const nh = p.holes.filter(o => !o.poly).length,
+      nc = p.holes.filter(o => o.poly).length;
+    h += `<tr><td class="n">${p.id}</td><td>${esc(p.type)}</td><td class="n">${p.qty}</td><td class="n">${f0(p.L)}${p.bandCut && p.finL !== p.L ? `<small class="fin">${f0(p.finL)} fin.</small>` : ''}</td><td class="n">${f0(p.Wd)}${p.bandCut && p.finWd !== p.Wd ? `<small class="fin">${f0(p.finWd)} fin.</small>` : ''}</td><td>${p.rect && !p.holes.length ? '<span class="note">rect</span>' : `<span class="tag">${p.rect ? 'rect' : p.poly.length + ' pts'}${nh ? ' · ' + nh + ' hole' + (nh > 1 ? 's' : '') : ''}${nc ? ' · cut-out' : ''}</span>`}${p.angled ? ' <span class="tag w">angled</span>' : ''}</td><td class="note">${esc(p.secs.join(', '))}</td><td class="note">${(() => {
+      const sf = stockFor(p, sp.cfg);
+      return sf
+        ? `<div class="stk">From a ${sf.W}×${sp.cfg.L} pre-edged board${sf.rip ? ` — rip ${sf.rip} mm off the back edge, keep the factory edge at the front` : ' — full board width, both long edges already finished'}${p.band === 'all' ? '; band the two short ends' : ''}</div>`
+        : '';
+    })()}${esc(p.notes.join(' · '))}${p.band !== 'none' && !stockFor(p, sp.cfg) ? `<div>${bandTxt(p)}</div>` : ''}</td></tr>`;
+  });
+  h += `</tbody></table></div>`;
+  if (sp.groups.length)
+    h += `<p class="lede">Pre-edged boards save about ${sp.saved.toFixed(1)} m of edge banding.</p>`;
+  h += `</section><section data-psec="buy"><h2>Shopping list</h2><p class="lede">What to buy besides the boards: the board totals, hardware, fabric and inserts. The sheets you need and how the parts sit on them are under Sheets.</p><h3>Materials</h3><div class="tw"><table class="cut" style="min-width:480px"><thead><tr><th>Material</th><th>Panel area</th><th>Edges</th><th>Edging / paint</th></tr></thead><tbody>${Object.entries(
+    mats
+  )
+    .map(
+      ([k, v]) =>
+        `<tr><td>${esc(k)}</td><td class="n">${v.area.toFixed(2)} m²</td><td class="note">${esc(v.edge)}</td><td class="n">${v.paint ? `${(v.area * 2 + v.peri).toFixed(2)} m² paint` : v.band > 0 ? `${v.band.toFixed(1)} m` : '—'}</td></tr>`
+    )
+    .join('')}</tbody></table></div>`;
+  const H = bgeo().H;
+  if (H.fabric.length) {
+    const fg = {};
+    H.fabric.forEach(f => {
+      const k = f.col + '|' + f.w + '|' + f.h;
+      (fg[k] = fg[k] || { ...f, qty: 0, secs: [] }).qty++;
+      if (!fg[k].secs.includes(f.sec)) fg[k].secs.push(f.sec);
+    });
+    const area = H.fabric.reduce((a, f) => a + (f.w * f.h) / 1e6, 0);
+    h += `<h3>Fabric</h3><p class="lede">Pieces include ${geo.tf + 25} mm on every side to wrap round the frame edge and staple at the back. Use an acoustically transparent fabric over speakers. Total ≈ ${area.toFixed(2)} m² before waste.</p><div class="tw"><table class="cut" style="min-width:480px"><thead><tr><th>Fabric</th><th>Qty</th><th>Size</th><th>Where</th></tr></thead><tbody>${Object.values(
+      fg
+    )
+      .map(
+        f =>
+          `<tr><td><span class="sw" style="background:${FABRICS[f.col].c}"></span> ${FABRICS[f.col].name}</td><td class="n">${f.qty}</td><td class="n">${f.w} × ${f.h}</td><td class="note">${esc(f.secs.join(', '))}</td></tr>`
+      )
+      .join('')}</tbody></table></div>`;
+  }
+  const wn = (WOODS[S.opts.handleWood] || WOODS.oak).name,
+    szl = { S: 'S', M: 'M', L: 'L', XL: 'XL', F: 'full length' }[S.opts.handleSize || 'M'],
+    HN = {
+      bar: `Metal bar handles (${szl})`,
+      knob: `Metal knobs (${szl})`,
+      woodbar: `${wn} bar handles (${szl})`,
+      woodpull: `${wn} D-pulls (${szl})`,
+      woodknob: `${wn} knobs (${szl})`,
+      woodblock: `${wn} block knobs (${szl})`,
+      woodcup: `${wn} cup pulls (${szl})`,
+      edge: `${wn} edge pulls (${szl})`,
+      profile: `${wn} J-profiles`,
+      disc: `${wn} disc pulls (${szl})${S.opts.discSeam ? ' — one disc per door pair, sawn in half' : ''}`,
+      stick: `Painted wooden stick pulls, ${(HCOL[S.opts.handleCol] || HCOL.blue)[0].toLowerCase()} (${szl})`,
+      cross: `Painted wooden cross knobs, ${(HCOL[S.opts.handleCol] || HCOL.blue)[0].toLowerCase()} (${szl})`,
+      ring: `Painted wooden ring pulls, ${(HCOL[S.opts.handleCol] || HCOL.blue)[0].toLowerCase()} (${szl})`,
+      dots: 'Finger holes (dot pattern)',
+      leather: `Leather strap pulls (${szl})`,
+      hole: `Finger holes (${szl})`,
+      slot: `Routed finger slots (${szl})`,
+      groove: 'Bevelled finger grooves',
+      none: 'Push-to-open latches'
+    };
+  const HNote = {
+    dots: 'Drilled through the front — no hardware',
+    disc: 'Fixed with one screw from the back (two for a half disc)',
+    stick: 'Fixed with two screws from the back',
+    hole: 'Drilled through the front — no hardware',
+    slot: 'Routed through — no hardware',
+    groove: 'Machined on the edge — no hardware',
+    edge: 'Glue + pin on the opening edge',
+    profile: 'Glued along the opening edge — order by the metre, sizes per front in the cut list',
+    leather: 'Fixed with two brass screws'
+  };
+  const hw = [];
+  {
+    const J = H.join || {};
+    const JN = J.type || 'confirmat';
+    if (J.joints) {
+      if (JN === 'minifix') {
+        hw.push([
+          'Minifix 15 cam housing + connecting bolt 34 mm',
+          J.joints,
+          'Ø15 × 12.5 in the horizontal panel, 34 mm from the end; bolt into a Ø5 hole in the side'
+        ]);
+        hw.push(['Beech dowels Ø8 × 30', J.dowels, 'Next to each cam, 32 mm away']);
+      } else if (JN === 'screw') {
+        hw.push([
+          'Chipboard screws 4.5 × 50, countersunk + cover caps',
+          J.joints,
+          'Ø4.5 clearance hole + countersink through the side, Ø3 × 40 pilot into the edge'
+        ]);
+      } else if (JN === 'confirmat') {
+        hw.push([
+          'Confirmat screws 7 × 50 + cover caps',
+          J.joints,
+          'Ø7 + countersink through the side, Ø5 pilot into the edge'
+        ]);
+      } else hw.push(['Beech dowels Ø8 × 35 + wood glue', J.joints * 2, 'Ø8 × 12 in the side, Ø8 × 25 in the edge']);
+    }
+    hw.push([
+      J.groove ? 'Back panel in groove (no fixings)' : 'Back nails 1.4 × 25 / screws 3.5 × 16',
+      J.groove ? '—' : Math.round(geo.secs.length * 40),
+      J.groove ? 'Groove 8.5 × 10, 18 mm from the back edge' : 'Every 150 mm round the back'
+    ]);
+  }
+  const HWo = S.opts.hw || {},
+    BLUM = (HWo.brand || 'blum') === 'blum';
+  if (H.hinges && BLUM) {
+    const hk = H.hk || {},
+      std = Math.max(0, hk.std || 0),
+      ins = hk.inset || 0,
+      wide = hk.wide || 0,
+      half = hk.half || 0,
+      rest = Math.max(0, H.hinges - std - ins - wide - half),
+      cup = 'Cup Ø35 × 13 mm deep, 4 mm from the door edge (cup centre 21.5 mm), 100 mm from top and bottom';
+    if (std + rest)
+      hw.push(
+        HWo.hinge === '155'
+          ? [
+              'Blum CLIP top 155° zero-protrusion hinge, screw-on · 71T7550',
+              std + rest,
+              cup + '. Opens wide and clears inner drawers. Add a BLUMOTION adapter for soft close.'
+            ]
+          : S.opts.handle === 'none'
+            ? [
+                'Blum CLIP top 110° hinge, unsprung (for TIP-ON), full overlay',
+                std + rest,
+                cup +
+                  '. Push-to-open doors need hinges without a closing spring — ask for the unsprung CLIP top version; no soft close.'
+              ]
+            : [
+                'Blum CLIP top BLUMOTION 110° hinge, full overlay, screw-on · 71B3550',
+                std + rest,
+                cup + '. Soft close built in.'
+              ]
+      );
+    if (half)
+      hw.push([
+        S.opts.handle === 'none'
+          ? 'Blum CLIP top 110° hinge, unsprung (for TIP-ON), half overlay'
+          : 'Blum CLIP top BLUMOTION 110° hinge, half overlay, screw-on · 71B3650',
+        half,
+        cup + '. For two doors that share one 18 mm upright: each door covers half of its edge.'
+      ]);
+    if (ins)
+      hw.push([
+        'Blum CLIP top BLUMOTION 110° hinge, inset · 71B3750',
+        ins,
+        cup + '. For fronts that sit inside the cabinet.'
+      ]);
+    if (wide)
+      hw.push([
+        'Blum CLIP top 155° zero-protrusion hinge, screw-on · 71T7550',
+        wide,
+        'Desk doors — fold back almost flat against the next cabinet. ' + cup
+      ]);
+    hw.push([
+      'Blum CLIP mounting plate, straight, 0 mm · 173L6100',
+      H.hinges,
+      'One per hinge. 37 mm from the front edge, 2 screws at 32 mm'
+    ]);
+  } else if (H.hinges && HWo.brand === 'blumeco') {
+    const ins = (H.hk || {}).inset || 0,
+      half = (H.hk || {}).half || 0;
+    if (half)
+      hw.push([
+        'Blum MODUL 100° slide-on hinge, half overlay (no soft close)',
+        half,
+        'For two doors that share one upright: each door covers half of its edge. Same drilling as the full-overlay hinge'
+      ]);
+    if (H.hinges - ins - half)
+      hw.push([
+        'Blum MODUL 100° slide-on hinge, full overlay (no soft close)',
+        H.hinges - ins - half,
+        'Cup Ø35 × 13 mm deep, 4 mm from the door edge, 100 mm from top and bottom. Take the article number from the Blum MODUL sheet for your door thickness'
+      ]);
+    if (ins)
+      hw.push(['Blum MODUL 100° slide-on hinge, inset (no soft close)', ins, 'For fronts that sit inside the cabinet']);
+    hw.push([
+      'Blum MODUL mounting plate, screw-on, 0 mm',
+      H.hinges,
+      'One per hinge. 37 mm from the front edge, 2 screws at 32 mm'
+    ]);
+  } else if (H.hinges)
+    hw.push([
+      (H.hk || {}).half
+        ? `Clip-top hinges 110° + mounting plates (${(H.hk || {}).half} half overlay, the rest full overlay)`
+        : 'Clip-top hinges 110°, full overlay + mounting plates',
+      H.hinges,
+      'Cup Ø35 × 13 mm, 4 mm from the door edge; plate 37 mm from the front, 2 × Ø5 at 32 mm'
+    ]);
+  if (BLUM) {
+    const MOV = HWo.runner === 'movento',
+      NL = [270, 300, 350, 400, 450, 500, 550, 600];
+    let pairs = 0;
+    Object.entries(H.slides).forEach(([l, c]) => {
+      const nl = [...NL].reverse().find(v => v <= +l + 20);
+      pairs += c;
+      hw.push(
+        nl
+          ? [
+              MOV
+                ? `Blum MOVENTO 760H full-extension runners with BLUMOTION, NL ${nl} (pairs)`
+                : `Blum TANDEM 550H full-extension runners with BLUMOTION, NL ${nl} (pairs)`,
+              c,
+              MOV
+                ? '40 kg, smooth synchronised run. Fix with the system holes 37 mm from the front, 32 mm pitch'
+                : '30 kg, soft close. Fix with the system holes 37 mm from the front, 32 mm pitch'
+            ]
+          : [`Drawer runners ${l} mm (too shallow for Blum NL 270 — use a short runner)`, c, '']
+      );
+    });
+    if (pairs)
+      hw.push([
+        MOV ? 'Blum MOVENTO locking devices (left + right)' : 'Blum TANDEM locking devices (left + right)',
+        pairs,
+        'Screw under the drawer box at the front; the drawer clips on and off'
+      ]);
+    const ph = (H.handles || {}).none || 0;
+    if (ph)
+      hw.push([
+        'Blum TIP-ON push-to-open (doors) / TIP-ON BLUMOTION (drawers)',
+        ph,
+        'For the handleless fronts: press to open. Use TIP-ON with the 155° or a hinge without BLUMOTION'
+      ]);
+  } else if (HWo.brand === 'blumeco')
+    Object.entries(H.slides).forEach(([l, c]) => {
+      const nl = [250, 300, 350, 400, 450, 500, 550, 600].reverse().find(v => v <= +l);
+      hw.push([
+        `Blum STANDARD 230M roller runners, single extension, NL ${nl || l} (pairs)`,
+        c,
+        '25 kg, self-closing over the last few cm, no soft close. Cabinet part 37 mm from the front on the system holes; the drawer part screws under the lower edge of the box side. The box is 26 mm narrower than the opening'
+      ]);
+    });
+  else
+    Object.entries(H.slides).forEach(([l, c]) =>
+      hw.push([
+        `Full-extension runners ${l} mm, soft-close (pairs)`,
+        c,
+        'System holes 37 mm from the front, 32 mm pitch'
+      ])
+    );
+  Object.entries(H.handles).forEach(([k, c]) => hw.push([HN[k] || k, c, HNote[k] || '']));
+  if (H.pins)
+    hw.push([
+      'Shelf supports Ø5 (metal, with sleeve)',
+      H.pins,
+      '4 per shelf; ' +
+        {
+          needed: 'holes drilled only where each shelf sits',
+          some: 'holes at each shelf ± two 32 mm steps',
+          rows: 'full rows 37 mm from front and back, 32 mm pitch'
+        }[S.opts.pinHoles || 'rows']
+    ]);
+  H.battens.forEach(b =>
+    hw.push([
+      'Battens 45×45 for the panel wall',
+      b.n,
+      `${b.sec}: up to ${b.L} mm each, max 400 mm centres, fixed into the shaft framing or wall`
+    ])
+  );
+  if (H.hatches)
+    hw.push(['Magnetic push latches (access hatch)', H.hatches * 2, 'Keep the shaft reachable without tools']);
+  if (H.tnuts) {
+    hw.push(['M10 hammer-in T-nuts', H.tnuts, 'Fit from the back before the panels go up']);
+    hw.push([
+      'Kids climbing holds + M10 bolts',
+      Math.round(H.tnuts * 0.4),
+      'Start with about 40% of the T-nuts; move holds around later'
+    ]);
+    hw.push(['Crash mat', H.climb ? 1 : 0, 'At least 1 m deep in front of the wall, full width of the climbing area']);
+  }
+  H.funParts.forEach(f => hw.push([f.n, f.q, f.sec]));
+  if (H.ladder) {
+    hw.push([
+      `Library ladder rail Ø28 + end stops + wall brackets`,
+      `${H.ladder.rail} mm`,
+      `At ${H.ladder.h} mm; brackets every 600 mm into partitions or the top rail`
+    ]);
+    hw.push([
+      `${(WOODS[(S.ladder || {}).wood || 'oak'] || WOODS.oak).name} library ladder with rail hooks + floor wheels`,
+      1,
+      `≈${H.ladder.len} mm long at 75°, foot ${H.ladder.foot} mm out from the rail`
+    ]);
+  }
+  H.paint.forEach(p =>
+    hw.push([
+      p.k === 'chalk'
+        ? 'Chalkboard paint'
+        : p.k === 'magnet'
+          ? 'Magnetic primer + chalkboard paint'
+          : 'Pegboard pegs & hooks',
+      p.k === 'peg' ? 'set' : `${p.area.toFixed(2)} m²`,
+      `${p.sec}`
+    ])
+  );
+  H.rails.forEach(r => {
+    hw.push(['Wardrobe rail Ø25 + 2 end sockets', 1, `${r.sec}: ${r.L} mm`]);
+    if (+String(r.L).replace(/[^\d]/g, '') > 1000)
+      hw.push([
+        'Centre support for the wardrobe rail',
+        1,
+        `${r.sec}: a rail over 1 m bends under a full load of clothes — screw the support to the shelf or top above, in the middle`
+      ]);
+  });
+  (H.fit || []).forEach(f => {
+    const F = FITS[f.kind],
+      nm = F.hw(f.w);
+    if (nm) hw.push([nm, f.n, `${f.sec}: inside width ${f0(f.w)} mm — ${F.note}`]);
+  });
+  if (H.legs) hw.push(['Adjustable plinth legs + kick clips', H.legs, `Plinth ${S.skirt.plinth} mm`]);
+  if (H.noLegs)
+    hw.push([
+      'Levelling shims / packers (hardwood or plastic)',
+      'set',
+      +S.skirt.plinth > 0
+        ? `Under the ${S.skirt.plinth} mm base frame (2 rails 45 × ${S.skirt.plinth} mm on edge per box — buy as planed timber)`
+        : 'Under the boxes, to level them on the floor'
+    ]);
+  {
+    const nv = gs.filter(p => p.type === 'Vertical divider').reduce((a, p) => a + p.qty, 0);
+    if (nv && (H.join || {}).type !== 'dowel')
+      hw.push([
+        'Beech dowels Ø8 × 35 + wood glue (vertical dividers)',
+        nv * 4,
+        '2 at the top and 2 at the bottom of each vertical divider'
+      ]);
+  }
+  if (H.wallHang || H.brackets)
+    hw.push([
+      'Adjustable cabinet hangers + wall rail (e.g. Camar 807)',
+      H.wallHang || H.brackets,
+      '2 per box, top-back corners; rail into studs or masonry plugs'
+    ]);
+  if (H.boxJoins)
+    hw.push([
+      'Cabinet connector bolts Ø5 (sleeve + screw, 30–37 mm)',
+      H.boxJoins * 4,
+      '4 per joint, 37 mm in from front and back'
+    ]);
+  (H.drench || []).forEach(d =>
+    hw.push([
+      d.cub
+        ? `Paint ${FIN[d.fin].name} (inside of the contrast cubbies)`
+        : d.out
+          ? `Paint ${FIN[d.fin].name} (colour-drenched level: the outside of this side panel)`
+          : `Paint ${FIN[d.fin].name} (colour-drenched level: inside of sides, top and bottom — the underside of the cabinet top too)`,
+      `${d.area.toFixed(2)} m²`,
+      `${d.sec}: sand the melamine and use a bonding primer first`
+    ])
+  );
+  H.angles.forEach(a =>
+    hw.push(['Steel angle 40×40×4 under rear header rail', 1, `${a.sec}: ${a.L} mm, screwed to wall every 400 mm`])
+  );
+  if (H.grommets) hw.push(['Cable grommet Ø60–80', H.grommets, 'Behind the TV / in the desk top']);
+  H.slide.forEach(r =>
+    hw.push(['Top-hung sliding door track + runners', 1, `${r.sec}: ${r.L} mm track, ${r.n} doors, soft-close`])
+  );
+  if (H.pocket)
+    hw.push([
+      'Pocket door system (pair of slides)',
+      Math.ceil(H.pocket / 2),
+      'Doors open, then slide back into the cabinet sides'
+    ]);
+  if (H.screen) {
+    hw.push([
+      `Projector screen, electric roll-down, ${H.screen.diag}″ 16:9 (picture ${H.screen.w} × ${H.screen.h} mm)`,
+      1,
+      `Cassette up to ${H.screen.cas} × ${H.screen.cas} mm and about ${H.screen.cl} mm long, with ceiling brackets — it hangs under the carrier board of the screen drawer. Tab-tensioned keeps the picture flat`
+    ]);
+    hw.push([
+      `Heavy-duty full-extension runners ${H.screen.rl} mm, 45 kg (pair)`,
+      1,
+      `For the ${H.screen.len} mm wide screen drawer; fit a stop so it comes out ${H.screen.pull} mm`
+    ]);
+    hw.push(['Flexible cable chain or coiled power lead', 1, 'Lets the motor cable follow the drawer in and out']);
+    hw.push(['Power socket inside the housing', 1, 'For the screen motor — have it fitted before the cabinets go in']);
+  }
+  (H.dog || []).forEach(d => {
+    hw.push([`Dog cushion ${d.w} × ${d.d} mm, washable cover`, 1, `${d.sec}: lay a wipe-clean mat or vinyl under it`]);
+  });
+  H.led.forEach(r =>
+    hw.push(['LED strip 24 V warm white (2700 K) in aluminium profile', 1, `${r.sec}: ${r.L} mm — ${r.why}`])
+  );
+  if (H.led.length)
+    hw.push([
+      'LED driver 24 V + switch/door sensor',
+      Math.max(1, Math.ceil(H.led.length / 4)),
+      'One driver feeds about 4 strips'
+    ]);
+  if (H.flegs) hw.push(['Furniture legs (tapered)', H.flegs, 'Screw-on mounting plates under the bottom panel']);
+  if (H.cleats) hw.push(['French cleat / hanging rail', H.cleats, 'Wall-hung units — into studs or masonry plugs']);
+  if (H.ped) hw.push(['Pedestal levelling feet', H.ped * 2, 'Under the front of the desk pedestal']);
+  if (H.ledges) hw.push(['Lip strip 30 × 12 mm', H.ledges, 'Along the front of each picture ledge']);
+  H.curtain.forEach(c => hw.push(['Curtain track + gliders', 1, `${c.sec}: ${f0(c.w / 2.2)} mm track`]));
+  if (H.baffles)
+    hw.push(['Speaker baffles', H.baffles, 'Drivers not included; check cut-out Ø on the driver datasheet']);
+  (H.passage || []).forEach(d =>
+    hw.push([
+      d.style === 'open'
+        ? 'Open doorway (lined)'
+        : d.style === 'hidden'
+          ? 'Hidden door: 40 mm solid-core blank + 3 concealed door hinges + magnetic push latch'
+          : d.style === 'hallway'
+            ? 'Door at the wall end of the hallway: 40 mm solid-core blank, 3 butt hinges, lever + latch'
+            : 'Door: 40 mm solid-core blank, 3 butt hinges, lever + latch',
+      1,
+      `${d.sec}: leaf ${d.w}×${d.h} mm`
+    ])
+  );
+  if (H.noBack)
+    hw.push([
+      'Wall fixing cleats (no-back columns)',
+      H.noBack * 2,
+      'Columns without a back need a rear cleat top and bottom; paint or finish the wall first'
+    ]);
+  if (H.cane.length || H.glass.length || H.curtain.length || H.cushion.length) {
+    h +=
+      `<h3>Inserts &amp; soft parts</h3><div class="tw"><table class="cut" style="min-width:480px"><thead><tr><th>Item</th><th>Size</th><th>Where</th></tr></thead><tbody>` +
+      H.cane
+        .map(
+          c =>
+            `<tr><td>Cane webbing (pre-woven, soak before fitting)</td><td class="n">${c.w} × ${c.h}</td><td class="note">${c.sec}</td></tr>`
+        )
+        .join('') +
+      H.glass
+        .map(
+          c =>
+            `<tr><td>Fluted (reeded) glass 4 mm, toughened</td><td class="n">${c.w} × ${c.h}</td><td class="note">${c.sec}</td></tr>`
+        )
+        .join('') +
+      H.curtain
+        .map(
+          c =>
+            `<tr><td><span class="sw" style="background:${FABRICS[c.col].c}"></span> Curtain, ${FABRICS[c.col].name} (2.2× fullness)</td><td class="n">${c.w} × ${c.h}</td><td class="note">${c.sec}</td></tr>`
+        )
+        .join('') +
+      H.cushion
+        .map(
+          c =>
+            `<tr><td><span class="sw" style="background:${FABRICS[c.col].c}"></span> Seat cushion 80 mm foam, ${FABRICS[c.col].name} cover</td><td class="n">${c.w} × ${c.d}</td><td class="note">${c.sec}</td></tr>`
+        )
+        .join('') +
+      `</tbody></table></div>`;
+  }
+  h += `<h3>Hardware</h3><div class="tw"><table class="cut hwt" style="min-width:480px"><thead><tr><th>Item</th><th>Qty</th><th>Notes</th></tr></thead><tbody>${hw.map(r => `<tr><td>${esc(r[0])}</td><td class="n">${r[1]}</td><td class="note">${esc(r[2])}</td></tr>`).join('')}</tbody></table></div>`;
+  lastPrice = priceRows(nest, sp, hw, mats);
+  lastPrice.nest = nest;
+  lastPrice.shops = ['best', ...Object.keys(SHOPS)].map(k => {
+    const t = k === lastPrice.tot.shop ? lastPrice.tot : priceRows(nest, sp, hw, mats, k).tot;
+    return { k, total: t.all, fb: t.fb };
+  });
+  lastAlt = null;
+  if (ROLES.some(([k]) => k !== 'back' && S.mat[k].type === 'melamine')) {
+    const keep = S.opts.stock,
+      was = !!(keep && keep.on);
+    try {
+      setStockAll(!was);
+      lastAlt = { on: !was, total: priceRows(nestAll(gs), stockPlan(gs), hw, mats).tot.all };
+    } catch (e) {
+      oops('cutlist #1', e);
+    }
+    S.opts.stock = keep;
+    if (keep === undefined) delete S.opts.stock;
+  }
+  h += '</section><section data-psec="price">' + priceHTML(lastPrice) + msHTML(nest) + '</section>';
+  if (PRICING) return;
+  el.innerHTML = partBar() + h;
+  budSoon();
+  {
+    const pv = document.getElementById('pstatv');
+    if (pv) pv.textContent = eur(lastPrice.tot.all);
+  }
 }

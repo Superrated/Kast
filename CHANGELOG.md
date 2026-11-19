@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.114
+
+Under the hood: sturdier, easier to work on. The cut lists, prices and drawings are unchanged (checked by the new tests).
+
+- **Automatic tests** (`tests/`): 23 saved designs (the 9 starters plus 14 random walls with slanted ceilings, beams, narrow and wide rooms). For each, the built page works out the cut list, hardware, design notes, price and 3D links and compares them with the saved results; the starters also go through every tab, the workshop 3D, the drawing sheets, the DXF and both shop forms. Run `python3 build.py && python3 tests/run.py`.
+- **Problems are no longer hidden**: about 135 places that used to skip an error silently now report it (console, and a short notice the first time). The tests fail on any reported problem.
+- **Holes and hardware in 3D on more parts**: the link between a cut-list part and its 3D board now allows for fractions of a millimetre (slanted parts), prefers the part's own column, and never links a board of another thickness (two glued 18 mm header layers are not "the" 36 mm block). Glass and other framed doors are linked through their stiles, so their hinge cups and hinges now show in the exploded views.
+- **Your settings on every device**: your details for the shop forms, the "let the shop drill" choice, the 3D switches, the last Parts/Drawings page, language, simple/expert panel and your own boards and colours are kept in your private space (only you can read it) and follow you to every device where you're signed in.
+- **Readable code**: the source is laid out one statement per line (prettier, `.prettierrc.json`); the published page is shrunk by the build (terser) — about 10% smaller to download.
+- **3D library** updated from three.js r128 to r159, with settings that keep exactly the same colours and light.
+- Removed two leftover files (`art.html`, an old v0.72 copy, and an empty `wrap3.html`).
+
 ## v0.113
 
 - **Prices updated on 19 November 2026 (second check):** boards and furniture panels at Hanssens Hout and Woodcenter unchanged; Blum hinges, plates and TANDEM runners unchanged. Hardware: Minifix connectors € 0.55 (typical) → € 1.25 (Hubo); full-extension runners € 19 (typical) → € 21.29 a pair (Hubo).

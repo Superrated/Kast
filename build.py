@@ -9,8 +9,10 @@ The source is split into small files so it is easy to read and extend:
   src/prices.js    every price, copied in at the /*@PRICES@*/ marker
   src/lang.js      translations, copied in at the /*@LANG@*/ marker
 
-Run:  python3 build.py           → writes index.html
+Run:  python3 build.py           → writes index.html (program shrunk with terser when Node.js is there)
+      python3 build.py --plain   → writes index.html without shrinking (readable, bigger)
       python3 build.py --source  → prints the assembled source (for tests)
+Then: python3 tests/run.py       → checks the built page (see tests/run.py)
 """
 import re, sys, pathlib
 root = pathlib.Path(__file__).parent
@@ -49,27 +51,61 @@ def shop_forms():
     return json.dumps(forms)
 
 
-def assemble():
+def program():
+    """The JavaScript of the app: src/js/*.js in file-name order, with the prices, translations and shop forms copied in."""
+    js = "".join(p.read_text(encoding="utf-8") for p in sorted((root / "src" / "js").glob("*.js")))
+    if re.search(r"/\*@FORMS@\*/\s*null", js):
+        forms = shop_forms()
+        js = re.sub(r"/\*@FORMS@\*/\s*null", lambda m: forms, js, count=1)
+    for marker, name in (("/*@PRICES@*/", "prices.js"), ("/*@LANG@*/", "lang.js")):
+        assert marker in js, marker + " missing in src/js"
+        js = js.replace(marker, read("src", name), 1)
+    return js
+
+
+def assemble(js=None, css=None):
     """The whole app as one page (without the <html>/<head>/<body> wrapper)."""
     page = read("src", "app.html")
-    css = "".join(p.read_text(encoding="utf-8") for p in sorted((root / "src" / "css").glob("*.css")))
-    js = "".join(p.read_text(encoding="utf-8") for p in sorted((root / "src" / "js").glob("*.js")))
+    css = css if css is not None else "".join(p.read_text(encoding="utf-8") for p in sorted((root / "src" / "css").glob("*.css")))
+    js = js if js is not None else program()
     assert "<!--@CSS@-->" in page and "<!--@JS@-->" in page, "markers missing in src/app.html"
-    src = page.replace("<!--@CSS@-->", css, 1).replace("<!--@JS@-->", js, 1)
-    if "/*@FORMS@*/null" in src:
-        src = src.replace("/*@FORMS@*/null", shop_forms(), 1)
-    for marker, name in (("/*@PRICES@*/", "prices.js"), ("/*@LANG@*/", "lang.js")):
-        assert marker in src, marker + " missing in src/js"
-        src = src.replace(marker, read("src", name), 1)
-    return src
+    return page.replace("<!--@CSS@-->", css, 1).replace("<!--@JS@-->", js, 1)
+
+
+def shrink_js(js):
+    """Makes the program smaller for the published page with terser (needs Node.js; npx fetches terser once).
+    Only names inside functions are shortened, so every global name (build, S, geo …) stays the same.
+    Without Node.js the page is built unshrunk, which works the same, only bigger."""
+    import subprocess, shutil, tempfile
+    if "--plain" in sys.argv or not shutil.which("npx"):
+        return js, False
+    with tempfile.TemporaryDirectory() as d:
+        src, out = pathlib.Path(d, "in.js"), pathlib.Path(d, "out.js")
+        src.write_text(js, encoding="utf-8")
+        cmd = ["npx", "--yes", "terser@5", str(src), "-o", str(out), "--ecma", "2020", "--compress", "passes=1,keep_fargs=true,keep_fnames=true", "--mangle", "--comments", "false"]
+        try:
+            subprocess.run(cmd, check=True, capture_output=True, timeout=300)
+            return out.read_text(encoding="utf-8"), True
+        except Exception as e:
+            print("note: could not shrink the program (", e, ") — building it unshrunk")
+            return js, False
+
+
+def shrink_css(css):
+    """Removes comments and spare spaces from the styles."""
+    css = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
+    css = re.sub(r"\s+", " ", css)
+    return re.sub(r"\s*([{};])\s*", r"\1", css).strip()
 
 
 if "--source" in sys.argv:
     sys.stdout.write(assemble())
     sys.exit(0)
 
-src = assemble()
-version = re.search(r"const APP_VERSION='([^']+)'", src).group(1)
+js = program()
+version = re.search(r"const APP_VERSION\s*=\s*'([^']+)'", js).group(1)
+js, shrunk = shrink_js(js)
+src = assemble(js, shrink_css("".join(p.read_text(encoding="utf-8") for p in sorted((root / "src" / "css").glob("*.css")))) if shrunk else None)
 # the version shown in the header and on the loading screen comes from APP_VERSION
 src = src.replace("__KAST_VERSION__", version)
 
@@ -107,4 +143,4 @@ page = f"""<!doctype html>
 sw = (root / "sw.js").read_text(encoding="utf-8")
 sw = re.sub(r"const VERSION='[^']*'", f"const VERSION='{version}'", sw)
 (root / "sw.js").write_text(sw, encoding="utf-8")
-print("built index.html for Fitted", version, f"({len(page)//1024} kB)")
+print("built index.html for Fitted", version, f"({len(page)//1024} kB{', shrunk' if shrunk else ''})")

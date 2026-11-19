@@ -5,298 +5,1969 @@
 /*@PRICES@*/
 /*@LANG@*/
 /* "Update prices" — starts the cloud task that looks the board prices up again at the shops in prices.js and republishes the app */
-const PRICE_TASK='trig_01PyPs4zoDR2bGAJ6uxmfCRX';let priceMcp=null;
-try{if(window.claude&&typeof window.claude.use==='function')window.claude.use('mcp').then(m=>{priceMcp=m||null;if(m&&ui.tab==='cut'){dirty.cut=true;try{renderCut()}catch(e){}}}).catch(()=>{})}catch(e){}
+const PRICE_TASK = 'trig_01PyPs4zoDR2bGAJ6uxmfCRX';
+let priceMcp = null;
+try {
+  if (window.claude && typeof window.claude.use === 'function')
+    window.claude
+      .use('mcp')
+      .then(m => {
+        priceMcp = m || null;
+        if (m && ui.tab === 'cut') {
+          dirty.cut = true;
+          try {
+            renderCut();
+          } catch (e) {
+            oops('prices-budget #1', e);
+          }
+        }
+      })
+      .catch(() => {});
+} catch (e) {
+  oops('prices-budget #2', e);
+}
 /* ===== who may run the online price check: only the owner of the app. Everyone else types their own prices. ===== */
-let IS_OWNER=false;try{if(window.claude&&claude.use)claude.use('user').then(u=>u&&u.isOwner?u.isOwner():false).then(v=>{IS_OWNER=!!v;if(ui.tab==='cut'){dirty.cut=true;try{renderCut()}catch(e){}}}).catch(()=>{})}catch(e){}
+let IS_OWNER = false;
+try {
+  if (window.claude && claude.use)
+    claude
+      .use('user')
+      .then(u => (u && u.isOwner ? u.isOwner() : false))
+      .then(v => {
+        IS_OWNER = !!v;
+        if (ui.tab === 'cut') {
+          dirty.cut = true;
+          try {
+            renderCut();
+          } catch (e) {
+            oops('prices-budget #3', e);
+          }
+        }
+      })
+      .catch(() => {});
+} catch (e) {
+  oops('prices-budget #4', e);
+}
 /* price level: €–€€€€€ */
-function eurs(n,plain){n=Math.max(1,Math.min(5,Math.round(n)));return plain?'€'.repeat(n):`<span class="euros" title="Price level ${n} of 5">${'€'.repeat(n)}<i>${'€'.repeat(5-n)}</i></span>`}
-function boardLevel(t){const P=PRICE_M2[t]||{};const my=+((S.opts.myM2||{})[t])||0,p=my||(SHOP_M2[t]?Math.min(...Object.values(SHOP_M2[t])):P.p||20);return p<12?1:p<20?2:p<46?3:p<80?4:5}
-const HW_LEVEL={brand:{blumeco:1,generic:2,blum:3},hinge:{'110':3,'155':4},runner:{tandem:3,movento:5},joinery:{screw:1,confirmat:1,dowel:2,minifix:3}};
-function myPricesHTML(nest){const types=[...new Set((nest||[]).map(n=>n.mt))],my=S.opts.myM2||{};
-  return `<details class="pf mypr"${IS_OWNER?'':' open'}><summary>Your own prices</summary><p class="hintp">Type what your shop asks. Board prices are per m² (a 2800 × 2070 sheet is 5.8 m²). Hardware: type your price in any row of the list below. Shipping: per shop, in the table under “Per shop”.</p>
-  <div class="grid2">${types.map(t=>{const P=PRICE_M2[t]||{},g=SHOP_M2[t]?Math.min(...Object.values(SHOP_M2[t])):P.p;return `<label class="fld"><span>${esc((MATS[t]||{}).name||t)} ${eurs(boardLevel(t))}</span><span class="inp"><input type="number" inputmode="decimal" step="0.01" min="0" data-mym2="${t}" value="${my[t]||''}" placeholder="${g?(+g).toFixed(2):''}"><em>€/m²</em></span></label>`}).join('')}</div></details>`}
-function shopsHTML(P){const sh=P.rows.shops||{},my=S.opts.ship||{},ks=Object.keys(sh);if(!ks.length)return '';
-  return `<details class="pf"><summary>Per shop · delivery costs</summary><div class="tw"><table class="cut" style="min-width:420px"><thead><tr><th>Shop / website</th><th>Lines</th><th>Goods</th><th>Delivery</th><th>Total</th></tr></thead><tbody>${ks.sort((a,b)=>sh[b].sub-sh[a].sub).map(k=>{const d=SHIP[k]||{p:7.95,est:1},v=my[k]!=null&&my[k]!==''?+my[k]:d.p;return `<tr><td>${esc(k)}</td><td class="n">${sh[k].n}</td><td class="n">${eur(sh[k].sub)}</td><td class="n"><span class="pin">€<input type="number" inputmode="decimal" step="0.01" min="0" data-ship="${esc(k)}" value="${my[k]!=null?my[k]:''}" placeholder="${(+d.p).toFixed(2)}" aria-label="Delivery cost from ${esc(k)}"></span><small class="fin">${esc(d.note||'')}</small></td><td class="n">${eur(sh[k].sub+v)}</td></tr>`}).join('')}</tbody></table></div><p class="hintp" style="margin:0">Shops you visit yourself cost nothing to deliver; type 0 when you collect, or the delivery price the shop quotes. Buying everything from fewer shops saves on delivery.</p></details>`}
-document.addEventListener('change',e=>{const el=e.target;if(!el||!el.dataset)return;const t=el.dataset.mym2,sh=el.dataset.ship;if(t==null&&sh==null)return;
-  if(t!=null){S.opts.myM2=S.opts.myM2||{};const v=parseFloat(el.value);if(v>0)S.opts.myM2[t]=v;else delete S.opts.myM2[t]}
-  else{S.opts.ship=S.opts.ship||{};if(el.value==='')delete S.opts.ship[sh];else S.opts.ship[sh]=Math.max(0,parseFloat(el.value)||0)}
-  saveSoon();snap();dirty.cut=true;if(ui.tab==='cut'){const sc=document.getElementById('v-cut'),y=sc.scrollTop,py=window.scrollY;renderCut();sc.scrollTop=y;window.scrollTo(0,py)}priceSoon();toast('Price updated')});
-function priceUpdHTML(){const st=ui.priceUpd||'',msg={busy:'Starting…',started:'The price check has started. It takes about 15–30 minutes; then the app is updated by itself — reload it to see the new prices.',reauth:'Claude Code needs to be connected again: open claude.ai → Settings → Connectors, then try again.',noconn:'This needs the Claude Code connector in your claude.ai account (Settings → Connectors).',approval:'Claude asks you to allow this the first time — tap the button again and choose Allow.',policy:'Your organisation does not allow this here.',fail:'The price check could not be started. Try again in a minute.',maybe:'Not sure the price check started — wait a few minutes before trying again.'}[st]||'';
-  if(!IS_OWNER)return `<div class="pbud"><span class="pbok">Prices</span><span>Guide prices from Belgian shops (${PRICE_DATE}). Prices change — type your own below for the most accurate total.</span></div>`;
-  if(!priceMcp)return `<div class="pbud"><span class="pbok">Prices</span><span>Last looked up on ${PRICE_DATE} at ${Object.values(SHOPS).join(' and ')}. To look them up again, open the app in Claude and use “Update prices”.</span></div>`;
-  return `<div class="pbud"><button type="button" class="btn" data-act="priceUpd" ${st==='busy'||st==='started'?'disabled':''}>Update prices</button><span>${msg||`Looks every board price up again at ${Object.values(SHOPS).join(' and ')} (last time: ${PRICE_DATE}), saves them in the price list and updates the app.`}</span></div>`}
-async function priceUpd(){if(!priceMcp||ui.priceUpd==='busy')return;ui.priceUpd='busy';dirty.cut=true;renderCut();
-  try{await priceMcp.callTool('Claude Code Remote','fire_trigger',{trigger_id:PRICE_TASK,text:'Started from the Update prices button in the app.'});ui.priceUpd='started'}
-  catch(e){const c=e&&e.code;ui.priceUpd=c==='needs_reauth'?'reauth':(c==='server_not_connected'||c==='server_not_found'||c==='not_in_manifest')?'noconn':(c==='approval_required'||c==='not_granted'||c==='consent_required'||c==='cancelled')?'approval':c==='blocked_by_policy'?'policy':(c==='server_unavailable'||c==='upstream_error')?'maybe':'fail'}
-  dirty.cut=true;if(ui.tab==='cut')renderCut()}
-function stockPrice(W,shop){const one=k=>{const t=STOCK_PRICES[k];if(!t)return null;const ws=Object.keys(t).map(Number),w=ws.reduce((a,b)=>Math.abs(b-W)<Math.abs(a-W)?b:a);return {u:t[w]*(W/w),w,src:SHOPS[k]}};
-  if(shop==='best'){const r=Object.keys(STOCK_PRICES).map(one).filter(Boolean).sort((a,b)=>a.u-b.u)[0];return Object.assign(r,{fb:false})}const r=one(shop);return r?Object.assign(r,{fb:false}):Object.assign(one('hh'),{fb:true})}
-function shopPrice(key,shop){const t=SHOP_M2[key];if(!t)return null;if(shop==='best'){const k=Object.keys(t).reduce((a,b)=>t[b]<t[a]?b:a);return {p:t[k],src:SHOPS[k],fb:false}}return t[shop]!=null?{p:t[shop],src:SHOPS[shop],fb:false}:{p:t.hh,src:SHOPS.hh,fb:true}}
-const curShop=()=>SHOPS[S.opts.shop]||S.opts.shop==='best'?S.opts.shop:'best';
-const pKey=k=>String(k).replace(/[^A-Za-z0-9]+/g,'_');
-function priceRows(nest,sp,hw,mats,shopO){const shop=shopO||curShop();let fbN=0;const ov=(S.opts.prices&&typeof S.opts.prices==='object')?S.opts.prices:{},rows=[];
-  const add=(grp,key,name,qty,unitLbl,unit,src,est,ref)=>{const k=pKey(key),o=+ov[k]>0?+ov[k]:null,u=o!=null?o:unit;rows.push({grp,k,name,qty,unitLbl,unit:u,dflt:unit,mine:o!=null,shop:src||'',src:o!=null?'your price':(est?'typical':src),est:!!est&&o==null,ref,total:u!=null?u*qty:null})};
-  nest.forEach(n=>{const P=PRICE_M2[n.mt]||PRICE_M2.melamine,sh=n.sh||{},area=(sh.L||2800)*(sh.W||2070)/1e6,f=FIN[n.fin]||{};const thin=n.mt==='hdf'&&+n.t<=4,sq=shopPrice(thin?'hdf3':n.mt==='hdf'?'':n.mt,shop);if(sq&&sq.fb)fbN++;let m2=(sq?sq.p:P.p)*(thin?1:(1+0.6*((+n.t||P.t)/P.t-1))),est=!thin&&(!!P.est||Math.abs((+n.t||P.t)-P.t)>1.5);if(n.mt==='veneer'&&n.fin!=='oak'){m2*=n.fin==='walnut'?1.35:1.15;est=true}
-    const my_=+((S.opts.myM2||{})[n.mt])||0,cu_=!!(MATS[n.mt]&&MATS[n.mt].custom);if(my_>0){m2=my_;est=false}const cnt=n.sheets.length+(n.over&&n.over.length?1:0);const uo=typeof msOffer==='function'?msOffer(n):null;
-    if(uo&&cnt){add('Sheets','m_'+n.mt+'_'+n.fin+'_'+n.t,`${n.name} mm sheet, ${n.sheet.replace('x',' × ')}`,cnt,'sheet',uo.unit,uo.shop.name,false,`Your price at ${uo.shop.name}: € ${(+uo.o.price).toFixed(2)} for a ${uo.o.sheet.replace('x',' × ')} sheet${uo.o.note?' · '+uo.o.note:''}`);
-      if(+uo.shop.cutEach>0){const cuts=(n.parts||[]).length*2+cnt;(rows._cuts=rows._cuts||{})[uo.shop.name]=((rows._cuts||{})[uo.shop.name]||0)+cuts}if(+uo.shop.edgeM>0){(rows._edge=rows._edge||{})[uo.shop.name]=(rows._edge[uo.shop.name]||0)+cnt}return}
-    if(cnt)add('Sheets','m_'+n.mt+'_'+n.fin+'_'+n.t,`${n.name} mm sheet, ${n.sheet.replace('x',' × ')}`,cnt,'sheet',Math.round(m2*area*100)/100,cu_?'':(sq?sq.src:P.src),cu_?my_<=0:est,cu_?'':P.ref)});
-  (sp.groups||[]).forEach(g=>{const white=(FIN[g.fin]||{}).ral&&lum((FIN[g.fin]||{}).base||'#fff')>0.8,L=(sp.cfg&&sp.cfg.L)||2500,sq=stockPrice(g.W,shop);if(sq.fb)fbN++;const w=sq.w;let u=sq.u*(L/2500)*(1+0.6*((+g.t||18)/18-1));if(!white)u*=2.1;
-    add('Sheets','s_'+g.fin+'_'+g.t+'_'+g.W,`${FIN[g.fin]?.name||''} ${g.t} mm pre-edged furniture panel, ${g.W} × ${L}`,g.bars.length,'board',Math.round(u*100)/100,sq.src,!white||Math.abs(w-g.W)>5||+g.t!==18||L!==2500,'White 18 mm furniture panels 2500 long — '+Object.entries(STOCK_PRICES).map(([k,t])=>SHOPS[k]+': '+Object.entries(t).map(([a,b])=>a+' € '+b).join(' · ')).join(' | '))});
-  let band=-(sp.saved||0),paint=0,micro=0;Object.values(mats||{}).forEach(m=>{if(!m.paint&&!m.micro)band+=m.band||0;if(m.paint)paint+=(m.area||0)*2+(m.peri||0);if(m.micro)micro+=(m.mA||0)+(m.vis||0)});
-  {const eS=rows._edge?Object.entries(rows._edge).sort((a,b)=>b[1]-a[1])[0]:null,es=eS&&MS.shops.find(x=>x.name===eS[0]);
-    if(band>0.5){if(es&&+es.edgeM>0)add('Finishing','edge',`Edge banding at ${es.name}, incl. 10 % waste`,Math.ceil(band*1.1),'m',+es.edgeM,es.name,false,`Your price at ${es.name}: € ${(+es.edgeM).toFixed(2)} per metre`);else add('Finishing','edge','Edge banding (ABS 1 mm or veneer), incl. 10 % waste',Math.ceil(band*1.1),'m',FINISH_PRICE.edge.p,FINISH_PRICE.edge.src||'',FINISH_PRICE.edge.est,FINISH_PRICE.edge.ref)}}
-  Object.entries(rows._cuts||{}).forEach(([nm,c])=>{const sh=MS.shops.find(x=>x.name===nm);if(sh)add('Finishing','cut_'+nm,`Cutting service at ${nm} (about ${c} cuts)`,c,'cut',+sh.cutEach,nm,false,`Your price at ${nm}: € ${(+sh.cutEach).toFixed(2)} per cut — the number of cuts is an estimate`)});
-  if(micro>0.2)add('Finishing','micro','Microcement on the visible sides (front face + visible edges): primer, base coat, 2 finish coats, PU varnish, incl. 15 % waste',Math.ceil(micro*1.15),'m²',FINISH_PRICE.micro.p,FINISH_PRICE.micro.src||'',FINISH_PRICE.micro.est,FINISH_PRICE.micro.ref);
-  if(paint>0.5)add('Finishing','paint',false?'':'Primer + two coats of lacquer for the painted MDF',Math.ceil(paint),'m²',FINISH_PRICE.paint.p,FINISH_PRICE.paint.src||'',FINISH_PRICE.paint.est,FINISH_PRICE.paint.ref);
-  hw.forEach((r,i)=>{const nm=String(r[0]),q=r[1];if(/Finger (hole|slot|groove)|Speaker baffles|Back panel in groove|Open doorway|groove pull|Handleless/i.test(nm))return;let rule=PRICE_HW.find(x=>x[0].test(nm));if(!rule&&/handle|pull|knob|grip|cup|profile|bar/i.test(nm))rule=[null,isBudget()&&isWoodHandle(S.opts.handle)?HANDLE_PRICE.wood:HANDLE_PRICE.other,1];
-    let qty=typeof q==='number'?q:null,unitLbl='pc';if(qty==null){const sq=String(q),a=parseFloat(sq);if(/m²/.test(sq)){qty=a;unitLbl='m²'}else if(/mm/.test(sq)){qty=a/1000;unitLbl='m'}else if(isFinite(a))qty=a;else if(sq==='set')qty=1;else return}
-    if(rule&&rule[4]==='m'&&unitLbl!=='m'){unitLbl='pc'}if(!(qty>0))return;
-    if(!rule){rows.push({grp:'Hardware',k:pKey('h_'+nm.slice(0,40)),name:nm,qty,unitLbl,unit:(+ov[pKey('h_'+nm.slice(0,40))]>0?+ov[pKey('h_'+nm.slice(0,40))]:null),dflt:null,mine:+ov[pKey('h_'+nm.slice(0,40))]>0,src:+ov[pKey('h_'+nm.slice(0,40))]>0?'your price':'not priced',est:false,total:+ov[pKey('h_'+nm.slice(0,40))]>0?+ov[pKey('h_'+nm.slice(0,40))]*qty:null});return}
-    add('Hardware','h_'+nm.slice(0,40),nm,qty,unitLbl,rule[1],rule[3]||'',rule[2],rule[3]?`${rule[3]} webshop, € ${rule[1].toFixed(2)} each`:'Typical trade price — not looked up')});
-  {const shops={};rows.forEach(r=>{if(r.total==null)return;const k=r.shop||'';if(!k)return;(shops[k]=shops[k]||{n:0,sub:0}).n++;shops[k].sub+=r.total});const my=S.opts.ship||{};
-    Object.entries(shops).forEach(([k,o])=>{const ms_=typeof msShip==='function'?msShip(k,o.sub):null;if(ms_){const mine=my[k]!=null&&my[k]!=='',u=mine?+my[k]:ms_.u;rows.push({grp:'Shipping',k:'ship_'+k,name:ms_.name,qty:1,unitLbl:'pc',unit:u,dflt:ms_.u,mine,shop:k,src:mine?'your price':k,est:false,ref:ms_.ref,total:u,ship:1});return}
-      const d=SHIP[k]||{p:7.95,est:1,note:'typical webshop delivery'},u=my[k]!=null&&my[k]!==''?+my[k]:d.p;if(u>0||my[k]!=null)rows.push({grp:'Shipping',k:'ship_'+k,name:`Delivery from ${k}`,qty:1,unitLbl:'pc',unit:u,dflt:d.p,mine:my[k]!=null&&my[k]!=='',shop:k,src:my[k]!=null&&my[k]!==''?'your price':d.est?'typical':k,est:!!d.est&&my[k]==null,ref:d.note,total:u,ship:1})});rows.shops=shops}
-  const sum=g=>rows.filter(r=>r.grp===g&&r.total!=null).reduce((a,r)=>a+r.total,0),tot={sheets:sum('Sheets'),fin:sum('Finishing'),hw:sum('Hardware'),ship:sum('Shipping')};tot.all=tot.sheets+tot.fin+tot.hw+tot.ship;tot.est=rows.filter(r=>r.est&&r.total!=null).reduce((a,r)=>a+r.total,0);tot.none=rows.filter(r=>r.total==null).length;tot.fb=fbN;tot.shop=shop;
-  return {rows,tot}}
-function nearRal(fin){const f=FIN[fin];if(!f||f.ral)return f?fin:'ral9010';const h=x=>[1,3,5].map(i=>parseInt(x.slice(i,i+2),16)),a=h(f.base);let best='ral9010',bd=1e9;Object.entries(FIN).forEach(([k,v])=>{if(!v.ral||!/^#[0-9a-f]{6}$/i.test(v.base))return;const b=h(v.base),d=(a[0]-b[0])**2+(a[1]-b[1])**2+(a[2]-b[2])**2;if(d<bd){bd=d;best=k}});return best}
+function eurs(n, plain) {
+  n = Math.max(1, Math.min(5, Math.round(n)));
+  return plain
+    ? '€'.repeat(n)
+    : `<span class="euros" title="Price level ${n} of 5">${'€'.repeat(n)}<i>${'€'.repeat(5 - n)}</i></span>`;
+}
+function boardLevel(t) {
+  const P = PRICE_M2[t] || {};
+  const my = +(S.opts.myM2 || {})[t] || 0,
+    p = my || (SHOP_M2[t] ? Math.min(...Object.values(SHOP_M2[t])) : P.p || 20);
+  return p < 12 ? 1 : p < 20 ? 2 : p < 46 ? 3 : p < 80 ? 4 : 5;
+}
+const HW_LEVEL = {
+  brand: { blumeco: 1, generic: 2, blum: 3 },
+  hinge: { 110: 3, 155: 4 },
+  runner: { tandem: 3, movento: 5 },
+  joinery: { screw: 1, confirmat: 1, dowel: 2, minifix: 3 }
+};
+function myPricesHTML(nest) {
+  const types = [...new Set((nest || []).map(n => n.mt))],
+    my = S.opts.myM2 || {};
+  return `<details class="pf mypr"${IS_OWNER ? '' : ' open'}><summary>Your own prices</summary><p class="hintp">Type what your shop asks. Board prices are per m² (a 2800 × 2070 sheet is 5.8 m²). Hardware: type your price in any row of the list below. Shipping: per shop, in the table under “Per shop”.</p>
+  <div class="grid2">${types
+    .map(t => {
+      const P = PRICE_M2[t] || {},
+        g = SHOP_M2[t] ? Math.min(...Object.values(SHOP_M2[t])) : P.p;
+      return `<label class="fld"><span>${esc((MATS[t] || {}).name || t)} ${eurs(boardLevel(t))}</span><span class="inp"><input type="number" inputmode="decimal" step="0.01" min="0" data-mym2="${t}" value="${my[t] || ''}" placeholder="${g ? (+g).toFixed(2) : ''}"><em>€/m²</em></span></label>`;
+    })
+    .join('')}</div></details>`;
+}
+function shopsHTML(P) {
+  const sh = P.rows.shops || {},
+    my = S.opts.ship || {},
+    ks = Object.keys(sh);
+  if (!ks.length) return '';
+  return `<details class="pf"><summary>Per shop · delivery costs</summary><div class="tw"><table class="cut" style="min-width:420px"><thead><tr><th>Shop / website</th><th>Lines</th><th>Goods</th><th>Delivery</th><th>Total</th></tr></thead><tbody>${ks
+    .sort((a, b) => sh[b].sub - sh[a].sub)
+    .map(k => {
+      const d = SHIP[k] || { p: 7.95, est: 1 },
+        v = my[k] != null && my[k] !== '' ? +my[k] : d.p;
+      return `<tr><td>${esc(k)}</td><td class="n">${sh[k].n}</td><td class="n">${eur(sh[k].sub)}</td><td class="n"><span class="pin">€<input type="number" inputmode="decimal" step="0.01" min="0" data-ship="${esc(k)}" value="${my[k] != null ? my[k] : ''}" placeholder="${(+d.p).toFixed(2)}" aria-label="Delivery cost from ${esc(k)}"></span><small class="fin">${esc(d.note || '')}</small></td><td class="n">${eur(sh[k].sub + v)}</td></tr>`;
+    })
+    .join(
+      ''
+    )}</tbody></table></div><p class="hintp" style="margin:0">Shops you visit yourself cost nothing to deliver; type 0 when you collect, or the delivery price the shop quotes. Buying everything from fewer shops saves on delivery.</p></details>`;
+}
+document.addEventListener('change', e => {
+  const el = e.target;
+  if (!el || !el.dataset) return;
+  const t = el.dataset.mym2,
+    sh = el.dataset.ship;
+  if (t == null && sh == null) return;
+  if (t != null) {
+    S.opts.myM2 = S.opts.myM2 || {};
+    const v = parseFloat(el.value);
+    if (v > 0) S.opts.myM2[t] = v;
+    else delete S.opts.myM2[t];
+  } else {
+    S.opts.ship = S.opts.ship || {};
+    if (el.value === '') delete S.opts.ship[sh];
+    else S.opts.ship[sh] = Math.max(0, parseFloat(el.value) || 0);
+  }
+  saveSoon();
+  snap();
+  dirty.cut = true;
+  if (ui.tab === 'cut') {
+    const sc = document.getElementById('v-cut'),
+      y = sc.scrollTop,
+      py = window.scrollY;
+    renderCut();
+    sc.scrollTop = y;
+    window.scrollTo(0, py);
+  }
+  priceSoon();
+  toast('Price updated');
+});
+function priceUpdHTML() {
+  const st = ui.priceUpd || '',
+    msg =
+      {
+        busy: 'Starting…',
+        started:
+          'The price check has started. It takes about 15–30 minutes; then the app is updated by itself — reload it to see the new prices.',
+        reauth: 'Claude Code needs to be connected again: open claude.ai → Settings → Connectors, then try again.',
+        noconn: 'This needs the Claude Code connector in your claude.ai account (Settings → Connectors).',
+        approval: 'Claude asks you to allow this the first time — tap the button again and choose Allow.',
+        policy: 'Your organisation does not allow this here.',
+        fail: 'The price check could not be started. Try again in a minute.',
+        maybe: 'Not sure the price check started — wait a few minutes before trying again.'
+      }[st] || '';
+  if (!IS_OWNER)
+    return `<div class="pbud"><span class="pbok">Prices</span><span>Guide prices from Belgian shops (${PRICE_DATE}). Prices change — type your own below for the most accurate total.</span></div>`;
+  if (!priceMcp)
+    return `<div class="pbud"><span class="pbok">Prices</span><span>Last looked up on ${PRICE_DATE} at ${Object.values(SHOPS).join(' and ')}. To look them up again, open the app in Claude and use “Update prices”.</span></div>`;
+  return `<div class="pbud"><button type="button" class="btn" data-act="priceUpd" ${st === 'busy' || st === 'started' ? 'disabled' : ''}>Update prices</button><span>${msg || `Looks every board price up again at ${Object.values(SHOPS).join(' and ')} (last time: ${PRICE_DATE}), saves them in the price list and updates the app.`}</span></div>`;
+}
+async function priceUpd() {
+  if (!priceMcp || ui.priceUpd === 'busy') return;
+  ui.priceUpd = 'busy';
+  dirty.cut = true;
+  renderCut();
+  try {
+    await priceMcp.callTool('Claude Code Remote', 'fire_trigger', {
+      trigger_id: PRICE_TASK,
+      text: 'Started from the Update prices button in the app.'
+    });
+    ui.priceUpd = 'started';
+  } catch (e) {
+    const c = e && e.code;
+    ui.priceUpd =
+      c === 'needs_reauth'
+        ? 'reauth'
+        : c === 'server_not_connected' || c === 'server_not_found' || c === 'not_in_manifest'
+          ? 'noconn'
+          : c === 'approval_required' || c === 'not_granted' || c === 'consent_required' || c === 'cancelled'
+            ? 'approval'
+            : c === 'blocked_by_policy'
+              ? 'policy'
+              : c === 'server_unavailable' || c === 'upstream_error'
+                ? 'maybe'
+                : 'fail';
+  }
+  dirty.cut = true;
+  if (ui.tab === 'cut') renderCut();
+}
+function stockPrice(W, shop) {
+  const one = k => {
+    const t = STOCK_PRICES[k];
+    if (!t) return null;
+    const ws = Object.keys(t).map(Number),
+      w = ws.reduce((a, b) => (Math.abs(b - W) < Math.abs(a - W) ? b : a));
+    return { u: t[w] * (W / w), w, src: SHOPS[k] };
+  };
+  if (shop === 'best') {
+    const r = Object.keys(STOCK_PRICES)
+      .map(one)
+      .filter(Boolean)
+      .sort((a, b) => a.u - b.u)[0];
+    return Object.assign(r, { fb: false });
+  }
+  const r = one(shop);
+  return r ? Object.assign(r, { fb: false }) : Object.assign(one('hh'), { fb: true });
+}
+function shopPrice(key, shop) {
+  const t = SHOP_M2[key];
+  if (!t) return null;
+  if (shop === 'best') {
+    const k = Object.keys(t).reduce((a, b) => (t[b] < t[a] ? b : a));
+    return { p: t[k], src: SHOPS[k], fb: false };
+  }
+  return t[shop] != null ? { p: t[shop], src: SHOPS[shop], fb: false } : { p: t.hh, src: SHOPS.hh, fb: true };
+}
+const curShop = () => (SHOPS[S.opts.shop] || S.opts.shop === 'best' ? S.opts.shop : 'best');
+const pKey = k => String(k).replace(/[^A-Za-z0-9]+/g, '_');
+function priceRows(nest, sp, hw, mats, shopO) {
+  const shop = shopO || curShop();
+  let fbN = 0;
+  const ov = S.opts.prices && typeof S.opts.prices === 'object' ? S.opts.prices : {},
+    rows = [];
+  const add = (grp, key, name, qty, unitLbl, unit, src, est, ref) => {
+    const k = pKey(key),
+      o = +ov[k] > 0 ? +ov[k] : null,
+      u = o != null ? o : unit;
+    rows.push({
+      grp,
+      k,
+      name,
+      qty,
+      unitLbl,
+      unit: u,
+      dflt: unit,
+      mine: o != null,
+      shop: src || '',
+      src: o != null ? 'your price' : est ? 'typical' : src,
+      est: !!est && o == null,
+      ref,
+      total: u != null ? u * qty : null
+    });
+  };
+  nest.forEach(n => {
+    const P = PRICE_M2[n.mt] || PRICE_M2.melamine,
+      sh = n.sh || {},
+      area = ((sh.L || 2800) * (sh.W || 2070)) / 1e6,
+      f = FIN[n.fin] || {};
+    const thin = n.mt === 'hdf' && +n.t <= 4,
+      sq = shopPrice(thin ? 'hdf3' : n.mt === 'hdf' ? '' : n.mt, shop);
+    if (sq && sq.fb) fbN++;
+    let m2 = (sq ? sq.p : P.p) * (thin ? 1 : 1 + 0.6 * ((+n.t || P.t) / P.t - 1)),
+      est = !thin && (!!P.est || Math.abs((+n.t || P.t) - P.t) > 1.5);
+    if (n.mt === 'veneer' && n.fin !== 'oak') {
+      m2 *= n.fin === 'walnut' ? 1.35 : 1.15;
+      est = true;
+    }
+    const my_ = +(S.opts.myM2 || {})[n.mt] || 0,
+      cu_ = !!(MATS[n.mt] && MATS[n.mt].custom);
+    if (my_ > 0) {
+      m2 = my_;
+      est = false;
+    }
+    const cnt = n.sheets.length + (n.over && n.over.length ? 1 : 0);
+    const uo = typeof msOffer === 'function' ? msOffer(n) : null;
+    if (uo && cnt) {
+      add(
+        'Sheets',
+        'm_' + n.mt + '_' + n.fin + '_' + n.t,
+        `${n.name} mm sheet, ${n.sheet.replace('x', ' × ')}`,
+        cnt,
+        'sheet',
+        uo.unit,
+        uo.shop.name,
+        false,
+        `Your price at ${uo.shop.name}: € ${(+uo.o.price).toFixed(2)} for a ${uo.o.sheet.replace('x', ' × ')} sheet${uo.o.note ? ' · ' + uo.o.note : ''}`
+      );
+      if (+uo.shop.cutEach > 0) {
+        const cuts = (n.parts || []).length * 2 + cnt;
+        (rows._cuts = rows._cuts || {})[uo.shop.name] = ((rows._cuts || {})[uo.shop.name] || 0) + cuts;
+      }
+      if (+uo.shop.edgeM > 0) {
+        (rows._edge = rows._edge || {})[uo.shop.name] = (rows._edge[uo.shop.name] || 0) + cnt;
+      }
+      return;
+    }
+    if (cnt)
+      add(
+        'Sheets',
+        'm_' + n.mt + '_' + n.fin + '_' + n.t,
+        `${n.name} mm sheet, ${n.sheet.replace('x', ' × ')}`,
+        cnt,
+        'sheet',
+        Math.round(m2 * area * 100) / 100,
+        cu_ ? '' : sq ? sq.src : P.src,
+        cu_ ? my_ <= 0 : est,
+        cu_ ? '' : P.ref
+      );
+  });
+  (sp.groups || []).forEach(g => {
+    const white = (FIN[g.fin] || {}).ral && lum((FIN[g.fin] || {}).base || '#fff') > 0.8,
+      L = (sp.cfg && sp.cfg.L) || 2500,
+      sq = stockPrice(g.W, shop);
+    if (sq.fb) fbN++;
+    const w = sq.w;
+    let u = sq.u * (L / 2500) * (1 + 0.6 * ((+g.t || 18) / 18 - 1));
+    if (!white) u *= 2.1;
+    add(
+      'Sheets',
+      's_' + g.fin + '_' + g.t + '_' + g.W,
+      `${FIN[g.fin]?.name || ''} ${g.t} mm pre-edged furniture panel, ${g.W} × ${L}`,
+      g.bars.length,
+      'board',
+      Math.round(u * 100) / 100,
+      sq.src,
+      !white || Math.abs(w - g.W) > 5 || +g.t !== 18 || L !== 2500,
+      'White 18 mm furniture panels 2500 long — ' +
+        Object.entries(STOCK_PRICES)
+          .map(
+            ([k, t]) =>
+              SHOPS[k] +
+              ': ' +
+              Object.entries(t)
+                .map(([a, b]) => a + ' € ' + b)
+                .join(' · ')
+          )
+          .join(' | ')
+    );
+  });
+  let band = -(sp.saved || 0),
+    paint = 0,
+    micro = 0;
+  Object.values(mats || {}).forEach(m => {
+    if (!m.paint && !m.micro) band += m.band || 0;
+    if (m.paint) paint += (m.area || 0) * 2 + (m.peri || 0);
+    if (m.micro) micro += (m.mA || 0) + (m.vis || 0);
+  });
+  {
+    const eS = rows._edge ? Object.entries(rows._edge).sort((a, b) => b[1] - a[1])[0] : null,
+      es = eS && MS.shops.find(x => x.name === eS[0]);
+    if (band > 0.5) {
+      if (es && +es.edgeM > 0)
+        add(
+          'Finishing',
+          'edge',
+          `Edge banding at ${es.name}, incl. 10 % waste`,
+          Math.ceil(band * 1.1),
+          'm',
+          +es.edgeM,
+          es.name,
+          false,
+          `Your price at ${es.name}: € ${(+es.edgeM).toFixed(2)} per metre`
+        );
+      else
+        add(
+          'Finishing',
+          'edge',
+          'Edge banding (ABS 1 mm or veneer), incl. 10 % waste',
+          Math.ceil(band * 1.1),
+          'm',
+          FINISH_PRICE.edge.p,
+          FINISH_PRICE.edge.src || '',
+          FINISH_PRICE.edge.est,
+          FINISH_PRICE.edge.ref
+        );
+    }
+  }
+  Object.entries(rows._cuts || {}).forEach(([nm, c]) => {
+    const sh = MS.shops.find(x => x.name === nm);
+    if (sh)
+      add(
+        'Finishing',
+        'cut_' + nm,
+        `Cutting service at ${nm} (about ${c} cuts)`,
+        c,
+        'cut',
+        +sh.cutEach,
+        nm,
+        false,
+        `Your price at ${nm}: € ${(+sh.cutEach).toFixed(2)} per cut — the number of cuts is an estimate`
+      );
+  });
+  if (micro > 0.2)
+    add(
+      'Finishing',
+      'micro',
+      'Microcement on the visible sides (front face + visible edges): primer, base coat, 2 finish coats, PU varnish, incl. 15 % waste',
+      Math.ceil(micro * 1.15),
+      'm²',
+      FINISH_PRICE.micro.p,
+      FINISH_PRICE.micro.src || '',
+      FINISH_PRICE.micro.est,
+      FINISH_PRICE.micro.ref
+    );
+  if (paint > 0.5)
+    add(
+      'Finishing',
+      'paint',
+      false ? '' : 'Primer + two coats of lacquer for the painted MDF',
+      Math.ceil(paint),
+      'm²',
+      FINISH_PRICE.paint.p,
+      FINISH_PRICE.paint.src || '',
+      FINISH_PRICE.paint.est,
+      FINISH_PRICE.paint.ref
+    );
+  hw.forEach((r, i) => {
+    const nm = String(r[0]),
+      q = r[1];
+    if (/Finger (hole|slot|groove)|Speaker baffles|Back panel in groove|Open doorway|groove pull|Handleless/i.test(nm))
+      return;
+    let rule = PRICE_HW.find(x => x[0].test(nm));
+    if (!rule && /handle|pull|knob|grip|cup|profile|bar/i.test(nm))
+      rule = [null, isBudget() && isWoodHandle(S.opts.handle) ? HANDLE_PRICE.wood : HANDLE_PRICE.other, 1];
+    let qty = typeof q === 'number' ? q : null,
+      unitLbl = 'pc';
+    if (qty == null) {
+      const sq = String(q),
+        a = parseFloat(sq);
+      if (/m²/.test(sq)) {
+        qty = a;
+        unitLbl = 'm²';
+      } else if (/mm/.test(sq)) {
+        qty = a / 1000;
+        unitLbl = 'm';
+      } else if (isFinite(a)) qty = a;
+      else if (sq === 'set') qty = 1;
+      else return;
+    }
+    if (rule && rule[4] === 'm' && unitLbl !== 'm') {
+      unitLbl = 'pc';
+    }
+    if (!(qty > 0)) return;
+    if (!rule) {
+      rows.push({
+        grp: 'Hardware',
+        k: pKey('h_' + nm.slice(0, 40)),
+        name: nm,
+        qty,
+        unitLbl,
+        unit: +ov[pKey('h_' + nm.slice(0, 40))] > 0 ? +ov[pKey('h_' + nm.slice(0, 40))] : null,
+        dflt: null,
+        mine: +ov[pKey('h_' + nm.slice(0, 40))] > 0,
+        src: +ov[pKey('h_' + nm.slice(0, 40))] > 0 ? 'your price' : 'not priced',
+        est: false,
+        total: +ov[pKey('h_' + nm.slice(0, 40))] > 0 ? +ov[pKey('h_' + nm.slice(0, 40))] * qty : null
+      });
+      return;
+    }
+    add(
+      'Hardware',
+      'h_' + nm.slice(0, 40),
+      nm,
+      qty,
+      unitLbl,
+      rule[1],
+      rule[3] || '',
+      rule[2],
+      rule[3] ? `${rule[3]} webshop, € ${rule[1].toFixed(2)} each` : 'Typical trade price — not looked up'
+    );
+  });
+  {
+    const shops = {};
+    rows.forEach(r => {
+      if (r.total == null) return;
+      const k = r.shop || '';
+      if (!k) return;
+      (shops[k] = shops[k] || { n: 0, sub: 0 }).n++;
+      shops[k].sub += r.total;
+    });
+    const my = S.opts.ship || {};
+    Object.entries(shops).forEach(([k, o]) => {
+      const ms_ = typeof msShip === 'function' ? msShip(k, o.sub) : null;
+      if (ms_) {
+        const mine = my[k] != null && my[k] !== '',
+          u = mine ? +my[k] : ms_.u;
+        rows.push({
+          grp: 'Shipping',
+          k: 'ship_' + k,
+          name: ms_.name,
+          qty: 1,
+          unitLbl: 'pc',
+          unit: u,
+          dflt: ms_.u,
+          mine,
+          shop: k,
+          src: mine ? 'your price' : k,
+          est: false,
+          ref: ms_.ref,
+          total: u,
+          ship: 1
+        });
+        return;
+      }
+      const d = SHIP[k] || { p: 7.95, est: 1, note: 'typical webshop delivery' },
+        u = my[k] != null && my[k] !== '' ? +my[k] : d.p;
+      if (u > 0 || my[k] != null)
+        rows.push({
+          grp: 'Shipping',
+          k: 'ship_' + k,
+          name: `Delivery from ${k}`,
+          qty: 1,
+          unitLbl: 'pc',
+          unit: u,
+          dflt: d.p,
+          mine: my[k] != null && my[k] !== '',
+          shop: k,
+          src: my[k] != null && my[k] !== '' ? 'your price' : d.est ? 'typical' : k,
+          est: !!d.est && my[k] == null,
+          ref: d.note,
+          total: u,
+          ship: 1
+        });
+    });
+    rows.shops = shops;
+  }
+  const sum = g => rows.filter(r => r.grp === g && r.total != null).reduce((a, r) => a + r.total, 0),
+    tot = { sheets: sum('Sheets'), fin: sum('Finishing'), hw: sum('Hardware'), ship: sum('Shipping') };
+  tot.all = tot.sheets + tot.fin + tot.hw + tot.ship;
+  tot.est = rows.filter(r => r.est && r.total != null).reduce((a, r) => a + r.total, 0);
+  tot.none = rows.filter(r => r.total == null).length;
+  tot.fb = fbN;
+  tot.shop = shop;
+  return { rows, tot };
+}
+function nearRal(fin) {
+  const f = FIN[fin];
+  if (!f || f.ral) return f ? fin : 'ral9010';
+  const h = x => [1, 3, 5].map(i => parseInt(x.slice(i, i + 2), 16)),
+    a = h(f.base);
+  let best = 'ral9010',
+    bd = 1e9;
+  Object.entries(FIN).forEach(([k, v]) => {
+    if (!v.ral || !/^#[0-9a-f]{6}$/i.test(v.base)) return;
+    const b = h(v.base),
+      d = (a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2 + (a[2] - b[2]) ** 2;
+    if (d < bd) {
+      bd = d;
+      best = k;
+    }
+  });
+  return best;
+}
 /* Doors under a slope must hinge on their tall side. Where a pair of doors would hit the ceiling, put an upright between them so each door has a tall side to hinge on */
-const underAt_=(q,x)=>{const u=q.under;if(x<=u[0][0])return u[0][1];for(let k=1;k<u.length;k++)if(x<=u[k][0]){const a=u[k-1],b=u[k];return a[1]+(b[1]-a[1])*(x-a[0])/((b[0]-a[0])||1)}return u[u.length-1][1]};
+const underAt_ = (q, x) => {
+  const u = q.under;
+  if (x <= u[0][0]) return u[0][1];
+  for (let k = 1; k < u.length; k++)
+    if (x <= u[k][0]) {
+      const a = u[k - 1],
+        b = u[k];
+      return a[1] + ((b[1] - a[1]) * (x - a[0])) / (b[0] - a[0] || 1);
+    }
+  return u[u.length - 1][1];
+};
 /* ===== One-tap fixes for design notes =====
    Each rule recognises one note and changes the design the way the note itself advises. A fix is only kept when the note is gone
    and the design has no more notes than before; anything else falls back to the general tidy-up (slopeFix). */
-const FIXS=[
-  [/^S(\d+)[^:]*: the narrowest door in level (\d+) is only/,(st,m)=>{const z=st.sections[m[1]-1].zones[m[2]-1];z.doors=Math.max(1,Math.ceil(((z.vd||[]).length+1)/2))}],
-  [/^S(\d+)[^:]*: the board under the reading nook/,(st,m,G)=>{const i=m[1]-1,sc=st.sections[i],k=sc.zones.findIndex(z=>z.type==='opening'&&z.look==='nook');if(k<1)return false;const zb=sc.zones[k-1],w=G.secs[i].w;if(zb.type==='drawers')zb.split=Math.max(2,+zb.split||1);else if(zb.type==='open'||zb.type==='closed'){zb.vd=[Math.round(w/2)];zb.vdMode='even';if(zb.type==='closed')zb.doors=0}else return false}],
-  [/^S(\d+)[^:]*: two rails above each other need/,(st,m)=>{st.sections[m[1]-1].zones.forEach(z=>{if(z.rail2)z.rail2=false})}],
-  [/^S(\d+)[^:]*: only (\d+) shel(?:f fits|ves fit) above the rail/,(st,m)=>{st.sections[m[1]-1].zones.forEach(z=>{if(z.rail&&+z.railUp>+m[2])z.railUp=+m[2]})}],
-  [/^S(\d+)[^:]*: a peg wall needs 18 mm plywood/,(st,m)=>{const sc=st.sections[m[1]-1];sc.panel=Object.assign({},PANEL_DEF,sc.panel||{},{mat:'ply',t:18});if(!finAllowed('ply',sc.panel.fin))sc.panel.fin='birch'}],
-  [/^S(\d+)[^:]*: an arch wider than about 900 mm/,(st,m,G)=>{const i=m[1]-1,w=G.secs[i].w;st.sections[i].zones.forEach(z=>{if(z.type==='open'&&z.arch){const n=Math.max(1,Math.ceil(w/800)-1);z.vd=Array.from({length:n},(_,j)=>Math.round(w*(j+1)/(n+1)));z.vdMode='even'}})}],
-  [/^S(\d+)[^:]*: the horizontal slats span more than 900/,(st,m)=>{st.sections[m[1]-1].zones.forEach(z=>{if(z.slat&&z.slatDir==='h')z.slatDir='v'})}],
-  [/^S(\d+)[^:]*: the vertical slats are over 1\.4 m long/,(st,m)=>{st.sections[m[1]-1].zones.forEach(z=>{if(z.type==='open'&&z.slat&&!(+z.shelves>0))z.shelves=1})}],
-  [/^S(\d+)[^:]*: the joined doors are/,(st,m)=>{const zs=st.sections[m[1]-1].zones;for(let k=zs.length-1;k>=0;k--)if(zs[k].joinUp){zs[k].joinUp=false;return}return false}],
-  [/^S(\d+)[^:]*: the doors of level (\d+) can't join/,(st,m)=>{st.sections[m[1]-1].zones[m[2]-1].joinUp=false}],
-  [/^S(\d+)[^:]*: no storage box fits in level (\d+)/,(st,m)=>{st.sections[m[1]-1].zones[m[2]-1].bask=''}],
-  [/^S(\d+)[^:]*: door \d+ is \d+ mm wide — add a divider or set the door count/,(st,m,G)=>{const i=m[1]-1,w=G.secs[i].w;st.sections[i].zones.forEach(z=>{if(z.type==='closed'&&!z.dog&&(z.vd||[]).length)z.doors=Math.max(2,Math.ceil(w/600))})}],
-  [/^S(\d+)[^:]*: the reading nook is (\d+) mm high inside/,(st,m)=>{const z=st.sections[m[1]-1].zones.find(z=>z.type==='opening'&&z.look==='nook');if(!z||!(+z.h>0))return false;z.h=+z.h+(880-+m[2])}]];
-function fixTry(w,fn){try{const st=JSON.parse(JSON.stringify(S)),G0=build(st),n0=new Set(G0.warns).size;if(fn(st,G0)===false)return null;const G1=build(st),s1=new Set(G1.warns);return !s1.has(w)&&s1.size<=n0-1?st:(!s1.has(w)&&s1.size<=n0?st:null)}catch(e){return null}}
+const FIXS = [
+  [
+    /^S(\d+)[^:]*: the narrowest door in level (\d+) is only/,
+    (st, m) => {
+      const z = st.sections[m[1] - 1].zones[m[2] - 1];
+      z.doors = Math.max(1, Math.ceil(((z.vd || []).length + 1) / 2));
+    }
+  ],
+  [
+    /^S(\d+)[^:]*: the board under the reading nook/,
+    (st, m, G) => {
+      const i = m[1] - 1,
+        sc = st.sections[i],
+        k = sc.zones.findIndex(z => z.type === 'opening' && z.look === 'nook');
+      if (k < 1) return false;
+      const zb = sc.zones[k - 1],
+        w = G.secs[i].w;
+      if (zb.type === 'drawers') zb.split = Math.max(2, +zb.split || 1);
+      else if (zb.type === 'open' || zb.type === 'closed') {
+        zb.vd = [Math.round(w / 2)];
+        zb.vdMode = 'even';
+        if (zb.type === 'closed') zb.doors = 0;
+      } else return false;
+    }
+  ],
+  [
+    /^S(\d+)[^:]*: two rails above each other need/,
+    (st, m) => {
+      st.sections[m[1] - 1].zones.forEach(z => {
+        if (z.rail2) z.rail2 = false;
+      });
+    }
+  ],
+  [
+    /^S(\d+)[^:]*: only (\d+) shel(?:f fits|ves fit) above the rail/,
+    (st, m) => {
+      st.sections[m[1] - 1].zones.forEach(z => {
+        if (z.rail && +z.railUp > +m[2]) z.railUp = +m[2];
+      });
+    }
+  ],
+  [
+    /^S(\d+)[^:]*: a peg wall needs 18 mm plywood/,
+    (st, m) => {
+      const sc = st.sections[m[1] - 1];
+      sc.panel = Object.assign({}, PANEL_DEF, sc.panel || {}, { mat: 'ply', t: 18 });
+      if (!finAllowed('ply', sc.panel.fin)) sc.panel.fin = 'birch';
+    }
+  ],
+  [
+    /^S(\d+)[^:]*: an arch wider than about 900 mm/,
+    (st, m, G) => {
+      const i = m[1] - 1,
+        w = G.secs[i].w;
+      st.sections[i].zones.forEach(z => {
+        if (z.type === 'open' && z.arch) {
+          const n = Math.max(1, Math.ceil(w / 800) - 1);
+          z.vd = Array.from({ length: n }, (_, j) => Math.round((w * (j + 1)) / (n + 1)));
+          z.vdMode = 'even';
+        }
+      });
+    }
+  ],
+  [
+    /^S(\d+)[^:]*: the horizontal slats span more than 900/,
+    (st, m) => {
+      st.sections[m[1] - 1].zones.forEach(z => {
+        if (z.slat && z.slatDir === 'h') z.slatDir = 'v';
+      });
+    }
+  ],
+  [
+    /^S(\d+)[^:]*: the vertical slats are over 1\.4 m long/,
+    (st, m) => {
+      st.sections[m[1] - 1].zones.forEach(z => {
+        if (z.type === 'open' && z.slat && !(+z.shelves > 0)) z.shelves = 1;
+      });
+    }
+  ],
+  [
+    /^S(\d+)[^:]*: the joined doors are/,
+    (st, m) => {
+      const zs = st.sections[m[1] - 1].zones;
+      for (let k = zs.length - 1; k >= 0; k--)
+        if (zs[k].joinUp) {
+          zs[k].joinUp = false;
+          return;
+        }
+      return false;
+    }
+  ],
+  [
+    /^S(\d+)[^:]*: the doors of level (\d+) can't join/,
+    (st, m) => {
+      st.sections[m[1] - 1].zones[m[2] - 1].joinUp = false;
+    }
+  ],
+  [
+    /^S(\d+)[^:]*: no storage box fits in level (\d+)/,
+    (st, m) => {
+      st.sections[m[1] - 1].zones[m[2] - 1].bask = '';
+    }
+  ],
+  [
+    /^S(\d+)[^:]*: door \d+ is \d+ mm wide — add a divider or set the door count/,
+    (st, m, G) => {
+      const i = m[1] - 1,
+        w = G.secs[i].w;
+      st.sections[i].zones.forEach(z => {
+        if (z.type === 'closed' && !z.dog && (z.vd || []).length) z.doors = Math.max(2, Math.ceil(w / 600));
+      });
+    }
+  ],
+  [
+    /^S(\d+)[^:]*: the reading nook is (\d+) mm high inside/,
+    (st, m) => {
+      const z = st.sections[m[1] - 1].zones.find(z => z.type === 'opening' && z.look === 'nook');
+      if (!z || !(+z.h > 0)) return false;
+      z.h = +z.h + (880 - +m[2]);
+    }
+  ]
+];
+function fixTry(w, fn) {
+  try {
+    const st = JSON.parse(JSON.stringify(S)),
+      G0 = build(st),
+      n0 = new Set(G0.warns).size;
+    if (fn(st, G0) === false) return null;
+    const G1 = build(st),
+      s1 = new Set(G1.warns);
+    return !s1.has(w) && s1.size <= n0 - 1 ? st : !s1.has(w) && s1.size <= n0 ? st : null;
+  } catch (e) {
+    return null;
+  }
+}
 /* returns true when the design was changed */
-function fixOne(w){for(const [re,fn] of FIXS){const m=re.exec(w);if(!m)continue;const st=fixTry(w,(t,G)=>fn(t,m,G));if(st){S=st;geo=build(S);return true}}
-  const st=fixTry(w,t=>{const r=slopeFix(t);if(r&&r!==t)Object.assign(t,r)});if(st){S=st;geo=build(S);return true}return false}
-const fixKnown=w=>FIXS.some(([re])=>re.test(w));
+function fixOne(w) {
+  for (const [re, fn] of FIXS) {
+    const m = re.exec(w);
+    if (!m) continue;
+    const st = fixTry(w, (t, G) => fn(t, m, G));
+    if (st) {
+      S = st;
+      geo = build(S);
+      return true;
+    }
+  }
+  const st = fixTry(w, t => {
+    const r = slopeFix(t);
+    if (r && r !== t) Object.assign(t, r);
+  });
+  if (st) {
+    S = st;
+    geo = build(S);
+    return true;
+  }
+  return false;
+}
+const fixKnown = w => FIXS.some(([re]) => re.test(w));
 /* which notes the general tidy-up can clear: worked out in the background, once per set of notes */
-function fixScan(){const ws=[...new Set(geo.warns)],sig=ws.join('|');if(!ws.length||(ui.fixG&&ui.fixG.sig===sig))return;clearTimeout(ui.fixT);ui.fixT=setTimeout(()=>{try{const st=JSON.parse(JSON.stringify(S)),r=slopeFix(st)||st,s1=new Set(build(r).warns),ok=s1.size<ws.length?ws.filter(w=>!s1.has(w)):[];ui.fixG={sig,set:new Set(ok)};if(ok.length)renderBar()}catch(e){ui.fixG={sig,set:new Set()}}},350)}
-const fixBtn=(w,j)=>fixKnown(w)||(ui.fixG&&ui.fixG.set.has(w))?` <button type="button" class="fixb" data-act="fixW" data-a="${j}">Fix it</button>`:'';
-function slopeFix(st){try{{const G=build(st),m=G.warns.map(w=>/^Columns S(\d+)–S(\d+) add up to (\d+) mm but (\d+) mm is available/.exec(w)).find(Boolean);if(m){const a=+m[1]-1,b=+m[2],k=+m[4]/+m[3];for(let i=a;i<b;i++){const sc=st.sections[i];if(sc&&+sc.w>0){sc.w=Math.round(+sc.w*k);(sc.zones||[]).forEach(z=>{if(Array.isArray(z.vd))z.vd=z.vd.map(v=>Math.round(+v*k))})}}if(st.sections[b-1])st.sections[b-1].w=null}}
-  for(let pass=0;pass<2;pass++){const G=build(st);let ch=false;G.warns.forEach(w=>{const m=/^(?:Door|Pocket door) \(S(\d+)\) is /.exec(w);if(!m)return;const i=+m[1]-1,sc=st.sections[i],q=G.secs[i];if(!sc||!q||q.follow!=null||(sc.link!=null&&sc.link!==''))return;const zs=sc.zones||[];let bk=-1,bh=0;q.zones.forEach(zr=>{const z=zs[zr.k],h=zr.top?(q.maxU-zr.y0):zr.h;if(z&&z.type==='closed'&&!z.dog&&h>bh){bh=h;bk=zr.k}});if(bk<0||bh<1400)return;
-      const z=zs[bk],lowH=Math.round(bh*0.6),up=JSON.parse(JSON.stringify(z));up.id=(z.id||'z')+'u'+pass;up.rail=false;up.fit='';up.railH=null;up.shelves=1;z.shelves=Math.max(0,(+z.shelves||0)-1);up.h=+z.h>0?Math.max(200,Math.round(+z.h-lowH-18)):null;z.h=lowH;zs.splice(bk+1,0,up);ch=true});if(!ch)break}
-  for(let pass=0;pass<2;pass++){const G=build(st);let ch=false;G.secs.forEach(q=>{if(q.panel||q.door||q.follow!=null)return;const sc=st.sections[q.i];if(!sc||(sc.link!=null&&sc.link!==''))return;(q.zones||[]).forEach(zr=>{if(!zr.swingBad)return;const z=(sc.zones||[])[zr.k];if(!z||z.type!=='closed'||z.dog)return;if(z.vd&&z.vd.length){if(+z.doors>0)return;const add=(zr.comps||[]).filter(([a,b])=>b-a>640).map(([a,b])=>Math.round((a+b)/2-q.xa));if(add.length){z.vd=z.vd.concat(add).sort((a,b)=>a-b);ch=true}return}const nd=+z.doors>0?+z.doors:((q.bR-q.bL)>620?2:1);if(nd<2){const pk=(q.under||[]).filter(p=>p[0]>q.xa+250&&p[0]<q.xb-250).sort((a,b)=>b[1]-a[1])[0];if(pk&&zr.top&&pk[1]>Math.max(underAt_(q,q.xa),underAt_(q,q.xb))+5){z.vd=[Math.round(pk[0]-q.xa)];z.vdMode=null;z.doors=0;ch=true}return}z.vdMode=null;z.vd=Array.from({length:nd-1},(_,k)=>Math.round(q.w*(k+1)/nd));z.doors=0;ch=true})});if(!ch)break}{const G=build(st);G.warns.forEach(w=>{const m=/^S(\d+): the \d+ mm shelves/.exec(w);if(!m)return;const i=+m[1]-1,sc=st.sections[i],q=G.secs[i];if(!sc||!q||q.follow!=null||(sc.link!=null&&sc.link!==''))return;(sc.zones||[]).forEach((z,k)=>{if((z.type==='open'||z.type==='closed')&&+z.shelves>0&&!(sc.base==='desk'&&k===0)&&!z.dog&&!z.rail&&!z.fit&&!z.box&&!z.niche&&!(z.vd&&z.vd.length)&&!(+z.span>0)){z.vd=[Math.round(q.w/2)];z.vdMode='even';if(z.type==='closed')z.doors=0}})})}for(let pass=0;pass<4;pass++){const G=build(st);let ch=false;G.warns.forEach(w=>{const m=/^S(\d+): shelves in level (\d+) are only/.exec(w);if(!m)return;const sc=st.sections[+m[1]-1],z=sc&&(sc.link==null||sc.link==='')&&(sc.zones||[])[+m[2]-1];if(z&&+z.shelves>0){z.shelves=+z.shelves-1;ch=true}});if(!ch)break}}catch(e){}return st}
+function fixScan() {
+  const ws = [...new Set(geo.warns)],
+    sig = ws.join('|');
+  if (!ws.length || (ui.fixG && ui.fixG.sig === sig)) return;
+  clearTimeout(ui.fixT);
+  ui.fixT = setTimeout(() => {
+    try {
+      const st = JSON.parse(JSON.stringify(S)),
+        r = slopeFix(st) || st,
+        s1 = new Set(build(r).warns),
+        ok = s1.size < ws.length ? ws.filter(w => !s1.has(w)) : [];
+      ui.fixG = { sig, set: new Set(ok) };
+      if (ok.length) renderBar();
+    } catch (e) {
+      ui.fixG = { sig, set: new Set() };
+    }
+  }, 350);
+}
+const fixBtn = (w, j) =>
+  fixKnown(w) || (ui.fixG && ui.fixG.set.has(w))
+    ? ` <button type="button" class="fixb" data-act="fixW" data-a="${j}">Fix it</button>`
+    : '';
+function slopeFix(st) {
+  try {
+    {
+      const G = build(st),
+        m = G.warns
+          .map(w => /^Columns S(\d+)–S(\d+) add up to (\d+) mm but (\d+) mm is available/.exec(w))
+          .find(Boolean);
+      if (m) {
+        const a = +m[1] - 1,
+          b = +m[2],
+          k = +m[4] / +m[3];
+        for (let i = a; i < b; i++) {
+          const sc = st.sections[i];
+          if (sc && +sc.w > 0) {
+            sc.w = Math.round(+sc.w * k);
+            (sc.zones || []).forEach(z => {
+              if (Array.isArray(z.vd)) z.vd = z.vd.map(v => Math.round(+v * k));
+            });
+          }
+        }
+        if (st.sections[b - 1]) st.sections[b - 1].w = null;
+      }
+    }
+    for (let pass = 0; pass < 2; pass++) {
+      const G = build(st);
+      let ch = false;
+      G.warns.forEach(w => {
+        const m = /^(?:Door|Pocket door) \(S(\d+)\) is /.exec(w);
+        if (!m) return;
+        const i = +m[1] - 1,
+          sc = st.sections[i],
+          q = G.secs[i];
+        if (!sc || !q || q.follow != null || (sc.link != null && sc.link !== '')) return;
+        const zs = sc.zones || [];
+        let bk = -1,
+          bh = 0;
+        q.zones.forEach(zr => {
+          const z = zs[zr.k],
+            h = zr.top ? q.maxU - zr.y0 : zr.h;
+          if (z && z.type === 'closed' && !z.dog && h > bh) {
+            bh = h;
+            bk = zr.k;
+          }
+        });
+        if (bk < 0 || bh < 1400) return;
+        const z = zs[bk],
+          lowH = Math.round(bh * 0.6),
+          up = JSON.parse(JSON.stringify(z));
+        up.id = (z.id || 'z') + 'u' + pass;
+        up.rail = false;
+        up.fit = '';
+        up.railH = null;
+        up.shelves = 1;
+        z.shelves = Math.max(0, (+z.shelves || 0) - 1);
+        up.h = +z.h > 0 ? Math.max(200, Math.round(+z.h - lowH - 18)) : null;
+        z.h = lowH;
+        zs.splice(bk + 1, 0, up);
+        ch = true;
+      });
+      if (!ch) break;
+    }
+    for (let pass = 0; pass < 2; pass++) {
+      const G = build(st);
+      let ch = false;
+      G.secs.forEach(q => {
+        if (q.panel || q.door || q.follow != null) return;
+        const sc = st.sections[q.i];
+        if (!sc || (sc.link != null && sc.link !== '')) return;
+        (q.zones || []).forEach(zr => {
+          if (!zr.swingBad) return;
+          const z = (sc.zones || [])[zr.k];
+          if (!z || z.type !== 'closed' || z.dog) return;
+          if (z.vd && z.vd.length) {
+            if (+z.doors > 0) return;
+            const add = (zr.comps || [])
+              .filter(([a, b]) => b - a > 640)
+              .map(([a, b]) => Math.round((a + b) / 2 - q.xa));
+            if (add.length) {
+              z.vd = z.vd.concat(add).sort((a, b) => a - b);
+              ch = true;
+            }
+            return;
+          }
+          const nd = +z.doors > 0 ? +z.doors : q.bR - q.bL > 620 ? 2 : 1;
+          if (nd < 2) {
+            const pk = (q.under || [])
+              .filter(p => p[0] > q.xa + 250 && p[0] < q.xb - 250)
+              .sort((a, b) => b[1] - a[1])[0];
+            if (pk && zr.top && pk[1] > Math.max(underAt_(q, q.xa), underAt_(q, q.xb)) + 5) {
+              z.vd = [Math.round(pk[0] - q.xa)];
+              z.vdMode = null;
+              z.doors = 0;
+              ch = true;
+            }
+            return;
+          }
+          z.vdMode = null;
+          z.vd = Array.from({ length: nd - 1 }, (_, k) => Math.round((q.w * (k + 1)) / nd));
+          z.doors = 0;
+          ch = true;
+        });
+      });
+      if (!ch) break;
+    }
+    {
+      const G = build(st);
+      G.warns.forEach(w => {
+        const m = /^S(\d+): the \d+ mm shelves/.exec(w);
+        if (!m) return;
+        const i = +m[1] - 1,
+          sc = st.sections[i],
+          q = G.secs[i];
+        if (!sc || !q || q.follow != null || (sc.link != null && sc.link !== '')) return;
+        (sc.zones || []).forEach((z, k) => {
+          if (
+            (z.type === 'open' || z.type === 'closed') &&
+            +z.shelves > 0 &&
+            !(sc.base === 'desk' && k === 0) &&
+            !z.dog &&
+            !z.rail &&
+            !z.fit &&
+            !z.box &&
+            !z.niche &&
+            !(z.vd && z.vd.length) &&
+            !(+z.span > 0)
+          ) {
+            z.vd = [Math.round(q.w / 2)];
+            z.vdMode = 'even';
+            if (z.type === 'closed') z.doors = 0;
+          }
+        });
+      });
+    }
+    for (let pass = 0; pass < 4; pass++) {
+      const G = build(st);
+      let ch = false;
+      G.warns.forEach(w => {
+        const m = /^S(\d+): shelves in level (\d+) are only/.exec(w);
+        if (!m) return;
+        const sc = st.sections[+m[1] - 1],
+          z = sc && (sc.link == null || sc.link === '') && (sc.zones || [])[+m[2] - 1];
+        if (z && +z.shelves > 0) {
+          z.shelves = +z.shelves - 1;
+          ch = true;
+        }
+      });
+      if (!ch) break;
+    }
+  } catch (e) {
+    oops('prices-budget #5', e);
+  }
+  return st;
+}
 /* Budget shuffles: fewer fronts and drawers. One door level per column (the lowest), the rest open shelves; drawers only in one column, two at most */
-function budgetLean(st){if(!(st.opts&&st.opts.budget))return st;const secs=(st.sections||[]).filter(sc=>sc.base!=='panel'&&sc.base!=='door'&&(sc.link==null||sc.link===''));if(!secs.length)return st;
-  const mid=(secs.length-1)/2,order=secs.map((sc,i)=>i).sort((a,b)=>Math.abs(a-mid)-Math.abs(b-mid));let drawerCol=-1;for(const i of order){if((secs[i].zones||[]).some(z=>z.type==='drawers')){drawerCol=i;break}}
-  secs.forEach((sc,i)=>{let kept=false;(sc.zones||[]).forEach((z,k)=>{if(sc.base==='desk'&&k===0)return;
-      if(z.type==='drawers'){if(i===drawerCol&&!sc._drKept){sc._drKept=1;z.count=Math.min(2,Math.max(1,+z.count||2));return}z.type=kept?'open':'closed';z.shelves=Math.max(1,+z.shelves||0);z.doors=0;z.face='flat';if(z.type==='closed')kept=true;else{z.rail=false}return}
-      if(z.type!=='closed')return;if(z.dog||z.rail||z.fridge||z.fit==='larder'){kept=true;return}if(!kept){kept=true;if(z.face==='glass'||z.face==='cane'||z.face==='fluted'||z.face==='curtain')z.face='flat';return}
-      z.type='open';z.shelves=Math.max(1,+z.shelves||0);z.doors=0;z.face='flat';z.box=false});if(+sc.w>650)(sc.zones||[]).forEach((z,k)=>{if((z.type==='open'||z.type==='closed')&&+z.shelves>0&&!(sc.base==='desk'&&k===0)&&!z.dog&&!z.rail&&!(z.vd&&z.vd.length)){z.vd=[Math.round(+sc.w/2)];z.vdMode='even';if(z.type==='closed')z.doors=0}});delete sc._drKept});
-  return st}
-const BUD_H=/^wood|^edge$|^profile$|^hole$|^slot$|^groove$/;
-function budgetFix(st){const kind=st.opts&&st.opts.budget;if(kind!=='mel'&&kind!=='mdf')return st;const M=st.mat,vis=kind==='mdf'?'mdfpaint':'melamine',set=(r,type,t)=>{const m=M[r];if(!m)return;m.type=type;m.t=t;m.sheet=MATS[type].sheet;if(!finAllowed(type,m.fin))m.fin=type==='mdfpaint'?nearRal(m.fin):'ral9010'};
-  set('carcass','melamine',18);set('shelf','melamine',18);set('front',vis,18);set('skirt',vis,18);set('desk',vis,kind==='mdf'?22:25);set('back','hdf',3);
-  if(kind==='mdf')(st.sections||[]).forEach(sc=>(sc.zones||[]).forEach(z=>{if(FIN[z.fin]&&!FIN[z.fin].ral)z.fin=nearRal(z.fin);if(Array.isArray(z.fins))z.fins=z.fins.map(f=>FIN[f]&&!FIN[f].ral?nearRal(f):f)}));
-  st.opts.hw=Object.assign({},st.opts.hw||{},{brand:'blumeco'});if(!['screw','confirmat','dowel'].includes(st.opts.joinery))st.opts.joinery='screw';if(!BUD_H.test(st.opts.handle||''))st.opts.handle='hole';st.opts.innerLight=false;return st}
-function budgetBuild(kind){if(kind==='off'){delete S.opts.budget;changed(true);toast('Budget mode off — your materials stay as they are, shuffles are free again');return}
-  kind=kind==='mdf'?'mdf':'mel';renderCut();const before=lastPrice?lastPrice.tot.all:0,was=S.opts.budget;S.opts.budget=kind;if(!was)S.opts.joinery='screw';budgetFix(S);
-  changed(true);renderCut();if(lastAlt&&lastPrice&&lastAlt.total<lastPrice.tot.all-1){setStockAll(lastAlt.on);changed(true);renderCut()}const after=lastPrice?lastPrice.tot.all:0;toast(`Budget build with ${kind==='mdf'?'painted MDF fronts':'melamine'}: ${eur(before)} → ${eur(after)}. Shuffles now stay on budget.`)}
+function budgetLean(st) {
+  if (!(st.opts && st.opts.budget)) return st;
+  const secs = (st.sections || []).filter(
+    sc => sc.base !== 'panel' && sc.base !== 'door' && (sc.link == null || sc.link === '')
+  );
+  if (!secs.length) return st;
+  const mid = (secs.length - 1) / 2,
+    order = secs.map((sc, i) => i).sort((a, b) => Math.abs(a - mid) - Math.abs(b - mid));
+  let drawerCol = -1;
+  for (const i of order) {
+    if ((secs[i].zones || []).some(z => z.type === 'drawers')) {
+      drawerCol = i;
+      break;
+    }
+  }
+  secs.forEach((sc, i) => {
+    let kept = false;
+    (sc.zones || []).forEach((z, k) => {
+      if (sc.base === 'desk' && k === 0) return;
+      if (z.type === 'drawers') {
+        if (i === drawerCol && !sc._drKept) {
+          sc._drKept = 1;
+          z.count = Math.min(2, Math.max(1, +z.count || 2));
+          return;
+        }
+        z.type = kept ? 'open' : 'closed';
+        z.shelves = Math.max(1, +z.shelves || 0);
+        z.doors = 0;
+        z.face = 'flat';
+        if (z.type === 'closed') kept = true;
+        else {
+          z.rail = false;
+        }
+        return;
+      }
+      if (z.type !== 'closed') return;
+      if (z.dog || z.rail || z.fridge || z.fit === 'larder') {
+        kept = true;
+        return;
+      }
+      if (!kept) {
+        kept = true;
+        if (z.face === 'glass' || z.face === 'cane' || z.face === 'fluted' || z.face === 'curtain') z.face = 'flat';
+        return;
+      }
+      z.type = 'open';
+      z.shelves = Math.max(1, +z.shelves || 0);
+      z.doors = 0;
+      z.face = 'flat';
+      z.box = false;
+    });
+    if (+sc.w > 650)
+      (sc.zones || []).forEach((z, k) => {
+        if (
+          (z.type === 'open' || z.type === 'closed') &&
+          +z.shelves > 0 &&
+          !(sc.base === 'desk' && k === 0) &&
+          !z.dog &&
+          !z.rail &&
+          !(z.vd && z.vd.length)
+        ) {
+          z.vd = [Math.round(+sc.w / 2)];
+          z.vdMode = 'even';
+          if (z.type === 'closed') z.doors = 0;
+        }
+      });
+    delete sc._drKept;
+  });
+  return st;
+}
+const BUD_H = /^wood|^edge$|^profile$|^hole$|^slot$|^groove$/;
+function budgetFix(st) {
+  const kind = st.opts && st.opts.budget;
+  if (kind !== 'mel' && kind !== 'mdf') return st;
+  const M = st.mat,
+    vis = kind === 'mdf' ? 'mdfpaint' : 'melamine',
+    set = (r, type, t) => {
+      const m = M[r];
+      if (!m) return;
+      m.type = type;
+      m.t = t;
+      m.sheet = MATS[type].sheet;
+      if (!finAllowed(type, m.fin)) m.fin = type === 'mdfpaint' ? nearRal(m.fin) : 'ral9010';
+    };
+  set('carcass', 'melamine', 18);
+  set('shelf', 'melamine', 18);
+  set('front', vis, 18);
+  set('skirt', vis, 18);
+  set('desk', vis, kind === 'mdf' ? 22 : 25);
+  set('back', 'hdf', 3);
+  if (kind === 'mdf')
+    (st.sections || []).forEach(sc =>
+      (sc.zones || []).forEach(z => {
+        if (FIN[z.fin] && !FIN[z.fin].ral) z.fin = nearRal(z.fin);
+        if (Array.isArray(z.fins)) z.fins = z.fins.map(f => (FIN[f] && !FIN[f].ral ? nearRal(f) : f));
+      })
+    );
+  st.opts.hw = Object.assign({}, st.opts.hw || {}, { brand: 'blumeco' });
+  if (!['screw', 'confirmat', 'dowel'].includes(st.opts.joinery)) st.opts.joinery = 'screw';
+  if (!BUD_H.test(st.opts.handle || '')) st.opts.handle = 'hole';
+  st.opts.innerLight = false;
+  return st;
+}
+function budgetBuild(kind) {
+  if (kind === 'off') {
+    delete S.opts.budget;
+    changed(true);
+    toast('Budget mode off — your materials stay as they are, shuffles are free again');
+    return;
+  }
+  kind = kind === 'mdf' ? 'mdf' : 'mel';
+  renderCut();
+  const before = lastPrice ? lastPrice.tot.all : 0,
+    was = S.opts.budget;
+  S.opts.budget = kind;
+  if (!was) S.opts.joinery = 'screw';
+  budgetFix(S);
+  changed(true);
+  renderCut();
+  if (lastAlt && lastPrice && lastAlt.total < lastPrice.tot.all - 1) {
+    setStockAll(lastAlt.on);
+    changed(true);
+    renderCut();
+  }
+  const after = lastPrice ? lastPrice.tot.all : 0;
+  toast(
+    `Budget build with ${kind === 'mdf' ? 'painted MDF fronts' : 'melamine'}: ${eur(before)} → ${eur(after)}. Shuffles now stay on budget.`
+  );
+}
 /* ===== Budget card: one target, a list of savings with what each one saves ===== */
-let PRICING=0,budTm=null;
-const budJ=v=>JSON.stringify(v===undefined?null:v),budGet=(st,p)=>p.split('.').reduce((o,k)=>o==null?o:o[k],st);
-function budPut(st,p,v){const ks=p.split('.');let o=st;for(let i=0;i<ks.length-1;i++){if(o[ks[i]]==null)o[ks[i]]={};o=o[ks[i]]}if(v==null)delete o[ks[ks.length-1]];else o[ks[ks.length-1]]=v}
-function budMat(st,r,type,t){const m=st.mat[r];if(!m)return;m.type=type;m.t=t;m.sheet=MATS[type].sheet;if(!finAllowed(type,m.fin))m.fin='ral9010'}
+let PRICING = 0,
+  budTm = null;
+const budJ = v => JSON.stringify(v === undefined ? null : v),
+  budGet = (st, p) => p.split('.').reduce((o, k) => (o == null ? o : o[k]), st);
+function budPut(st, p, v) {
+  const ks = p.split('.');
+  let o = st;
+  for (let i = 0; i < ks.length - 1; i++) {
+    if (o[ks[i]] == null) o[ks[i]] = {};
+    o = o[ks[i]];
+  }
+  if (v == null) delete o[ks[ks.length - 1]];
+  else o[ks[ks.length - 1]] = v;
+}
+function budMat(st, r, type, t) {
+  const m = st.mat[r];
+  if (!m) return;
+  m.type = type;
+  m.t = t;
+  m.sheet = MATS[type].sheet;
+  if (!finAllowed(type, m.fin)) m.fin = 'ral9010';
+}
 /* in order of how little you notice them: the first ones are tried first */
-const BUD=[
-  {id:'join',l:'Plain chipboard screws',n:'The cheapest way to join the boards; needs only a drill. Screw heads show on the outer sides unless you cap them.',f:['opts.joinery'],ap:st=>{st.opts.joinery='screw'}},
-  {id:'back',l:'Thin 3 mm backs',n:'White hardboard nailed on the back instead of a thicker back panel. You do not see the difference from the front.',f:['mat.back'],ap:st=>budMat(st,'back','hdf',3)},
-  {id:'stock',l:'Ready-edged furniture panels',n:'Buy the white melamine as 250 cm panels with finished edges instead of big sheets: less sawing and edge banding.',f:['opts.stock'],ap:st=>{st.opts.stock=Object.assign({},st.opts.stock||{},{on:true,roles:Object.assign({},STK_ALL)})}},
-  {id:'hw',l:'Simpler hinges and drawer runners',n:'Blum’s budget lines: doors close without soft close, drawers pull out three quarters instead of fully.',f:['opts.hw'],ap:st=>{st.opts.hw=Object.assign({},st.opts.hw||{},{brand:'blumeco'})}},
-  {id:'light',l:'No lights inside the cupboards',n:'Leaves out the LED strips that switch on when a door opens.',f:['opts.innerLight'],ap:st=>{st.opts.innerLight=false}},
-  {id:'carc',l:'White melamine inside',n:'Sides and shelves in 18 mm white melamine. You see it on open shelves and when a door is open.',f:['mat.carcass','mat.shelf'],ap:st=>{budMat(st,'carcass','melamine',18);budMat(st,'shelf','melamine',18)}},
-  {id:'handle',l:'Finger holes instead of handles',n:'A hole drilled in each door and drawer front; no handles to buy.',f:['opts.handle'],ap:st=>{st.opts.handle='hole'}},
-  {id:'desk',l:'Melamine desk top',n:'A 25 mm melamine top instead of veneer or solid wood.',f:['mat.desk'],ap:st=>budMat(st,'desk','melamine',25)},
-  {id:'front',l:'Melamine doors and drawer fronts',n:'The most visible saving: fronts and closing strips in melamine instead of veneer, wood or paint.',f:['mat.front','mat.skirt'],ap:st=>{budMat(st,'front','melamine',18);budMat(st,'skirt','melamine',18)}},
-  {id:'lean',l:'Fewer doors and drawers',n:'Changes the layout: one cupboard with doors per column and open shelves above, drawers in one column only.',f:['sections'],ap:st=>{const b=st.opts.budget;st.opts.budget=b||'mel';try{budgetLean(st)}finally{if(!b)delete st.opts.budget}slopeFix(st)}}];
-const budSig=()=>JSON.stringify(S,(k,v)=>k==='budT'?undefined:v);
-function budCalc(){const cur=(priceOf(S)||{}).total;if(!(cur>0)){ui.bud={sig:budSig(),cur:0,rows:[],floor:0,done:0};return}const sv=S.opts.sav&&typeof S.opts.sav==='object'?S.opts.sav:{},rows=[];let done=0;const fl=JSON.parse(JSON.stringify(S));
-  BUD.forEach(o=>{try{const c=JSON.parse(JSON.stringify(S));o.ap(c);const noop=o.f.every(p=>budJ(budGet(c,p))===budJ(budGet(S,p)));let rec=sv[o.id];if(rec&&!noop){delete sv[o.id];rec=null}
-      if(rec){const c2=JSON.parse(JSON.stringify(S));o.f.forEach((p,i)=>budPut(c2,p,JSON.parse(rec.p[i])));const pr=priceOf(c2);rows.push({id:o.id,on:true,save:pr?pr.total-cur:0})}
-      else if(noop)done++;else{const pr=priceOf(c);if(pr&&cur-pr.total>=1){rows.push({id:o.id,on:false,save:cur-pr.total});o.ap(fl)}else done++}}catch(e){}});
-  const pf=priceOf(fl);ui.bud={sig:budSig(),cur,rows,done,floor:pf?Math.min(cur,pf.total):cur}}
+const BUD = [
+  {
+    id: 'join',
+    l: 'Plain chipboard screws',
+    n: 'The cheapest way to join the boards; needs only a drill. Screw heads show on the outer sides unless you cap them.',
+    f: ['opts.joinery'],
+    ap: st => {
+      st.opts.joinery = 'screw';
+    }
+  },
+  {
+    id: 'back',
+    l: 'Thin 3 mm backs',
+    n: 'White hardboard nailed on the back instead of a thicker back panel. You do not see the difference from the front.',
+    f: ['mat.back'],
+    ap: st => budMat(st, 'back', 'hdf', 3)
+  },
+  {
+    id: 'stock',
+    l: 'Ready-edged furniture panels',
+    n: 'Buy the white melamine as 250 cm panels with finished edges instead of big sheets: less sawing and edge banding.',
+    f: ['opts.stock'],
+    ap: st => {
+      st.opts.stock = Object.assign({}, st.opts.stock || {}, { on: true, roles: Object.assign({}, STK_ALL) });
+    }
+  },
+  {
+    id: 'hw',
+    l: 'Simpler hinges and drawer runners',
+    n: 'Blum’s budget lines: doors close without soft close, drawers pull out three quarters instead of fully.',
+    f: ['opts.hw'],
+    ap: st => {
+      st.opts.hw = Object.assign({}, st.opts.hw || {}, { brand: 'blumeco' });
+    }
+  },
+  {
+    id: 'light',
+    l: 'No lights inside the cupboards',
+    n: 'Leaves out the LED strips that switch on when a door opens.',
+    f: ['opts.innerLight'],
+    ap: st => {
+      st.opts.innerLight = false;
+    }
+  },
+  {
+    id: 'carc',
+    l: 'White melamine inside',
+    n: 'Sides and shelves in 18 mm white melamine. You see it on open shelves and when a door is open.',
+    f: ['mat.carcass', 'mat.shelf'],
+    ap: st => {
+      budMat(st, 'carcass', 'melamine', 18);
+      budMat(st, 'shelf', 'melamine', 18);
+    }
+  },
+  {
+    id: 'handle',
+    l: 'Finger holes instead of handles',
+    n: 'A hole drilled in each door and drawer front; no handles to buy.',
+    f: ['opts.handle'],
+    ap: st => {
+      st.opts.handle = 'hole';
+    }
+  },
+  {
+    id: 'desk',
+    l: 'Melamine desk top',
+    n: 'A 25 mm melamine top instead of veneer or solid wood.',
+    f: ['mat.desk'],
+    ap: st => budMat(st, 'desk', 'melamine', 25)
+  },
+  {
+    id: 'front',
+    l: 'Melamine doors and drawer fronts',
+    n: 'The most visible saving: fronts and closing strips in melamine instead of veneer, wood or paint.',
+    f: ['mat.front', 'mat.skirt'],
+    ap: st => {
+      budMat(st, 'front', 'melamine', 18);
+      budMat(st, 'skirt', 'melamine', 18);
+    }
+  },
+  {
+    id: 'lean',
+    l: 'Fewer doors and drawers',
+    n: 'Changes the layout: one cupboard with doors per column and open shelves above, drawers in one column only.',
+    f: ['sections'],
+    ap: st => {
+      const b = st.opts.budget;
+      st.opts.budget = b || 'mel';
+      try {
+        budgetLean(st);
+      } finally {
+        if (!b) delete st.opts.budget;
+      }
+      slopeFix(st);
+    }
+  }
+];
+const budSig = () => JSON.stringify(S, (k, v) => (k === 'budT' ? undefined : v));
+function budCalc() {
+  const cur = (priceOf(S) || {}).total;
+  if (!(cur > 0)) {
+    ui.bud = { sig: budSig(), cur: 0, rows: [], floor: 0, done: 0 };
+    return;
+  }
+  const sv = S.opts.sav && typeof S.opts.sav === 'object' ? S.opts.sav : {},
+    rows = [];
+  let done = 0;
+  const fl = JSON.parse(JSON.stringify(S));
+  BUD.forEach(o => {
+    try {
+      const c = JSON.parse(JSON.stringify(S));
+      o.ap(c);
+      const noop = o.f.every(p => budJ(budGet(c, p)) === budJ(budGet(S, p)));
+      let rec = sv[o.id];
+      if (rec && !noop) {
+        delete sv[o.id];
+        rec = null;
+      }
+      if (rec) {
+        const c2 = JSON.parse(JSON.stringify(S));
+        o.f.forEach((p, i) => budPut(c2, p, JSON.parse(rec.p[i])));
+        const pr = priceOf(c2);
+        rows.push({ id: o.id, on: true, save: pr ? pr.total - cur : 0 });
+      } else if (noop) done++;
+      else {
+        const pr = priceOf(c);
+        if (pr && cur - pr.total >= 1) {
+          rows.push({ id: o.id, on: false, save: cur - pr.total });
+          o.ap(fl);
+        } else done++;
+      }
+    } catch (e) {
+      oops('prices-budget #6', e);
+    }
+  });
+  const pf = priceOf(fl);
+  ui.bud = { sig: budSig(), cur, rows, done, floor: pf ? Math.min(cur, pf.total) : cur };
+}
 /* which savings to suggest to get under the target: least noticeable first */
-function budSuggest(){const B=ui.bud,T=+S.opts.budT;if(!B)return 0;let need=T>0?B.cur-T:0,sum=0;B.rows.forEach(r=>{r.sug=false;if(!r.on&&need>0.5){r.sug=true;need-=r.save;sum+=r.save}});return sum}
-function budSwitch(id,onOnly){const o=BUD.find(x=>x.id===id);if(!o)return;if(!S.opts.sav||typeof S.opts.sav!=='object')S.opts.sav={};const sv=S.opts.sav,rec=sv[id];
-  if(rec&&!onOnly){if(id==='lean'&&rec.a!==JSON.stringify(S.sections)){delete sv[id];toast('You changed the layout since — use Undo to step back to the fuller layout');return}o.f.forEach((p,i)=>budPut(S,p,JSON.parse(rec.p[i])));delete sv[id];return}
-  if(rec)return;const prev=o.f.map(p=>budJ(budGet(S,p)));o.ap(S);sv[id]={p:prev};if(id==='lean')sv[id].a=JSON.stringify(S.sections)}
-function budRange(){const B=ui.bud||{},cur=B.cur||(lastPrice?lastPrice.tot.all:0),T=+S.opts.budT>0?+S.opts.budT:0,back=((B.rows||[]).filter(r=>r.on).reduce((a,r)=>a+Math.max(0,r.save),0));const lo=Math.max(50,Math.floor((B.floor||cur*0.5)*0.9/50)*50),hi=Math.max(lo+100,Math.ceil(Math.max(cur+back,T)*1.15/50)*50);return {lo,hi,cur,T}}
-function budState(cur,T){if(!(T>0))return ['','Drag the slider to the amount you want to spend'];const d=cur-T;return d>0.5?['over',`${eur(d)} over your budget`]:['under',d<-0.5?`${eur(-d)} under your budget`:'Exactly on budget']}
-function budHTML(){const B=ui.bud,ok=B&&B.sig===budSig();const R=budRange(),cur=lastPrice?lastPrice.tot.all:R.cur,st=budState(cur,R.T),v=R.T||Math.ceil(cur/50)*50;
-  let h=`<div class="budh"><b>Budget</b><span class="budst ${st[0]}" id="budst">${st[1]}</span></div>
-  <div class="budsl"><input type="range" data-bud="t" min="${R.lo}" max="${R.hi}" step="50" value="${Math.max(R.lo,Math.min(R.hi,v))}" aria-label="Your budget in euro" style="--f:${((Math.max(R.lo,Math.min(R.hi,cur))-R.lo)/(R.hi-R.lo)*100).toFixed(1)}%"><output id="budv" class="${R.T?'':'off'}">${R.T?eur(R.T):'no budget'}</output>${R.T?'<button type="button" class="btn sm" data-act="budClear">Clear</button>':''}</div>
+function budSuggest() {
+  const B = ui.bud,
+    T = +S.opts.budT;
+  if (!B) return 0;
+  let need = T > 0 ? B.cur - T : 0,
+    sum = 0;
+  B.rows.forEach(r => {
+    r.sug = false;
+    if (!r.on && need > 0.5) {
+      r.sug = true;
+      need -= r.save;
+      sum += r.save;
+    }
+  });
+  return sum;
+}
+function budSwitch(id, onOnly) {
+  const o = BUD.find(x => x.id === id);
+  if (!o) return;
+  if (!S.opts.sav || typeof S.opts.sav !== 'object') S.opts.sav = {};
+  const sv = S.opts.sav,
+    rec = sv[id];
+  if (rec && !onOnly) {
+    if (id === 'lean' && rec.a !== JSON.stringify(S.sections)) {
+      delete sv[id];
+      toast('You changed the layout since — use Undo to step back to the fuller layout');
+      return;
+    }
+    o.f.forEach((p, i) => budPut(S, p, JSON.parse(rec.p[i])));
+    delete sv[id];
+    return;
+  }
+  if (rec) return;
+  const prev = o.f.map(p => budJ(budGet(S, p)));
+  o.ap(S);
+  sv[id] = { p: prev };
+  if (id === 'lean') sv[id].a = JSON.stringify(S.sections);
+}
+function budRange() {
+  const B = ui.bud || {},
+    cur = B.cur || (lastPrice ? lastPrice.tot.all : 0),
+    T = +S.opts.budT > 0 ? +S.opts.budT : 0,
+    back = (B.rows || []).filter(r => r.on).reduce((a, r) => a + Math.max(0, r.save), 0);
+  const lo = Math.max(50, Math.floor(((B.floor || cur * 0.5) * 0.9) / 50) * 50),
+    hi = Math.max(lo + 100, Math.ceil((Math.max(cur + back, T) * 1.15) / 50) * 50);
+  return { lo, hi, cur, T };
+}
+function budState(cur, T) {
+  if (!(T > 0)) return ['', 'Drag the slider to the amount you want to spend'];
+  const d = cur - T;
+  return d > 0.5
+    ? ['over', `${eur(d)} over your budget`]
+    : ['under', d < -0.5 ? `${eur(-d)} under your budget` : 'Exactly on budget'];
+}
+function budHTML() {
+  const B = ui.bud,
+    ok = B && B.sig === budSig();
+  const R = budRange(),
+    cur = lastPrice ? lastPrice.tot.all : R.cur,
+    st = budState(cur, R.T),
+    v = R.T || Math.ceil(cur / 50) * 50;
+  let h = `<div class="budh"><b>Budget</b><span class="budst ${st[0]}" id="budst">${st[1]}</span></div>
+  <div class="budsl"><input type="range" data-bud="t" min="${R.lo}" max="${R.hi}" step="50" value="${Math.max(R.lo, Math.min(R.hi, v))}" aria-label="Your budget in euro" style="--f:${(((Math.max(R.lo, Math.min(R.hi, cur)) - R.lo) / (R.hi - R.lo)) * 100).toFixed(1)}%"><output id="budv" class="${R.T ? '' : 'off'}">${R.T ? eur(R.T) : 'no budget'}</output>${R.T ? '<button type="button" class="btn sm" data-act="budClear">Clear</button>' : ''}</div>
   <div class="budsc"><span>${eur(R.lo)}</span><span>design now ${eur(cur)}</span><span>${eur(R.hi)}</span></div>`;
-  if(!B)return h+`<p class="hintp" style="margin:0">Working out what each saving is worth…</p>`;
-  const sum=budSuggest(),nS=B.rows.filter(r=>r.sug).length,short=R.T>0&&B.cur-R.T>0.5?B.cur-R.T-B.rows.filter(r=>!r.on).reduce((a,r)=>a+r.save,0):0;
-  if(B.rows.length)h+=`<div class="budl${ok?'':' stale'}">${B.rows.map(r=>{const o=BUD.find(x=>x.id===r.id);return `<button type="button" class="budr ${r.on?'on':''} ${r.sug?'sug':''}" data-act="budT" data-a="${r.id}" aria-pressed="${r.on}"><i class="bsw"></i><span class="budt"><b>${o.l}${r.sug?' <em>suggested</em>':''}</b><small>${o.n}</small></span><span class="buda">${r.on?(r.save>=1?'saves € '+Math.round(r.save).toLocaleString('en-GB'):'on'):'− € '+Math.round(r.save).toLocaleString('en-GB')}</span></button>`}).join('')}</div>`;
-  else h+=`<p class="hintp" style="margin:0">Nothing left to save on here — this design already uses the cheapest boards, hardware and joints.</p>`;
-  if(nS)h+=`<div class="budgo"><button type="button" class="btn pri" data-act="budGo">Switch on the ${nS} suggested</button><span>${short>0.5?`Saves about ${eur(sum)}. Even with every saving on you stay about ${eur(short)} over — a narrower or shallower cabinet, or fewer columns, is the next step.`:`Saves about ${eur(sum)} and brings the design within your budget. The least noticeable savings are picked first.`}</span></div>`;
-  h+=`<p class="hintp" style="margin:0">Tap a saving to switch it on or off; the amounts are worked out for this design. Lowest this layout can go: about ${eur(B.floor)}.${B.done?` ${B.done} other saving${B.done===1?' is':'s are'} already in this design.`:''}</p>
-  <label class="chk budm"><input type="checkbox" data-act="budMode" ${budgetKind()?'checked':''}> Keep it cheap when I shuffle — new shuffles use budget boards and hardware, with fewer doors and drawers</label>`;
-  return h}
-function budPaint(){const el=document.getElementById('budcard');if(el)el.innerHTML=budHTML()}
-function budSoon(){clearTimeout(budTm);if(ui.tab!=='cut'||(ui.bud&&ui.bud.sig===budSig()))return;budTm=setTimeout(()=>{try{if(ui.tab!=='cut')return;budCalc();budPaint();budChips()}catch(e){}},40)}
-function budChipText(){const T=+S.opts.budT;if(!(T>0)||!lastPrice)return '💶 Set a budget';const d=lastPrice.tot.all-T;return d>0.5?`💶 ${eur(d)} over budget`:`💶 ${eur(Math.max(0,-d))} under budget`}
-function budChipBtn(){const T=+S.opts.budT,over=T>0&&lastPrice&&lastPrice.tot.all-T>0.5;return `<button type="button" class="lockchip bchip ${over?'bover':T>0?'bunder':''}" data-act="toBudget" title="Your budget — tap to set it and see what you can save">${budChipText()}</button>`}
-function budChips(){const T=+S.opts.budT,over=T>0&&lastPrice&&lastPrice.tot.all-T>0.5;document.querySelectorAll('.bchip').forEach(el=>{el.textContent=budChipText();el.classList.toggle('bover',!!over);el.classList.toggle('bunder',T>0&&!over)})}
-document.addEventListener('input',e=>{const el=e.target;if(!el||!el.dataset||el.dataset.bud!=='t')return;const v=+el.value,o=document.getElementById('budv'),s_=document.getElementById('budst'),st=budState(lastPrice?lastPrice.tot.all:0,v);if(o){o.textContent=eur(v);o.classList.remove('off')}if(s_){s_.textContent=st[1];s_.className='budst '+st[0]}});
-document.addEventListener('change',e=>{const el=e.target;if(!el||!el.dataset||el.dataset.bud!=='t')return;S.opts.budT=+el.value;saveSoon();snap();budPaint();budChips()});
-const budgetKind=()=>S.opts.budget==='mel'||S.opts.budget==='mdf'?S.opts.budget:'';
-const isBudget=()=>!!budgetKind();
+  if (!B) return h + `<p class="hintp" style="margin:0">Working out what each saving is worth…</p>`;
+  const sum = budSuggest(),
+    nS = B.rows.filter(r => r.sug).length,
+    short = R.T > 0 && B.cur - R.T > 0.5 ? B.cur - R.T - B.rows.filter(r => !r.on).reduce((a, r) => a + r.save, 0) : 0;
+  if (B.rows.length)
+    h += `<div class="budl${ok ? '' : ' stale'}">${B.rows
+      .map(r => {
+        const o = BUD.find(x => x.id === r.id);
+        return `<button type="button" class="budr ${r.on ? 'on' : ''} ${r.sug ? 'sug' : ''}" data-act="budT" data-a="${r.id}" aria-pressed="${r.on}"><i class="bsw"></i><span class="budt"><b>${o.l}${r.sug ? ' <em>suggested</em>' : ''}</b><small>${o.n}</small></span><span class="buda">${r.on ? (r.save >= 1 ? 'saves € ' + Math.round(r.save).toLocaleString('en-GB') : 'on') : '− € ' + Math.round(r.save).toLocaleString('en-GB')}</span></button>`;
+      })
+      .join('')}</div>`;
+  else
+    h += `<p class="hintp" style="margin:0">Nothing left to save on here — this design already uses the cheapest boards, hardware and joints.</p>`;
+  if (nS)
+    h += `<div class="budgo"><button type="button" class="btn pri" data-act="budGo">Switch on the ${nS} suggested</button><span>${short > 0.5 ? `Saves about ${eur(sum)}. Even with every saving on you stay about ${eur(short)} over — a narrower or shallower cabinet, or fewer columns, is the next step.` : `Saves about ${eur(sum)} and brings the design within your budget. The least noticeable savings are picked first.`}</span></div>`;
+  h += `<p class="hintp" style="margin:0">Tap a saving to switch it on or off; the amounts are worked out for this design. Lowest this layout can go: about ${eur(B.floor)}.${B.done ? ` ${B.done} other saving${B.done === 1 ? ' is' : 's are'} already in this design.` : ''}</p>
+  <label class="chk budm"><input type="checkbox" data-act="budMode" ${budgetKind() ? 'checked' : ''}> Keep it cheap when I shuffle — new shuffles use budget boards and hardware, with fewer doors and drawers</label>`;
+  return h;
+}
+function budPaint() {
+  const el = document.getElementById('budcard');
+  if (el) el.innerHTML = budHTML();
+}
+function budSoon() {
+  clearTimeout(budTm);
+  if (ui.tab !== 'cut' || (ui.bud && ui.bud.sig === budSig())) return;
+  budTm = setTimeout(() => {
+    try {
+      if (ui.tab !== 'cut') return;
+      budCalc();
+      budPaint();
+      budChips();
+    } catch (e) {
+      oops('prices-budget #7', e);
+    }
+  }, 40);
+}
+function budChipText() {
+  const T = +S.opts.budT;
+  if (!(T > 0) || !lastPrice) return '💶 Set a budget';
+  const d = lastPrice.tot.all - T;
+  return d > 0.5 ? `💶 ${eur(d)} over budget` : `💶 ${eur(Math.max(0, -d))} under budget`;
+}
+function budChipBtn() {
+  const T = +S.opts.budT,
+    over = T > 0 && lastPrice && lastPrice.tot.all - T > 0.5;
+  return `<button type="button" class="lockchip bchip ${over ? 'bover' : T > 0 ? 'bunder' : ''}" data-act="toBudget" title="Your budget — tap to set it and see what you can save">${budChipText()}</button>`;
+}
+function budChips() {
+  const T = +S.opts.budT,
+    over = T > 0 && lastPrice && lastPrice.tot.all - T > 0.5;
+  document.querySelectorAll('.bchip').forEach(el => {
+    el.textContent = budChipText();
+    el.classList.toggle('bover', !!over);
+    el.classList.toggle('bunder', T > 0 && !over);
+  });
+}
+document.addEventListener('input', e => {
+  const el = e.target;
+  if (!el || !el.dataset || el.dataset.bud !== 't') return;
+  const v = +el.value,
+    o = document.getElementById('budv'),
+    s_ = document.getElementById('budst'),
+    st = budState(lastPrice ? lastPrice.tot.all : 0, v);
+  if (o) {
+    o.textContent = eur(v);
+    o.classList.remove('off');
+  }
+  if (s_) {
+    s_.textContent = st[1];
+    s_.className = 'budst ' + st[0];
+  }
+});
+document.addEventListener('change', e => {
+  const el = e.target;
+  if (!el || !el.dataset || el.dataset.bud !== 't') return;
+  S.opts.budT = +el.value;
+  saveSoon();
+  snap();
+  budPaint();
+  budChips();
+});
+const budgetKind = () => (S.opts.budget === 'mel' || S.opts.budget === 'mdf' ? S.opts.budget : '');
+const isBudget = () => !!budgetKind();
 /* What a cabinet maker would roughly charge, fitted — from Belgian price guides (DM-Line, Bobex), looked up 13 Nov 2026:
    wall units in board material € 1200–1,750 per running metre fitted, excl. VAT (open € 1,100, hinged doors € 1,600); veneer about € 1600–2,200, solid wood € 1800–3,500;
    drawers about € 350 each; LED € 200–400 per lit zone; sloped ceilings 20–40 % more */
-function makerEstimate(){const G=bgeo(),qs=G.secs.filter(q=>!q.panel);if(!qs.length)return null;const ps=partSet(),use=qs.filter(q=>!ps||ps.has(q.i)),m=use.reduce((a,q)=>a+(q.bR-q.bL),0)/1000;if(!(m>0.2))return null;
-  const ft=S.mat.front.type,R=MAKER_PRICE.perMetre[ft]||MAKER_PRICE.other;
-  let tot=0,op=0;use.forEach(q=>(q.zones||[]).forEach(zr=>{const a=q.w*(zr.h||0),z=zr.z||{};tot+=a;if(z.type==='open'||z.type==='opening')op+=a}));const openSh=tot?op/tot:0,of=openSh>0.5?0.8:1;
-  const tops=use.flatMap(q=>[q.top(q.bL),q.top(q.bR)]),slope=Math.max(...tops)-Math.min(...tops)>150,sf=slope?[1.2,1.4]:[1,1];
-  const dr=G.fronts.filter(f=>f.kind==='drawer'&&(!ps||ps.has(f.sec))).length,led=(G.H.led||[]).length,parts=[];
-  let lo=m*R[0]*of*sf[0],hi=m*R[1]*of*sf[1];parts.push(`${m.toFixed(1)} m of cabinet at € ${Math.round(R[0]*of).toLocaleString('en-GB')}–${Math.round(R[1]*of).toLocaleString('en-GB')} a metre${openSh>0.5?' (mostly open shelving)':''}`);if(slope)parts.push('sloped ceiling: 20–40 % more');
-  if(dr){lo+=dr*MAKER_PRICE.drawer[0];hi+=dr*MAKER_PRICE.drawer[1];parts.push(`${dr} drawer${dr>1?'s':''} at about € ${MAKER_PRICE.drawer[0]}–${MAKER_PRICE.drawer[1]} each`)}if(led){lo+=led*MAKER_PRICE.light[0];hi+=led*MAKER_PRICE.light[1];parts.push(`${led} lit level${led>1?'s':''} at € ${MAKER_PRICE.light[0]}–${MAKER_PRICE.light[1]}`)}
-  return {lo:lo*1.21,hi:hi*1.21,parts,m}}
-const eurK=v=>'€ '+(Math.round(v/100)*100).toLocaleString('en-GB');
-function makerHTML(t){const M=makerEstimate();if(!M)return '';const mid=(M.lo+M.hi)/2,w=Math.max(4,Math.min(100,t.all/M.hi*100));
-  return `<div class="pmk"><div class="pmkh"><b>Cabinet maker, fitted</b><span>${eurK(M.lo)} – ${eurK(M.hi)} incl. 21 % VAT</span></div><div class="pmkb"><i style="width:${w.toFixed(1)}%"></i><em style="left:${(M.lo/M.hi*100).toFixed(1)}%"></em></div><div class="pmkl"><span>Building it yourself: ${eur(t.all)} in materials</span><span>about ${eurK(mid-t.all)} less than the middle of that range</span></div>
-  <p class="hintp" style="margin:0">Rough guide, not a quote: ${M.parts.join(' · ')}. Based on Belgian price guides for fitted made-to-measure cabinets (DM-Line and Bobex, looked up on ${PRICE_DATE}). A home older than 10 years can often get 6 % VAT instead of 21 %. Your own hours and tools are not in the do-it-yourself figure.</p></div>`}
+function makerEstimate() {
+  const G = bgeo(),
+    qs = G.secs.filter(q => !q.panel);
+  if (!qs.length) return null;
+  const ps = partSet(),
+    use = qs.filter(q => !ps || ps.has(q.i)),
+    m = use.reduce((a, q) => a + (q.bR - q.bL), 0) / 1000;
+  if (!(m > 0.2)) return null;
+  const ft = S.mat.front.type,
+    R = MAKER_PRICE.perMetre[ft] || MAKER_PRICE.other;
+  let tot = 0,
+    op = 0;
+  use.forEach(q =>
+    (q.zones || []).forEach(zr => {
+      const a = q.w * (zr.h || 0),
+        z = zr.z || {};
+      tot += a;
+      if (z.type === 'open' || z.type === 'opening') op += a;
+    })
+  );
+  const openSh = tot ? op / tot : 0,
+    of = openSh > 0.5 ? 0.8 : 1;
+  const tops = use.flatMap(q => [q.top(q.bL), q.top(q.bR)]),
+    slope = Math.max(...tops) - Math.min(...tops) > 150,
+    sf = slope ? [1.2, 1.4] : [1, 1];
+  const dr = G.fronts.filter(f => f.kind === 'drawer' && (!ps || ps.has(f.sec))).length,
+    led = (G.H.led || []).length,
+    parts = [];
+  let lo = m * R[0] * of * sf[0],
+    hi = m * R[1] * of * sf[1];
+  parts.push(
+    `${m.toFixed(1)} m of cabinet at € ${Math.round(R[0] * of).toLocaleString('en-GB')}–${Math.round(R[1] * of).toLocaleString('en-GB')} a metre${openSh > 0.5 ? ' (mostly open shelving)' : ''}`
+  );
+  if (slope) parts.push('sloped ceiling: 20–40 % more');
+  if (dr) {
+    lo += dr * MAKER_PRICE.drawer[0];
+    hi += dr * MAKER_PRICE.drawer[1];
+    parts.push(`${dr} drawer${dr > 1 ? 's' : ''} at about € ${MAKER_PRICE.drawer[0]}–${MAKER_PRICE.drawer[1]} each`);
+  }
+  if (led) {
+    lo += led * MAKER_PRICE.light[0];
+    hi += led * MAKER_PRICE.light[1];
+    parts.push(`${led} lit level${led > 1 ? 's' : ''} at € ${MAKER_PRICE.light[0]}–${MAKER_PRICE.light[1]}`);
+  }
+  return { lo: lo * 1.21, hi: hi * 1.21, parts, m };
+}
+const eurK = v => '€ ' + (Math.round(v / 100) * 100).toLocaleString('en-GB');
+function makerHTML(t) {
+  const M = makerEstimate();
+  if (!M) return '';
+  const mid = (M.lo + M.hi) / 2,
+    w = Math.max(4, Math.min(100, (t.all / M.hi) * 100));
+  return `<div class="pmk"><div class="pmkh"><b>Cabinet maker, fitted</b><span>${eurK(M.lo)} – ${eurK(M.hi)} incl. 21 % VAT</span></div><div class="pmkb"><i style="width:${w.toFixed(1)}%"></i><em style="left:${((M.lo / M.hi) * 100).toFixed(1)}%"></em></div><div class="pmkl"><span>Building it yourself: ${eur(t.all)} in materials</span><span>about ${eurK(mid - t.all)} less than the middle of that range</span></div>
+  <p class="hintp" style="margin:0">Rough guide, not a quote: ${M.parts.join(' · ')}. Based on Belgian price guides for fitted made-to-measure cabinets (DM-Line and Bobex, looked up on ${PRICE_DATE}). A home older than 10 years can often get 6 % VAT instead of 21 %. Your own hours and tools are not in the do-it-yourself figure.</p></div>`;
+}
 /* Build in phases: split the wall into runs of columns and price each run as its own purchase */
-const phSig=()=>JSON.stringify([S.sections,S.mat,S.room,S.opts.shop,S.opts.stock,S.opts.hw,S.opts.joinery,S.opts.construct,S.opts.prices]);
-function planPhases(n){const units=[];geo.secs.forEach(q=>{if(q.panel)return;if(q.follow!=null&&units.length){units[units.length-1].ix.push(q.i);units[units.length-1].w+=q.w}else units.push({ix:[q.i],w:q.w})});n=Math.max(2,Math.min(n,units.length));if(units.length<2){ui.phases=null;toast('There is only one column to build');return}
-  const tot=units.reduce((a,u)=>a+u.w,0),chunks=[];let cur=[],acc=0,done=0;units.forEach((u,k)=>{cur.push(...u.ix);acc+=u.w;const left=units.length-1-k,need=n-chunks.length-1;if(need>0&&(left===need||(left>need&&acc>=(tot-done)/(need+1)-u.w/2))){chunks.push(cur);done+=acc;cur=[];acc=0}});if(cur.length)chunks.push(cur);
-  const keep=S.opts.part?JSON.parse(JSON.stringify(S.opts.part)):undefined,rows=[];
-  try{chunks.forEach(c=>{S.opts.part=Object.assign({},keep||{},{on:'1',secs:c});renderCut();rows.push({secs:c,total:lastPrice.tot.all,sheets:lastPrice.rows.filter(r=>r.grp==='Sheets').reduce((a,r)=>a+r.qty,0)})});
-    S.opts.part=Object.assign({},keep||{},{on:''});renderCut();ui.phases={n,rows,full:lastPrice.tot.all,sig:phSig()}}finally{if(keep===undefined)delete S.opts.part;else S.opts.part=keep}
-  dirty.cut=true;renderCut()}
-function phasesHTML(){const ph=ui.phases,ok=ph&&ph.sig===phSig(),lab=c=>c.length>1?`Columns ${c[0]+1}–${c[c.length-1]+1}`:`Column ${c[0]+1}`;
-  let h=`<div class="pbud"><span class="pbok">Build in phases</span><div class="seg" role="group">${[2,3,4].map(k=>`<button type="button" class="${ok&&ph.n===k?'on':''}" data-act="phases" data-a="${k}">${k} phases</button>`).join('')}</div><span>Splits the wall into runs of neighbouring columns and prices each run as its own shopping trip.</span></div>`;
-  if(ok){const sum=ph.rows.reduce((a,r)=>a+r.total,0);h+=`<div class="tw"><table class="cut" style="min-width:480px"><thead><tr><th>Phase</th><th>Boards to buy</th><th>Cost</th><th></th></tr></thead><tbody>${ph.rows.map((r,i)=>`<tr><td>Phase ${i+1} · ${lab(r.secs)}</td><td class="n">${r.sheets}</td><td class="n">${eur(r.total)}</td><td class="note"><button type="button" class="btn sm" data-act="phaseUse" data-a="${r.secs.join(',')}">Show only this phase</button></td></tr>`).join('')}<tr class="grp"><td>All phases bought separately</td><td></td><td class="n">${eur(sum)}</td><td class="note">${sum>ph.full+1?`${eur(sum-ph.full)} more than buying everything at once (${eur(ph.full)}), because each phase starts new sheets — keep the offcuts for the next phase`:''}</td></tr></tbody></table></div>`}
-  return h}
+const phSig = () =>
+  JSON.stringify([
+    S.sections,
+    S.mat,
+    S.room,
+    S.opts.shop,
+    S.opts.stock,
+    S.opts.hw,
+    S.opts.joinery,
+    S.opts.construct,
+    S.opts.prices
+  ]);
+function planPhases(n) {
+  const units = [];
+  geo.secs.forEach(q => {
+    if (q.panel) return;
+    if (q.follow != null && units.length) {
+      units[units.length - 1].ix.push(q.i);
+      units[units.length - 1].w += q.w;
+    } else units.push({ ix: [q.i], w: q.w });
+  });
+  n = Math.max(2, Math.min(n, units.length));
+  if (units.length < 2) {
+    ui.phases = null;
+    toast('There is only one column to build');
+    return;
+  }
+  const tot = units.reduce((a, u) => a + u.w, 0),
+    chunks = [];
+  let cur = [],
+    acc = 0,
+    done = 0;
+  units.forEach((u, k) => {
+    cur.push(...u.ix);
+    acc += u.w;
+    const left = units.length - 1 - k,
+      need = n - chunks.length - 1;
+    if (need > 0 && (left === need || (left > need && acc >= (tot - done) / (need + 1) - u.w / 2))) {
+      chunks.push(cur);
+      done += acc;
+      cur = [];
+      acc = 0;
+    }
+  });
+  if (cur.length) chunks.push(cur);
+  const keep = S.opts.part ? JSON.parse(JSON.stringify(S.opts.part)) : undefined,
+    rows = [];
+  try {
+    chunks.forEach(c => {
+      S.opts.part = Object.assign({}, keep || {}, { on: '1', secs: c });
+      renderCut();
+      rows.push({
+        secs: c,
+        total: lastPrice.tot.all,
+        sheets: lastPrice.rows.filter(r => r.grp === 'Sheets').reduce((a, r) => a + r.qty, 0)
+      });
+    });
+    S.opts.part = Object.assign({}, keep || {}, { on: '' });
+    renderCut();
+    ui.phases = { n, rows, full: lastPrice.tot.all, sig: phSig() };
+  } finally {
+    if (keep === undefined) delete S.opts.part;
+    else S.opts.part = keep;
+  }
+  dirty.cut = true;
+  renderCut();
+}
+function phasesHTML() {
+  const ph = ui.phases,
+    ok = ph && ph.sig === phSig(),
+    lab = c => (c.length > 1 ? `Columns ${c[0] + 1}–${c[c.length - 1] + 1}` : `Column ${c[0] + 1}`);
+  let h = `<div class="pbud"><span class="pbok">Build in phases</span><div class="seg" role="group">${[2, 3, 4].map(k => `<button type="button" class="${ok && ph.n === k ? 'on' : ''}" data-act="phases" data-a="${k}">${k} phases</button>`).join('')}</div><span>Splits the wall into runs of neighbouring columns and prices each run as its own shopping trip.</span></div>`;
+  if (ok) {
+    const sum = ph.rows.reduce((a, r) => a + r.total, 0);
+    h += `<div class="tw"><table class="cut" style="min-width:480px"><thead><tr><th>Phase</th><th>Boards to buy</th><th>Cost</th><th></th></tr></thead><tbody>${ph.rows.map((r, i) => `<tr><td>Phase ${i + 1} · ${lab(r.secs)}</td><td class="n">${r.sheets}</td><td class="n">${eur(r.total)}</td><td class="note"><button type="button" class="btn sm" data-act="phaseUse" data-a="${r.secs.join(',')}">Show only this phase</button></td></tr>`).join('')}<tr class="grp"><td>All phases bought separately</td><td></td><td class="n">${eur(sum)}</td><td class="note">${sum > ph.full + 1 ? `${eur(sum - ph.full)} more than buying everything at once (${eur(ph.full)}), because each phase starts new sheets — keep the offcuts for the next phase` : ''}</td></tr></tbody></table></div>`;
+  }
+  return h;
+}
 /* Leftover pieces of each sheet that are big enough to reuse */
-function offcuts(nest){const out=[];nest.forEach(n=>{const L=n.sh.L,W=n.sh.W,kerf=sawCfg().kerf;n.sheets.forEach((sh,si)=>{(sh.shelves||[]).forEach(r=>{const w=L-r.x,h=r.h;if(w>=300&&h>=150)out.push({name:n.name,si,w:Math.floor(w),h:Math.floor(h)})});const h2=W-(sh.y||0);if(h2>=150)out.push({name:n.name,si,w:L,h:Math.floor(h2)})})});
-  return out.sort((a,b)=>b.w*b.h-a.w*a.h)}
-function offcutHTML(nest){const o=offcuts(nest);if(!o.length)return '';const by={};o.forEach(c=>{(by[c.name]=by[c.name]||[]).push(c)});const m2=o.reduce((a,c)=>a+c.w*c.h,0)/1e6;
-  return `<div class="pbud" style="align-items:flex-start"><span class="pbok">Leftovers</span><span>${m2.toFixed(1)} m² of reusable offcuts (pieces of at least 300 × 150 mm):<br>${Object.entries(by).map(([k,v])=>`<b>${esc(k)} mm</b> — ${v.slice(0,6).map(c=>`${c.w} × ${c.h}`).join(' · ')}${v.length>6?` · +${v.length-6} more`:''}`).join('<br>')}<br>Good for drawer boxes, rails, plinth blocks, shelf strips or a later column.</span></div>`}
+function offcuts(nest) {
+  const out = [];
+  nest.forEach(n => {
+    const L = n.sh.L,
+      W = n.sh.W,
+      kerf = sawCfg().kerf;
+    n.sheets.forEach((sh, si) => {
+      (sh.shelves || []).forEach(r => {
+        const w = L - r.x,
+          h = r.h;
+        if (w >= 300 && h >= 150) out.push({ name: n.name, si, w: Math.floor(w), h: Math.floor(h) });
+      });
+      const h2 = W - (sh.y || 0);
+      if (h2 >= 150) out.push({ name: n.name, si, w: L, h: Math.floor(h2) });
+    });
+  });
+  return out.sort((a, b) => b.w * b.h - a.w * a.h);
+}
+function offcutHTML(nest) {
+  const o = offcuts(nest);
+  if (!o.length) return '';
+  const by = {};
+  o.forEach(c => {
+    (by[c.name] = by[c.name] || []).push(c);
+  });
+  const m2 = o.reduce((a, c) => a + c.w * c.h, 0) / 1e6;
+  return `<div class="pbud" style="align-items:flex-start"><span class="pbok">Leftovers</span><span>${m2.toFixed(1)} m² of reusable offcuts (pieces of at least 300 × 150 mm):<br>${Object.entries(
+    by
+  )
+    .map(
+      ([k, v]) =>
+        `<b>${esc(k)} mm</b> — ${v
+          .slice(0, 6)
+          .map(c => `${c.w} × ${c.h}`)
+          .join(' · ')}${v.length > 6 ? ` · +${v.length - 6} more` : ''}`
+    )
+    .join('<br>')}<br>Good for drawer boxes, rails, plinth blocks, shelf strips or a later column.</span></div>`;
+}
 /* Sheet saver: the same design at other cabinet depths — which one needs the fewest boards? */
-function sheetSaver(){const D0=+S.room.D||600,lo=Math.max(300,D0-100),hi=D0+20,sig=JSON.stringify(S),out=[];
-  const run=d=>{const t=JSON.parse(sig);t.room.D=d;const G=build(t),gs=groupPanels(G),nest=nestAll(gs),sp=stockPlan(gs);let used=0,tot=0;nest.forEach(n=>{const A=n.sh.L*n.sh.W;n.sheets.forEach(sh=>{tot+=A;used+=sh.pl.reduce((a,c)=>a+Math.abs(polyArea(c.p.poly)),0)})});
-    const rail=G.secs.some(q=>q.zones.some(zr=>zr.z&&zr.z.rail))?Math.min(...G.secs.filter(q=>q.zones.some(zr=>zr.z&&zr.z.rail)).map(q=>q.Dh)):null;
-    return {d,G,nest,sp,sheets:nest.reduce((a,n)=>a+n.sheets.length+(n.over.length?1:0),0),boards:(sp.groups||[]).reduce((a,g)=>a+g.bars.length,0),use:tot?used/tot:0,warns:G.warns.length,rail,slides:Object.keys(G.H.slides||{}).map(Number)}};
-  const all=[];for(let d=hi;d>=lo;d--){try{all.push(run(d))}catch(e){}}
-  const cur=all.find(o=>o.d===D0)||run(D0),key=o=>o.sheets*1000+o.boards;
+function sheetSaver() {
+  const D0 = +S.room.D || 600,
+    lo = Math.max(300, D0 - 100),
+    hi = D0 + 20,
+    sig = JSON.stringify(S),
+    out = [];
+  const run = d => {
+    const t = JSON.parse(sig);
+    t.room.D = d;
+    const G = build(t),
+      gs = groupPanels(G),
+      nest = nestAll(gs),
+      sp = stockPlan(gs);
+    let used = 0,
+      tot = 0;
+    nest.forEach(n => {
+      const A = n.sh.L * n.sh.W;
+      n.sheets.forEach(sh => {
+        tot += A;
+        used += sh.pl.reduce((a, c) => a + Math.abs(polyArea(c.p.poly)), 0);
+      });
+    });
+    const rail = G.secs.some(q => q.zones.some(zr => zr.z && zr.z.rail))
+      ? Math.min(...G.secs.filter(q => q.zones.some(zr => zr.z && zr.z.rail)).map(q => q.Dh))
+      : null;
+    return {
+      d,
+      G,
+      nest,
+      sp,
+      sheets: nest.reduce((a, n) => a + n.sheets.length + (n.over.length ? 1 : 0), 0),
+      boards: (sp.groups || []).reduce((a, g) => a + g.bars.length, 0),
+      use: tot ? used / tot : 0,
+      warns: G.warns.length,
+      rail,
+      slides: Object.keys(G.H.slides || {}).map(Number)
+    };
+  };
+  const all = [];
+  for (let d = hi; d >= lo; d--) {
+    try {
+      all.push(run(d));
+    } catch (e) {
+      oops('prices-budget #8', e);
+    }
+  }
+  const cur = all.find(o => o.d === D0) || run(D0),
+    key = o => o.sheets * 1000 + o.boards;
   // for every smaller sheet count: the deepest depth that gets there
-  const best={};all.forEach(o=>{if(o.d>D0)return;const k=key(o);if(k<key(cur)&&(!best[k]||o.d>best[k].d))best[k]=o});
-  const rows=Object.values(best).sort((a,b)=>b.d-a.d).slice(0,4);
-  const deeper=all.filter(o=>o.d>D0&&key(o)<=key(cur)).sort((a,b)=>b.d-a.d)[0]||null;
-  const cost=o=>{try{return priceRows(o.nest,o.sp,[],{}).tot.sheets}catch(e){return 0}};[cur,...rows,...(deeper?[deeper]:[])].forEach(o=>{o.cost=cost(o);delete o.G;delete o.nest;delete o.sp});
-  ui.saver={cur,rows,deeper,at:sig.length,sig}}
-function saverHTML(){const r=ui.saver;if(!r||!r.cur)return '';const c=r.cur,pc=v=>Math.round(v*100)+'%',sh=o=>`${o.sheets} sheet${o.sheets===1?'':'s'}${o.boards?' + '+o.boards+' panels':''}`;
-  const notes=o=>{const n=[];if(o.rail!=null&&o.rail<560&&!(c.rail!=null&&c.rail<560))n.push(`hanging space only ${Math.round(o.rail)} mm deep (clothes need 560)`);if(o.slides.length&&c.slides.length&&Math.max(...o.slides)<Math.max(...c.slides))n.push(`shorter drawer runners (${Math.max(...o.slides)} mm)`);if(o.warns>c.warns)n.push(`${o.warns-c.warns} more design note${o.warns-c.warns>1?'s':''}`);return n.join(' · ')};
-  const row=(o,isCur)=>`<tr${isCur?' class="grp"':''}><td>${o.d} mm${isCur?' (now)':o.d>c.d?' (deeper)':` (${c.d-o.d} less)`}</td><td class="n">${sh(o)}</td><td class="n">${pc(o.use)}</td><td class="n">${eur(o.cost)}</td><td class="n">${isCur?'—':(o.cost<c.cost-0.5?'saves '+eur(c.cost-o.cost):o.cost>c.cost+0.5?'+'+eur(o.cost-c.cost):'same')}</td><td class="note">${isCur?'':notes(o)} ${isCur?'':`<button type="button" class="btn sm" data-act="saverUse" data-a="${o.d}">Use</button>`}</td></tr>`;
-  const b=r.rows[0];
-  return `<div class="tw"><table class="cut" style="min-width:560px"><thead><tr><th>Cabinet depth</th><th>Sheets</th><th>Sheet used</th><th>Boards cost</th><th>Difference</th><th></th></tr></thead><tbody>${row(c,true)}${r.rows.map(o=>row(o,false)).join('')}${r.deeper?row(r.deeper,false):''}</tbody></table></div>
-  <p class="hintp" style="margin:0">${b?`Making the cabinets <b>${c.d-b.d} mm shallower (${b.d} mm)</b> needs ${c.sheets+c.boards-b.sheets-b.boards} sheet${c.sheets+c.boards-b.sheets-b.boards>1?'s':''} less. Every depth from ${c.d+20} down to ${Math.max(300,c.d-100)} mm was tried; each row is the deepest one that reaches that number of sheets.`:`No depth between ${Math.max(300,c.d-100)} and ${c.d} mm saves a whole sheet — ${c.d} mm is already a good depth.`}${r.deeper?` If there is room, you can even go to <b>${r.deeper.d} mm</b> on the same sheets.`:''} “Sheet used” is how much of the bought sheets ends up as parts.</p>`}
-const eur=v=>'€ '+(v>=100?Math.round(v).toLocaleString('en-GB'):v.toFixed(2));
-let CMT=null;let lastPrice=null,lastAlt=null;const STK_ALL={carcass:true,shelf:true,skirt:true,desk:true,front:true};
-function setStockAll(on){S.opts.stock=Object.assign({},S.opts.stock||{},on?{on:true,roles:Object.assign({},STK_ALL)}:{on:false})}
-function priceHTML(P){const t=P.tot;let last='';
-  return `<h3 id="price">Estimated price</h3><div class="pricebox"><div class="ptot"><b>${eur(t.all)}</b><span>for boards, finishing and hardware · incl. 21 % VAT</span></div><div class="pparts"><span><b>${eur(t.sheets)}</b> boards</span><span><b>${eur(t.fin)}</b> edge band &amp; paint</span><span><b>${eur(t.hw)}</b> hardware</span>${t.ship?`<span><b>${eur(t.ship)}</b> delivery</span>`:''}</div>
-  ${lastAlt?(()=>{const on=!lastAlt.on,a=on?t.all:lastAlt.total,b=on?lastAlt.total:t.all;return `<div class="pbud"><span>Buy the melamine as</span><div class="seg" role="group"><button type="button" class="${on?'':'on'}" data-act="stkAll" data-a="0">Full sheets · ${eur(b)}</button><button type="button" class="${on?'on':''}" data-act="stkAll" data-a="1">Furniture panels 250 cm · ${eur(a)}</button></div><span>${a<b-1?'Furniture panels are cheaper here and come with the long edges already banded.':b<a-1?'Full sheets are cheaper here; furniture panels save sawing and edge banding.':'About the same price.'}</span></div>`})():''}
+  const best = {};
+  all.forEach(o => {
+    if (o.d > D0) return;
+    const k = key(o);
+    if (k < key(cur) && (!best[k] || o.d > best[k].d)) best[k] = o;
+  });
+  const rows = Object.values(best)
+    .sort((a, b) => b.d - a.d)
+    .slice(0, 4);
+  const deeper = all.filter(o => o.d > D0 && key(o) <= key(cur)).sort((a, b) => b.d - a.d)[0] || null;
+  const cost = o => {
+    try {
+      return priceRows(o.nest, o.sp, [], {}).tot.sheets;
+    } catch (e) {
+      return 0;
+    }
+  };
+  [cur, ...rows, ...(deeper ? [deeper] : [])].forEach(o => {
+    o.cost = cost(o);
+    delete o.G;
+    delete o.nest;
+    delete o.sp;
+  });
+  ui.saver = { cur, rows, deeper, at: sig.length, sig };
+}
+function saverHTML() {
+  const r = ui.saver;
+  if (!r || !r.cur) return '';
+  const c = r.cur,
+    pc = v => Math.round(v * 100) + '%',
+    sh = o => `${o.sheets} sheet${o.sheets === 1 ? '' : 's'}${o.boards ? ' + ' + o.boards + ' panels' : ''}`;
+  const notes = o => {
+    const n = [];
+    if (o.rail != null && o.rail < 560 && !(c.rail != null && c.rail < 560))
+      n.push(`hanging space only ${Math.round(o.rail)} mm deep (clothes need 560)`);
+    if (o.slides.length && c.slides.length && Math.max(...o.slides) < Math.max(...c.slides))
+      n.push(`shorter drawer runners (${Math.max(...o.slides)} mm)`);
+    if (o.warns > c.warns) n.push(`${o.warns - c.warns} more design note${o.warns - c.warns > 1 ? 's' : ''}`);
+    return n.join(' · ');
+  };
+  const row = (o, isCur) =>
+    `<tr${isCur ? ' class="grp"' : ''}><td>${o.d} mm${isCur ? ' (now)' : o.d > c.d ? ' (deeper)' : ` (${c.d - o.d} less)`}</td><td class="n">${sh(o)}</td><td class="n">${pc(o.use)}</td><td class="n">${eur(o.cost)}</td><td class="n">${isCur ? '—' : o.cost < c.cost - 0.5 ? 'saves ' + eur(c.cost - o.cost) : o.cost > c.cost + 0.5 ? '+' + eur(o.cost - c.cost) : 'same'}</td><td class="note">${isCur ? '' : notes(o)} ${isCur ? '' : `<button type="button" class="btn sm" data-act="saverUse" data-a="${o.d}">Use</button>`}</td></tr>`;
+  const b = r.rows[0];
+  return `<div class="tw"><table class="cut" style="min-width:560px"><thead><tr><th>Cabinet depth</th><th>Sheets</th><th>Sheet used</th><th>Boards cost</th><th>Difference</th><th></th></tr></thead><tbody>${row(c, true)}${r.rows.map(o => row(o, false)).join('')}${r.deeper ? row(r.deeper, false) : ''}</tbody></table></div>
+  <p class="hintp" style="margin:0">${b ? `Making the cabinets <b>${c.d - b.d} mm shallower (${b.d} mm)</b> needs ${c.sheets + c.boards - b.sheets - b.boards} sheet${c.sheets + c.boards - b.sheets - b.boards > 1 ? 's' : ''} less. Every depth from ${c.d + 20} down to ${Math.max(300, c.d - 100)} mm was tried; each row is the deepest one that reaches that number of sheets.` : `No depth between ${Math.max(300, c.d - 100)} and ${c.d} mm saves a whole sheet — ${c.d} mm is already a good depth.`}${r.deeper ? ` If there is room, you can even go to <b>${r.deeper.d} mm</b> on the same sheets.` : ''} “Sheet used” is how much of the bought sheets ends up as parts.</p>`;
+}
+const eur = v => '€ ' + (v >= 100 ? Math.round(v).toLocaleString('en-GB') : v.toFixed(2));
+let CMT = null;
+let lastPrice = null,
+  lastAlt = null;
+const STK_ALL = { carcass: true, shelf: true, skirt: true, desk: true, front: true };
+function setStockAll(on) {
+  S.opts.stock = Object.assign(
+    {},
+    S.opts.stock || {},
+    on ? { on: true, roles: Object.assign({}, STK_ALL) } : { on: false }
+  );
+}
+function priceHTML(P) {
+  const t = P.tot;
+  let last = '';
+  return `<h3 id="price">Estimated price</h3><div class="pricebox"><div class="ptot"><b>${eur(t.all)}</b><span>for boards, finishing and hardware · incl. 21 % VAT</span></div><div class="pparts"><span><b>${eur(t.sheets)}</b> boards</span><span><b>${eur(t.fin)}</b> edge band &amp; paint</span><span><b>${eur(t.hw)}</b> hardware</span>${t.ship ? `<span><b>${eur(t.ship)}</b> delivery</span>` : ''}</div>
+  ${
+    lastAlt
+      ? (() => {
+          const on = !lastAlt.on,
+            a = on ? t.all : lastAlt.total,
+            b = on ? lastAlt.total : t.all;
+          return `<div class="pbud"><span>Buy the melamine as</span><div class="seg" role="group"><button type="button" class="${on ? '' : 'on'}" data-act="stkAll" data-a="0">Full sheets · ${eur(b)}</button><button type="button" class="${on ? 'on' : ''}" data-act="stkAll" data-a="1">Furniture panels 250 cm · ${eur(a)}</button></div><span>${a < b - 1 ? 'Furniture panels are cheaper here and come with the long edges already banded.' : b < a - 1 ? 'Full sheets are cheaper here; furniture panels save sawing and edge banding.' : 'About the same price.'}</span></div>`;
+        })()
+      : ''
+  }
   ${makerHTML(t)}
-  ${P.shops?`<div class="pbud"><span class="pbok">Boards from</span><div class="seg" role="group">${P.shops.map(o=>`<button type="button" class="${t.shop===o.k?'on':''}" data-act="shop" data-a="${o.k}">${o.k==='best'?'Cheapest per board':SHOPS[o.k]} · ${eur(o.total)}</button>`).join('')}</div><span>${t.shop==='best'?'Each board is priced at the cheapest of the shops that list it. Buying from several shops means several deliveries.':t.fb?`${SHOPS[t.shop]} does not list ${t.fb} of these boards (or I did not find them), so those use the Hanssens Hout price.`:`All boards priced at ${SHOPS[t.shop]}.`}</span></div>`:''}
+  ${P.shops ? `<div class="pbud"><span class="pbok">Boards from</span><div class="seg" role="group">${P.shops.map(o => `<button type="button" class="${t.shop === o.k ? 'on' : ''}" data-act="shop" data-a="${o.k}">${o.k === 'best' ? 'Cheapest per board' : SHOPS[o.k]} · ${eur(o.total)}</button>`).join('')}</div><span>${t.shop === 'best' ? 'Each board is priced at the cheapest of the shops that list it. Buying from several shops means several deliveries.' : t.fb ? `${SHOPS[t.shop]} does not list ${t.fb} of these boards (or I did not find them), so those use the Hanssens Hout price.` : `All boards priced at ${SHOPS[t.shop]}.`}</span></div>` : ''}
   ${priceUpdHTML()}${myPricesHTML(P.nest)}${shopsHTML(P)}<div id="budcard" class="bud">${budHTML()}</div>
-  <div class="pbud"><button type="button" class="btn" data-act="saver">${ui.saver?'Recalculate sheet saver':'Sheet saver'}</button><span>Tries every cabinet depth up to 100 mm shallower (and 20 mm deeper) and shows which ones need fewer sheets.</span></div>${ui.saver?saverHTML():''}${bgeo().partial?'':phasesHTML()}${P.nest?offcutHTML(P.nest):''}
-  <p class="hintp" style="margin:0">Board prices were looked up at ${Object.values(SHOPS).join(' and ')}, and the hardware at Pierard, Hornbach, Gamma, Hubo and two Blum webshops, on ${PRICE_DATE}; the Source column shows the shop of each line. All prices are in src/prices.js. Lines marked “typical” (${eur(t.est)} of the total) are normal trade prices that were not looked up — type your own price in any row to replace it.${t.none?` ${t.none} line${t.none>1?'s have':' has'} no price yet.`:''} Not included: delivery, sawing or edge-banding service, tools, TV, speakers and other equipment.</p></div>
-  <div class="tw"><table class="cut price" style="min-width:560px"><thead><tr><th>Item</th><th>Qty</th><th>Price each</th><th>Total</th><th>Source</th></tr></thead><tbody>${P.rows.map(r=>`${r.grp!==last?(last=r.grp,`<tr class="grp"><td colspan="5">${r.grp}</td></tr>`):''}<tr><td title="${esc(r.ref||'')}">${esc(r.name)}</td><td class="n">${r.unitLbl==='pc'||r.unitLbl==='sheet'||r.unitLbl==='board'?r.qty:(+r.qty).toFixed(r.unitLbl==='m'?1:2)} ${r.unitLbl==='pc'?'':r.unitLbl}</td><td class="n"><span class="pin">€<input type="number" inputmode="decimal" step="0.01" min="0" data-price="${r.k}" value="${r.mine?r.unit:''}" placeholder="${r.dflt!=null?r.dflt.toFixed(2):'—'}" aria-label="Price each for ${esc(r.name)}"></span></td><td class="n">${r.total!=null?eur(r.total):'—'}</td><td class="note">${r.mine?'your price':r.est?'typical':esc(r.src)}</td></tr>`).join('')}</tbody></table></div>`}
-document.addEventListener('change',e=>{const el=e.target,k=el&&el.dataset&&el.dataset.price;if(!k)return;if(!S.opts.prices||typeof S.opts.prices!=='object')S.opts.prices={};const v=parseFloat(el.value);if(v>0)S.opts.prices[k]=v;else delete S.opts.prices[k];saveSoon();snap();dirty.cut=true;if(ui.tab==='cut'){const sc=document.getElementById('v-cut'),y=sc.scrollTop,py=window.scrollY;renderCut();sc.scrollTop=y;window.scrollTo(0,py)}toast(v>0?'Price updated':'Back to the guide price')});
-function csv(){const gs=groupsCache||groupPanels(bgeo());const q=v=>`"${String(v).replace(/"/g,'""')}"`;
-  return ['id,part,qty,board,colour,thickness_mm,length_mm,width_mm,shape,where,notes',...gs.map(p=>[p.id,q(p.type),p.qty,q(MATS[p.matType]?.name||''),q(FIN[p.fin]?.name||p.fin),p.t,f0(p.L),f0(p.Wd),q(p.rect?'rect':'shaped '+p.poly.length+'pts'),q(p.secs.join(' ')),q(p.notes.join('; '))].join(','))].join('\n')}
-function txt(){const gs=groupsCache||groupPanels(bgeo());return gs.map(p=>`${p.id}  ${p.qty}×  ${p.type}  ${f0(p.L)} × ${f0(p.Wd)} × ${p.t}  ${MATS[p.matType]?.short||''} ${FIN[p.fin]?.name||p.fin}${p.rect?'':'  (shaped)'}`).join('\n')}
-async function copy(t){try{await navigator.clipboard.writeText(t);toast('Copied')}catch(e){ioOpen('share');setTimeout(()=>{const ta=document.getElementById('ioText');if(ta){ta.value=t;ta.focus();ta.select()}},60);toast('Select all and copy')}}
+  <div class="pbud"><button type="button" class="btn" data-act="saver">${ui.saver ? 'Recalculate sheet saver' : 'Sheet saver'}</button><span>Tries every cabinet depth up to 100 mm shallower (and 20 mm deeper) and shows which ones need fewer sheets.</span></div>${ui.saver ? saverHTML() : ''}${bgeo().partial ? '' : phasesHTML()}${P.nest ? offcutHTML(P.nest) : ''}
+  <p class="hintp" style="margin:0">Board prices were looked up at ${Object.values(SHOPS).join(' and ')}, and the hardware at Pierard, Hornbach, Gamma, Hubo and two Blum webshops, on ${PRICE_DATE}; the Source column shows the shop of each line. All prices are in src/prices.js. Lines marked “typical” (${eur(t.est)} of the total) are normal trade prices that were not looked up — type your own price in any row to replace it.${t.none ? ` ${t.none} line${t.none > 1 ? 's have' : ' has'} no price yet.` : ''} Not included: delivery, sawing or edge-banding service, tools, TV, speakers and other equipment.</p></div>
+  <div class="tw"><table class="cut price" style="min-width:560px"><thead><tr><th>Item</th><th>Qty</th><th>Price each</th><th>Total</th><th>Source</th></tr></thead><tbody>${P.rows.map(r => `${r.grp !== last ? ((last = r.grp), `<tr class="grp"><td colspan="5">${r.grp}</td></tr>`) : ''}<tr><td title="${esc(r.ref || '')}">${esc(r.name)}</td><td class="n">${r.unitLbl === 'pc' || r.unitLbl === 'sheet' || r.unitLbl === 'board' ? r.qty : (+r.qty).toFixed(r.unitLbl === 'm' ? 1 : 2)} ${r.unitLbl === 'pc' ? '' : r.unitLbl}</td><td class="n"><span class="pin">€<input type="number" inputmode="decimal" step="0.01" min="0" data-price="${r.k}" value="${r.mine ? r.unit : ''}" placeholder="${r.dflt != null ? r.dflt.toFixed(2) : '—'}" aria-label="Price each for ${esc(r.name)}"></span></td><td class="n">${r.total != null ? eur(r.total) : '—'}</td><td class="note">${r.mine ? 'your price' : r.est ? 'typical' : esc(r.src)}</td></tr>`).join('')}</tbody></table></div>`;
+}
+document.addEventListener('change', e => {
+  const el = e.target,
+    k = el && el.dataset && el.dataset.price;
+  if (!k) return;
+  if (!S.opts.prices || typeof S.opts.prices !== 'object') S.opts.prices = {};
+  const v = parseFloat(el.value);
+  if (v > 0) S.opts.prices[k] = v;
+  else delete S.opts.prices[k];
+  saveSoon();
+  snap();
+  dirty.cut = true;
+  if (ui.tab === 'cut') {
+    const sc = document.getElementById('v-cut'),
+      y = sc.scrollTop,
+      py = window.scrollY;
+    renderCut();
+    sc.scrollTop = y;
+    window.scrollTo(0, py);
+  }
+  toast(v > 0 ? 'Price updated' : 'Back to the guide price');
+});
+function csv() {
+  const gs = groupsCache || groupPanels(bgeo());
+  const q = v => `"${String(v).replace(/"/g, '""')}"`;
+  return [
+    'id,part,qty,board,colour,thickness_mm,length_mm,width_mm,shape,where,notes',
+    ...gs.map(p =>
+      [
+        p.id,
+        q(p.type),
+        p.qty,
+        q(MATS[p.matType]?.name || ''),
+        q(FIN[p.fin]?.name || p.fin),
+        p.t,
+        f0(p.L),
+        f0(p.Wd),
+        q(p.rect ? 'rect' : 'shaped ' + p.poly.length + 'pts'),
+        q(p.secs.join(' ')),
+        q(p.notes.join('; '))
+      ].join(',')
+    )
+  ].join('\n');
+}
+function txt() {
+  const gs = groupsCache || groupPanels(bgeo());
+  return gs
+    .map(
+      p =>
+        `${p.id}  ${p.qty}×  ${p.type}  ${f0(p.L)} × ${f0(p.Wd)} × ${p.t}  ${MATS[p.matType]?.short || ''} ${FIN[p.fin]?.name || p.fin}${p.rect ? '' : '  (shaped)'}`
+    )
+    .join('\n');
+}
+async function copy(t) {
+  try {
+    await navigator.clipboard.writeText(t);
+    toast('Copied');
+  } catch (e) {
+    ioOpen('share');
+    setTimeout(() => {
+      const ta = document.getElementById('ioText');
+      if (ta) {
+        ta.value = t;
+        ta.focus();
+        ta.select();
+      }
+    }, 60);
+    toast('Select all and copy');
+  }
+}
 
-function loftSVG(p){
-  const w=p.w,h=p.h,pts=p.poly,big=Math.max(w,h,240),fs=Math.max(15,big/40),gp=fs*2.1,ar=polyArea(pts),lw=big/700;
-  const uniq=a=>[...new Set(a.map(v=>r1(v)))].sort((m,n)=>m-n);
-  const stag=vals=>{let last=-1e9,lv=0;return vals.map(v=>{if(v-last<fs*1.15){lv=lv?0:1}else lv=0;last=v;return lv})};
-  const xs=uniq(pts.map(q=>q[0])),ys=uniq(pts.map(q=>q[1]));
-  const ordX=xs.length>2,ordY=ys.length>2,hs=p.holes.filter(o=>!o.poly),few=hs.length>0&&hs.length<=8;
-  const hx=few?uniq(hs.map(o=>o.x)):[],hy=few?uniq(hs.map(o=>o.y)):[];
-  const rowsB=1+(hx.length?1:0),rowsL=1+(hy.length?1:0);
-  const mL=gp*rowsL+fs*(hy.length?4.6:1.4),mB=gp*rowsB+fs*(hx.length?3.6:1.2),mT=(ordX?gp+fs*5.2:0)+fs*1.2,mR=(ordY?gp+fs*6.8:0)+fs*1.2;
-  const Y=y=>h-y,X=x=>x;let s=`<svg viewBox="${-mL} ${-mT} ${w+mL+mR} ${h+mT+mB}" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace">`;
-  const D='style="stroke:var(--accent)"',E='style="stroke:var(--ink3)"',T=(x,y,t,o='')=>`<text x="${n1(x)}" y="${n1(y)}" ${/font-size=/.test(o)?'':`font-size="${n1(fs)}"`} style="fill:var(--accent)" ${o}>${t}</text>`;
-  const tick=(x,y)=>`<line x1="${n1(x-fs*.35)}" y1="${n1(y+fs*.35)}" x2="${n1(x+fs*.35)}" y2="${n1(y-fs*.35)}" ${D} stroke-width="${n1(lw*2)}"/>`;
+function loftSVG(p) {
+  const w = p.w,
+    h = p.h,
+    pts = p.poly,
+    big = Math.max(w, h, 240),
+    fs = Math.max(15, big / 40),
+    gp = fs * 2.1,
+    ar = polyArea(pts),
+    lw = big / 700;
+  const uniq = a => [...new Set(a.map(v => r1(v)))].sort((m, n) => m - n);
+  const stag = vals => {
+    let last = -1e9,
+      lv = 0;
+    return vals.map(v => {
+      if (v - last < fs * 1.15) {
+        lv = lv ? 0 : 1;
+      } else lv = 0;
+      last = v;
+      return lv;
+    });
+  };
+  const xs = uniq(pts.map(q => q[0])),
+    ys = uniq(pts.map(q => q[1]));
+  const ordX = xs.length > 2,
+    ordY = ys.length > 2,
+    hs = p.holes.filter(o => !o.poly),
+    few = hs.length > 0 && hs.length <= 8;
+  const hx = few ? uniq(hs.map(o => o.x)) : [],
+    hy = few ? uniq(hs.map(o => o.y)) : [];
+  const rowsB = 1 + (hx.length ? 1 : 0),
+    rowsL = 1 + (hy.length ? 1 : 0);
+  const mL = gp * rowsL + fs * (hy.length ? 4.6 : 1.4),
+    mB = gp * rowsB + fs * (hx.length ? 3.6 : 1.2),
+    mT = (ordX ? gp + fs * 5.2 : 0) + fs * 1.2,
+    mR = (ordY ? gp + fs * 6.8 : 0) + fs * 1.2;
+  const Y = y => h - y,
+    X = x => x;
+  let s = `<svg viewBox="${-mL} ${-mT} ${w + mL + mR} ${h + mT + mB}" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace">`;
+  const D = 'style="stroke:var(--accent)"',
+    E = 'style="stroke:var(--ink3)"',
+    T = (x, y, t, o = '') =>
+      `<text x="${n1(x)}" y="${n1(y)}" ${/font-size=/.test(o) ? '' : `font-size="${n1(fs)}"`} style="fill:var(--accent)" ${o}>${t}</text>`;
+  const tick = (x, y) =>
+    `<line x1="${n1(x - fs * 0.35)}" y1="${n1(y + fs * 0.35)}" x2="${n1(x + fs * 0.35)}" y2="${n1(y - fs * 0.35)}" ${D} stroke-width="${n1(lw * 2)}"/>`;
   // panel
-  s+=`<polygon points="${pts.map(q=>`${q[0]},${Y(q[1])}`).join(' ')}" fill="url(#${p.grain==='w'?'ph':'pv'}-${p.fin})" fill-opacity=".5" style="stroke:var(--ink)" stroke-width="${n1(lw*2.2)}"/>`;
+  s += `<polygon points="${pts.map(q => `${q[0]},${Y(q[1])}`).join(' ')}" fill="url(#${p.grain === 'w' ? 'ph' : 'pv'}-${p.fin})" fill-opacity=".5" style="stroke:var(--ink)" stroke-width="${n1(lw * 2.2)}"/>`;
   // overall width (bottom) + height (left)
-  const yW=Y(0)+gp*rowsB;s+=`<line x1="0" x2="0" y1="${n1(Y(0)+fs*.4)}" y2="${n1(yW+fs*.5)}" ${E} stroke-width="${n1(lw)}"/><line x1="${w}" x2="${w}" y1="${n1(Y(0)+fs*.4)}" y2="${n1(yW+fs*.5)}" ${E} stroke-width="${n1(lw)}"/>`;
-  s+=`<line x1="0" x2="${w}" y1="${n1(yW)}" y2="${n1(yW)}" ${D} stroke-width="${n1(lw*1.2)}"/>${tick(0,yW)}${tick(w,yW)}${T(w/2,yW-fs*.35,f0(w)===w?w:r1(w),'text-anchor="middle" font-weight="500"')}`;
-  const xH=-gp*rowsL;s+=`<line y1="${Y(0)}" y2="${Y(0)}" x1="${n1(-fs*.4)}" x2="${n1(xH-fs*.5)}" ${E} stroke-width="${n1(lw)}"/><line y1="${Y(h)}" y2="${Y(h)}" x1="${n1(-fs*.4)}" x2="${n1(xH-fs*.5)}" ${E} stroke-width="${n1(lw)}"/>`;
-  s+=`<line x1="${n1(xH)}" x2="${n1(xH)}" y1="${Y(0)}" y2="${Y(h)}" ${D} stroke-width="${n1(lw*1.2)}"/>${tick(xH,Y(0))}${tick(xH,Y(h))}${T(xH-fs*.35,Y(h/2),r1(h),`text-anchor="middle" font-weight="500" transform="rotate(-90 ${n1(xH-fs*.35)} ${n1(Y(h/2))})"`)}`;
+  const yW = Y(0) + gp * rowsB;
+  s += `<line x1="0" x2="0" y1="${n1(Y(0) + fs * 0.4)}" y2="${n1(yW + fs * 0.5)}" ${E} stroke-width="${n1(lw)}"/><line x1="${w}" x2="${w}" y1="${n1(Y(0) + fs * 0.4)}" y2="${n1(yW + fs * 0.5)}" ${E} stroke-width="${n1(lw)}"/>`;
+  s += `<line x1="0" x2="${w}" y1="${n1(yW)}" y2="${n1(yW)}" ${D} stroke-width="${n1(lw * 1.2)}"/>${tick(0, yW)}${tick(w, yW)}${T(w / 2, yW - fs * 0.35, f0(w) === w ? w : r1(w), 'text-anchor="middle" font-weight="500"')}`;
+  const xH = -gp * rowsL;
+  s += `<line y1="${Y(0)}" y2="${Y(0)}" x1="${n1(-fs * 0.4)}" x2="${n1(xH - fs * 0.5)}" ${E} stroke-width="${n1(lw)}"/><line y1="${Y(h)}" y2="${Y(h)}" x1="${n1(-fs * 0.4)}" x2="${n1(xH - fs * 0.5)}" ${E} stroke-width="${n1(lw)}"/>`;
+  s += `<line x1="${n1(xH)}" x2="${n1(xH)}" y1="${Y(0)}" y2="${Y(h)}" ${D} stroke-width="${n1(lw * 1.2)}"/>${tick(xH, Y(0))}${tick(xH, Y(h))}${T(xH - fs * 0.35, Y(h / 2), r1(h), `text-anchor="middle" font-weight="500" transform="rotate(-90 ${n1(xH - fs * 0.35)} ${n1(Y(h / 2))})"`)}`;
   // ordinate X along top for shaped panels
-  if(ordX){const yo=Y(h)-gp;s+=`<line x1="0" x2="${w}" y1="${n1(yo)}" y2="${n1(yo)}" ${D} stroke-width="${n1(lw)}"/>`;
-    const sx=stag(xs);xs.forEach((x,j)=>{const vy=Math.max(...pts.filter(q=>Math.abs(q[0]-x)<0.11).map(q=>q[1])),ty=yo-fs*.5-sx[j]*fs*2.6;s+=`<line x1="${x}" x2="${x}" y1="${n1(Y(vy)-fs*.4)}" y2="${n1(yo)}" ${E} stroke-width="${n1(lw*.8)}" stroke-dasharray="${n1(fs*.4)} ${n1(fs*.3)}"/>${tick(x,yo)}${T(x+fs*.3,ty,x,`transform="rotate(-90 ${n1(x+fs*.3)} ${n1(ty)})"`)}`})}
+  if (ordX) {
+    const yo = Y(h) - gp;
+    s += `<line x1="0" x2="${w}" y1="${n1(yo)}" y2="${n1(yo)}" ${D} stroke-width="${n1(lw)}"/>`;
+    const sx = stag(xs);
+    xs.forEach((x, j) => {
+      const vy = Math.max(...pts.filter(q => Math.abs(q[0] - x) < 0.11).map(q => q[1])),
+        ty = yo - fs * 0.5 - sx[j] * fs * 2.6;
+      s += `<line x1="${x}" x2="${x}" y1="${n1(Y(vy) - fs * 0.4)}" y2="${n1(yo)}" ${E} stroke-width="${n1(lw * 0.8)}" stroke-dasharray="${n1(fs * 0.4)} ${n1(fs * 0.3)}"/>${tick(x, yo)}${T(x + fs * 0.3, ty, x, `transform="rotate(-90 ${n1(x + fs * 0.3)} ${n1(ty)})"`)}`;
+    });
+  }
   // ordinate Y along right
-  if(ordY){const xo=w+gp;s+=`<line x1="${n1(xo)}" x2="${n1(xo)}" y1="${Y(0)}" y2="${Y(h)}" ${D} stroke-width="${n1(lw)}"/>`;
-    const sy=stag(ys);ys.forEach((y,j)=>{const vx=Math.max(...pts.filter(q=>Math.abs(q[1]-y)<0.11).map(q=>q[0]));s+=`<line x1="${n1(vx+fs*.4)}" x2="${n1(xo)}" y1="${Y(y)}" y2="${Y(y)}" ${E} stroke-width="${n1(lw*.8)}" stroke-dasharray="${n1(fs*.4)} ${n1(fs*.3)}"/>${tick(xo,Y(y))}${T(xo+fs*.5+sy[j]*fs*3.6,Y(y)+fs*.35,y)}`})}
+  if (ordY) {
+    const xo = w + gp;
+    s += `<line x1="${n1(xo)}" x2="${n1(xo)}" y1="${Y(0)}" y2="${Y(h)}" ${D} stroke-width="${n1(lw)}"/>`;
+    const sy = stag(ys);
+    ys.forEach((y, j) => {
+      const vx = Math.max(...pts.filter(q => Math.abs(q[1] - y) < 0.11).map(q => q[0]));
+      s += `<line x1="${n1(vx + fs * 0.4)}" x2="${n1(xo)}" y1="${Y(y)}" y2="${Y(y)}" ${E} stroke-width="${n1(lw * 0.8)}" stroke-dasharray="${n1(fs * 0.4)} ${n1(fs * 0.3)}"/>${tick(xo, Y(y))}${T(xo + fs * 0.5 + sy[j] * fs * 3.6, Y(y) + fs * 0.35, y)}`;
+    });
+  }
   // hole positions
-  if(hx.length){const yh=Y(0)+gp;s+=`<line x1="0" x2="${w}" y1="${n1(yh)}" y2="${n1(yh)}" ${D} stroke-width="${n1(lw*.8)}"/>`;const shx=stag(hx);hx.forEach((x,j)=>{const ty=yh+fs*.4+shx[j]*fs*2.4;s+=`<line x1="${x}" x2="${x}" y1="${n1(Math.min(...hs.filter(o=>Math.abs(o.x-x)<0.11).map(o=>Y(o.y))))}" y2="${n1(yh)}" ${E} stroke-width="${n1(lw*.7)}" stroke-dasharray="${n1(fs*.25)} ${n1(fs*.25)}"/>${tick(x,yh)}${T(x+fs*.3,ty,x,`text-anchor="end" font-size="${n1(fs*.85)}" transform="rotate(-90 ${n1(x+fs*.3)} ${n1(ty)})"`)}`})}
-  if(hy.length){const xh=-gp;s+=`<line x1="${n1(xh)}" x2="${n1(xh)}" y1="${Y(0)}" y2="${Y(h)}" ${D} stroke-width="${n1(lw*.8)}"/>`;const shy=stag(hy);hy.forEach((y,j)=>{s+=`<line x1="${n1(Math.min(...hs.filter(o=>Math.abs(o.y-y)<0.11).map(o=>o.x)))}" x2="${n1(xh)}" y1="${Y(y)}" y2="${Y(y)}" ${E} stroke-width="${n1(lw*.7)}" stroke-dasharray="${n1(fs*.25)} ${n1(fs*.25)}"/>${tick(xh,Y(y))}${T(xh-fs*.3-shy[j]*fs*3.4,Y(y)-fs*.3,y,'text-anchor="end" font-size="'+n1(fs*.85)+'"')}`})}
+  if (hx.length) {
+    const yh = Y(0) + gp;
+    s += `<line x1="0" x2="${w}" y1="${n1(yh)}" y2="${n1(yh)}" ${D} stroke-width="${n1(lw * 0.8)}"/>`;
+    const shx = stag(hx);
+    hx.forEach((x, j) => {
+      const ty = yh + fs * 0.4 + shx[j] * fs * 2.4;
+      s += `<line x1="${x}" x2="${x}" y1="${n1(Math.min(...hs.filter(o => Math.abs(o.x - x) < 0.11).map(o => Y(o.y))))}" y2="${n1(yh)}" ${E} stroke-width="${n1(lw * 0.7)}" stroke-dasharray="${n1(fs * 0.25)} ${n1(fs * 0.25)}"/>${tick(x, yh)}${T(x + fs * 0.3, ty, x, `text-anchor="end" font-size="${n1(fs * 0.85)}" transform="rotate(-90 ${n1(x + fs * 0.3)} ${n1(ty)})"`)}`;
+    });
+  }
+  if (hy.length) {
+    const xh = -gp;
+    s += `<line x1="${n1(xh)}" x2="${n1(xh)}" y1="${Y(0)}" y2="${Y(h)}" ${D} stroke-width="${n1(lw * 0.8)}"/>`;
+    const shy = stag(hy);
+    hy.forEach((y, j) => {
+      s += `<line x1="${n1(Math.min(...hs.filter(o => Math.abs(o.y - y) < 0.11).map(o => o.x)))}" x2="${n1(xh)}" y1="${Y(y)}" y2="${Y(y)}" ${E} stroke-width="${n1(lw * 0.7)}" stroke-dasharray="${n1(fs * 0.25)} ${n1(fs * 0.25)}"/>${tick(xh, Y(y))}${T(xh - fs * 0.3 - shy[j] * fs * 3.4, Y(y) - fs * 0.3, y, 'text-anchor="end" font-size="' + n1(fs * 0.85) + '"')}`;
+    });
+  }
   // sloped edge lengths
-  pts.forEach((a,i)=>{const b=pts[(i+1)%pts.length],L=Math.hypot(b[0]-a[0],b[1]-a[1]);if(L<big*0.03||Math.abs(a[0]-b[0])<0.2||Math.abs(a[1]-b[1])<0.2)return;
-    let nx=(b[1]-a[1])/L,ny=-(b[0]-a[0])/L;if(ar<0){nx=-nx;ny=-ny}const mx=(a[0]+b[0])/2+nx*fs*1.2,my=(a[1]+b[1])/2+ny*fs*1.2,ang=-Math.atan2(b[1]-a[1],b[0]-a[0])*DEG;const ang2=ang>90?ang-180:ang<-90?ang+180:ang;
-    s+=T(mx,Y(my),r1(L),`text-anchor="middle" dominant-baseline="middle" transform="rotate(${n1(ang2)} ${n1(mx)} ${n1(Y(my))})" font-style="italic"`)});
+  pts.forEach((a, i) => {
+    const b = pts[(i + 1) % pts.length],
+      L = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    if (L < big * 0.03 || Math.abs(a[0] - b[0]) < 0.2 || Math.abs(a[1] - b[1]) < 0.2) return;
+    let nx = (b[1] - a[1]) / L,
+      ny = -(b[0] - a[0]) / L;
+    if (ar < 0) {
+      nx = -nx;
+      ny = -ny;
+    }
+    const mx = (a[0] + b[0]) / 2 + nx * fs * 1.2,
+      my = (a[1] + b[1]) / 2 + ny * fs * 1.2,
+      ang = -Math.atan2(b[1] - a[1], b[0] - a[0]) * DEG;
+    const ang2 = ang > 90 ? ang - 180 : ang < -90 ? ang + 180 : ang;
+    s += T(
+      mx,
+      Y(my),
+      r1(L),
+      `text-anchor="middle" dominant-baseline="middle" transform="rotate(${n1(ang2)} ${n1(mx)} ${n1(Y(my))})" font-style="italic"`
+    );
+  });
   // non-square corner angles
-  pts.forEach((q,i)=>{const a=vAngle(pts,i,ar);if(Math.abs(a-90)<0.3||Math.abs(a-180)<0.3)return;const pv=pts[(i-1+pts.length)%pts.length],nx=pts[(i+1)%pts.length];
-    const bx=(pv[0]-q[0])/Math.hypot(pv[0]-q[0],pv[1]-q[1])+(nx[0]-q[0])/Math.hypot(nx[0]-q[0],nx[1]-q[1]),by=(pv[1]-q[1])/Math.hypot(pv[0]-q[0],pv[1]-q[1])+(nx[1]-q[1])/Math.hypot(nx[0]-q[0],nx[1]-q[1]),bl=Math.hypot(bx,by)||1;
-    const tx=q[0]+bx/bl*fs*2.6,ty=q[1]+by/bl*fs*2.6;s+=`<text x="${n1(tx)}" y="${n1(Y(ty))}" text-anchor="middle" dominant-baseline="middle" font-size="${n1(fs*.85)}" style="fill:var(--ink2)">${a.toFixed(1)}°</text>`});
+  pts.forEach((q, i) => {
+    const a = vAngle(pts, i, ar);
+    if (Math.abs(a - 90) < 0.3 || Math.abs(a - 180) < 0.3) return;
+    const pv = pts[(i - 1 + pts.length) % pts.length],
+      nx = pts[(i + 1) % pts.length];
+    const bx =
+        (pv[0] - q[0]) / Math.hypot(pv[0] - q[0], pv[1] - q[1]) +
+        (nx[0] - q[0]) / Math.hypot(nx[0] - q[0], nx[1] - q[1]),
+      by =
+        (pv[1] - q[1]) / Math.hypot(pv[0] - q[0], pv[1] - q[1]) +
+        (nx[1] - q[1]) / Math.hypot(nx[0] - q[0], nx[1] - q[1]),
+      bl = Math.hypot(bx, by) || 1;
+    const tx = q[0] + (bx / bl) * fs * 2.6,
+      ty = q[1] + (by / bl) * fs * 2.6;
+    s += `<text x="${n1(tx)}" y="${n1(Y(ty))}" text-anchor="middle" dominant-baseline="middle" font-size="${n1(fs * 0.85)}" style="fill:var(--ink2)">${a.toFixed(1)}°</text>`;
+  });
   // holes + cut-outs
-  let hn=0;p.holes.forEach(o=>{const sw_=lw*1.4;
-    if(o.poly){const cx=o.poly.reduce((a,q)=>a+q[0],0)/o.poly.length,cy=o.poly.reduce((a,q)=>a+q[1],0)/o.poly.length;s+=`<polygon points="${o.poly.map(q=>`${q[0]},${Y(q[1])}`).join(' ')}" style="fill:var(--paper);stroke:var(--ink)" stroke-width="${n1(sw_)}" stroke-dasharray="${n1(big/90)} ${n1(big/140)}"/><text x="${n1(cx)}" y="${n1(Y(cy))}" text-anchor="middle" dominant-baseline="middle" font-size="${n1(fs)}" style="fill:var(--accent)">${/fabric|baffle/i.test(p.type)?'fabric cut-out':'cut-out'}</text>`;
-      o.poly.forEach((q,k)=>s+=`<text x="${n1(q[0])}" y="${n1(Y(q[1]))}" text-anchor="middle" dominant-baseline="middle" font-size="${n1(fs*.7)}" style="fill:var(--accent)">C${k+1}</text>`);return}
-    hn++;if(o.len){const v=o.dir==='v',ww=v?o.d:o.len,hh=v?o.len:o.d;s+=`<rect x="${n1(o.x-ww/2)}" y="${n1(Y(o.y)-hh/2)}" width="${ww}" height="${hh}" rx="${o.d/2}" style="fill:var(--paper);stroke:var(--ink)" stroke-width="${n1(sw_)}"/>`}
-    else s+=`<circle cx="${o.x}" cy="${Y(o.y)}" r="${Math.max(o.d/2,lw*3)}" style="fill:var(--paper);stroke:var(--ink)" stroke-width="${n1(sw_)}"/>`;
-    if(few){const e=Math.max(o.d,o.len||0)*.6+fs*.3;s+=`<line x1="${n1(o.x-e)}" x2="${n1(o.x+e)}" y1="${Y(o.y)}" y2="${Y(o.y)}" ${D} stroke-width="${n1(lw*.8)}"/><line x1="${o.x}" x2="${o.x}" y1="${n1(Y(o.y)-e)}" y2="${n1(Y(o.y)+e)}" ${D} stroke-width="${n1(lw*.8)}"/>${T(o.x+e*0.8,Y(o.y)-e*0.8,`H${hn} ${o.len?o.d+'×'+o.len:'Ø'+o.d+(o.dp?' × '+o.dp+' deep':'')}`,`font-size="${n1(fs*.8)}"`)}`}});
-  pts.forEach((a,i)=>s+=`<circle cx="${a[0]}" cy="${Y(a[1])}" r="${n1(fs*.58)}" style="fill:var(--ink)"/><text x="${a[0]}" y="${Y(a[1])}" text-anchor="middle" dominant-baseline="central" font-size="${n1(fs*.7)}" style="fill:var(--paper)">${i+1}</text>`);
-  s+=`<text x="${n1(w/2)}" y="${n1(Y(h/2))}" text-anchor="middle" dominant-baseline="middle" font-size="${n1(fs*1.05)}" style="fill:var(--ink2)" opacity=".55">${p.id} · ${p.t} mm</text>`;
-  return s+'</svg>'}
-function vAngle(pts,i,ar){const a=pts[(i-1+pts.length)%pts.length],b=pts[i],c=pts[(i+1)%pts.length];const v1=[a[0]-b[0],a[1]-b[1]],v2=[c[0]-b[0],c[1]-b[1]];
-  let ang=Math.atan2(v1[0]*v2[1]-v1[1]*v2[0],v1[0]*v2[0]+v1[1]*v2[1])*DEG;if(ar>0)ang=-ang;if(ang<0)ang+=360;return ang}
-function renderLoft(){
-  const gs=groupsCache||groupPanels(bgeo());const sp=gs.filter(p=>ui.loftAll||!p.rect||p.holes.length||p.angled).sort((a,b)=>((a.rect&&!a.holes.length)?1:0)-((b.rect&&!b.holes.length)?1:0));const el=document.getElementById('v-loft');
-  let h=`<h2>Shaped parts</h2><div style="display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px"><button type="button" class="btn sm" data-act="tplPdf">Full-size templates (PDF)</button><button type="button" class="btn sm" data-act="dxfZip">DXF files for a CNC shop</button><button type="button" class="btn sm" data-act="lblPdf">Part labels (PDF)</button></div><p class="lede">The parts that are not plain rectangles — sloped tops, cut-outs and drilled holes — each with a drawing. <b>How to use it:</b> measure each numbered point from the part’s bottom-left corner (X to the right, Y up, in mm), mark the points on the board, join them with a straight edge and cut. Blue lines are sizes.</p><div class="seg" style="max-width:420px;margin-bottom:14px"><button type="button" class="${ui.loftAll?'':'on'}" data-act="loftAll" data-a="0">Shaped &amp; drilled parts</button><button type="button" class="${ui.loftAll?'on':''}" data-act="loftAll" data-a="1">Every panel</button></div>`;
-  if(!sp.length)h+='<p class="lede">All panels are plain rectangles — see the cut list.</p>';
-  h+='<div class="lgrid">'+sp.map(p=>{const ar=polyArea(p.poly);return `<div class="lcard"><h4>${p.id} · ${esc(p.type)} <span>${p.qty}× · ${esc(matName(p))}</span></h4>
+  let hn = 0;
+  p.holes.forEach(o => {
+    const sw_ = lw * 1.4;
+    if (o.poly) {
+      const cx = o.poly.reduce((a, q) => a + q[0], 0) / o.poly.length,
+        cy = o.poly.reduce((a, q) => a + q[1], 0) / o.poly.length;
+      s += `<polygon points="${o.poly.map(q => `${q[0]},${Y(q[1])}`).join(' ')}" style="fill:var(--paper);stroke:var(--ink)" stroke-width="${n1(sw_)}" stroke-dasharray="${n1(big / 90)} ${n1(big / 140)}"/><text x="${n1(cx)}" y="${n1(Y(cy))}" text-anchor="middle" dominant-baseline="middle" font-size="${n1(fs)}" style="fill:var(--accent)">${/fabric|baffle/i.test(p.type) ? 'fabric cut-out' : 'cut-out'}</text>`;
+      o.poly.forEach(
+        (q, k) =>
+          (s += `<text x="${n1(q[0])}" y="${n1(Y(q[1]))}" text-anchor="middle" dominant-baseline="middle" font-size="${n1(fs * 0.7)}" style="fill:var(--accent)">C${k + 1}</text>`)
+      );
+      return;
+    }
+    hn++;
+    if (o.len) {
+      const v = o.dir === 'v',
+        ww = v ? o.d : o.len,
+        hh = v ? o.len : o.d;
+      s += `<rect x="${n1(o.x - ww / 2)}" y="${n1(Y(o.y) - hh / 2)}" width="${ww}" height="${hh}" rx="${o.d / 2}" style="fill:var(--paper);stroke:var(--ink)" stroke-width="${n1(sw_)}"/>`;
+    } else
+      s += `<circle cx="${o.x}" cy="${Y(o.y)}" r="${Math.max(o.d / 2, lw * 3)}" style="fill:var(--paper);stroke:var(--ink)" stroke-width="${n1(sw_)}"/>`;
+    if (few) {
+      const e = Math.max(o.d, o.len || 0) * 0.6 + fs * 0.3;
+      s += `<line x1="${n1(o.x - e)}" x2="${n1(o.x + e)}" y1="${Y(o.y)}" y2="${Y(o.y)}" ${D} stroke-width="${n1(lw * 0.8)}"/><line x1="${o.x}" x2="${o.x}" y1="${n1(Y(o.y) - e)}" y2="${n1(Y(o.y) + e)}" ${D} stroke-width="${n1(lw * 0.8)}"/>${T(o.x + e * 0.8, Y(o.y) - e * 0.8, `H${hn} ${o.len ? o.d + '×' + o.len : 'Ø' + o.d + (o.dp ? ' × ' + o.dp + ' deep' : '')}`, `font-size="${n1(fs * 0.8)}"`)}`;
+    }
+  });
+  pts.forEach(
+    (a, i) =>
+      (s += `<circle cx="${a[0]}" cy="${Y(a[1])}" r="${n1(fs * 0.58)}" style="fill:var(--ink)"/><text x="${a[0]}" y="${Y(a[1])}" text-anchor="middle" dominant-baseline="central" font-size="${n1(fs * 0.7)}" style="fill:var(--paper)">${i + 1}</text>`)
+  );
+  s += `<text x="${n1(w / 2)}" y="${n1(Y(h / 2))}" text-anchor="middle" dominant-baseline="middle" font-size="${n1(fs * 1.05)}" style="fill:var(--ink2)" opacity=".55">${p.id} · ${p.t} mm</text>`;
+  return s + '</svg>';
+}
+function vAngle(pts, i, ar) {
+  const a = pts[(i - 1 + pts.length) % pts.length],
+    b = pts[i],
+    c = pts[(i + 1) % pts.length];
+  const v1 = [a[0] - b[0], a[1] - b[1]],
+    v2 = [c[0] - b[0], c[1] - b[1]];
+  let ang = Math.atan2(v1[0] * v2[1] - v1[1] * v2[0], v1[0] * v2[0] + v1[1] * v2[1]) * DEG;
+  if (ar > 0) ang = -ang;
+  if (ang < 0) ang += 360;
+  return ang;
+}
+function renderLoft() {
+  const gs = groupsCache || groupPanels(bgeo());
+  const sp = gs
+    .filter(p => ui.loftAll || !p.rect || p.holes.length || p.angled)
+    .sort((a, b) => (a.rect && !a.holes.length ? 1 : 0) - (b.rect && !b.holes.length ? 1 : 0));
+  const el = document.getElementById('v-loft');
+  let h = `<h2>Shaped parts</h2><div style="display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px"><button type="button" class="btn sm" data-act="tplPdf">Full-size templates (PDF)</button><button type="button" class="btn sm" data-act="dxfZip">DXF files for a CNC shop</button><button type="button" class="btn sm" data-act="lblPdf">Part labels (PDF)</button></div><p class="lede">The parts that are not plain rectangles — sloped tops, cut-outs and drilled holes — each with a drawing. <b>How to use it:</b> measure each numbered point from the part’s bottom-left corner (X to the right, Y up, in mm), mark the points on the board, join them with a straight edge and cut. Blue lines are sizes.</p><div class="seg" style="max-width:420px;margin-bottom:14px"><button type="button" class="${ui.loftAll ? '' : 'on'}" data-act="loftAll" data-a="0">Shaped &amp; drilled parts</button><button type="button" class="${ui.loftAll ? 'on' : ''}" data-act="loftAll" data-a="1">Every panel</button></div>`;
+  if (!sp.length) h += '<p class="lede">All panels are plain rectangles — see the cut list.</p>';
+  h +=
+    '<div class="lgrid">' +
+    sp
+      .map(p => {
+        const ar = polyArea(p.poly);
+        return `<div class="lcard"><h4>${p.id} · ${esc(p.type)} <span>${p.qty}× · ${esc(matName(p))}</span></h4>
     <div class="lsvg">${loftSVG(p)}</div>
-    ${p.notes.length?`<div class="note">${esc(p.notes.join(' · '))}</div>`:''}
+    ${p.notes.length ? `<div class="note">${esc(p.notes.join(' · '))}</div>` : ''}
     <div class="note">${esc(p.secs.join(', '))} · bounding box ${f0(p.w)} × ${f0(p.h)}</div>
-    ${p.rect&&!p.holes.length?'':`<table class="ord"><thead><tr><th>Pt</th><th>X</th><th>Y</th><th>Angle</th></tr></thead><tbody>${p.poly.map((q,i)=>`<tr><td>${i+1}</td><td>${q[0].toFixed(1)}</td><td>${q[1].toFixed(1)}</td><td>${vAngle(p.poly,i,ar).toFixed(1)}°</td></tr>`).join('')}</tbody></table>`}
-    ${p.manyHoles?`<p class="note">${p.holes.length} holes on a staggered 200 mm grid — positions shown in the drawing; first hole 100 mm from the left edge.</p>`:''}${!p.manyHoles&&p.holes.some(o=>!o.poly)?`<table class="ord"><thead><tr><th>Hole</th><th>X</th><th>Y</th><th>Size</th></tr></thead><tbody>${p.holes.filter(o=>!o.poly).map((o,i)=>`<tr><td>H${i+1}</td><td>${o.x.toFixed(1)}</td><td>${o.y.toFixed(1)}</td><td>${o.len?o.d+'×'+o.len+(o.dir==='v'?' ↕':' ↔'):'Ø'+o.d+(o.dp?' × '+o.dp+' deep':' through')}${o.face&&o.dp?`<br><small>${esc(o.face)}</small>`:''}</td></tr>`).join('')}</tbody></table>`:''}${p.holes.filter(o=>o.poly).map(o=>`<table class="ord"><thead><tr><th>Cut-out</th><th>X</th><th>Y</th><th></th></tr></thead><tbody>${o.poly.map((q,k)=>`<tr><td>C${k+1}</td><td>${q[0].toFixed(1)}</td><td>${q[1].toFixed(1)}</td><td></td></tr>`).join('')}</tbody></table>`).join('')}
-  </div>`}).join('')+'</div>';
-  el.innerHTML=partBar()+h;
+    ${p.rect && !p.holes.length ? '' : `<table class="ord"><thead><tr><th>Pt</th><th>X</th><th>Y</th><th>Angle</th></tr></thead><tbody>${p.poly.map((q, i) => `<tr><td>${i + 1}</td><td>${q[0].toFixed(1)}</td><td>${q[1].toFixed(1)}</td><td>${vAngle(p.poly, i, ar).toFixed(1)}°</td></tr>`).join('')}</tbody></table>`}
+    ${p.manyHoles ? `<p class="note">${p.holes.length} holes on a staggered 200 mm grid — positions shown in the drawing; first hole 100 mm from the left edge.</p>` : ''}${
+      !p.manyHoles && p.holes.some(o => !o.poly)
+        ? `<table class="ord"><thead><tr><th>Hole</th><th>X</th><th>Y</th><th>Size</th></tr></thead><tbody>${p.holes
+            .filter(o => !o.poly)
+            .map(
+              (o, i) =>
+                `<tr><td>H${i + 1}</td><td>${o.x.toFixed(1)}</td><td>${o.y.toFixed(1)}</td><td>${o.len ? o.d + '×' + o.len + (o.dir === 'v' ? ' ↕' : ' ↔') : 'Ø' + o.d + (o.dp ? ' × ' + o.dp + ' deep' : ' through')}${o.face && o.dp ? `<br><small>${esc(o.face)}</small>` : ''}</td></tr>`
+            )
+            .join('')}</tbody></table>`
+        : ''
+    }${p.holes
+      .filter(o => o.poly)
+      .map(
+        o =>
+          `<table class="ord"><thead><tr><th>Cut-out</th><th>X</th><th>Y</th><th></th></tr></thead><tbody>${o.poly.map((q, k) => `<tr><td>C${k + 1}</td><td>${q[0].toFixed(1)}</td><td>${q[1].toFixed(1)}</td><td></td></tr>`).join('')}</tbody></table>`
+      )
+      .join('')}
+  </div>`;
+      })
+      .join('') +
+    '</div>';
+  el.innerHTML = partBar() + h;
 }
 /* pre-edged melamine boards (e.g. 300–600 × 2500, edge band on both long edges) */
-const STOCK_W=[200,250,300,350,400,450,500,600];
-function sawCfg(){const o=S.opts||{},num=(v,d)=>v===''||v==null||!isFinite(+v)?d:Math.max(0,+v);return {kerf:num(o.kerf,4),trim:num(o.trim,10)}}
-function stockCfg(){const o=S.opts.stock||{};return {on:!!o.on,ws:(Array.isArray(o.ws)&&o.ws.length?o.ws:STOCK_W).map(Number).sort((a,b)=>a-b),L:+o.L||2500,roles:o.roles||{carcass:true,shelf:true,skirt:true,desk:true}}}
-function stockFor(p,cfg){if(!cfg.on||p.matType!=='melamine'||!cfg.roles[p.role]||+p.t!==18)return null;const a=Math.min(p.w,p.h),b=Math.max(p.w,p.h);if(b>cfg.L-2)return null;
-  const W=cfg.ws.find(w=>w>=a-0.5);if(!W)return null;return {W,rip:Math.round(W-a),len:b,across:a}}
-function stockPlan(gs){const cfg=stockCfg(),groups={},kerf=sawCfg().kerf;let saved=0;if(!cfg.on)return {cfg,groups:[],saved:0,ids:new Set()};const ids=new Set();
-  gs.forEach(p=>{const sf=stockFor(p,cfg);if(!sf)return;ids.add(p.id);const k=p.fin+'|'+p.t+'|'+sf.W;(groups[k]=groups[k]||{fin:p.fin,t:p.t,W:sf.W,pcs:[]});for(let i=0;i<p.qty;i++)groups[k].pcs.push({p,len:sf.len,rip:sf.rip});
-    if(p.band==='front')saved+=(p.bandLen||0)*p.qty/1000;else if(p.band==='all')saved+=2*sf.len*p.qty/1000});
-  const out=Object.values(groups).map(g=>{const bars=[];g.pcs.sort((a,b)=>b.len-a.len).forEach(c=>{let bar=bars.find(b=>b.used+c.len+(b.pl.length?kerf:0)<=cfg.L);if(!bar){bar={used:0,pl:[]};bars.push(bar)}const x=bar.used+(bar.pl.length?kerf:0);bar.pl.push(Object.assign({x},c));bar.used=x+c.len});return Object.assign(g,{bars})});
-  return {cfg,groups:out,saved,ids}}
+const STOCK_W = [200, 250, 300, 350, 400, 450, 500, 600];
+function sawCfg() {
+  const o = S.opts || {},
+    num = (v, d) => (v === '' || v == null || !isFinite(+v) ? d : Math.max(0, +v));
+  return { kerf: num(o.kerf, 4), trim: num(o.trim, 10) };
+}
+function stockCfg() {
+  const o = S.opts.stock || {};
+  return {
+    on: !!o.on,
+    ws: (Array.isArray(o.ws) && o.ws.length ? o.ws : STOCK_W).map(Number).sort((a, b) => a - b),
+    L: +o.L || 2500,
+    roles: o.roles || { carcass: true, shelf: true, skirt: true, desk: true }
+  };
+}
+function stockFor(p, cfg) {
+  if (!cfg.on || p.matType !== 'melamine' || !cfg.roles[p.role] || +p.t !== 18) return null;
+  const a = Math.min(p.w, p.h),
+    b = Math.max(p.w, p.h);
+  if (b > cfg.L - 2) return null;
+  const W = cfg.ws.find(w => w >= a - 0.5);
+  if (!W) return null;
+  return { W, rip: Math.round(W - a), len: b, across: a };
+}
+function stockPlan(gs) {
+  const cfg = stockCfg(),
+    groups = {},
+    kerf = sawCfg().kerf;
+  let saved = 0;
+  if (!cfg.on) return { cfg, groups: [], saved: 0, ids: new Set() };
+  const ids = new Set();
+  gs.forEach(p => {
+    const sf = stockFor(p, cfg);
+    if (!sf) return;
+    ids.add(p.id);
+    const k = p.fin + '|' + p.t + '|' + sf.W;
+    groups[k] = groups[k] || { fin: p.fin, t: p.t, W: sf.W, pcs: [] };
+    for (let i = 0; i < p.qty; i++) groups[k].pcs.push({ p, len: sf.len, rip: sf.rip });
+    if (p.band === 'front') saved += ((p.bandLen || 0) * p.qty) / 1000;
+    else if (p.band === 'all') saved += (2 * sf.len * p.qty) / 1000;
+  });
+  const out = Object.values(groups).map(g => {
+    const bars = [];
+    g.pcs
+      .sort((a, b) => b.len - a.len)
+      .forEach(c => {
+        let bar = bars.find(b => b.used + c.len + (b.pl.length ? kerf : 0) <= cfg.L);
+        if (!bar) {
+          bar = { used: 0, pl: [] };
+          bars.push(bar);
+        }
+        const x = bar.used + (bar.pl.length ? kerf : 0);
+        bar.pl.push(Object.assign({ x }, c));
+        bar.used = x + c.len;
+      });
+    return Object.assign(g, { bars });
+  });
+  return { cfg, groups: out, saved, ids };
+}

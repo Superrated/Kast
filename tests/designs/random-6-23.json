@@ -1,0 +1,468 @@
+{
+ "name": "Attic wall",
+ "room": {
+  "W": 3600,
+  "H": 2550,
+  "D": 600,
+  "drop": 0,
+  "ceil": [
+   {
+    "x": 0,
+    "y": 1300
+   },
+   {
+    "x": 1500,
+    "y": 2550
+   },
+   {
+    "x": 2400,
+    "y": 2550
+   },
+   {
+    "x": 3600,
+    "y": 1600
+   }
+  ],
+  "beams": [
+   {
+    "x": 2600,
+    "w": 200,
+    "h": 300
+   }
+  ],
+  "wallFin": ""
+ },
+ "skirt": {
+  "top": 40,
+  "side": 30,
+  "plinth": 90,
+  "recess": 40,
+  "beamGap": 10,
+  "scribe": 10
+ },
+ "mat": {
+  "carcass": {
+   "type": "melamine",
+   "t": 18,
+   "sheet": "2800x2070",
+   "fin": "ral7044"
+  },
+  "shelf": {
+   "type": "melamine",
+   "t": 25,
+   "sheet": "2800x2070",
+   "fin": "ral7044"
+  },
+  "back": {
+   "type": "hdf",
+   "t": 8,
+   "sheet": "2800x2070",
+   "fin": "ral7044"
+  },
+  "front": {
+   "type": "mdfpaint",
+   "t": 19,
+   "sheet": "2440x1220",
+   "fin": "ral7044"
+  },
+  "desk": {
+   "type": "solid",
+   "t": 30,
+   "sheet": "2500x1250",
+   "fin": "walnut"
+  },
+  "skirt": {
+   "type": "mdfpaint",
+   "t": 19,
+   "sheet": "2440x1220",
+   "fin": "ral7044"
+  }
+ },
+ "opts": {
+  "gap": 3,
+  "setback": 20,
+  "kerf": 4,
+  "trim": 10,
+  "handle": "groove",
+  "handleSize": "M",
+  "handleWood": "walnut",
+  "construct": "boxes",
+  "two": {
+   "on": false,
+   "y": 800,
+   "fin": "ral7044"
+  },
+  "innerLight": true
+ },
+ "sections": [
+  {
+   "id": "i1029co2g",
+   "w": 324,
+   "base": "cab",
+   "back": "full",
+   "deskH": 740,
+   "over": 20,
+   "zones": [
+    {
+     "id": "i10463vhy",
+     "type": "closed",
+     "h": null,
+     "shelves": 2,
+     "doors": 1,
+     "rail": false,
+     "hinge": "L",
+     "count": 3,
+     "tv": 0,
+     "header": true,
+     "grommet": true,
+     "woofer": 145,
+     "nw": 1,
+     "tweeter": 52,
+     "grille": false,
+     "fabric": false,
+     "fabricCol": "charcoal",
+     "span": 0,
+     "box": false,
+     "boxT": null,
+     "boxFin": "front",
+     "fin": "",
+     "fins": [],
+     "inFin": "",
+     "face": "flat"
+    }
+   ]
+  },
+  {
+   "id": "i1031cypz",
+   "w": 531,
+   "base": "cab",
+   "back": "full",
+   "deskH": 740,
+   "over": 20,
+   "zones": [
+    {
+     "id": "i10471bxs",
+     "type": "closed",
+     "h": null,
+     "shelves": 2,
+     "doors": 1,
+     "rail": false,
+     "hinge": "R",
+     "count": 3,
+     "tv": 0,
+     "header": true,
+     "grommet": true,
+     "woofer": 145,
+     "nw": 1,
+     "tweeter": 52,
+     "grille": false,
+     "fabric": false,
+     "fabricCol": "charcoal",
+     "span": 0,
+     "box": false,
+     "boxT": null,
+     "boxFin": "front",
+     "fin": "",
+     "fins": [],
+     "inFin": "",
+     "face": "flat"
+    }
+   ]
+  },
+  {
+   "id": "i1033eg95",
+   "w": 532,
+   "base": "cab",
+   "back": "full",
+   "deskH": 740,
+   "over": 20,
+   "zones": [
+    {
+     "id": "i10484q0b",
+     "type": "drawers",
+     "h": 672,
+     "shelves": 0,
+     "doors": 0,
+     "rail": false,
+     "hinge": "L",
+     "count": 3,
+     "tv": 0,
+     "header": true,
+     "grommet": true,
+     "woofer": 145,
+     "nw": 1,
+     "tweeter": 52,
+     "grille": false,
+     "fabric": false,
+     "fabricCol": "charcoal",
+     "span": 0,
+     "box": false,
+     "boxT": null,
+     "boxFin": "front",
+     "fin": "",
+     "fins": [],
+     "inFin": ""
+    },
+    {
+     "id": "i10490cie",
+     "type": "open",
+     "h": 550,
+     "shelves": 0,
+     "doors": 0,
+     "rail": false,
+     "hinge": "L",
+     "count": 3,
+     "tv": 0,
+     "header": true,
+     "grommet": true,
+     "woofer": 145,
+     "nw": 1,
+     "tweeter": 52,
+     "grille": false,
+     "fabric": false,
+     "fabricCol": "charcoal",
+     "span": 0,
+     "box": false,
+     "boxT": null,
+     "boxFin": "front",
+     "fin": "",
+     "fins": [],
+     "inFin": "walnut",
+     "drench": true
+    },
+    {
+     "id": "i1050s6bl",
+     "type": "closed",
+     "h": null,
+     "shelves": 1,
+     "doors": 1,
+     "rail": false,
+     "hinge": "L",
+     "count": 3,
+     "tv": 0,
+     "header": true,
+     "grommet": true,
+     "woofer": 145,
+     "nw": 1,
+     "tweeter": 52,
+     "grille": false,
+     "fabric": false,
+     "fabricCol": "charcoal",
+     "span": 0,
+     "box": false,
+     "boxT": null,
+     "boxFin": "front",
+     "fin": "",
+     "fins": [],
+     "inFin": "",
+     "face": "flat"
+    }
+   ]
+  },
+  {
+   "id": "i1036u773",
+   "w": 532,
+   "base": "cab",
+   "back": "full",
+   "deskH": 740,
+   "over": 20,
+   "zones": [
+    {
+     "id": "i1051n4z7",
+     "type": "closed",
+     "h": 2070,
+     "shelves": 5,
+     "doors": 1,
+     "rail": false,
+     "hinge": "R",
+     "count": 3,
+     "tv": 0,
+     "header": true,
+     "grommet": true,
+     "woofer": 145,
+     "nw": 1,
+     "tweeter": 52,
+     "grille": false,
+     "fabric": false,
+     "fabricCol": "charcoal",
+     "span": 0,
+     "box": false,
+     "boxT": null,
+     "boxFin": "front",
+     "fin": "",
+     "fins": [],
+     "inFin": "",
+     "face": "flat"
+    },
+    {
+     "id": "i10556mmm",
+     "type": "closed",
+     "h": null,
+     "shelves": 0,
+     "doors": 0,
+     "rail": false,
+     "hinge": "L",
+     "count": 3,
+     "tv": 0,
+     "header": true,
+     "grommet": true,
+     "woofer": 145,
+     "nw": 1,
+     "tweeter": 52,
+     "grille": false,
+     "fabric": false,
+     "fabricCol": "charcoal",
+     "span": 0,
+     "box": false,
+     "boxT": null,
+     "boxFin": "front",
+     "fin": "",
+     "fins": [],
+     "inFin": "",
+     "face": "flat"
+    }
+   ]
+  },
+  {
+   "id": "i1038dstf",
+   "w": 532,
+   "base": "cab",
+   "back": "full",
+   "deskH": 740,
+   "over": 20,
+   "zones": [
+    {
+     "id": "i1052zsez",
+     "type": "closed",
+     "h": 2070,
+     "shelves": 4,
+     "doors": 1,
+     "rail": false,
+     "hinge": "L",
+     "count": 3,
+     "tv": 0,
+     "header": true,
+     "grommet": true,
+     "woofer": 145,
+     "nw": 1,
+     "tweeter": 52,
+     "grille": false,
+     "fabric": false,
+     "fabricCol": "charcoal",
+     "span": 0,
+     "box": false,
+     "boxT": null,
+     "boxFin": "front",
+     "fin": "",
+     "fins": [],
+     "inFin": "",
+     "face": "flat"
+    },
+    {
+     "id": "i1058bmqf",
+     "type": "closed",
+     "h": null,
+     "shelves": 0,
+     "doors": 0,
+     "rail": false,
+     "hinge": "L",
+     "count": 3,
+     "tv": 0,
+     "header": true,
+     "grommet": true,
+     "woofer": 145,
+     "nw": 1,
+     "tweeter": 52,
+     "grille": false,
+     "fabric": false,
+     "fabricCol": "charcoal",
+     "span": 0,
+     "box": false,
+     "boxT": null,
+     "boxFin": "front",
+     "fin": "",
+     "fins": [],
+     "inFin": "",
+     "face": "flat"
+    }
+   ]
+  },
+  {
+   "id": "i1040z5e2",
+   "w": 531,
+   "base": "cab",
+   "back": "full",
+   "deskH": 740,
+   "over": 20,
+   "zones": [
+    {
+     "id": "i1053x5jg",
+     "type": "closed",
+     "h": null,
+     "shelves": 3,
+     "doors": 1,
+     "rail": false,
+     "hinge": "R",
+     "count": 3,
+     "tv": 0,
+     "header": true,
+     "grommet": true,
+     "woofer": 145,
+     "nw": 1,
+     "tweeter": 52,
+     "grille": false,
+     "fabric": false,
+     "fabricCol": "charcoal",
+     "span": 0,
+     "box": false,
+     "boxT": null,
+     "boxFin": "front",
+     "fin": "",
+     "fins": [],
+     "inFin": "",
+     "face": "flat"
+    }
+   ]
+  },
+  {
+   "id": "i10434ui3",
+   "w": null,
+   "base": "cab",
+   "back": "full",
+   "deskH": 740,
+   "over": 20,
+   "zones": [
+    {
+     "id": "i1054p9vr",
+     "type": "closed",
+     "h": null,
+     "shelves": 2,
+     "doors": 1,
+     "rail": false,
+     "hinge": "L",
+     "count": 3,
+     "tv": 0,
+     "header": true,
+     "grommet": true,
+     "woofer": 145,
+     "nw": 1,
+     "tweeter": 52,
+     "grille": false,
+     "fabric": false,
+     "fabricCol": "charcoal",
+     "span": 0,
+     "box": false,
+     "boxT": null,
+     "boxFin": "front",
+     "fin": "",
+     "fins": [],
+     "inFin": "",
+     "face": "flat"
+    }
+   ]
+  }
+ ],
+ "ladder": {
+  "on": false
+ }
+}
