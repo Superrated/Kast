@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.72
+
+- **Online price check for the owner only**: the "Update prices" button that looks prices up at the shops now only shows for you, the owner. Everyone else sees guide prices and types their own.
+- **Your own prices** (Cut list → price): enter what your shop asks per m² for each board type in the design; hardware prices can be typed in any row.
+- **Delivery per shop or website**: the price now includes delivery, grouped per shop, with a "Per shop · delivery costs" table showing lines, goods, delivery and total per shop. Shops you collect from cost 0; webshops have a typical delivery price you can change.
+- **Price level €–€€€€€** next to the options: board types (Look → Board), hinges, drawer runners, hardware brand, joinery, and the wizard's Budget / Balanced / Premium.
+
 ## v0.71
 
 - **Talk to BRUIS** (♥ Feedback in the bottom bar, and in the ☰ menu): say thanks, report a bug (with optional technical details), suggest a feature, or buy me a coffee.
