@@ -427,3 +427,11 @@ details.pf .grid2{margin-top:6px}
 /* the status bar already says "No design issues" on desktop */
 @media (min-width:861px){.okline{display:none}}
 @media (min-width:861px) and (max-width:1300px){.viewsw>span{display:none}}
+/* phone design-notes panel */
+.mnp{position:fixed;inset:0;z-index:60;background:rgba(10,14,16,.45);display:flex;align-items:flex-end}
+.mnp[hidden]{display:none}
+.mnpbox{width:100%;max-height:min(80vh,80dvh);display:flex;flex-direction:column;background:var(--surface);color:var(--ink);border-radius:18px 18px 0 0;border-top:1px solid var(--line);padding:14px max(16px,env(safe-area-inset-right,0px)) max(14px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));box-shadow:0 -10px 30px rgba(0,0,0,.25)}
+.mnph{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.mnph b{font-size:16px;color:var(--warn)}
+.mnpfix{display:grid;gap:6px;margin-bottom:10px}.mnpfix .btn{justify-self:start}.mnpfix span{font-size:12px;color:var(--ink2)}
+.mnpl{margin:0;padding:0 0 0 20px;overflow:auto;display:grid;gap:10px;font-size:14px;line-height:1.45}
+.mnpl li p{margin:0 0 6px}.mnpl .fixb{margin-left:0;font-size:13px;padding:5px 12px}

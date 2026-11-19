@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.104
+
+- **Design notes on phones**: tapping ⚠ now opens a proper panel from the bottom of the screen. It has readable notes, a "Fix what Fitted can" button with a count, and Close. Before, the list was squeezed into the button row over the drawing and could not be used.
+
 ## v0.103
 
 - **Saving is automatic**: save a design once (the header button says **Save** until you do). From then on every change saves by itself a few seconds later. The header shows the design's name with ✓ when it is saved. An earlier version is kept at most every 20 minutes, so you can always go back.

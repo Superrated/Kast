@@ -13,7 +13,7 @@ function renderBar(){
   if((ui.tab==='elev'||ui.tab==='3d')&&S.opts.screen&&S.opts.screen.on)h=`<button class="btn sm ${S.opts.screen.show==='down'?'on':''}" data-act="scrT" title="Pull the screen drawer out and roll the screen down, or put it away">${S.opts.screen.show==='down'?'Screen is down':'Pull screen down'}</button>`+(ui.tab==='3d'?`<button class="btn sm ${ui.cinema?'on':''}" data-act="cinema" title="Dim the room, switch the picture on and look from the sofa">Cinema view</button>`:'')+h;
   b.innerHTML=`<div class="tools">${h}</div><div class="bnotes">${nt}</div>`;
   {const mf=document.getElementById('mfloat');if(mf){const wn=[...new Set(w)];const fmN={solid:'Doors',glass:'See-through',off:'No doors'}[ui.fm]||'Doors';
-    mf.innerHTML=`${wn.length?`<button type="button" class="mfb warn" data-act="mnotes">⚠ ${wn.length}</button>`:''}<button type="button" class="mfb pchip" data-act="toPriceTab" aria-label="Estimated price">${pchipText()}</button><span class="sp"></span><button type="button" class="mfb" data-act="fmCycle" aria-label="Fronts: ${fmN}">${FM_ICON[ui.fm]||''}${fmN}</button><button type="button" class="mfb ${ui.props?'on':''}" data-act="props" aria-pressed="${!!ui.props}" title="Show books, clothes and boxes at real size">🪴 Items</button>${S.opts.screen&&S.opts.screen.on?`<button type="button" class="mfb ${S.opts.screen.show==='down'?'on':''}" data-act="scrT">Screen</button>`:''}${flowNow()!=='home'?`<button type="button" class="mfb" data-act="focusT">${ui.focus===false?'Zoom in':'Whole wall'}</button>`:''}`+(ui.mnotes&&wn.length?`<ul class="mnotes"><li class="fixall" style="list-style:none;margin-left:-16px"><button type="button" class="fixb" data-act="fixAll">Fix what Fitted can</button></li>${wn.map((x,j)=>`<li>${esc(x)}${fixBtn(x,j)}</li>`).join('')}</ul>`:'')}}try{fixScan()}catch(e){}
+    mf.innerHTML=`${wn.length?`<button type="button" class="mfb warn" data-act="mnotes">⚠ ${wn.length}</button>`:''}<button type="button" class="mfb pchip" data-act="toPriceTab" aria-label="Estimated price">${pchipText()}</button><span class="sp"></span><button type="button" class="mfb" data-act="fmCycle" aria-label="Fronts: ${fmN}">${FM_ICON[ui.fm]||''}${fmN}</button><button type="button" class="mfb ${ui.props?'on':''}" data-act="props" aria-pressed="${!!ui.props}" title="Show books, clothes and boxes at real size">🪴 Items</button>${S.opts.screen&&S.opts.screen.on?`<button type="button" class="mfb ${S.opts.screen.show==='down'?'on':''}" data-act="scrT">Screen</button>`:''}${flowNow()!=='home'?`<button type="button" class="mfb" data-act="focusT">${ui.focus===false?'Zoom in':'Whole wall'}</button>`:''}`;mnotesPanel(wn)}}try{fixScan()}catch(e){}
   placeFmode();renderStatus();
 }
 function renderStatus(){const el=document.getElementById('sbar');if(!el||!geo)return;const qs=geo.secs.filter(q=>!q.panel),wn=[...new Set(geo.warns)].length,tops=geo.cps.map(p=>p.y);
@@ -85,3 +85,12 @@ function updateSideInfo(){const s=document.getElementById('side');const scr=s.sc
   const box=s.querySelector('details[data-k="secs"] .accb');if(box&&!(ae&&box.contains(ae)))box.innerHTML=secEditor();
   s.scrollTop=scr}
 
+
+/* phone: the design notes open as their own panel (a bottom sheet over the drawing), not squeezed into the button row */
+function mnotesPanel(wn){let p=document.getElementById('mnp');const on=!!(ui.mnotes&&wn&&wn.length&&innerWidth<=860);
+  if(!on){if(p)p.hidden=true;return}
+  if(!p){p=document.createElement('div');p.id='mnp';p.className='mnp';document.body.appendChild(p);p.addEventListener('click',e=>{if(e.target===p){ui.mnotes=false;p.hidden=true}})}
+  const fixable=wn.map((x,j)=>fixBtn(x,j)).filter(Boolean).length;
+  p.innerHTML=`<div class="mnpbox" role="dialog" aria-modal="true" aria-label="Design notes"><div class="mnph"><b>${wn.length} design note${wn.length>1?'s':''}</b><button type="button" class="btn sm" data-act="notesClose">Close</button></div>
+    ${fixable?`<div class="mnpfix"><button type="button" class="btn pri" data-act="fixAll">Fix what Fitted can (${fixable})</button><span>Each fix follows the advice in its note. Undo brings it back.</span></div>`:''}
+    <ol class="mnpl">${wn.map((x,j)=>`<li><p>${esc(x)}</p>${fixBtn(x,j)}</li>`).join('')}</ol></div>`;p.hidden=false}
