@@ -44,17 +44,17 @@
    "fin": "birch",
    "grain": "h",
    "holes": [
-    "287 2156 5 0 through · connector screw",
+    "287 2147 5 0 through · connector screw",
     "287 2361 5 0 through · connector screw",
     "287 9 5 0 through · connector screw",
-    "37 2194.3 5 12 face towards S1",
-    "37 2226.3 5 12 face towards S1",
-    "37 2299.8 5 12 face towards S1",
-    "37 2331.8 5 12 face towards S1",
-    "50 2156 5 0 through · connector screw",
+    "37 2187.5 5 12 face towards S1",
+    "37 2219.5 5 12 face towards S1",
+    "37 2297.5 5 12 face towards S1",
+    "37 2329.5 5 12 face towards S1",
+    "50 2147 5 0 through · connector screw",
     "50 2361 5 0 through · connector screw",
     "50 9 5 0 through · connector screw",
-    "524 2156 5 0 through · connector screw",
+    "524 2147 5 0 through · connector screw",
     "524 2361 5 0 through · connector screw",
     "524 9 5 0 through · connector screw"
    ],
@@ -293,14 +293,14 @@
    "holes": [],
    "id": "P7",
    "mat": "melamine",
-   "qty": 2,
+   "qty": 1,
    "role": "carcass",
    "secs": [
     "S1"
    ],
    "shape": "0,0 1000,0 1000,574 0,574",
    "t": 18,
-   "type": "Header layer"
+   "type": "Header"
   },
   {
    "L": 1000,
@@ -346,7 +346,7 @@
    "grain": "h",
    "holes": [
     "287 1349 5 0 through · connector screw",
-    "287 2246 5 0 through · connector screw",
+    "287 2237 5 0 through · connector screw",
     "287 2451 5 0 through · connector screw",
     "287 99 5 0 through · connector screw",
     "312 2451 5 0 through · connector screw",
@@ -378,19 +378,19 @@
     "37 2182 5 12 face towards S2",
     "37 2214 5 12 face towards S2",
     "37 2246 5 12 face towards S2",
-    "37 2284.3 5 12 face towards S1",
-    "37 2316.3 5 12 face towards S1",
+    "37 2277.5 5 12 face towards S1",
+    "37 2309.5 5 12 face towards S1",
     "37 2342 5 12 face towards S2",
     "37 2374 5 12 face towards S2",
-    "37 2389.8 5 12 face towards S1",
+    "37 2387.5 5 12 face towards S1",
     "37 2406 5 12 face towards S2",
-    "37 2421.8 5 12 face towards S1",
+    "37 2419.5 5 12 face towards S1",
     "50 1349 5 0 through · connector screw",
-    "50 2246 5 0 through · connector screw",
+    "50 2237 5 0 through · connector screw",
     "50 2451 5 0 through · connector screw",
     "50 99 5 0 through · connector screw",
     "524 1349 5 0 through · connector screw",
-    "524 2246 5 0 through · connector screw",
+    "524 2237 5 0 through · connector screw",
     "524 2451 5 0 through · connector screw",
     "524 99 5 0 through · connector screw",
     "537 1382 5 12 face towards S2",
@@ -1402,14 +1402,14 @@
    "type": "Door"
   },
   {
-   "L": 211,
+   "L": 220,
    "W": 510.5,
    "band": "1111",
    "fin": "oak",
    "grain": "h",
    "holes": [
-    "21.5 158.3 35 13 ",
-    "21.5 52.8 35 13 "
+    "21.5 165 35 13 ",
+    "21.5 55 35 13 "
    ],
    "id": "P32",
    "mat": "veneer",
@@ -1418,19 +1418,19 @@
    "secs": [
     "S1"
    ],
-   "shape": "0,0 510.5,0 510.5,211 0,211",
+   "shape": "0,0 510.5,0 510.5,220 0,220",
    "t": 19,
    "type": "Door"
   },
   {
-   "L": 211,
+   "L": 220,
    "W": 510.5,
    "band": "1111",
    "fin": "oak",
    "grain": "h",
    "holes": [
-    "489 158.3 35 13 ",
-    "489 52.8 35 13 "
+    "489 165 35 13 ",
+    "489 55 35 13 "
    ],
    "id": "P33",
    "mat": "veneer",
@@ -1439,7 +1439,7 @@
    "secs": [
     "S1"
    ],
-   "shape": "0,0 510.5,0 510.5,211 0,211",
+   "shape": "0,0 510.5,0 510.5,220 0,220",
    "t": 19,
    "type": "Door"
   },
@@ -1726,9 +1726,9 @@
  "link": {
   "boards": 51,
   "holesOnLinked": 14,
-  "linked": 40,
+  "linked": 41,
   "unlinkedWithHoles": 0
  },
  "notes": [],
- "price": 2598.7
+ "price": 2597.5
 }

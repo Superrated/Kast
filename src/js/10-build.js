@@ -2169,7 +2169,7 @@ function build(S) {
     // levels
     if (lead) {
       q.zones = lead.zones.map(lz => {
-        const zr = { k: lz.k, z: lz.z, y0: lz.y0, h: lz.h, top: lz.top, divY: lz.divY, divT: lz.divT };
+        const zr = { k: lz.k, z: lz.z, y0: lz.y0, h: lz.h, top: lz.top, divY: lz.divY, divT: lz.divT, head: lz.head };
         if (zr.top) {
           zr.hMin = q.minU - zr.y0;
           zr.hMax = q.maxU - zr.y0;
@@ -2228,12 +2228,22 @@ function build(S) {
       if (q.follow != null && secs[q.follow] && !(q.splitK >= 0)) q.splitK = secs[q.follow].splitK ?? -1;
       const oSpan = gp ? gp.members[gp.members.length - 1].xb - gp.members[0].xa : q.w,
         visUp = k => !!(Z0[k + 1] && (Z0[k + 1].type === 'open' || Z0[k + 1].face === 'glass'));
-      // structural: a header over a wide niche with open shelves above has no front rail to stiffen it, so it is made 3 layers thick; a doorway wider than 800 mm gets a double head
+      // structural: a header over a niche carries the level above. With doors above it gets two rails on edge
+      // (front and back) that run one length over the opening: they are the beams, so the board itself is one
+      // layer. With open shelves above there is no front rail (it would show), so the board is made 3 layers
+      // thick over a wide niche (2 otherwise). Too little height above for 100 mm rails → 2 layers.
+      // A doorway wider than 800 mm gets a double head.
+      const headK = k => Z0[k].type === 'opening' && Z0[k].header !== false,
+        roomForRails = k => !(+((Z0[k + 1] || {}).h) > 0) || +Z0[k + 1].h >= 200;
       const divT = k =>
-        Z0[k].type === 'opening' && Z0[k].header !== false
-          ? visUp(k) && oSpan > 900
-            ? 3 * tc
-            : 2 * tc
+        headK(k)
+          ? visUp(k)
+            ? oSpan > 900
+              ? 3 * tc
+              : 2 * tc
+            : roomForRails(k)
+              ? tc
+              : 2 * tc
           : (Z0[k].type === 'passage' && q.w > 800) || k === q.splitK
             ? 2 * tc
             : tc;
@@ -2276,6 +2286,7 @@ function build(S) {
         if (!top) {
           zr.divY = y + h;
           zr.divT = divT(k);
+          zr.head = headK(k);
           y = y + h + zr.divT;
         } else {
           zr.hMin = q.minU - y;
@@ -2330,7 +2341,7 @@ function build(S) {
       if (q.follow != null && secs[q.follow] && !(q.splitK >= 0)) q.splitK = secs[q.follow].splitK ?? -1;
       zr.divIv = iv;
       const L = iv[1] - iv[0],
-        isHead = zr.divT > tc,
+        isHead = !!zr.head || zr.divT > tc,
         short = !spanDiv && L < q.w - 1,
         dl = spanDiv ? glab : lab;
       const isSplit = zr.k === q.splitK,
@@ -2341,7 +2352,9 @@ function build(S) {
             : zr.z.type === 'passage'
               ? 'Door head (lining)'
               : isHead
-                ? 'Header layer'
+                ? zr.divT > tc
+                  ? 'Header layer'
+                  : 'Header'
                 : spanDiv
                   ? zr.k === gp.ko
                     ? 'Opening top'
@@ -2353,7 +2366,7 @@ function build(S) {
         hFin =
           isHead && up_ && up_.type === 'open' && up_.drench && FIN[up_.inFin] ? up_.inFin : colDrench(q) || undefined;
       zr.divFin = hFin || null; // header under a colour-drenched open level takes its colour
-      for (let l = 0; l < (isSplit ? 2 : isHead ? Math.round(zr.divT / tc) : 1); l++)
+      for (let l = 0; l < (isSplit ? 2 : isHead ? Math.max(1, Math.round(zr.divT / tc)) : 1); l++)
         addPanel({
           type:
             isSplit && l === 1
@@ -2369,7 +2382,11 @@ function build(S) {
           band: 'front',
           bandLen: L,
           notes: [
-            isHead ? `Glue + screw ${Math.round(zr.divT / tc)} layers into one ${f0(zr.divT)} mm header` : '',
+            isHead
+              ? zr.divT > tc
+                ? `Glue + screw ${Math.round(zr.divT / tc)} layers into one ${f0(zr.divT)} mm header`
+                : 'Header: one board — the two rails on edge on top of it carry the load over the opening'
+              : '',
             spanDiv ? 'Continuous across the shared opening' : '',
             short ? 'Shortened by ceiling slope' : '',
             dOff ? `Shallow cabinet: ${f0(dDep - dOff)} deep, set ${f0(dOff)} mm back from the front of the sides` : '',
@@ -2391,8 +2408,9 @@ function build(S) {
               const base = spanDiv && gp ? ra0 : q.xa;
               let o_ = [[ra0, rb0]];
               const pe_ = boxes ? tc : tc / 2,
-                va_ = nz_ ? autoVd(nz_, ra0 - pe_, rb0 + pe_, ra0) : null,
-                vr = va_ ? va_ : vr0.slice();
+                // uprights above do NOT split the rails any more: the rails are beams over the opening below, so they stay one
+                // length and the uprights are notched over them (see 'Vertical divider'). Drawer stacks still split them.
+                vr = [];
               if (nz_ && nz_.type === 'drawers') {
                 const w_ = rb0 - ra0,
                   nc = Math.max(1, Math.ceil(w_ / (ECO ? 900 : 1200))),
@@ -2426,7 +2444,9 @@ function build(S) {
               poly: rect(rb - ra, rh),
               grain: 'w',
               notes: ['On edge on top of header, against back; screw to sides + wall studs'].concat(
-                rIv.length > 1 ? ['One per column: fits between the uprights that stand on the header'] : [],
+                rIv.length > 1
+                  ? ['One per drawer stack: fits between the boards that stand on the header']
+                  : ['One length over the full width — it carries the load over the opening below, so do not cut it; the uprights above are notched over it'],
                 nzV
                   ? [
                       'The shelves above are open, so there is no front rail: this rear rail and the thick header carry the load'
@@ -2441,7 +2461,9 @@ function build(S) {
                 sec: dl,
                 poly: rect(rb - ra, rh),
                 grain: 'w',
-                notes: ['On edge on top of header, 20 mm behind front; screw to sides']
+                notes: ['On edge on top of header, 20 mm behind front; screw to sides'].concat(
+                  rIv.length > 1 ? [] : ['One length over the full width — do not cut it; the uprights above are notched over it']
+                )
               });
           });
           rIv.forEach(([ra, rb]) => {
@@ -3247,13 +3269,35 @@ function build(S) {
               ly.filter(y => !both.includes(y)).forEach(y => add_(y, { dp: 8, face: `face towards compartment ${ci + 1}` }));
               ry.filter(y => !both.some(b => Math.abs(b - y) < 2)).forEach(y => add_(y, { dp: 8, face: `face towards compartment ${ci + 2}` }));
             }
+            // standing on a header with rails on edge: notch the bottom over them (front rail 20 mm behind the front, rear rail at the back)
+            const rOn = hRails.filter(r_ => Math.abs(r_.y0 - zr.y0) < 1 && r_.xa < x + 1 && r_.xb > x + tc - 1),
+              rH = rOn.length ? Math.max(...rOn.map(r_ => r_.y1 - r_.y0)) : 0,
+              fRail = rOn.some(r_ => !r_.rear),
+              vdPoly = rH > 0 && lb === 0
+                ? [
+                    ...(fRail
+                      ? [
+                          [0, 0],
+                          [20, 0],
+                          [20, rH],
+                          [20 + tc, rH],
+                          [20 + tc, 0]
+                        ]
+                      : [[0, 0]]),
+                    [q.Dh - tc, 0],
+                    [q.Dh - tc, rH],
+                    [q.Dh, rH],
+                    [q.Dh, yt - y0v],
+                    [0, yt - y0v]
+                  ]
+                : rect(q.Dh, yt - y0v);
             addPanel({
               type: 'Vertical divider',
               role: 'carcass',
               fin: dren || undefined,
               sec: lab,
               holes: vdHoles,
-              poly: rect(q.Dh, yt - y0v),
+              poly: vdPoly,
               grain: 'h',
               band: 'front',
               bandLen: yt - y0v,
@@ -3264,7 +3308,12 @@ function build(S) {
                       'Screw the back panel to its rear edge every 150 mm: the back then carries it, so the board it stands on does not bend'
                     ]
                   : [],
-                dren ? [`Colour-drenched: ${FIN[dren].name}, like the inside of this level`] : []
+                dren ? [`Colour-drenched: ${FIN[dren].name}, like the inside of this level`] : [],
+                vdPoly.length > 4
+                  ? [
+                      `Notched at the bottom over the header rails: ${fRail ? `a slot ${tc} × ${f0(rH)} mm, 20 mm behind the front edge, and ` : ''}a corner ${tc} × ${f0(rH)} mm at the back — saw the sides, chisel out; the rails stay one length`
+                    ]
+                  : []
               )
             });
             if (zr.k > 0 && q.s.back === 'none' && !q._vdNB) {
@@ -3277,12 +3326,7 @@ function build(S) {
               wf(
                 {
                   k: 'prism',
-                  poly: [
-                    [0, y0v],
-                    [q.Dh, y0v],
-                    [q.Dh, yt],
-                    [0, yt]
-                  ],
+                  poly: vdPoly.map(([u, v2]) => [u, v2 + y0v]),
                   toW: (u, v2) => [x, v2, -u - q.z0],
                   ext: [tc, 0, 0],
                   role: 'carcass'

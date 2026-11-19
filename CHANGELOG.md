@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.127
+
+- **Header rails are one length**: the two rails on edge on top of a header (over a niche, reading nook or TV opening) are the beams that carry the level above over the opening, so they now run the full width in one piece. Before, uprights in the level above cut them into short pieces between the uprights, which carried nothing over the opening. Those uprights are now **notched** at the bottom over the rails (an 18 × 100 mm slot 20 mm behind the front edge and an 18 × 100 mm corner at the back), shown in the cut list, machining drawings and 3D. Drawer stacks above a header still split the rails.
+- **Header one board thick with doors above**: with the two rails carrying the load, the header itself is now one 18 mm board (was two layers glued into 36 mm) — the two 18 × 100 rails are about twice as stiff as the 36 mm board. Over a niche with **open** shelves above there is only a rear rail (a front rail would show), so that header stays 2–3 layers thick; so does a header whose level above is too low for 100 mm rails.
+
 ## v0.126
 
 - **Shelf-pin holes in uprights**: shelves that rest against an upright (a level split side by side) now get their support holes in the upright too — before, only the outer sides were drilled, so that end of the shelf had nothing to sit on. Where shelves on both sides of an upright sit on the same height, one Ø5 hole goes right through (two 12 mm holes from both faces would meet in an 18 mm board); otherwise Ø5 × 8 mm from that face. The 3D assembly shows the pins in them.
