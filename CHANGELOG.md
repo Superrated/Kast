@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.112
+
+- **The shops' own order forms** (Parts → List → Have it cut):
+  - **Hanssens Hout**: Fitted fills in their "invulblad zaagwerk" — material codes from their list (MEL18, MEL18KLEUR, MDF18, BER18, MDF19EIK, UNA3WIT…), length along the grain, width, number, edge band per edge (ABS1 / FINEER / HPL), Draaibaar (0 when the grain matters), and the work in Positie (hinge cups, shelf-pin rows, CNC shapes, angled cuts). Your details go on the "Persoonlijke gegevens" sheet.
+  - **Woodcenter**: Fitted fills in their "houtlijst" — name (max 20 characters), number, length, width, thickness, material and colour, grain (Nee = 1 / Ja = 0), each edge (PVC_1, Fineer_0.7, Laminaat_0.8), remarks and stickers. Your name, address, phone, email and today's date go at the top.
+  - Their drop-down lists, layout and pictures stay as they are, so the shop gets the file it knows.
+  - New: **Your details on the forms** (kept on this device) and a tick box **Let the shop drill the hinge cups and shelf-pin rows**.
+
 ## v0.111
 
 - **Prices updated on 19 November 2026:**

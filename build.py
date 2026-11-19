@@ -20,6 +20,33 @@ def read(*parts):
     return (root.joinpath(*parts)).read_text(encoding="utf-8")
 
 
+def shop_forms():
+    """The panel shops' own order forms (templates/), packed into the page so Fitted can fill them in.
+    Each form goes in as one small zip (base64): pictures re-saved smaller, a template (.xltx)
+    turned into a normal workbook (.xlsx). The page unpacks it when you export."""
+    import zipfile, base64, json, io
+    from PIL import Image
+    forms = {}
+    for key, fn in (("hh", "hanssens-invulblad-zaagwerk.xlsx"), ("wc", "woodcenter-houtlijst.xltx")):
+        out = io.BytesIO()
+        with zipfile.ZipFile(root / "templates" / fn) as z, zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as o:
+            for n in z.namelist():
+                b = z.read(n)
+                if n.endswith(".xml"):
+                    b = b.replace(b"spreadsheetml.template.main+xml", b"spreadsheetml.sheet.main+xml")
+                elif n.endswith((".png", ".jpeg", ".jpg")):
+                    im = Image.open(io.BytesIO(b)); im.thumbnail((640, 640)); buf = io.BytesIO()
+                    if n.endswith(".png"):
+                        im.convert("RGBA").quantize(64, method=Image.FASTOCTREE).save(buf, "PNG", optimize=True)
+                    else:
+                        im.convert("RGB").save(buf, "JPEG", quality=72, optimize=True)
+                    if buf.tell() < len(b):
+                        b = buf.getvalue()
+                o.writestr(n, b)
+        forms[key] = base64.b64encode(out.getvalue()).decode("ascii")
+    return json.dumps(forms)
+
+
 def assemble():
     """The whole app as one page (without the <html>/<head>/<body> wrapper)."""
     page = read("src", "app.html")
@@ -27,6 +54,8 @@ def assemble():
     js = "".join(p.read_text(encoding="utf-8") for p in sorted((root / "src" / "js").glob("*.js")))
     assert "<!--@CSS@-->" in page and "<!--@JS@-->" in page, "markers missing in src/app.html"
     src = page.replace("<!--@CSS@-->", css, 1).replace("<!--@JS@-->", js, 1)
+    if "/*@FORMS@*/null" in src:
+        src = src.replace("/*@FORMS@*/null", shop_forms(), 1)
     for marker, name in (("/*@PRICES@*/", "prices.js"), ("/*@LANG@*/", "lang.js")):
         assert marker in src, marker + " missing in src/js"
         src = src.replace(marker, read("src", name), 1)

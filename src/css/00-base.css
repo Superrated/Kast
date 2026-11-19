@@ -514,3 +514,10 @@ aside.side.locked>*:not(.shead):not(.lockban):not(.viewsw){pointer-events:none;o
 .msstl{display:grid;gap:6px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--raised)}
 .msst{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;justify-content:space-between;font-size:13px;padding:4px 0;border-top:1px solid var(--line)}.msst:first-of-type{border-top:0}.msst em{font-style:normal;color:var(--ink2)}.msst.ok em{color:#2E7D50}
 .seg.wrap{flex-wrap:wrap}
+/* shop order forms: options under the "Have it cut" buttons */
+.sfopts{flex:1 1 100%;display:flex;flex-direction:column;gap:8px;min-width:0}
+.sfchk{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:var(--ink2)}.sfchk input{margin-top:2px}
+.sfme summary{cursor:pointer;font-weight:600;color:var(--ink);font-size:12.5px}.sfme summary small{font-weight:400;color:var(--ink2);margin-left:6px}
+.sfgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
+.sfgrid label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--ink2);min-width:0}
+.sfgrid input{font:inherit;font-size:13px;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--raised);color:var(--ink);min-width:0}
