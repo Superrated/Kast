@@ -42,7 +42,9 @@ def shop_forms():
                         im.convert("RGB").save(buf, "JPEG", quality=72, optimize=True)
                     if buf.tell() < len(b):
                         b = buf.getvalue()
-                o.writestr(n, b)
+                zi = zipfile.ZipInfo(n, date_time=(2026, 1, 1, 0, 0, 0))  # fixed date: the same input gives the same page
+                zi.compress_type = zipfile.ZIP_DEFLATED
+                o.writestr(zi, b)
         forms[key] = base64.b64encode(out.getvalue()).decode("ascii")
     return json.dumps(forms)
 
