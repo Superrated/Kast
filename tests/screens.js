@@ -14,6 +14,18 @@
   await step('dxf', () => tdDXF());
   for (const shop of ['hh', 'wc'])
     await step('form ' + shop, async () => { const b = await shopFormXlsx(shop); if (!b || !b.size) throw new Error('empty form') });
+  await step('order checklist', () => {
+    pnGo('buy');
+    const b = document.querySelector('[data-act=buyTap]');
+    if (!b) throw new Error('no checklist lines');
+    const key = b.dataset.a;
+    b.click();
+    lockOn();
+    document.querySelector(`[data-act=buyTap][data-a="${CSS.escape(key)}"]`).click();
+    const s = ((S.done.buy || {}).items || {})[key];
+    if (!s || s.s !== 'here') throw new Error('status not kept while locked: ' + JSON.stringify(s));
+    lockOff();
+  });
   showTab('elev');
   return { done, problems: OOPS.filter(o => !o.quiet).map(o => o.where + ': ' + o.msg) };
 })

@@ -1149,6 +1149,12 @@ document.addEventListener('click', e => {
       offAdd([{ mt, fin, t: +t, L: Math.max(L, W), W: Math.min(L, W), from: 'added by hand' }]).then(() => renderCut());
       break;
     }
+    case 'buyTap':
+      buyTap(a);
+      break;
+    case 'buyAll':
+      buyAll(a);
+      break;
     case 'ocAnyway': {
       const shop = ui.ocPending;
       if (!shop) break;

@@ -73,7 +73,7 @@ function renderCut() {
   h += `</tbody></table></div>`;
   if (sp.groups.length)
     h += `<p class="lede">Pre-edged boards save about ${sp.saved.toFixed(1)} m of edge banding.</p>`;
-  h += `</section><section data-psec="buy"><h2>Shopping list</h2><p class="lede">What to buy besides the boards: the board totals, hardware, fabric and inserts. The sheets you need and how the parts sit on them are under Sheets.</p><h3>Materials</h3><div class="tw"><table class="cut" style="min-width:480px"><thead><tr><th>Material</th><th>Panel area</th><th>Edges</th><th>Edging / paint</th></tr></thead><tbody>${Object.entries(
+  h += `</section><section data-psec="buy"><h2>Shopping list</h2><p class="lede">What to buy besides the boards: the board totals, hardware, fabric and inserts. The sheets you need and how the parts sit on them are under Sheets.</p><!--BUYLIST--><h3>Materials</h3><div class="tw"><table class="cut" style="min-width:480px"><thead><tr><th>Material</th><th>Panel area</th><th>Edges</th><th>Edging / paint</th></tr></thead><tbody>${Object.entries(
     mats
   )
     .map(
@@ -524,6 +524,11 @@ function renderCut() {
     }
     S.opts.stock = keep;
     if (keep === undefined) delete S.opts.stock;
+  }
+  try {
+    h = h.replace('<!--BUYLIST-->', buyListHTML(lastPrice));
+  } catch (e) {
+    oops('buy list', e);
   }
   h += '</section><section data-psec="price">' + priceHTML(lastPrice) + msHTML(nest) + '</section>';
   if (PRICING) return;

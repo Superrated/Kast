@@ -90,3 +90,7 @@ The version is `APP_VERSION` in `src/js/81-room-photo.js`. Each update adds 0.00
 ## Check before ordering (v0.115)
 
 - `59-order-check.js`: `orderCheck()` returns `{lv:'stop'|'look', t, d}` items; `orderCheckHTML()` draws the card in the cut list; `ocBeforeShop(shop)` holds back the shop export while there is a stop (`ui.ocPending`, button `ocAnyway`). `tests/order_check.js` makes each problem on purpose.
+
+## Order checklist (v0.116)
+
+- `69-buy-list.js`: `buyListHTML(lastPrice)` groups `lastPrice.rows` by shop; status in `S.done.buy` (`items['shop|name'] = {s:'ordered'|'here', at}`, `shops[shop].ref`). `S.done` is allowed through the build lock. Placed in the Shopping section via the `<!--BUYLIST-->` marker in `renderCut`.

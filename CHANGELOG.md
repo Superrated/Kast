@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.116
+
+- **Order checklist** (Parts → Shopping, at the top): everything to buy, grouped per shop (Hanssens Hout, Pierard, Hornbach, Hubo, Gamma, webshops…), with what it costs there.
+  - Tap a line to move it along: **to order → ordered → here** (picked up or delivered). "All ordered" and "All here" per shop, and a box for the order number.
+  - A shop folds shut once everything from it is here.
+  - Kept in the design, so it goes with your saved design to your other devices, and it works while the design is locked for building.
+
 ## v0.115
 
 - **Check before ordering** (Parts → List, above "Have it cut"): a last look at what will actually be cut and drilled.
