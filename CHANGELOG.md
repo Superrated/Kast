@@ -1,5 +1,25 @@
 # Changelog
 
+## v0.65
+
+- **A friendlier wizard.** Two parts — *Your room* and *Your cabinet* — with a progress bar.
+  - The wall and ceiling steps have a big drawing of your wall with a 1.75 m person for scale; drag the blue dots to set the width, height, slopes and beam.
+  - "I measured in more places": width at the floor, halfway and at the top, plus the floor level. Kast uses the smallest width and widens the side strips to match.
+  - New step **"How does it get up there?"**: doorway, stairs (straight, quarter or half turn) and loft hatch. It shows the longest board that gets through and whether boxes go up built.
+  - Proposals say whether the boxes fit up the stairs; "🎲 Surprise me" for the look; confetti when the design is made.
+- **Getting it in** (Room): every box and board is checked against the doorway, stairs and hatch. Parts that can't get in are flagged; boxes too big to carry built are listed as "build it in the room".
+- **Several walls in one room** (Room → Walls in this room): add the next wall to the right for an L- or U-shaped room, with a floor plan showing how the doors open. Each corner is "runs into the corner" or "both stop". Kast keeps the widths right, warns when fronts are blocked in a corner or the side strip is too narrow, and adds up the whole room (price, and sheets when cut together).
+- **DXF files for a CNC shop** (Cut list and Lofting): one drawing per part with every hole and cut-out on its own layer, plus a read-me with the part list.
+- **Offcuts** (Cut list): keep the useful leftovers of a design and cut small parts from them first next time.
+- **Weight and wall fixing** (Build): weight per column empty and full, who carries it, and which plugs and screws to use for your wall.
+- **Time and weekend plan** (Build, and the first step of the guide): hours per stage and a Saturday/Sunday plan.
+- **Ask a maker for a quote** (PDF): a Dutch brief for a cabinet maker with the room, the cabinet, materials and hardware, followed by the drawings.
+- **Edge band thickness** (Build → Construction): with 1 or 2 mm ABS the saw sizes are made smaller so parts end up at the drawn size; the shop Excel keeps finished sizes.
+- **3D light**: daylight, morning, evening, or evening with the lamps on.
+- **Nederlands / English**: the NL button switches most of the screen to Dutch.
+- "Styling" is now called "Contents".
+- Fixed: the depth buttons in the wizard (600 / 500 / 400 / 320) did nothing.
+
 ## v0.64
 
 - **Compare two designs** (Designs → "Compare two designs side by side"): pick any two — or what is open now against a saved one — and see size, columns, doors, drawers, panels, sheets, board / finishing / hardware cost, total, cabinet-maker estimate, materials and warnings next to each other, with the difference and the cheaper one in green. A list shows which settings differ.
