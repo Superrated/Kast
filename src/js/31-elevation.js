@@ -1768,7 +1768,12 @@ function elevSVG(S, G, o = {}) {
         `<g style="stroke:var(--accent)" stroke-width="${sw}"><line x1="${x}" x2="${x}" y1="${Y(a)}" y2="${Y(b)}"/><line x1="${x - t}" x2="${x + t}" y1="${Y(a)}" y2="${Y(a)}"/><line x1="${x - t}" x2="${x + t}" y1="${Y(b)}" y2="${Y(b)}"/></g><text x="${x + fs * 0.4}" y="${Y((a + b) / 2)}" dominant-baseline="middle" font-size="${fs * 0.65}" style="fill:var(--accent)">${label}</text>`
       );
     };
-    G.secs.forEach(q => dim(q.xa, q.xb, -fs * 2.4, f0(q.w), q.w < fs * 3));
+    // a panel wall between two boxes has no sides of its own: its free width runs from box to box
+    G.secs.forEach(q =>
+      G.boxes && q.panel
+        ? dim(q.bL, q.bR, -fs * 2.4, f0(q.bR - q.bL), q.bR - q.bL < fs * 3)
+        : dim(q.xa, q.xb, -fs * 2.4, f0(q.w), q.w < fs * 3)
+    );
     G.secs.forEach(q =>
       push(
         `<text x="${(q.xa + q.xb) / 2}" y="${Y(-fs * 4)}" text-anchor="middle" font-size="${fs * 0.9}" font-family="Instrument Sans, sans-serif" font-weight="600" style="fill:${q.i === o.sel ? 'var(--accent)' : 'var(--ink2)'}">S${q.i + 1}</text>`

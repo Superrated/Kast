@@ -110,7 +110,8 @@ function build(S) {
     props = [],
     linings = [],
     grommets = [],
-    hRails = [];
+    hRails = [],
+    vdPend = []; // uprights that may carry hinges: their mounting-plate holes are added once all doors exist
   const H = {
     fit: [],
     funParts: [],
@@ -500,13 +501,21 @@ function build(S) {
   };
   /* shelf-support holes: "needed" = at each shelf; "some" = plus two 32 mm steps above and below;
      "rows" = a 32 mm row through the level, lined up with the shelves (default). holeYs = the holes for the shelves now. */
-  const pinMode = q => (q && q.s && ['needed', 'some', 'rows'].includes(q.s.pinHoles) ? q.s.pinHoles : ['needed', 'some', 'rows'].includes(O.pinHoles) ? O.pinHoles : 'rows');
+  const pinMode = q =>
+    q && q.s && ['needed', 'some', 'rows'].includes(q.s.pinHoles)
+      ? q.s.pinHoles
+      : ['needed', 'some', 'rows'].includes(O.pinHoles)
+        ? O.pinHoles
+        : 'rows';
   const pinYsFor = (holeYs, lo, hi, mode) => {
     const r = v => Math.round(v * 10) / 10,
       set = new Set();
     if (!holeYs.length) return [];
     const extra = [];
-    if (mode === 'some') holeYs.forEach(y => [-2, -1, 1, 2].forEach(j => (y + j * 32 >= lo + 20 && y + j * 32 <= hi - 20 ? extra.push(y + j * 32) : 0)));
+    if (mode === 'some')
+      holeYs.forEach(y =>
+        [-2, -1, 1, 2].forEach(j => (y + j * 32 >= lo + 20 && y + j * 32 <= hi - 20 ? extra.push(y + j * 32) : 0))
+      );
     // full rows: one 32 mm grid from the bottom of the level, the same on every side and upright of the
     // level, so holes on both faces of an upright line up
     if (mode === 'rows') for (let v = lo + 24; v <= hi - 20; v += 32) extra.push(v);
@@ -532,7 +541,9 @@ function build(S) {
   const doorVd = (q, z) => {
     if (!q || !q.s || q.bL == null || q.bR == null) return null;
     const mode = String(z.vdMode || '').replace(/-r$/, ''),
-      lead = (q.s.zones || []).find(z2 => doorVdLead(z2) && z2.vd.length === z.vd.length && String(z2.vdMode).replace(/-r$/, '') === mode);
+      lead = (q.s.zones || []).find(
+        z2 => doorVdLead(z2) && z2.vd.length === z.vd.length && String(z2.vdMode).replace(/-r$/, '') === mode
+      );
     if (!lead) return null;
     return vdPosDoors(z.vd.length, lead.vdMode, q.bR - q.bL).map(x => x + q.bL - q.xa);
   };
@@ -2234,7 +2245,7 @@ function build(S) {
       // thick over a wide niche (2 otherwise). Too little height above for 100 mm rails → 2 layers.
       // A doorway wider than 800 mm gets a double head.
       const headK = k => Z0[k].type === 'opening' && Z0[k].header !== false,
-        roomForRails = k => !(+((Z0[k + 1] || {}).h) > 0) || +Z0[k + 1].h >= 200;
+        roomForRails = k => !(+(Z0[k + 1] || {}).h > 0) || +Z0[k + 1].h >= 200;
       const divT = k =>
         headK(k)
           ? visUp(k)
@@ -2374,7 +2385,9 @@ function build(S) {
           dd = dDep - dOff;
         [20 + tc / 2, dd - tc / 2].forEach((yy, j) => {
           if (j === 0 && up_ && (up_.type === 'open' || up_.face === 'glass')) return; // no front rail when the level above is open
-          xsS.forEach(x_ => railScrews.push({ x: x_, y: yy, d: 4.5, face: 'through, countersunk from below · screw into the rail' }));
+          xsS.forEach(x_ =>
+            railScrews.push({ x: x_, y: yy, d: 4.5, face: 'through, countersunk from below · screw into the rail' })
+          );
         });
         H.railScrews = (H.railScrews || 0) + railScrews.length;
       }
@@ -2459,7 +2472,9 @@ function build(S) {
               notes: ['On edge on top of header, against back; screw to sides + wall studs'].concat(
                 rIv.length > 1
                   ? ['One per drawer stack: fits between the boards that stand on the header']
-                  : ['One length over the full width — it carries the load over the opening below, so do not cut it; the uprights above are notched over it'],
+                  : [
+                      'One length over the full width — it carries the load over the opening below, so do not cut it; the uprights above are notched over it'
+                    ],
                 nzV
                   ? [
                       'The shelves above are open, so there is no front rail: this rear rail and the thick header carry the load'
@@ -2475,7 +2490,9 @@ function build(S) {
                 poly: rect(rb - ra, rh),
                 grain: 'w',
                 notes: ['On edge on top of header, 20 mm behind front; screw to sides'].concat(
-                  rIv.length > 1 ? [] : ['One length over the full width — do not cut it; the uprights above are notched over it']
+                  rIv.length > 1
+                    ? []
+                    : ['One length over the full width — do not cut it; the uprights above are notched over it']
                 )
               });
           });
@@ -3006,7 +3023,10 @@ function build(S) {
         let vd = vdA
           ? vdA
           : (z.type === 'open' || z.type === 'closed') && Array.isArray(z.vd)
-            ? (z.vdMode && z.vd.length ? doorVd(q, z) || vdPos(z.vd.length, z.vdMode, q.w, tc, zr.lined || 0) : z.vd.map(Number))
+            ? (z.vdMode && z.vd.length
+                ? doorVd(q, z) || vdPos(z.vd.length, z.vdMode, q.w, tc, zr.lined || 0)
+                : z.vd.map(Number)
+              )
                 .filter(v => v > 60 && v < q.w - 60)
                 .sort((a, b) => a - b)
             : [];
@@ -3274,36 +3294,82 @@ function build(S) {
                 L_ = (zr.shelvesY || []).filter(([y, x0, x1]) => Math.abs(x1 + 1 - xl) < 3 && y > y0v && y < yt),
                 R_ = (zr.shelvesY || []).filter(([y, x0, x1]) => Math.abs(x0 - 1 - xr) < 3 && y > y0v && y < yt),
                 ci = (zr.comps || []).findIndex(c => Math.abs(c[1] - xl) < 2),
-                ly = L_.length ? pinYsFor(L_.map(([y]) => y - 4), y0v, yt, mode) : [],
-                ry = R_.length ? pinYsFor(R_.map(([y]) => y - 4), y0v, yt, mode) : [];
+                // standing on header rails: the pin rows start above them
+                pLo = Math.max(
+                  y0v,
+                  ...hRails
+                    .filter(r_ => Math.abs(r_.y0 - zr.y0) < 1 && r_.xa < xl + 1 && r_.xb > xr - 1)
+                    .map(r_ => r_.y1)
+                ),
+                ly = L_.length
+                  ? pinYsFor(
+                      L_.map(([y]) => y - 4),
+                      pLo,
+                      yt,
+                      mode
+                    )
+                  : [],
+                ry = R_.length
+                  ? pinYsFor(
+                      R_.map(([y]) => y - 4),
+                      pLo,
+                      yt,
+                      mode
+                    )
+                  : [];
+              // a spare grid hole a few mm from a shelf's own hole on the other face: drop the grid hole and drill the shelf's hole through
+              {
+                const needL = L_.map(([y]) => r1(y - 4)),
+                  needR = R_.map(([y]) => r1(y - 4)),
+                  isN = (arr, y) => arr.some(v => Math.abs(v - y) < 0.2);
+                for (let m = ly.length - 1; m >= 0; m--) {
+                  const y = ly[m],
+                    r_ = ry.find(v => Math.abs(v - y) >= 2 && Math.abs(v - y) < 12);
+                  if (r_ == null) continue;
+                  if (!isN(needL, y) && isN(needR, r_)) ly[m] = r_;
+                  else if (isN(needL, y) && !isN(needR, r_)) ry[ry.indexOf(r_)] = y;
+                }
+                [ly, ry].forEach(a_ => {
+                  const u_ = [...new Set(a_)].sort((x_, y_) => x_ - y_);
+                  a_.length = 0;
+                  a_.push(...u_);
+                });
+              }
               const both = ly.filter(y => ry.some(v => Math.abs(v - y) < 2));
-              const add_ = (y, o) => [37, q.Dh - 37].forEach(u => vdHoles.push(Object.assign({ x: u, y: y - y0v, d: 5 }, o)));
+              const add_ = (y, o) =>
+                [37, q.Dh - 37].forEach(u => vdHoles.push(Object.assign({ x: u, y: y - y0v, d: 5 }, o)));
               both.forEach(y => add_(y, { face: 'through · shelf pins from both sides' }));
-              ly.filter(y => !both.includes(y)).forEach(y => add_(y, { dp: 8, face: `face towards compartment ${ci + 1}` }));
-              ry.filter(y => !both.some(b => Math.abs(b - y) < 2)).forEach(y => add_(y, { dp: 8, face: `face towards compartment ${ci + 2}` }));
+              ly.filter(y => !both.includes(y)).forEach(y =>
+                add_(y, { dp: 8, face: `face towards compartment ${ci + 1}` })
+              );
+              ry.filter(y => !both.some(b => Math.abs(b - y) < 2)).forEach(y =>
+                add_(y, { dp: 8, face: `face towards compartment ${ci + 2}` })
+              );
             }
             // standing on a header with rails on edge: notch the bottom over them (front rail 20 mm behind the front, rear rail at the back)
             const rOn = hRails.filter(r_ => Math.abs(r_.y0 - zr.y0) < 1 && r_.xa < x + 1 && r_.xb > x + tc - 1),
               rH = rOn.length ? Math.max(...rOn.map(r_ => r_.y1 - r_.y0)) : 0,
               fRail = rOn.some(r_ => !r_.rear),
-              vdPoly = rH > 0 && lb === 0
-                ? [
-                    ...(fRail
-                      ? [
-                          [0, 0],
-                          [20, 0],
-                          [20, rH],
-                          [20 + tc, rH],
-                          [20 + tc, 0]
-                        ]
-                      : [[0, 0]]),
-                    [q.Dh - tc, 0],
-                    [q.Dh - tc, rH],
-                    [q.Dh, rH],
-                    [q.Dh, yt - y0v],
-                    [0, yt - y0v]
-                  ]
-                : rect(q.Dh, yt - y0v);
+              vdPoly =
+                rH > 0 && lb === 0
+                  ? [
+                      ...(fRail
+                        ? [
+                            [0, 0],
+                            [20, 0],
+                            [20, rH],
+                            [20 + tc, rH],
+                            [20 + tc, 0]
+                          ]
+                        : [[0, 0]]),
+                      [q.Dh - tc, 0],
+                      [q.Dh - tc, rH],
+                      [q.Dh, rH],
+                      [q.Dh, yt - y0v],
+                      [0, yt - y0v]
+                    ]
+                  : rect(q.Dh, yt - y0v);
+            vdPend.push({ n: panels.length, xl: x, xr: x + tc, y0v, yt, sec: i, Dh: q.Dh });
             addPanel({
               type: 'Vertical divider',
               role: 'carcass',
@@ -3694,7 +3760,9 @@ function build(S) {
                 // a front header rail at the bottom of this level stands where the hinge mounting plates go
                 // (20–38 mm behind the front, plates 37 mm): keep the lowest hinge's plate (±25 mm) 8 mm above it
                 railTop = hRails
-                  .filter(r_ => !r_.rear && r_.xa < cx + 40 && r_.xb > cx - 40 && r_.y1 > yb - 1 && r_.y0 < yb + mg + 40)
+                  .filter(
+                    r_ => !r_.rear && r_.xa < cx + 40 && r_.xb > cx - 40 && r_.y1 > yb - 1 && r_.y0 < yb + mg + 40
+                  )
                   .reduce((m_, r_) => Math.max(m_, r_.y1), -Infinity),
                 a = Math.max(yb + mg, isFinite(railTop) ? railTop + 33 : -Infinity),
                 b = yT - mg,
@@ -3702,10 +3770,36 @@ function build(S) {
                   hc_ === 1 || b - a < 40
                     ? [(yb + yT) / 2]
                     : Array.from({ length: hc_ }, (_, m) => a + ((b - a) * m) / (hc_ - 1));
+              // two doors hinged on the two faces of one shared partition: hinges at (nearly) the same height
+              // would put the mounting-plate screws of both into the same spot of an 18 mm board — move this door's hinge 50 mm
+              if (!boxes && hinge === 'L' && xl < q.xa + 1 && i > 0) {
+                const other = fronts
+                  .filter(
+                    f_ =>
+                      f_.sec === i - 1 &&
+                      f_.hinge === 'R' &&
+                      f_.cups &&
+                      !f_.rear &&
+                      Math.max(...f_.poly.map(p_ => p_[0])) > q.xa - tc - 2
+                  )
+                  .flatMap(f_ => f_.cups);
+                ys_.forEach((y_, m) => {
+                  if (!other.some(o_ => Math.abs(o_ - y_) < 30)) return;
+                  const up_ = y_ + 50,
+                    dn_ = y_ - 50,
+                    ok_ = v =>
+                      v > yb + 35 &&
+                      v < yT - 35 &&
+                      !other.some(o_ => Math.abs(o_ - v) < 30) &&
+                      !ys_.some((w_, n_) => n_ !== m && Math.abs(w_ - v) < 80);
+                  if (ok_(up_)) ys_[m] = up_;
+                  else if (ok_(dn_)) ys_[m] = dn_;
+                });
+              }
               cupYs = ys_.slice();
               ys_.forEach(y_ => holes.push({ x: cx, y: y_, d: 35, dp: 13, cup: true }));
               extraNotes.push(
-                `Hinge cups Ø35 × 13 mm deep in the back face, centre ${21.5} mm from the ${hinge === 'L' ? 'left' : 'right'} edge, at ${ys_.map(y_ => f0(y_ - yb)).join(', ')} mm from the bottom edge. Mounting plates on the cabinet side 37 mm from its front edge, at the same heights`
+                `Hinge cups Ø35 × 13 mm deep in the back face, centre ${21.5} mm from the ${hinge === 'L' ? 'left' : 'right'} edge, at ${ys_.map(y_ => f0(y_ - yb)).join(', ')} mm from the bottom edge. Mounting plates on the ${(hinge === 'L' ? xl < q.xa + 1 : xr > q.xb - 1) ? 'cabinet side' : 'upright'} 37 mm from its front edge, at the same heights`
               );
             }
           }
@@ -5137,12 +5231,17 @@ function build(S) {
             iy0 = oy0,
             iy1 = oy1;
           if (z.box || (z.drench && FIN[z.inFin])) {
-            const bt = +z.boxT > 0 ? +z.boxT : tf,
-              ext = boxExt(z),
+            // a reading nook with a front board (arch, porthole …): the box stops at the carcass edge, the board covers it
+            const nookBoard =
+                (z.look || 'tv') === 'nook' && ['arch', 'eyebrow', 'port', 'house', 'pod'].includes(z.nookFront),
+              bt = +z.boxT > 0 ? +z.boxT : tf,
+              ext = nookBoard ? 0 : boxExt(z),
               dep = q.Dh + ext,
               role = 'front',
               fin = boxFinOf(z),
-              nt = `Projects ${ext} mm past the carcass ${Math.abs(ext - tf) < 0.6 ? 'so its front edge is flush with the doors' : '(the doors are ' + tf + ' mm thick)'}`;
+              nt = nookBoard
+                ? 'Front edge flush with the carcass — the nook front board covers it'
+                : `Projects ${ext} mm past the carcass ${Math.abs(ext - tf) < 0.6 ? 'so its front edge is flush with the doors' : '(the doors are ' + tf + ' mm thick)'}`;
             for (let l = 0; l < 2; l++)
               addPanel({
                 type: 'Niche box (top/bottom)',
@@ -5223,7 +5322,6 @@ function build(S) {
                 warns.push(
                   `${ol}: the reading nook is ${f0(nh)} mm high inside — about ${f0(sh)} mm above a cushion: fine for children up to about 7, tight from about 8. ${need('Children up to about 12', 870)}.`
                 );
-
             }
             if (iy0 > (z.nookStep ? 800 : 550))
               warns.push(
@@ -5276,17 +5374,26 @@ function build(S) {
               const ownPort = nf === 'port' && (+z.portD > 0 || +z.portX || +z.portY);
               if (ownPort) {
                 const rMax = Math.max(120, Math.min(Wi, Hi) / 2 - 20),
-                  r_ = +z.portD > 0 ? Math.max(120, Math.min(rMax, +z.portD / 2)) : Math.max(120, Math.min(Wi, Hi) / 2 - 30),
+                  r_ =
+                    +z.portD > 0
+                      ? Math.max(120, Math.min(rMax, +z.portD / 2))
+                      : Math.max(120, Math.min(Wi, Hi) / 2 - 30),
                   pcx = Math.max(ix0 + r_ + 20, Math.min(ix1 - r_ - 20, cx + (+z.portX || 0))),
                   pcy = Math.max(iy0 + r_ + 20, Math.min(iy1 - r_ - 20, iy0 + 30 + r_ + (+z.portY || 0)));
                 holes.push(arc(pcx, pcy, r_, r_, 0, Math.PI * 2, 48).slice(0, -1));
                 zr.port = { cx: pcx, cy: pcy, r: r_ };
                 if (+z.portD > 0 && Math.abs(r_ * 2 - +z.portD) > 2)
-                  warns.push(`${ol}: the porthole can be at most ${f0(rMax * 2)} mm across here (and at least 240 mm) — it is ${f0(r_ * 2)} mm now.`);
+                  warns.push(
+                    `${ol}: the porthole can be at most ${f0(rMax * 2)} mm across here (and at least 240 mm) — it is ${f0(r_ * 2)} mm now.`
+                  );
                 if (r_ * 2 < 500)
-                  warns.push(`${ol}: the porthole is ${f0(r_ * 2)} mm across — a child climbs in easily from about 500 mm.`);
+                  warns.push(
+                    `${ol}: the porthole is ${f0(r_ * 2)} mm across — a child climbs in easily from about 500 mm.`
+                  );
                 if (Math.abs(pcx - (cx + (+z.portX || 0))) > 1 || Math.abs(pcy - (iy0 + 30 + r_ + (+z.portY || 0))) > 1)
-                  warns.push(`${ol}: the porthole was moved back inside the front — it needs 20 mm of board around it.`);
+                  warns.push(
+                    `${ol}: the porthole was moved back inside the front — it needs 20 mm of board around it.`
+                  );
               } else if (small) {
                 const ow = Math.min(Wi, Math.max(450, Wi * osz)),
                   oh = Math.min(Hi, Math.max(600, Hi * (0.55 + 0.45 * osz))),
@@ -6549,6 +6656,58 @@ function build(S) {
       q.backPieces.push({ poly: bpoly, fin: rg.fin });
     });
   });
+  // hinge mounting plates on uprights: a door hinged on its edge over an upright gets its plates there,
+  // 37 mm from the front, 16 mm above and below each hinge cup (a shelf-pin hole in the way is left out)
+  vdPend.forEach(v => {
+    const pn = panels[v.n];
+    if (!pn || pn.type !== 'Vertical divider') return;
+    const add = [];
+    fronts
+      .filter(
+        f => f.sec === v.sec && f.cups && f.cups.length && !f.rear && f.poly && (f.hinge === 'L' || f.hinge === 'R')
+      )
+      .forEach(f => {
+        const xs = f.poly.map(p_ => p_[0]),
+          he = f.hinge === 'R' ? Math.max(...xs) : Math.min(...xs);
+        if (he < v.xl - 2 || he > v.xr + 2) return;
+        const face = f.hinge === 'R' ? 'left' : 'right';
+        f.cups.forEach(cy =>
+          [cy - 16, cy + 16].forEach(yy => {
+            if (yy > v.y0v + 8 && yy < v.yt - 8) add.push({ y: yy - v.y0v, face });
+          })
+        );
+      });
+    if (!add.length) return;
+    const both = add.filter(a => add.some(b => b.face !== a.face && Math.abs(b.y - a.y) < 12));
+    add.forEach(a => {
+      pn.holes = pn.holes.filter(
+        h =>
+          !(
+            (h.dp || /shelf pin/.test(h.face || '')) &&
+            !h.plate &&
+            !h.cf &&
+            !h.dw &&
+            Math.abs(h.x - 37) < 12 &&
+            Math.abs(h.y - a.y) < 12
+          )
+      );
+      if (pn.holes.some(h => h.plate && Math.abs(h.y - a.y) < 1)) return;
+      pn.holes.push(
+        both.includes(a)
+          ? {
+              x: 37,
+              y: r1(a.y),
+              d: 5,
+              face: 'through · hinge plates on both sides (long screw or connector bolt)',
+              plate: 1
+            }
+          : { x: 37, y: r1(a.y), d: 5, dp: 12, face: `${a.face} face · hinge mounting plate`, plate: 1 }
+      );
+    });
+    pn.notes = (pn.notes || []).concat(
+      `Hinge mounting plates: ${add.length} holes Ø5 × 12 deep, 37 mm from the front edge, 32 mm apart — same heights as the hinge cups of the door hinged here`
+    );
+  });
   // sides / partitions
   const walls = [];
   if (boxes)
@@ -6628,6 +6787,17 @@ function build(S) {
         near = (u, y) => hs.some(h => Math.abs(h.x - u) < 12 && Math.abs(h.y - y) < 12),
         put = (u, y, o) => {
           if (y < y0 + 8 || y > y1 - 8 || u < 5 || u > dW - 5) return;
+          // a hinge mounting plate must sit exactly 37 mm from the front: a shelf-pin hole in its way is left out instead
+          if (o.plate) {
+            for (let m = hs.length - 1; m >= 0; m--) {
+              const h = hs[m];
+              if (!h.plate && !h.cf && !h.dw && h.dp && Math.abs(h.x - u) < 12 && Math.abs(h.y - y) < 12)
+                hs.splice(m, 1);
+            }
+            if (!hs.some(h => h.plate && Math.abs(h.x - u) < 1 && Math.abs(h.y - y) < 1))
+              hs.push(Object.assign({ x: u, y }, o));
+            return;
+          }
           let uu = u;
           if (near(uu, y)) uu += 25;
           if (!near(uu, y)) hs.push(Object.assign({ x: uu, y }, o));
@@ -6676,10 +6846,26 @@ function build(S) {
         // shelf-support holes, per level, by this column's setting
         const mode = pinMode(q);
         q.zones.forEach(zr => {
-          const mine = (zr.shelvesY || []).filter(([y, x0, x1]) => (isL ? Math.abs(x0 - 1 - q.xa) < 3 : Math.abs(x1 + 1 - q.xb) < 3));
+          const mine = (zr.shelvesY || []).filter(([y, x0, x1]) =>
+            isL ? Math.abs(x0 - 1 - q.xa) < 3 : Math.abs(x1 + 1 - q.xb) < 3
+          );
           if (!mine.length) return;
-          const hi = zr.y0 + zr.h;
-          pinYsFor(mine.map(([y]) => y - 4), zr.y0, hi, mode).forEach(y => [37, q.Dh - 37].forEach(u => put(uF + u, y, { d: 5, dp: 12, face })));
+          const hi = zr.y0 + zr.h,
+            // header rails on edge at the bottom of this level: no shelf can sit beside them, so the pin rows start above them
+            lo = Math.max(
+              zr.y0,
+              ...hRails
+                .filter(
+                  r_ => Math.abs(r_.y0 - zr.y0) < 1 && (isL ? Math.abs(r_.xa - q.xa) < 3 : Math.abs(r_.xb - q.xb) < 3)
+                )
+                .map(r_ => r_.y1)
+            );
+          pinYsFor(
+            mine.map(([y]) => y - 4),
+            lo,
+            hi,
+            mode
+          ).forEach(y => [37, q.Dh - 37].forEach(u => put(uF + u, y, { d: 5, dp: 12, face })));
         });
         fronts
           .filter(f => f.sec === q.i && f.cups && !f.rear && (isL ? f.hinge === 'L' : f.hinge === 'R'))

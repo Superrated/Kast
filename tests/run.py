@@ -18,6 +18,7 @@ snap = (ROOT / "tests" / "snapshot.js").read_text()
 screens = (ROOT / "tests" / "screens.js").read_text()
 order_check = (ROOT / "tests" / "order_check.js").read_text()
 even_doors = (ROOT / "tests" / "even_doors.js").read_text()
+drill_check = (ROOT / "tests" / "drill_check.js").read_text()
 fails = 0
 with sync_playwright() as pw:
     b, p = open_page(pw)
@@ -41,6 +42,7 @@ with sync_playwright() as pw:
         if f.stem.startswith("starter-"):  # screens and exports, on the starter designs
             sc = p.evaluate(screens, json.loads(f.read_text()))
             problems += ["on screen: " + x for x in sc["problems"]]
+        problems += ["workshop check: " + x for x in p.evaluate(drill_check, json.loads(f.read_text()))]
         if f.stem == "starter-oak":  # the order check finds each problem made on purpose
             problems += ["order check missed: " + n for n, ok in p.evaluate(order_check, json.loads(f.read_text())) if not ok]
         if p.errors:

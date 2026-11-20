@@ -36,11 +36,12 @@ The version is `APP_VERSION` in `src/js/81-room-photo.js`. Each update adds 0.00
 
 `python3 build.py && python3 tests/run.py` — run after every change. It opens the built page in headless Chrome (Playwright).
 
-- `tests/designs/*.json`: the test designs (9 starters + 14 random walls, made once by `tests/make_designs.py`).
+- `tests/designs/*.json`: the test designs (9 starters + 14 random walls + the user's balder v07, made once by `tests/make_designs.py`).
 - `tests/snapshot.js`: per design, the cut list, hardware (`G.H`), design notes, price and how 3D boards link to parts.
   Compared with `tests/expected/*.json`; any difference fails and is shown. When a change is meant to change
   results, check the differences, then `python3 tests/run.py --update`.
 - `tests/screens.js`: on the starters, every tab, workshop 3D, drawing sheets, DXF and both shop forms.
+- `tests/drill_check.js`: on every design, workshop sanity: holes off their part, Ø5/Ø8 holes running into each other, hinge plates not 37 mm from the front, doors hinged on an upright without plate holes, boards overlapping in 3D (backs in grooves and header rails in notches allowed).
 - A test fails on any page error, any problem reported with `oops()`, or a drilled part without a 3D board.
 - Offline: set `THREE_JS=/path/to/three.min.js` (e.g. from `npm i three@0.159.0`) and the page gets that copy.
 
@@ -123,3 +124,9 @@ The version is `APP_VERSION` in `src/js/81-room-photo.js`. Each update adds 0.00
 
 - `pinMode(q)` (column `s.pinHoles`, else `opts.pinHoles`, else 'rows') and `pinYsFor(holeYs, lo, hi, mode)` in `10-build.js`. Sides (`drill()` in the side code) and uprights (`Vertical divider`, `vdHoles`) use them; upright holes shared by both faces are through holes (`face: 'through · shelf pins from both sides'`).
 - Side holes for the fixed boards follow `opts.joinery`: 'dowel' (Ø8×12, `dw`), 'minifix' (Ø5×11 bolt `cf` + Ø8×12 dowel), else Ø5 through (`cf`).
+
+## Hinge plates (v0.130)
+
+- Sides: `drill()` in `10-build.js` puts plate holes with `{plate:1}` first-class — a shelf-pin hole within 12 mm is removed, the plate never moves.
+- Uprights: `vdPend` records each `Vertical divider` panel (`n` = index in `panels`, `xl/xr/y0v/yt`); after all fronts exist, doors whose hinge edge lies over the upright get plate holes at x 37 (through, when both faces need one at the same height).
+- Shared partitions (not boxes): a door hinged L on the partition moves a cup 50 mm when the door on the other face has one within 30 mm.

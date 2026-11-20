@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.130
+
+A check of the workshop output (drawings, sizes, holes, numbers) on the balder design and all test designs found and fixed:
+
+- **Hinge plates in the right place**: wherever a hinge mounting plate landed on a shelf-pin row, its two screw holes were pushed 25 mm back (62 instead of 37 mm from the front), so the plate would not have fitted the hinge. The plate now keeps its place and the shelf-pin hole in its way is left out.
+- **Hinge plates on uprights**: a door hinged on an upright (balder S1, the middle door) got no plate holes in that upright. They are now drilled, 37 mm from the front at the cup heights, with a note on the part; the door's note says "on the upright" instead of "on the cabinet side".
+- **Reading nook box behind the front board**: with a porthole/arched/house front, the box lining the nook stuck 18 mm forward, right through the front board. It now stops at the carcass edge (balder: nook box sides 447 → 429 mm deep).
+- **No shelf pins beside header rails**: pin rows in a level above a header with rails on edge now start above the rails (one hole also ran into a rail screw).
+- **Shared partition with hinges on both faces**: when the doors on both sides hinge on the same partition at almost the same height, the plate screws would meet inside the 18 mm board — the second door's hinge moves 50 mm.
+- **Uprights**: a spare grid pin hole a few mm from a shelf's own hole on the other face is dropped and the shelf hole drilled through, instead of two holes almost on top of each other.
+- **Front drawing**: the inside width of a panel wall between two boxes now shows the real free width from box to box (balder S2: 787, was 751).
+- **Tests**: new workshop check on every test design (`tests/drill_check.js`): holes off their part, holes running into each other, hinge plates not at 37 mm, doors hinged on an upright without plate holes, and boards overlapping in 3D.
+
 ## v0.129
 
 - **Header rails are fixed down**: both rails on edge (front and back) now get two fixings at each end through the box sides (25 and 75 mm up, on the rail's centre line) — connector screws, or Ø8 dowel holes with glued dowels — in the side parts, machining drawings and shop forms. The header board gets countersunk Ø4.5 holes from below, about every 250 mm along both rails, for screws up into the rails. The hardware list counts them (the side screws with the other joints, plus "Chipboard screws 4 × 40 (header into the rails)"), and the 3D assembly shows the screws going into the rails.
