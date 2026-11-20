@@ -275,7 +275,7 @@ function simplifySide(el) {
   if (head && !el.querySelector('.viewsw'))
     head.insertAdjacentHTML(
       'afterend',
-      `<div class="viewsw"><div class="seg" role="group" aria-label="How much to show"><button type="button" class="${ui.simple ? 'on' : ''}" data-act="viewMode" data-a="s">Simple</button><button type="button" class="${ui.simple ? '' : 'on'}" data-act="viewMode" data-a="x">Expert</button></div><span>${ui.simple ? 'The settings most people use' : 'Every setting'}</span></div>`
+      `<div class="viewsw"><div class="seg" role="group" aria-label="How much to show"><button type="button" class="${ui.simple ? 'on' : ''}" data-act="viewMode" data-a="s">Simple</button><button type="button" class="${ui.simple ? '' : 'on'}" data-act="viewMode" data-a="x">Expert</button></div><span>${ui.simple ? 'The settings most people use' : 'Every setting'}</span></div><label class="chk expsw"><input type="checkbox" data-act="expMode" ${expOn() ? 'checked' : ''}> Experimental: more walls in one room and corner cabinets</label>`
     );
   if (!ui.simple) return;
   const open = ui.moreOpen || {},
@@ -534,7 +534,7 @@ function renderSide() {
     R = S.room;
   const pane = PANES.find(x => x[0] === (ui.pane || 'layout')) || PANES[1];
   let h = `<details class="acc" data-k="room" ${op('room')}><summary>Wall</summary><div class="accb">
-    <div class="grid2">${S.proj ? `<div class="fld"><span>Wall width</span><span class="note" style="padding:8px 0">${f0(R.W)} mm for cabinets — the wall length is set under “Walls in this room”</span></div>` : fld('Wall width', 'room.W')}${fld('Full ceiling height', 'room.H')}${fld('Cabinet depth', 'room.D')}${fld('Ceiling lower at the back by', 'room.drop')}</div>
+    <div class="grid2">${S.proj && expOn() ? `<div class="fld"><span>Wall width</span><span class="note" style="padding:8px 0">${f0(R.W)} mm for cabinets — the wall length is set under “Walls in this room”</span></div>` : fld('Wall width', 'room.W')}${fld('Full ceiling height', 'room.H')}${fld('Cabinet depth', 'room.D')}${fld('Ceiling lower at the back by', 'room.drop')}</div>
     <div style="display:grid;gap:8px">${chk('The back wall is not parallel to the cabinet front', 'room.skew.on')}${
       R.skew && R.skew.on
         ? `<div class="grid2">${fld('Depth available at the left end', 'room.skew.dL', { ph: String(R.D) })}${fld('Depth available at the right end', 'room.skew.dR', { ph: String(R.D) })}</div>${skewPlan()}<p class="hintp" style="margin:0">Measure from where the cabinet front will be, straight back to the wall, at both ends. The front stays straight and every column is made as deep as the wall allows at its shallowest corner, rounded down to 10 mm${
@@ -612,7 +612,10 @@ function renderSide() {
     <p class="hintp" style="margin:0">They show as blue outlines on the drawing (orange when something is in the way). Sockets get a cut-out in the back panel; shuffling tries to keep sides, shelves and drawers away from them.</p>
   </div></details>`;
   }
-  h += `<details class="acc" data-k="walls" ${op('walls')}><summary>Walls in this room${S.proj ? ` (${S.proj.walls.length})` : ''}</summary><div class="accb">${pjHTML()}</div></details>`;
+  if (expOn())
+    h += `<details class="acc" data-k="walls" ${op('walls')}><summary>Walls in this room <span class="exptag">experimental</span>${S.proj ? ` (${S.proj.walls.length})` : ''}</summary><div class="accb">${pjHTML()}</div></details>`;
+  else if (S.proj)
+    h += `<details class="acc" data-k="walls" ${op('walls')}><summary>Walls in this room (${S.proj.walls.length})</summary><div class="accb"><p class="hintp" style="margin:0">This design has ${S.proj.walls.length} walls with corner cabinets — an experimental feature. You are seeing only “${esc((S.proj.walls[S.proj.at] || {}).name || 'this wall')}”; nothing is lost. <button type="button" class="linkb" data-act="expMode">Turn on Experimental</button> to see and change the others.</p></div></details>`;
   {
     const F = R.front || {};
     h += `<details class="acc" data-k="front" ${op('front')}><summary>Space in front · hallway</summary><div class="accb">

@@ -1406,6 +1406,30 @@ document.addEventListener('click', e => {
       ui.mnotes = !ui.mnotes;
       renderBar();
       break;
+    case 'expMode':
+      EXP = !EXP;
+      try {
+        localStorage.setItem('fitted-exp', EXP ? '1' : '0');
+      } catch (er) {
+        oops('events #exp', er, 1);
+      }
+      if (EXP && S.proj) {
+        try {
+          pjSync();
+        } catch (er) {
+          oops('events #exp2', er);
+        }
+      }
+      geo = build(S);
+      groupsCache = null;
+      renderSide();
+      renderViews();
+      toast(
+        EXP
+          ? 'Experimental on: more walls and corner cabinets under “Walls in this room”'
+          : 'Experimental off: one wall at a time'
+      );
+      break;
     case 'viewMode':
       ui.simple = a !== 'x';
       try {

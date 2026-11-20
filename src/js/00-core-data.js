@@ -9,6 +9,16 @@ const r1 = v => Math.round(v * 10) / 10,
   DEG = 180 / Math.PI;
 let _uid = 1;
 const uid = () => 'i' + _uid++ + Math.random().toString(36).slice(2, 6);
+/* Experimental mode (one switch for the whole app, kept on this device and synced like the other settings):
+   more walls in one room and the corner cabinets between them. Off: the app works with one wall; a design that
+   already has more walls keeps them untouched and shows them again when the switch is turned on. */
+let EXP = false;
+try {
+  EXP = typeof localStorage !== 'undefined' && localStorage.getItem('fitted-exp') === '1';
+} catch (e) {
+  EXP = false;
+}
+const expOn = () => EXP;
 const FIN = {
   oak: { name: 'Natural oak', base: '#C9A26E', grain: '#8F6A3C', kind: 'wood', rough: 0.6 },
   smoked: { name: 'Smoked oak', base: '#71533A', grain: '#3F2B1C', kind: 'wood', rough: 0.6 },

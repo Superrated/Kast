@@ -8099,7 +8099,7 @@ function build(S) {
     oops('build #2', e);
   }
   try {
-    cornerCheck(result, S);
+    if (expOn()) cornerCheck(result, S);
   } catch (e) {
     oops('build #3', e);
   }

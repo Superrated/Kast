@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.134
+
+- **Experimental mode**: more walls in one room and the corner cabinets between them are now behind one switch, "Experimental", at the top of the side panel (under Simple / Expert). It is off by default, remembered on this device and synced with your other settings. When it is off the app works with one wall: no "Walls in this room", no corner check or corner parts, no corner in the front drawing, no other walls in 3D. A design that already has more walls keeps them untouched and shows a short note with a "Turn on Experimental" button.
+
 ## v0.133
 
 Fixings check — every board that should be fastened now is, on all test designs and the 50 random ones:

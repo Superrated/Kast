@@ -4207,3 +4207,5 @@ aside.side.locked > *:not(.shead):not(.lockban):not(.viewsw) {
 /* number boxes never get so narrow that the number is cut off (room for e.g. "1045.5") */
 .inp input[type=number]{min-width:calc(6ch + 20px);flex:1 1 auto}
 .inp{flex-wrap:nowrap}
+
+.expsw{margin:6px 0 2px;font-size:13px}.exptag{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;background:var(--accent-soft);color:var(--accent);border-radius:4px;padding:1px 5px;margin-left:4px;vertical-align:middle}

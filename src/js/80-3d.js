@@ -16,7 +16,8 @@ function srgb(t) {
 }
 /* sRGB = true: the picture is written as sRGB (main 3D view); false: as linear (workshop boxes, as on r128) */
 function threeOut(renderer, sRGB) {
-  if ('outputColorSpace' in renderer) renderer.outputColorSpace = sRGB ? THREE.SRGBColorSpace : THREE.LinearSRGBColorSpace;
+  if ('outputColorSpace' in renderer)
+    renderer.outputColorSpace = sRGB ? THREE.SRGBColorSpace : THREE.LinearSRGBColorSpace;
   else renderer.outputEncoding = sRGB ? THREE.sRGBEncoding : THREE.LinearEncoding;
   if ('useLegacyLights' in renderer) renderer.useLegacyLights = true;
   return renderer;
@@ -127,7 +128,7 @@ function floorTex() {
 }
 /* the other walls of the room and the diagonal corner cabinets, placed around the open wall in 3D */
 function others3D() {
-  if (!S.proj || !T3 || ui.others3D === false) return;
+  if (!expOn() || !S.proj || !T3 || ui.others3D === false) return;
   const L = pjLayout();
   if (!L) return;
   const a = L.segs[S.proj.at];

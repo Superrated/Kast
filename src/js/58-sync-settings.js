@@ -35,6 +35,10 @@ const SYNC = {
     const l = localStorage.getItem('kast-lang');
     if (l && l !== LANG && LANGS[l]) setLang(l);
   },
+  'fitted-exp': () => {
+    // experimental mode: more walls and corner cabinets
+    EXP = localStorage.getItem('fitted-exp') === '1';
+  },
   'kast-view': () => {
     ui.simple = localStorage.getItem(VIEW_KEY) !== 'x';
   },
