@@ -314,11 +314,15 @@ function renderCut() {
       'Shelf supports Ø5 (metal, with sleeve)',
       H.pins,
       '4 per shelf; ' +
-        {
+        ({
           needed: 'holes drilled only where each shelf sits',
           some: 'holes at each shelf ± two 32 mm steps',
-          rows: 'full rows 37 mm from front and back, 32 mm pitch'
-        }[S.opts.pinHoles || 'rows']
+          rows: 'full rows 37 mm from front and back, 32 mm pitch',
+          auto: 'full rows (32 mm pitch) behind doors, holes only where each shelf sits on open shelves'
+        }[S.opts.pinHoles || 'auto'] || '') +
+        (S.sections.some(s_ => s_.pinHoles || (s_.zones || []).some(z_ => z_.pinHoles))
+          ? ' (some columns or levels have their own setting)'
+          : '')
     ]);
   H.battens.forEach(b =>
     hw.push([

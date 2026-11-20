@@ -25,7 +25,9 @@ function chk(label, p, { re = true } = {}) {
   return `<label class="chk"><input type="checkbox" id="${idOf(p)}" data-p="${p}" ${re ? 'data-re="1"' : ''} ${getP(p) ? 'checked' : ''}> ${label}</label>`;
 }
 function seg(p, opts, { num = false, dflt = '' } = {}) {
-  const v = getP(p) ?? dflt;
+  // an empty value means the default, unless one of the choices is itself empty ("Like the rest")
+  const raw = getP(p),
+    v = raw == null || (raw === '' && !opts.some(o => o[0] === '')) ? dflt : raw;
   return `<div class="seg" role="group">${opts.map(([k, l]) => `<button type="button" class="${String(v ?? '') === String(k) ? 'on' : ''}" data-act="setv" data-a="${p}|${k}|${num ? 'n' : 's'}">${l}</button>`).join('')}</div>`;
 }
 function stepper(label, p, min = 0, max = 12, autoZero = false) {
@@ -838,13 +840,14 @@ function renderSide() {
     <div class="fld"><span>Holes for shelf supports</span>${seg(
       'opts.pinHoles',
       [
+        ['auto', 'Automatic'],
         ['needed', 'Only where needed'],
         ['some', 'A few to adjust'],
         ['rows', 'Full rows']
       ],
-      { dflt: 'rows' }
+      { dflt: 'auto' }
     )}</div>
-    <p class="hintp" style="margin:0">${{ needed: 'Cleanest inside: 4 holes per shelf, exactly where it sits. Shelves can’t be moved later.', some: 'Holes at each shelf plus two 32 mm steps up and down — move a shelf ±64 mm later without drilling.', rows: 'A full 32 mm row from top to bottom of every shelf level — move shelves anywhere, any time.' }[S.opts.pinHoles || 'rows']}</p>
+    <p class="hintp" style="margin:0">${PIN_HINT[S.opts.pinHoles || 'auto'] || PIN_HINT.auto} Each column and each level can have its own setting.</p>
     <div class="grid2">${fld('Tallest box to carry in', 'opts.maxUnitH', { ph: 'auto · ' + f0(geo.maxUnitAuto || 2780), auto: true })}${fld('Longest closing strip', 'opts.maxSkirtL', { ph: 'auto · ' + f0(geo.maxSkirt || 2780), auto: true })}</div>
     <p class="hintp" style="margin:0">Taller columns are built as two stacked units, and longer closing strips and plinths are cut in pieces that join over a cabinet side. Auto follows your sheet size, or the pre-edged board length when those are on.</p>
     <div class="fld"><span>Back panel</span>${seg(
@@ -1098,12 +1101,17 @@ function secEditorFull() {
     }${
       !isSheet() || s.base === 'panel'
         ? ''
-        : `<div class="fld"><span>Holes for shelf supports in this column</span>${seg(p + '.pinHoles', [
-            ['', 'Like the rest'],
-            ['needed', 'Only where needed'],
-            ['some', 'A few to adjust'],
-            ['rows', 'Full rows']
-          ], { dflt: '' })}</div><div class="fld"><span>Back panel</span>${seg(p + '.back', [
+        : `<div class="fld"><span>Holes for shelf supports in this column</span>${seg(
+            p + '.pinHoles',
+            [
+              ['', 'Like the rest'],
+              ['auto', 'Automatic'],
+              ['needed', 'Only where needed'],
+              ['some', 'A few to adjust'],
+              ['rows', 'Full rows']
+            ],
+            { dflt: '' }
+          )}</div><div class="fld"><span>Back panel</span>${seg(p + '.back', [
             ['full', 'One piece'],
             ['split', 'One per level'],
             ['none', 'No back']
@@ -1244,12 +1252,17 @@ function secEditorFull() {
     ${
       s.base === 'panel' || isSheet()
         ? ''
-        : `<div class="fld"><span>Holes for shelf supports in this column</span>${seg(p + '.pinHoles', [
-            ['', 'Like the rest'],
-            ['needed', 'Only where needed'],
-            ['some', 'A few to adjust'],
-            ['rows', 'Full rows']
-          ], { dflt: '' })}</div><div class="fld"><span>Back panel</span>${seg(p + '.back', [
+        : `<div class="fld"><span>Holes for shelf supports in this column</span>${seg(
+            p + '.pinHoles',
+            [
+              ['', 'Like the rest'],
+              ['auto', 'Automatic'],
+              ['needed', 'Only where needed'],
+              ['some', 'A few to adjust'],
+              ['rows', 'Full rows']
+            ],
+            { dflt: '' }
+          )}</div><div class="fld"><span>Back panel</span>${seg(p + '.back', [
             ['full', 'One piece'],
             ['split', 'One per level'],
             ['none', 'No back']
@@ -1916,7 +1929,11 @@ function zoneRow(i, k) {
         .join(
           ''
         )}${z.vdMode ? '' : `<span class="hintp" style="margin:0;align-self:center">Own positions</span>`}</div>${
-        z.vdMode && z.type === 'closed' && !(+z.doors > 0) && z.face !== 'curtain' && (!z.doorMode || z.doorMode === 'hinged')
+        z.vdMode &&
+        z.type === 'closed' &&
+        !(+z.doors > 0) &&
+        z.face !== 'curtain' &&
+        (!z.doorMode || z.doorMode === 'hinged')
           ? `<p class="hintp" style="margin:4px 0 0">Spaced by the doors: every door gets the same width (or the chosen proportions). The outer doors also cover the side panels, so the compartments behind them come out a little narrower. Other levels in this column with the same uprights line up with these.</p>`
           : ''
       }`;
@@ -2020,6 +2037,7 @@ function zoneRow(i, k) {
       (!z.rail && (+z.shelves > 0 || (z.vsh || []).some(v => +v > 0))
         ? `<div class="fld" style="grid-column:1/-1"><span>Shelf spacing</span>${seg(p + '.space', SPACINGS, { dflt: 'even' })}</div>`
         : '') +
+      (!z.rail ? pinLevelUI(p, z, zr) : '') +
       stepper('Doors', p + '.doors', z.doorMode === 'slide' ? 2 : 0, 6, z.doorMode !== 'slide');
     if (+z.doors === 1)
       h += `<div class="fld"><span>Hinge side</span>${seg(p + '.hinge', [
@@ -2084,6 +2102,7 @@ function zoneRow(i, k) {
       (+z.shelves > 0 || (z.vsh || []).some(v => +v > 0)
         ? `<div class="fld" style="grid-column:1/-1"><span>Shelf spacing</span>${seg(p + '.space', SPACINGS, { dflt: 'even' })}</div>`
         : '') +
+      pinLevelUI(p, z, zr) +
       `<div style="grid-column:1/-1">${chk('Picture ledges — slim lipped shelves for leaning art and records', p + '.ledge')}${chk('Arched tops — a front frame with a rounded opening over every compartment', p + '.arch')}${z.arch ? '' : chk('Slatted screen — fixed slats in front of the shelves, with open gaps', p + '.slat')}${
         z.arch || z.slat
           ? ''
@@ -2130,7 +2149,22 @@ function zoneRow(i, k) {
             }`
       }${z.slat && !z.arch ? `<div class="grid2">${slatUI(p, z, 'The screen does not open: it half hides the shelves and lets air and light through. Good in front of a radiator, speakers or a messy shelf.')}</div>${finSelect('Slat colour', p + '.slatFin', 'Same as the doors')}` : ''}${
         z.arch
-          ? `<div class="fld" style="grid-column:1/-1"><span>Openings</span>${seg(p + '.archOpen', [['', 'One per shelf space'], ['tall', 'One tall arch']], { dflt: '' })}</div><div class="fld" style="grid-column:1/-1"><span>Top of the openings</span>${seg(p + '.archTop', [['', 'Half circle'], ['flat', 'Flatter'], ['square', 'Square']], { dflt: '' })}</div><div style="grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:end">${fld('Border around each opening', p + '.archBorder', { ph: '0' })}</div><p class="hintp" style="grid-column:1/-1;margin:0">“One tall arch” leaves the shelves visible behind one opening per compartment. The border is extra board around each opening, on top of the sides and uprights behind it (0–150 mm).</p>`
+          ? `<div class="fld" style="grid-column:1/-1"><span>Openings</span>${seg(
+              p + '.archOpen',
+              [
+                ['', 'One per shelf space'],
+                ['tall', 'One tall arch']
+              ],
+              { dflt: '' }
+            )}</div><div class="fld" style="grid-column:1/-1"><span>Top of the openings</span>${seg(
+              p + '.archTop',
+              [
+                ['', 'Half circle'],
+                ['flat', 'Flatter'],
+                ['square', 'Square']
+              ],
+              { dflt: '' }
+            )}</div><div style="grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:end">${fld('Border around each opening', p + '.archBorder', { ph: '0' })}</div><p class="hintp" style="grid-column:1/-1;margin:0">“One tall arch” leaves the shelves visible behind one opening per compartment. The border is extra board around each opening, on top of the sides and uprights behind it (0–150 mm).</p>`
           : ''
       }${z.arch ? finSelect('Frame colour', p + '.archFin', FIN[z.inFin] ? 'Same as the inside colour' : 'Same as the doors') : ''}${z.arch ? '<p class="hintp" style="margin:0">One board sits in front of this level with the arches sawn out of it; the shelves and uprights behind it stay straight. Use “Split side by side” for more arches next to each other and the shelf count for rows. It looks best colour-drenched, in one colour inside and out.</p>' : ''}</div><div class="fld" style="grid-column:1/-1"><span>Use these shelves as</span>${seg(
         p + '.niche',
@@ -2277,4 +2311,26 @@ function zoneRow(i, k) {
   }
   h += `<div class="ztools"><button class="btn sm" data-act="moveZone" data-a="${k},1">Move up</button><button class="btn sm" data-act="moveZone" data-a="${k},-1">Move down</button><button class="btn sm" data-act="delZone" data-a="${k}">Remove</button></div></div></div>`;
   return h;
+}
+
+/* shelf-support holes: what each setting means, and the per-level choice (only when the level has shelves) */
+const PIN_HINT = {
+  auto: 'Full rows behind doors (move shelves any time, nobody sees the holes); only the holes each shelf needs on open shelves and behind glass, where the holes are on show.',
+  needed: 'Cleanest inside: 4 holes per shelf, exactly where it sits. Shelves can’t be moved later.',
+  some: 'Holes at each shelf plus two 32 mm steps up and down — move a shelf ±64 mm later without drilling.',
+  rows: 'A full 32 mm row from top to bottom of every shelf level — move shelves anywhere, any time.'
+};
+function pinLevelUI(p, z, zr) {
+  if (!(+z.shelves > 0 || (z.vsh || []).some(v => +v > 0))) return '';
+  const now = zr && zr.pinM ? { needed: 'only where needed', some: 'a few to adjust', rows: 'full rows' }[zr.pinM] : '';
+  return `<div class="fld" style="grid-column:1/-1"><span>Holes for shelf supports in this level</span>${seg(
+    p + '.pinHoles',
+    [
+      ['', 'Like the column'],
+      ['needed', 'Only where needed'],
+      ['some', 'A few to adjust'],
+      ['rows', 'Full rows']
+    ],
+    { dflt: '' }
+  )}</div>${!z.pinHoles && now ? `<p class="hintp" style="grid-column:1/-1;margin:0">Now: ${now}${(S.opts.pinHoles || 'auto') === 'auto' ? (z.type === 'closed' && z.face !== 'glass' ? ' — behind doors' : ' — the holes are on show here') : ''}.</p>` : ''}`;
 }

@@ -132,3 +132,4 @@ The version is `APP_VERSION` in `src/js/81-room-photo.js`. Each update adds 0.00
 - Shared partitions (not boxes): a door hinged L on the partition moves a cup 50 mm when the door on the other face has one within 30 mm.
 - Inset doors (v0.131): with uprights they always follow them (`follow` also when `ins`); without, `insE` gives equal doors in `xa..xb`.
 - Beams: `build()` fills `bottom` from `h` (ceiling − h) and `depth` = D when missing; `fixFins()` does the same in the saved state.
+- Shelf pins (v0.132): `pinMode(q, zr)` = level `z.pinHoles` → column `s.pinHoles` → `opts.pinHoles` → 'auto'; 'auto' = 'rows' when `pinHidden` (closed level, not glass; joined levels use their lead level) else 'needed'. The side drilling stores the result in `zr.pinM` for the side panel (`pinLevelUI`, `PIN_HINT` in `40-side-panel.js`).

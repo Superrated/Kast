@@ -514,12 +514,26 @@ function build(S) {
   };
   /* shelf-support holes: "needed" = at each shelf; "some" = plus two 32 mm steps above and below;
      "rows" = a 32 mm row through the level, lined up with the shelves (default). holeYs = the holes for the shelves now. */
-  const pinMode = q =>
-    q && q.s && ['needed', 'some', 'rows'].includes(q.s.pinHoles)
-      ? q.s.pinHoles
-      : ['needed', 'some', 'rows'].includes(O.pinHoles)
-        ? O.pinHoles
-        : 'rows';
+  /* shelf-support holes per level: the level's own setting, else the column's, else the whole cabinet's.
+     'auto' (the default): full rows behind doors, only where needed where you can see them (open shelves, glass doors) */
+  const PIN_M = ['needed', 'some', 'rows', 'auto'],
+    pinHidden = (q, zr) => {
+      if (!q || !zr) return false;
+      const ld = zr.joined != null && q.zones[zr.joined] ? q.zones[zr.joined] : zr,
+        z = ld.z || {};
+      return z.type === 'closed' && z.face !== 'glass';
+    },
+    pinMode = (q, zr) => {
+      const zp = zr && zr.z ? zr.z.pinHoles : '',
+        m = PIN_M.includes(zp)
+          ? zp
+          : q && q.s && PIN_M.includes(q.s.pinHoles)
+            ? q.s.pinHoles
+            : PIN_M.includes(O.pinHoles)
+              ? O.pinHoles
+              : 'auto';
+      return m === 'auto' ? (pinHidden(q, zr) ? 'rows' : 'needed') : m;
+    };
   const pinYsFor = (holeYs, lo, hi, mode) => {
     const r = v => Math.round(v * 10) / 10,
       set = new Set();
@@ -3303,7 +3317,7 @@ function build(S) {
             {
               const xl = x,
                 xr = x + tc,
-                mode = pinMode(q),
+                mode = pinMode(q, zr),
                 L_ = (zr.shelvesY || []).filter(([y, x0, x1]) => Math.abs(x1 + 1 - xl) < 3 && y > y0v && y < yt),
                 R_ = (zr.shelvesY || []).filter(([y, x0, x1]) => Math.abs(x0 - 1 - xr) < 3 && y > y0v && y < yt),
                 ci = (zr.comps || []).findIndex(c => Math.abs(c[1] - xl) < 2),
@@ -6885,8 +6899,9 @@ function build(S) {
             );
           });
         // shelf-support holes, per level, by this column's setting
-        const mode = pinMode(q);
         q.zones.forEach(zr => {
+          const mode = pinMode(q, zr);
+          zr.pinM = mode;
           const mine = (zr.shelvesY || []).filter(([y, x0, x1]) =>
             isL ? Math.abs(x0 - 1 - q.xa) < 3 : Math.abs(x1 + 1 - q.xb) < 3
           );

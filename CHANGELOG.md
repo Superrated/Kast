@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.132
+
+- **Shelf-support holes: Automatic** — the new default. Levels behind doors get full rows (move shelves any time, nobody sees the holes); open shelves and levels behind glass doors get only the holes each shelf needs, so the holes don't show. A level covered by a door from the level below (joined doors) counts as behind doors.
+- **Per level**: every level with shelves has its own "Holes for shelf supports in this level" (Like the column / Only where needed / A few to adjust / Full rows), with a line saying what it gets now. The column setting gains "Automatic" too. Order: level → column → whole cabinet.
+- The hardware list says which rule is used, and notes when columns or levels have their own setting.
+- Settings with an empty value now show their default as chosen (unless one of the choices is "Like the rest").
+
 ## v0.131
 
 Workshop checks run on 50 new random designs (random rooms, slopes, beams, box or shared construction, all three joinery types, all shelf-pin settings), plus every screen and export. Found and fixed:
