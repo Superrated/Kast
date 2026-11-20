@@ -389,15 +389,18 @@ function renderCut() {
         ? `Under the ${S.skirt.plinth} mm base frame (2 rails 45 × ${S.skirt.plinth} mm on edge per box — buy as planed timber)`
         : 'Under the boxes, to level them on the floor'
     ]);
-  {
-    const nv = gs.filter(p => p.type === 'Vertical divider').reduce((a, p) => a + p.qty, 0);
-    if (nv && (H.join || {}).type !== 'dowel')
-      hw.push([
-        'Beech dowels Ø8 × 35 + wood glue (vertical dividers)',
-        nv * 4,
-        '2 at the top and 2 at the bottom of each vertical divider'
-      ]);
-  }
+  if (H.vdDowels)
+    hw.push([
+      'Beech dowels Ø8 × 35 + wood glue (uprights)',
+      H.vdDowels,
+      '2 at each end of each upright, in the holes drilled in the boards under and over it'
+    ]);
+  if (H.slopeBrk)
+    hw.push([
+      'Small angle brackets 30 × 30 mm + 4 × 16 mm screws',
+      H.slopeBrk,
+      'Under a sloping top: 2 per upright top and 2 per shelf end that has no side to rest on'
+    ]);
   if (H.wallHang || H.brackets)
     hw.push([
       'Adjustable cabinet hangers + wall rail (e.g. Camar 807)',

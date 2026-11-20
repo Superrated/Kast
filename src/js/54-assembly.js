@@ -128,7 +128,9 @@ function asHW(c, G) {
       hw.push(Object.assign(s, { hw: type, host: host || null, extra: extra || [0, 0, 0] }));
     },
     inc = (t, n) => (cnt[t] = (cnt[t] || 0) + (n || 1));
-  const boards = c.cs.filter(s => (s.role === 'carcass' || s.role === 'shelf') && (s.ax === 1 || (s.ax === 2 && s.bb[1][1] - s.bb[1][0] <= 160))); // horizontal boards, and rails on edge
+  const boards = c.cs.filter(
+    s => (s.role === 'carcass' || s.role === 'shelf') && (s.ax === 1 || (s.ax === 2 && s.bb[1][1] - s.bb[1][0] <= 160))
+  ); // horizontal boards, and rails on edge
   c.cs.forEach(s => {
     const H = asHoles(s, ctr, G);
     if (!H.length) return;
@@ -160,9 +162,24 @@ function asHW(c, G) {
       }
       add('hinge', asBox(V3.a(m, V3.m(o.out, 6)), [12, 50, 32]), s);
     });
-    // shelf pins
+    // shelf pins: only in the holes a shelf actually rests on (a full row of holes holds 4 pins per shelf, not one per hole)
+    const shelves = c.cs.filter(b => b.role === 'shelf' && b.ax === 1);
     H.filter(o => o.kind === 'pin').forEach(o => {
-      add('pin', asCyl(V3.a(o.pt, V3.m(o.out, 5)), o.out, 2.5, 10), s);
+      const P = o.A,
+        sh = shelves.find(
+          b =>
+            b.bb[1][0] >= P[1] - 1 &&
+            b.bb[1][0] <= P[1] + 14 &&
+            (Math.abs(b.bb[0][0] - P[0]) < 30 || Math.abs(b.bb[0][1] - P[0]) < 30) &&
+            P[2] >= b.bb[2][0] - 5 &&
+            P[2] <= b.bb[2][1] + 5
+        );
+      if (!sh) return;
+      // the pin sticks out on the shelf's side (a hole drilled through serves both faces)
+      const toShelf = Math.sign((sh.bb[0][0] + sh.bb[0][1]) / 2 - P[0]) || 1,
+        out = o.face === 'T' ? [toShelf, 0, 0] : o.out,
+        base = o.face === 'T' ? (toShelf * (o.B[0] - o.A[0]) > 0 ? o.B : o.A) : o.pt;
+      add('pin', asCyl(V3.a(base, V3.m(out, 5)), out, 2.5, 10), s);
       inc('pin');
     });
     // connector screws: only where a board of this box meets the side

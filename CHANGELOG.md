@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.133
+
+Fixings check — every board that should be fastened now is, on all test designs and the 50 random ones:
+
+- **Desk top**: now fixed into the cabinet sides at both ends, like the other boards (connector screws, dowels or Minifix, as chosen).
+- **Lining boxes** (niche box, open box): their top and bottom end against the cabinet sides and are now fixed there too.
+- **Uprights**: the note said "fix with dowels top and bottom" but nothing was drilled. Now the board under and the board over every upright get two Ø8 × 12 dowel holes on its centre line (50 mm from front and back at the bottom, 82 mm at the top, so an upright above and one below the same board never share a spot), and the upright's note says where to drill its ends. The hardware list counts the dowels actually drilled. Under a sloping top: 2 small angle brackets instead.
+- **Underside of a sloped top**: where a sloping part meets a flat part, the underside corner was taken straight under the top's corner, so the flat part counted a few mm too low and uprights stopped short of the top (3–7 mm). Now each piece of the top is moved down square to itself and the corner is where they cross.
+- **Shelves cut short by a slope**: the end under the sloping top has no side for pins — its note says to bevel it and fix it with 2 small angle brackets (in the hardware list).
+- **Every shelf keeps its 4 pin holes**: a pin hole in a hinge plate's way, or running into the other face's pin on a shared partition, now moves one or two 32 mm steps further back instead of being dropped; pins on both faces within 4 mm become one hole right through; spare grid holes closer than 16 mm to a shelf's own hole are left out.
+- **3D step by step**: the first step showed no floor when the box includes its plinth (the bottom was taken for a fixed shelf). The lowest fixed board is now always the bottom. Boxes, linings and other front-coloured parts keep their own names in the 3D parts list (they were all called "Door" or "Drawer front"), and only the shelf pins a shelf rests on are drawn (4 per shelf, not one in every hole of a full row).
+- **Tests**: the workshop check now also fails on a fixed board or upright that is not fixed, and on a shelf without its pin holes.
+
 ## v0.132
 
 - **Shelf-support holes: Automatic** — the new default. Levels behind doors get full rows (move shelves any time, nobody sees the holes); open shelves and levels behind glass doors get only the holes each shelf needs, so the holes don't show. A level covered by a door from the level below (joined doors) counts as behind doors.

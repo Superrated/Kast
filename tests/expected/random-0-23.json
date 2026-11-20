@@ -241,7 +241,15 @@
     "537 874 5 12 face towards S1",
     "537 906 5 12 face towards S1",
     "537 938 5 12 face towards S1",
-    "537 970 5 12 face towards S1"
+    "537 970 5 12 face towards S1",
+    "69 1036.5 5 12 face towards S1",
+    "69 106 5 12 face towards S1",
+    "69 1066 5 12 face towards S1",
+    "69 1514 5 12 face towards S1",
+    "69 1546 5 12 face towards S1",
+    "69 554 5 12 face towards S1",
+    "69 586 5 12 face towards S1",
+    "69 74 5 12 face towards S1"
    ],
    "id": "P6",
    "mat": "melamine",
@@ -715,7 +723,15 @@
     "537 874 5 12 face towards S2",
     "537 906 5 12 face towards S2",
     "537 938 5 12 face towards S2",
-    "537 970 5 12 face towards S2"
+    "537 970 5 12 face towards S2",
+    "69 1036.5 5 12 face towards S2",
+    "69 106 5 12 face towards S2",
+    "69 1066 5 12 face towards S2",
+    "69 1514 5 12 face towards S2",
+    "69 1546 5 12 face towards S2",
+    "69 554 5 12 face towards S2",
+    "69 586 5 12 face towards S2",
+    "69 74 5 12 face towards S2"
    ],
    "id": "P9",
    "mat": "melamine",
@@ -812,7 +828,13 @@
     "537 2228 5 12 face towards S3",
     "537 2260 5 12 face towards S3",
     "537 2292 5 12 face towards S3",
-    "537 2324 5 12 face towards S3"
+    "537 2324 5 12 face towards S3",
+    "69 1364 5 12 face towards S3",
+    "69 1396 5 12 face towards S3",
+    "69 1812 5 12 face towards S3",
+    "69 1844 5 12 face towards S3",
+    "69 2260 5 12 face towards S3",
+    "69 2292 5 12 face towards S3"
    ],
    "id": "P10",
    "mat": "melamine",
@@ -1227,7 +1249,15 @@
     "537 874 5 12 face towards S4",
     "537 906 5 12 face towards S4",
     "537 938 5 12 face towards S4",
-    "537 970 5 12 face towards S4"
+    "537 970 5 12 face towards S4",
+    "69 1036.5 5 12 face towards S4",
+    "69 106 5 12 face towards S4",
+    "69 1066 5 12 face towards S4",
+    "69 1514 5 12 face towards S4",
+    "69 1546 5 12 face towards S4",
+    "69 554 5 12 face towards S4",
+    "69 586 5 12 face towards S4",
+    "69 74 5 12 face towards S4"
    ],
    "id": "P13",
    "mat": "melamine",
@@ -1389,7 +1419,15 @@
     "537 874 5 12 face towards S5",
     "537 906 5 12 face towards S5",
     "537 938 5 12 face towards S5",
-    "537 970 5 12 face towards S5"
+    "537 970 5 12 face towards S5",
+    "69 1036.5 5 12 face towards S5",
+    "69 106 5 12 face towards S5",
+    "69 1066 5 12 face towards S5",
+    "69 1514 5 12 face towards S5",
+    "69 1546 5 12 face towards S5",
+    "69 554 5 12 face towards S5",
+    "69 586 5 12 face towards S5",
+    "69 74 5 12 face towards S5"
    ],
    "id": "P14",
    "mat": "melamine",
@@ -1863,7 +1901,15 @@
     "537 874 5 12 face towards S6",
     "537 906 5 12 face towards S6",
     "537 938 5 12 face towards S6",
-    "537 970 5 12 face towards S6"
+    "537 970 5 12 face towards S6",
+    "69 1036.5 5 12 face towards S6",
+    "69 106 5 12 face towards S6",
+    "69 1066 5 12 face towards S6",
+    "69 1514 5 12 face towards S6",
+    "69 1546 5 12 face towards S6",
+    "69 554 5 12 face towards S6",
+    "69 586 5 12 face towards S6",
+    "69 74 5 12 face towards S6"
    ],
    "id": "P17",
    "mat": "melamine",
@@ -2025,7 +2071,15 @@
     "537 874 5 12 face towards S7",
     "537 906 5 12 face towards S7",
     "537 938 5 12 face towards S7",
-    "537 970 5 12 face towards S7"
+    "537 970 5 12 face towards S7",
+    "69 1036.5 5 12 face towards S7",
+    "69 106 5 12 face towards S7",
+    "69 1066 5 12 face towards S7",
+    "69 1514 5 12 face towards S7",
+    "69 1546 5 12 face towards S7",
+    "69 554 5 12 face towards S7",
+    "69 586 5 12 face towards S7",
+    "69 74 5 12 face towards S7"
    ],
    "id": "P18",
    "mat": "melamine",
@@ -3121,8 +3175,10 @@
   "slides": {
    "550": 3
   },
+  "slopeBrk": 0,
   "stacked": 0,
   "tnuts": 0,
+  "vdDowels": 0,
   "wallHang": 14
  },
  "link": {

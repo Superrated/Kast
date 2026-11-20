@@ -546,8 +546,8 @@ function build(S) {
     // full rows: one 32 mm grid from the bottom of the level, the same on every side and upright of the
     // level, so holes on both faces of an upright line up
     if (mode === 'rows') for (let v = lo + 24; v <= hi - 20; v += 32) extra.push(v);
-    // the hole each shelf sits on wins over a grid hole closer than 10 mm
-    extra.filter(v => !holeYs.some(y => Math.abs(y - v) < 10)).forEach(v => set.add(r(v)));
+    // the hole each shelf sits on wins over a grid hole closer than half a step (16 mm)
+    extra.filter(v => !holeYs.some(y => Math.abs(y - v) < 16)).forEach(v => set.add(r(v)));
     holeYs.forEach(y => set.add(r(y)));
     return [...set].sort((x, y) => x - y);
   };
@@ -1925,11 +1925,40 @@ function build(S) {
     }
     q.top = x => Math.min(ceilAt(x) - K.top, q.cap, q.free ? fTop : Infinity, q.own ? ownT : Infinity);
     q.topPts = sampleLine(q.top, q.xa, q.xb);
-    q.under = q.topPts.map((p, k, a) => {
-      const s1 = k > 0 ? Math.abs(Math.atan2(p[1] - a[k - 1][1], p[0] - a[k - 1][0])) : 0,
-        s2 = k < a.length - 1 ? Math.abs(Math.atan2(a[k + 1][1] - p[1], a[k + 1][0] - p[0])) : 0;
-      return [p[0], p[1] - tc / Math.cos(Math.max(s1, s2))];
-    });
+    // underside of the top: every piece of the top moved down by the board thickness (square to the piece);
+    // where a sloping piece meets a flat one, the underside corner is where the two moved lines cross
+    // (not straight under the top's corner — that left the flat part a few mm too low)
+    q.under = (() => {
+      const P = q.topPts;
+      if (P.length < 2) return P.map(p => [p[0], p[1] - tc]);
+      const L = P.slice(1).map((b, k) => {
+        const a = P[k],
+          dx = b[0] - a[0],
+          dy = b[1] - a[1],
+          ln = Math.hypot(dx, dy) || 1;
+        let n = [dy / ln, -dx / ln];
+        if (n[1] > 0) n = [-n[0], -n[1]];
+        return { a: [a[0] + n[0] * tc, a[1] + n[1] * tc], d: [dx / ln, dy / ln] };
+      });
+      const atX = (l, x) => (Math.abs(l.d[0]) < 1e-9 ? l.a[1] : l.a[1] + ((x - l.a[0]) * l.d[1]) / l.d[0]);
+      const out = [[P[0][0], atX(L[0], P[0][0])]];
+      for (let k = 1; k < L.length; k++) {
+        const A = L[k - 1],
+          B = L[k],
+          den = A.d[0] * B.d[1] - A.d[1] * B.d[0];
+        let pt = null;
+        if (Math.abs(den) > 1e-6) {
+          const t = ((B.a[0] - A.a[0]) * B.d[1] - (B.a[1] - A.a[1]) * B.d[0]) / den;
+          pt = [A.a[0] + A.d[0] * t, A.a[1] + A.d[1] * t];
+        }
+        // nearly in line, or the crossing falls outside the neighbouring corners: straight under the corner
+        if (!pt || !(pt[0] > P[k - 1][0] && pt[0] < P[k + 1][0]))
+          pt = [P[k][0], Math.min(atX(A, P[k][0]), atX(B, P[k][0]))];
+        out.push(pt);
+      }
+      out.push([P[P.length - 1][0], atX(L[L.length - 1], P[P.length - 1][0])]);
+      return out;
+    })();
     q.minU = Math.min(...q.under.map(p => p[1]));
     q.maxU = Math.max(...q.under.map(p => p[1]));
   });
@@ -3198,7 +3227,13 @@ function build(S) {
           iv = [Math.max(iv[0], cl), Math.min(iv[1], cr)];
           if (iv[1] - iv[0] < 70 || y < zr.y0) return;
           const L = iv[1] - iv[0] - 2,
-            dep = q.Dh - sbk - (zr.insD || 0);
+            dep = q.Dh - sbk - (zr.insD || 0),
+            // an end cut short by the slope stands under the sloping top, not against a side: no pin holes there
+            freeEnds = [iv[0] > cl + 1 ? 'left' : null, iv[1] < cr - 1 ? 'right' : null].filter(Boolean);
+          if (!ledge && freeEnds.length) {
+            H.slopeBrk = (H.slopeBrk || 0) + 2 * freeEnds.length;
+            H.pins -= 2 * freeEnds.length;
+          }
           addPanel({
             type: ledge ? 'Picture ledge' : 'Shelf',
             role: 'shelf',
@@ -3208,9 +3243,15 @@ function build(S) {
             grain: 'w',
             band: 'front',
             bandLen: L,
-            notes: (L < cr - cl - 3 ? ['Shortened by ceiling slope'] : []).concat(
-              ledge ? ['Screw from the back; the 30 × 12 mm lip strip is its own part on this list'] : []
-            )
+            notes: (L < cr - cl - 3 ? ['Shortened by ceiling slope'] : [])
+              .concat(
+                !ledge && freeEnds.length
+                  ? [
+                      `${freeEnds.length > 1 ? 'Both ends stand' : `The ${freeEnds[0]} end stands`} under the sloping top, with no side to hold shelf pins: bevel ${freeEnds.length > 1 ? 'them' : 'it'} to the slope and fix ${freeEnds.length > 1 ? 'each' : 'it'} with 2 small angle brackets screwed into the sloping top`
+                    ]
+                  : []
+              )
+              .concat(ledge ? ['Screw from the back; the 30 × 12 mm lip strip is its own part on this list'] : [])
           });
           if (ledge)
             addPanel({
@@ -6735,17 +6776,26 @@ function build(S) {
     if (!add.length) return;
     const both = add.filter(a => add.some(b => b.face !== a.face && Math.abs(b.y - a.y) < 12));
     add.forEach(a => {
-      pn.holes = pn.holes.filter(
-        h =>
-          !(
-            (h.dp || /shelf pin/.test(h.face || '')) &&
-            !h.plate &&
-            !h.cf &&
-            !h.dw &&
-            Math.abs(h.x - 37) < 12 &&
-            Math.abs(h.y - a.y) < 12
-          )
-      );
+      pn.holes = pn.holes.filter(h => {
+        if (!(
+          (h.dp || /shelf pin/.test(h.face || '')) &&
+          !h.plate &&
+          !h.cf &&
+          !h.dw &&
+          Math.abs(h.x - 37) < 12 &&
+          Math.abs(h.y - a.y) < 12
+        ))
+          return true;
+        // a shelf-pin hole in the plate's way: one 32 mm step further back, if that spot is free
+        const nx = [32, 64]
+          .map(d_ => h.x + d_)
+          .find(v => !pn.holes.some(k => k !== h && Math.abs(k.x - v) < 12 && Math.abs(k.y - h.y) < 12));
+        if (nx != null) {
+          h.x = nx;
+          return true;
+        }
+        return false;
+      });
       if (pn.holes.some(h => h.plate && Math.abs(h.y - a.y) < 1)) return;
       pn.holes.push(
         both.includes(a)
@@ -6842,18 +6892,65 @@ function build(S) {
         near = (u, y) => hs.some(h => Math.abs(h.x - u) < 12 && Math.abs(h.y - y) < 12),
         put = (u, y, o) => {
           if (y < y0 + 8 || y > y1 - 8 || u < 5 || u > dW - 5) return;
-          // a hinge mounting plate must sit exactly 37 mm from the front: a shelf-pin hole in its way is left out instead
+          // a hinge mounting plate must sit exactly 37 mm from the front: a shelf-pin hole in its way moves one
+          // 32 mm step further back (clear of the plate, so the shelf keeps its 4 pins), or is left out if that spot is taken
           if (o.plate) {
             for (let m = hs.length - 1; m >= 0; m--) {
               const h = hs[m];
-              if (!h.plate && !h.cf && !h.dw && h.dp && Math.abs(h.x - u) < 12 && Math.abs(h.y - y) < 12)
-                hs.splice(m, 1);
+              if (
+                !h.plate &&
+                !h.cf &&
+                !h.dw &&
+                (h.dp || /shelf pins/.test(h.face || '')) &&
+                Math.abs(h.x - u) < 12 &&
+                Math.abs(h.y - y) < 12
+              ) {
+                const nx = [32, 64]
+                  .map(d_ => h.x + d_)
+                  .find(
+                    v => v < dW - 5 && !hs.some(k => k !== h && Math.abs(k.x - v) < 12 && Math.abs(k.y - h.y) < 12)
+                  );
+                if (nx != null) h.x = nx;
+                else hs.splice(m, 1);
+              }
             }
             if (!hs.some(h => h.plate && h.face === o.face && Math.abs(h.x - u) < 1 && Math.abs(h.y - y) < 1))
               hs.push(Object.assign({ x: u, y }, o));
             return;
           }
           let uu = u;
+          // a shelf-pin hole that would run into another hole (e.g. the other face's pin a few mm away) moves one
+          // 32 mm step further back; if that spot is taken too it is left out
+          if (o.dp && !o.cf && !o.dw && !o.plate && near(uu, y)) {
+            // try the spot, then one 32 mm step further back: free → drill it; the other face's shelf pin within
+            // 4 mm there → one hole right through serves both shelves; otherwise the hole is left out
+            const tryAt = x_ => {
+              if (x_ > dW - 5) return false;
+              if (!near(x_, y)) {
+                hs.push(Object.assign({ x: x_, y }, o));
+                return true;
+              }
+              const tw = hs.find(
+                h =>
+                  h.dp &&
+                  !h.plate &&
+                  !h.cf &&
+                  !h.dw &&
+                  h.face !== o.face &&
+                  Math.abs(h.x - x_) < 1 &&
+                  Math.abs(h.y - y) <= 4
+              );
+              if (tw && !hs.some(h => h !== tw && Math.abs(h.x - x_) < 12 && Math.abs(h.y - y) < 12)) {
+                tw.y = Math.round(((tw.y + y) / 2) * 10) / 10;
+                delete tw.dp;
+                tw.face = 'through · shelf pins from both sides';
+                return true;
+              }
+              return false;
+            };
+            if (!tryAt(uu) && !tryAt(uu + 32)) tryAt(uu + 64);
+            return;
+          }
           if (near(uu, y)) uu += 25;
           if (!near(uu, y)) hs.push(Object.assign({ x: uu, y }, o));
         };
@@ -6873,6 +6970,17 @@ function build(S) {
             t1 = q.top(q.xb);
           if (Math.abs(t0 - t1) < 2) boards.push(q.top(xL) - tc / 2);
         }
+        // the desk top and lining boxes (niche, open box) also end against this side: fix them like the other boards
+        secs.forEach(d_ => {
+          if (!d_.desk || d_.dF || !d_.s) return;
+          const x1d = d_.dgEnd || d_.xb;
+          if (isL ? Math.abs(d_.xa - q.xa) < 3 : Math.abs(x1d - q.xb) < 3) boards.push(+d_.s.deskH - td / 2);
+        });
+        linings.forEach(L_ => {
+          if (L_.nb || !(isL ? Math.abs(L_.x0 - q.xa) < 3 : Math.abs(L_.x1 - q.xb) < 3)) return;
+          boards.push(L_.y0 + L_.bt / 2);
+          if (!L_.top) boards.push(L_.y1 - L_.bt / 2);
+        });
         // the joints with the fixed boards, as chosen under Build → joinery
         const JN = O.joinery || 'confirmat';
         boards.forEach(y =>
@@ -8002,7 +8110,143 @@ function build(S) {
   } catch (e) {
     oops('Linking parts to 3D boards', e);
   }
+  try {
+    fixUprights(items, result.H);
+  } catch (e) {
+    oops('Upright fixings', e);
+  }
   return result;
+}
+
+/* ---------- fix every upright to the boards under and over it ----------
+   Runs after linkPanels, so each 3D board knows its cut-list part. For each upright (Vertical divider) the
+   board it stands on and the board over it get two holes on the upright's centre line: 50 mm from the front
+   and back for the lower end, 82 mm for the upper end (so an upright above and one below the same board, in
+   line, never share a spot). Always glued dowels, whatever the joinery: Ø8 × 12 in the board, Ø8 × 25 in the
+   upright's end — nothing shows on the shelf. Under a sloping top: 2 small angle brackets instead. */
+function fixUprights(items, H) {
+  const bbOf = it => {
+    const A = it.poly.map(([u, v]) => it.toW(u, v)),
+      e = it.ext || [0, 0, 0],
+      all = A.concat(A.map(p => [p[0] + e[0], p[1] + e[1], p[2] + e[2]]));
+    return [0, 1, 2].map(k => [Math.min(...all.map(p => p[k])), Math.max(...all.map(p => p[k]))]);
+  };
+  const axOf = e => {
+    const a = e.map(Math.abs);
+    return a[0] > a[1] && a[0] > a[2] ? 0 : a[1] > a[2] ? 1 : 2;
+  };
+  // world point → the part's own x, y (inverse of the board's flat mapping, as in asUV)
+  const toPart = (it, P) => {
+    const o = it.toW(0, 0),
+      du = it.toW(1, 0).map((v, k) => v - o[k]),
+      dv = it.toW(0, 1).map((v, k) => v - o[k]),
+      r = P.map((v, k) => v - o[k]),
+      dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2],
+      a11 = dot(du, du),
+      a12 = dot(du, dv),
+      a22 = dot(dv, dv),
+      b1 = dot(du, r),
+      b2 = dot(dv, r),
+      det = a11 * a22 - a12 * a12;
+    if (Math.abs(det) < 1e-9) return null;
+    const u = (b1 * a22 - b2 * a12) / det,
+      v = (a11 * b2 - a12 * b1) / det,
+      mu = Math.min(...it.poly.map(p => p[0])),
+      mv = Math.min(...it.poly.map(p => p[1])),
+      off = it.panOff || [0, 0];
+    return it.panSw ? [v - mv - off[1], u - mu - off[0]] : [u - mu - off[0], v - mv - off[1]];
+  };
+  const ok = it => it.k === 'prism' && it.pan && typeof it.toW === 'function' && it.poly && it.poly.length >= 3;
+  const ups = items.filter(it => ok(it) && it.pan.type === 'Vertical divider' && axOf(it.ext || [0, 0, 0]) === 0);
+  const flats = items.filter(
+    it => ok(it) && (it.role === 'carcass' || it.role === 'desk') && axOf(it.ext || [0, 0, 0]) === 1
+  );
+  const fb = flats.map(it => ({ it, bb: bbOf(it) })),
+    allC = items
+      .filter(
+        it =>
+          it.k === 'prism' && it.role === 'carcass' && typeof it.toW === 'function' && it.poly && it.poly.length >= 3
+      )
+      .map(it => ({ it, bb: bbOf(it) }));
+  let brk = 0;
+  const dowel = true;
+  let n = 0;
+  ups.forEach(it => {
+    const b = bbOf(it),
+      xc = (b[0][0] + b[0][1]) / 2,
+      zF = b[2][1],
+      zB = b[2][0],
+      ends = [];
+    [
+      ['bottom', b[1][0], 50],
+      ['top', b[1][1], 82]
+    ].forEach(([end, y, inset]) => {
+      const f = fb.find(
+        o =>
+          (end === 'bottom' ? Math.abs(o.bb[1][1] - y) < 1.5 : o.bb[1][0] > y - 1.5 && o.bb[1][0] < y + 5) &&
+          o.bb[0][0] < xc - 5 &&
+          o.bb[0][1] > xc + 5 &&
+          o.bb[2][0] < zF - 20 &&
+          o.bb[2][1] > zB + 20
+      );
+      if (!f) {
+        // under a sloping top: the upright's top is cut to the slope — two small angle brackets hold it
+        if (
+          end === 'top' &&
+          allC.some(o => o.bb[0][0] < xc && o.bb[0][1] > xc && o.bb[1][0] < y + 5 && o.bb[1][1] > y + 5)
+        ) {
+          brk += 2;
+          ends.push('top: cut to the slope, fix with 2 small angle brackets to the sloping top');
+        }
+        return;
+      }
+      const pn = f.it.pan,
+        dep = zF - zB,
+        ins = Math.min(inset, dep / 3),
+        zs = [zF - ins, zB + ins];
+      let got = 0;
+      zs.forEach(z => {
+        const xy = toPart(f.it, [xc, y, z]);
+        if (!xy) return;
+        const [hx, hy] = xy.map(v => Math.round(v * 10) / 10);
+        if (hx < 5 || hy < 5 || hx > pn.w - 5 || hy > pn.h - 5) return;
+        if ((pn.holes || []).some(h => !h.poly && Math.hypot(h.x - hx, h.y - hy) < 10)) return;
+        pn.holes = pn.holes || [];
+        pn.holes.push(
+          dowel
+            ? {
+                x: hx,
+                y: hy,
+                d: 8,
+                dp: 12,
+                face: `${end === 'bottom' ? 'top' : 'bottom'} face · dowel (upright)`,
+                dw: 1
+              }
+            : { x: hx, y: hy, d: 5, face: 'through · connector screw into the upright', cf: 1 }
+        );
+        got++;
+      });
+      if (got) {
+        n += got;
+        ends.push(`${end} ${zs.map(z => Math.round(zF - z)).join(' and ')} mm from the front`);
+      }
+    });
+    const bracket = ends.find(e_ => /angle brackets/.test(e_));
+    if (bracket) {
+      ends.splice(ends.indexOf(bracket), 1);
+      it.pan.notes = (it.pan.notes || []).concat('Top: ' + bracket.slice(5));
+    }
+    if (ends.length)
+      it.pan.notes = (it.pan.notes || []).concat(
+        dowel
+          ? `Dowel holes Ø8 × 25 in the ${ends.length > 1 ? 'top and bottom edges' : ends[0].split(' ')[0] + ' edge'} on the centre line (${ends.join('; ')}), to match the holes in the boards`
+          : `Pre-drill Ø4 into the ${ends.length > 1 ? 'top and bottom edges' : ends[0].split(' ')[0] + ' edge'} on the centre line (${ends.join('; ')}) for the connector screws through the boards`
+      );
+  });
+  if (H) {
+    H.vdDowels = n;
+    H.slopeBrk = (H.slopeBrk || 0) + brk;
+  }
 }
 
 /* grouping for cut list */

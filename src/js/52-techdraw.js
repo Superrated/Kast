@@ -622,16 +622,28 @@ function tdSection(G, sol, c, den) {
 function tdPartName(s, c) {
   const ax = s.ax,
     bx = c.bx;
-  if (s.role === 'front' || /^fabric/.test(s.role))
+  if (s.role === 'front' || /^fabric/.test(s.role)) {
+    // boxes, linings and other front-coloured parts keep their own name from the cut list
+    const pt = s.pan && s.pan.type ? String(s.pan.type) : '';
+    if (pt && !/^(Door|Drawer front|Flap|Sliding door|Pocket door)/.test(pt)) return pt.replace(/\s*\(.*\)$/, '');
     return s.bb[1][1] - s.bb[1][0] < 450 && s.bb[0][1] - s.bb[0][0] > s.bb[1][1] - s.bb[1][0] ? 'Drawer front' : 'Door';
+  }
   if (s.role === 'back') return 'Back panel';
   if (s.role === 'shelf') return 'Shelf';
   if (s.role === 'skirt') return 'Plinth / strip';
   if (s.role === 'desk') return 'Desk top';
   if (s.role === 'carcass') {
     if (ax === 0) return Math.abs(s.bb[0][0] - bx.x0) < 3 || Math.abs(s.bb[0][1] - bx.x1) < 3 ? 'Side' : 'Divider';
-    if (ax === 1)
-      return Math.abs(s.bb[1][1] - bx.y1) < 3 ? 'Top' : Math.abs(s.bb[1][0] - bx.y0) < 30 ? 'Bottom' : 'Fixed shelf';
+    if (ax === 1) {
+      // the bottom is the lowest fixed board of the box (the box may start lower, at the floor, when its plinth belongs to it)
+      if (c.lowY == null)
+        c.lowY = Math.min(...(c.cs || []).filter(o => o.role === 'carcass' && o.ax === 1).map(o => o.bb[1][0]));
+      return Math.abs(s.bb[1][1] - bx.y1) < 3
+        ? 'Top'
+        : Math.abs(s.bb[1][0] - bx.y0) < 30 || Math.abs(s.bb[1][0] - c.lowY) < 1
+          ? 'Bottom'
+          : 'Fixed shelf';
+    }
     return 'Rail / batten';
   }
   return 'Part';
