@@ -1,6 +1,6 @@
 /* Runs inside the Fitted page (tests/run.py). Workshop sanity checks for one design; returns a list of problems:
    holes that fall off their part, Ø5/Ø8 holes that run into each other on one part, hinge mounting plates that are
-   not 37 mm from the front, doors hinged on an upright that has no plate holes, and boards that overlap in 3D
+   not 37 mm from the front, hinge cups without plate holes beside them, and boards that overlap in 3D
    (backs in their grooves and header rails in their notches are allowed). */
 (st => {
   S = JSON.parse(JSON.stringify(st)); geo = build(S); groupsCache = null; if (typeof _bg !== 'undefined') _bg = null;
@@ -18,11 +18,14 @@
       for (let j = i + 1; j < sm.length; j++)
         if (Math.hypot(sm[i].x - sm[j].x, sm[i].y - sm[j].y) < (sm[i].d + sm[j].d) / 2 + 2) out.push(`${g.type} ${g.sec}: holes run into each other at ${sm[i].x}, ${sm[i].y}`);
   }
+  // every hinge cup needs its two mounting-plate holes in the board the door hinges on, at the cup height ± 16 mm
+  const vert = tdSolids(geo).filter(s => s.pan && s.ax === 0);
   for (const f of geo.fronts) {
-    if (!f.cups || !f.cups.length || f.rear || !f.poly) continue;
-    const q = geo.secs[f.sec], xs = f.poly.map(p => p[0]), he = f.hinge === 'R' ? Math.max(...xs) : Math.min(...xs);
-    if (f.hinge === 'L' ? he < q.xa + 1 : he > q.xb - 1) continue;
-    if (!geo.panels.some(p => p.type === 'Vertical divider' && (p.holes || []).some(h => h.plate))) out.push(`S${f.sec + 1}: door hinged on an upright without plate holes`);
+    if (!f.cups || !f.cups.length || f.rear || !f.poly || !(f.hinge === 'L' || f.hinge === 'R')) continue;
+    const xs = f.poly.map(p => p[0]), he = f.hinge === 'R' ? Math.max(...xs) : Math.min(...xs);
+    const cand = vert.filter(s => s.bb[0][0] < he + 30 && s.bb[0][1] > he - 30 && s.bb[1][0] < f.cups[0] && s.bb[1][1] > f.cups[f.cups.length - 1]);
+    const ok = f.cups.every(c => cand.some(s => (s.pan.holes || []).some(h => h.plate && [c - 16, c + 16].some(y => Math.abs(h.y + s.bb[1][0] - y) < 1.5))));
+    if (!ok) out.push(`S${f.sec + 1}: a door's hinge has no mounting-plate holes beside it`);
   }
   const sol = tdSolids(geo).filter(s => s.pan && s.role !== 'hw' && s.role !== 'back' && !/rail/i.test(s.pan.type));
   for (let i = 0; i < sol.length; i++)

@@ -36,7 +36,7 @@ The version is `APP_VERSION` in `src/js/81-room-photo.js`. Each update adds 0.00
 
 `python3 build.py && python3 tests/run.py` — run after every change. It opens the built page in headless Chrome (Playwright).
 
-- `tests/designs/*.json`: the test designs (9 starters + 14 random walls + the user's balder v07, made once by `tests/make_designs.py`).
+- `tests/designs/*.json`: the test designs (9 starters + 14 random walls + 3 from the 50-design sweep (random50-*) + the user's balder v07, made once by `tests/make_designs.py`).
 - `tests/snapshot.js`: per design, the cut list, hardware (`G.H`), design notes, price and how 3D boards link to parts.
   Compared with `tests/expected/*.json`; any difference fails and is shown. When a change is meant to change
   results, check the differences, then `python3 tests/run.py --update`.
@@ -130,3 +130,5 @@ The version is `APP_VERSION` in `src/js/81-room-photo.js`. Each update adds 0.00
 - Sides: `drill()` in `10-build.js` puts plate holes with `{plate:1}` first-class — a shelf-pin hole within 12 mm is removed, the plate never moves.
 - Uprights: `vdPend` records each `Vertical divider` panel (`n` = index in `panels`, `xl/xr/y0v/yt`); after all fronts exist, doors whose hinge edge lies over the upright get plate holes at x 37 (through, when both faces need one at the same height).
 - Shared partitions (not boxes): a door hinged L on the partition moves a cup 50 mm when the door on the other face has one within 30 mm.
+- Inset doors (v0.131): with uprights they always follow them (`follow` also when `ins`); without, `insE` gives equal doors in `xa..xb`.
+- Beams: `build()` fills `bottom` from `h` (ceiling − h) and `depth` = D when missing; `fixFins()` does the same in the saved state.

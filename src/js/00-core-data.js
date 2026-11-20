@@ -68,6 +68,16 @@ function fixFins(st) {
       }
     };
     walk(st);
+    // a beam saved with only its height (h): give it an underside height and the full depth, so the form shows them
+    const R = st && st.room;
+    if (R && Array.isArray(R.beams))
+      R.beams.forEach(b => {
+        if (!(isFinite(+b.bottom) && b.bottom !== null && b.bottom !== '') && +b.h > 0) {
+          b.bottom = Math.round((+R.H || 2500) - +b.h);
+          delete b.h;
+        }
+        if (!(+b.depth > 0)) b.depth = +R.D || 600;
+      });
   } catch (e) {
     oops('core-data #1', e);
   }

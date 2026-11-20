@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.131
+
+Workshop checks run on 50 new random designs (random rooms, slopes, beams, box or shared construction, all three joinery types, all shelf-pin settings), plus every screen and export. Found and fixed:
+
+- **Inset doors were uneven**: two inset doors were split at the middle of the box's outside, not of the opening — e.g. 417 + 426 mm instead of 421.5 + 421.5. Inset doors without uprights are now equal in the opening.
+- **Inset doors ran into an upright**: inset doors sit in the plane of the uprights, but with a door count set they ignored an upright (for example one added so the shelves don't sag) and ran 12 mm into it. They now always go between the uprights, one per compartment, with a note when that changes the door count.
+- **Hinge plates for inset doors on an upright** were missing (the door stops 2.5 mm short of the upright's face).
+- **Hinge plates on both faces of a shared partition**: a plate hole could be shared by the doors on both faces (one door then had no plate holes of its own), and moving a hinge 50 mm could still put a plate screw 1 mm from a screw on the other face. The move now checks the screws themselves (16 mm above and below each cup), tries 44–120 mm, works for inset doors too, and warns if no spot is free.
+- **Very low doors** (under 200 mm, e.g. squeezed under a slope) now get a warning, and from about 100 mm tall they get two hinge cups, so the drilling matches the hinge count.
+- **Beams saved with only a height** (older or hand-made files) broke the front drawing and were ignored when building. They now get an underside height (ceiling minus the height) and the full depth, both when building and when the file is opened. Test designs random-5/6 had such beams: their columns are now lowered to clear them.
+- The door note says "on the cabinet side" for inset doors too (it said "upright").
+- **Tests**: the workshop check now looks up both plate holes for every hinge cup; three of the new random designs (random50-04/07/19) joined the test set.
+
 ## v0.130
 
 A check of the workshop output (drawings, sizes, holes, numbers) on the balder design and all test designs found and fixed:

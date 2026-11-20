@@ -207,9 +207,6 @@ function build(S) {
       mode: o.mode === 'notch' ? 'notch' : 'shallow'
     }))
     .filter(b => b.d < D - 150);
-  const beams = (R.beams || [])
-    .map(b => ({ x: +b.x, w: +b.w, bottom: +b.bottom, depth: +b.depth }))
-    .filter(b => b.w > 0);
   const ceilAt = x => {
     if (x <= cps[0].x) return cps[0].y;
     for (let i = 1; i < cps.length; i++) {
@@ -221,6 +218,22 @@ function build(S) {
     }
     return cps[cps.length - 1].y;
   };
+  // beams: an older or hand-made file may give only the beam's height (h) and no depth — then the bottom is the
+  // ceiling minus h, and the beam runs the full depth; a beam with no usable size is left out
+  const beams = (R.beams || [])
+    .map(b => {
+      const x = +b.x,
+        w = +b.w,
+        bottom =
+          isFinite(+b.bottom) && b.bottom !== null && b.bottom !== ''
+            ? +b.bottom
+            : +b.h > 0
+              ? ceilAt(x + w / 2) - +b.h
+              : NaN,
+        depth = isFinite(+b.depth) && b.depth !== null && b.depth !== '' && +b.depth > 0 ? +b.depth : D;
+      return { x, w, bottom, depth };
+    })
+    .filter(b => b.w > 0 && isFinite(b.x) && isFinite(b.bottom));
   const isFull = b => b.depth >= D;
   const frontLim = x => {
     let c = ceilAt(x);
@@ -3766,13 +3779,16 @@ function build(S) {
                   .reduce((m_, r_) => Math.max(m_, r_.y1), -Infinity),
                 a = Math.max(yb + mg, isFinite(railTop) ? railTop + 33 : -Infinity),
                 b = yT - mg,
+                // a very low door: two cups still fit from about 100 mm tall (centres 27 % and 73 % up), so the count stays right
                 ys_ =
-                  hc_ === 1 || b - a < 40
+                  hc_ === 1 || (b - a < 40 && yT - yb < 100)
                     ? [(yb + yT) / 2]
-                    : Array.from({ length: hc_ }, (_, m) => a + ((b - a) * m) / (hc_ - 1));
+                    : b - a < 40
+                      ? [yb + (yT - yb) * 0.27, yT - (yT - yb) * 0.27]
+                      : Array.from({ length: hc_ }, (_, m) => a + ((b - a) * m) / (hc_ - 1));
               // two doors hinged on the two faces of one shared partition: hinges at (nearly) the same height
-              // would put the mounting-plate screws of both into the same spot of an 18 mm board — move this door's hinge 50 mm
-              if (!boxes && hinge === 'L' && xl < q.xa + 1 && i > 0) {
+              // would put the mounting-plate screws of both into the same spot of an 18 mm board — move this door's hinge 50–90 mm
+              if (!boxes && hinge === 'L' && xl < q.xa + 4 && i > 0) {
                 const other = fronts
                   .filter(
                     f_ =>
@@ -3780,26 +3796,30 @@ function build(S) {
                       f_.hinge === 'R' &&
                       f_.cups &&
                       !f_.rear &&
-                      Math.max(...f_.poly.map(p_ => p_[0])) > q.xa - tc - 2
+                      Math.max(...f_.poly.map(p_ => p_[0])) > q.xa - tc - 5
                   )
                   .flatMap(f_ => f_.cups);
+                // the plate screws sit 16 mm above and below each cup: no screw of this door within 12 mm of one of the other door
+                const clash_ = v => other.some(o_ => [0, 32, -32].some(k_ => Math.abs(v - o_ + k_) < 12));
                 ys_.forEach((y_, m) => {
-                  if (!other.some(o_ => Math.abs(o_ - y_) < 30)) return;
-                  const up_ = y_ + 50,
-                    dn_ = y_ - 50,
-                    ok_ = v =>
-                      v > yb + 35 &&
-                      v < yT - 35 &&
-                      !other.some(o_ => Math.abs(o_ - v) < 30) &&
-                      !ys_.some((w_, n_) => n_ !== m && Math.abs(w_ - v) < 80);
-                  if (ok_(up_)) ys_[m] = up_;
-                  else if (ok_(dn_)) ys_[m] = dn_;
+                  if (!clash_(y_)) return;
+                  const ok_ = v =>
+                    v > yb + 30 &&
+                    v < yT - 30 &&
+                    !clash_(v) &&
+                    !ys_.some((w_, n_) => n_ !== m && Math.abs(w_ - v) < 55);
+                  const to_ = [44, -44, 50, -50, 60, -60, 70, -70, 90, -90, 120, -120].map(d_ => y_ + d_).find(ok_);
+                  if (to_ != null) ys_[m] = to_;
+                  else
+                    warns.push(
+                      `${lab}: a hinge of this door and one of the door on the other side of the partition need the same spot — the plate screws would meet inside the board. Use a door that hinges on the other side, or 5 × 8 mm short screws for one of the plates.`
+                    );
                 });
               }
               cupYs = ys_.slice();
               ys_.forEach(y_ => holes.push({ x: cx, y: y_, d: 35, dp: 13, cup: true }));
               extraNotes.push(
-                `Hinge cups Ø35 × 13 mm deep in the back face, centre ${21.5} mm from the ${hinge === 'L' ? 'left' : 'right'} edge, at ${ys_.map(y_ => f0(y_ - yb)).join(', ')} mm from the bottom edge. Mounting plates on the ${(hinge === 'L' ? xl < q.xa + 1 : xr > q.xb - 1) ? 'cabinet side' : 'upright'} 37 mm from its front edge, at the same heights`
+                `Hinge cups Ø35 × 13 mm deep in the back face, centre ${21.5} mm from the ${hinge === 'L' ? 'left' : 'right'} edge, at ${ys_.map(y_ => f0(y_ - yb)).join(', ')} mm from the bottom edge. Mounting plates on the ${(hinge === 'L' ? xl < q.xa + 4 : xr > q.xb - 4) ? 'cabinet side' : 'upright'} 37 mm from its front edge, at the same heights`
               );
             }
           }
@@ -4633,8 +4653,9 @@ function build(S) {
           }
         }
         if (z.type === 'closed') {
+          // inset doors sit in the plane of the uprights, so they always go between them (one per compartment)
           const vdx = zr.vdx || [],
-            follow = vdx.length && !(+z.doors > 0);
+            follow = vdx.length && (!(+z.doors > 0) || ins);
           const edges0 = follow ? [bL, ...vdx, bR] : null,
             hfix = [],
             edges = edges0
@@ -4650,7 +4671,22 @@ function build(S) {
                 })
               : null;
           const nd = follow ? edges.length - 1 : +z.doors > 0 ? +z.doors : bR - bL > 620 ? 2 : 1,
-            wd = (bR - bL) / nd;
+            wd = (bR - bL) / nd,
+            // inset doors without uprights: equal doors in the opening (2.5 mm reveal at the sides, the gap between)
+            insE =
+              ins && !follow && nd > 1
+                ? Array.from({ length: nd + 1 }, (_, j) =>
+                    j === 0
+                      ? bL
+                      : j === nd
+                        ? bR
+                        : q.xa + gi + j * ((q.xb - q.xa - 2 * gi - (nd - 1) * g) / nd + g) - g / 2
+                  )
+                : null;
+          if (ins && follow && +z.doors > 0 && +z.doors !== nd)
+            warns.push(
+              `${lab}: inset doors sit between the uprights, so level ${k + 1} gets ${nd} door${nd > 1 ? 's' : ''} (one per compartment) instead of ${+z.doors}.`
+            );
           if (!follow && wd - g > 650 && !z.dog)
             warns.push(`${lab}: doors are ${f0(wd - g)} mm wide — consider ${nd + 1} doors.`);
           if (!follow && nd > 1 && wd - g < 200 && !z.dog)
@@ -4708,8 +4744,8 @@ function build(S) {
             });
           } else if (zr.joined == null)
             for (let j = 0; j < nd; j++) {
-              const l = follow ? edges[j] : bL + j * wd,
-                r_ = follow ? edges[j + 1] : bL + (j + 1) * wd;
+              const l = follow ? edges[j] : insE ? insE[j] : bL + j * wd,
+                r_ = follow ? edges[j + 1] : insE ? insE[j + 1] : bL + (j + 1) * wd;
               if (follow && r_ - l - g > 650)
                 warns.push(`${lab}: door ${j + 1} is ${f0(r_ - l - g)} mm wide — add a divider or set the door count.`);
               if (follow && j === 0 && !z.dog) {
@@ -4773,6 +4809,10 @@ function build(S) {
               }
               const hh = Math.max(...poly.map(p => p[1])) - Math.min(...poly.map(p => p[1]));
               const hc = z.dog || zr.larder || zr.fridge ? 0 : hh <= 900 ? 2 : hh <= 1600 ? 3 : hh <= 2000 ? 4 : 5;
+              if (hc && hh < 200 && j === 0)
+                warns.push(
+                  `${lab}: the door${nd > 1 ? 's' : ''} in level ${k + 1} ${nd > 1 ? 'are' : 'is'} only ${f0(hh)} mm tall — too low for two hinges and a handle. Make the level open, give it a drawer, or join it with the level below.`
+                );
               if (zr.larder)
                 swNote.push(
                   'No hinges: screw this door to the front of the larder frame with its brackets — it pulls straight out'
@@ -6669,7 +6709,8 @@ function build(S) {
       .forEach(f => {
         const xs = f.poly.map(p_ => p_[0]),
           he = f.hinge === 'R' ? Math.max(...xs) : Math.min(...xs);
-        if (he < v.xl - 2 || he > v.xr + 2) return;
+        // overlay doors end over the upright; inset doors stop 2.5 mm short of its face
+        if (f.hinge === 'R' ? he < v.xl - 4 || he > v.xr + 2 : he < v.xl - 2 || he > v.xr + 4) return;
         const face = f.hinge === 'R' ? 'left' : 'right';
         f.cups.forEach(cy =>
           [cy - 16, cy + 16].forEach(yy => {
@@ -6794,7 +6835,7 @@ function build(S) {
               if (!h.plate && !h.cf && !h.dw && h.dp && Math.abs(h.x - u) < 12 && Math.abs(h.y - y) < 12)
                 hs.splice(m, 1);
             }
-            if (!hs.some(h => h.plate && Math.abs(h.x - u) < 1 && Math.abs(h.y - y) < 1))
+            if (!hs.some(h => h.plate && h.face === o.face && Math.abs(h.x - u) < 1 && Math.abs(h.y - y) < 1))
               hs.push(Object.assign({ x: u, y }, o));
             return;
           }
