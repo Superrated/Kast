@@ -21,6 +21,7 @@ function defsSVG(sfx) {
     rot = S.flute.dir === 'h' ? ' patternTransform="rotate(90)"' : '';
   let d = `<linearGradient id="flg${x}" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".24"/><stop offset=".35" stop-color="#fff" stop-opacity=".3"/><stop offset=".7" stop-color="#fff" stop-opacity=".05"/><stop offset="1" stop-color="#000" stop-opacity=".26"/></linearGradient>
   <pattern id="flute${x}" width="${p}" height="40" patternUnits="userSpaceOnUse"${rot}><rect width="${p}" height="40" fill="url(#flg${x})"/></pattern>
+ <pattern id="groove${x}" width="${S.flute.gpitch}" height="40" patternUnits="userSpaceOnUse"${rot}><rect x="${S.flute.gpitch / 2 - 2}" width="2.5" height="40" fill="#000" fill-opacity=".38"/><rect x="${S.flute.gpitch / 2 + 0.5}" width="2" height="40" fill="#fff" fill-opacity=".35"/></pattern>
   <linearGradient id="glass${x}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e9f1ee"/><stop offset=".55" stop-color="#c9d8d3"/><stop offset="1" stop-color="#b3c6c0"/></linearGradient>`;
   Object.entries(MATS).forEach(([k, m]) => {
     if (!m.wood) return;
@@ -55,10 +56,19 @@ function frontSVG(f, Y, sfx) {
     o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fc}"/><rect x="${x + fr}" y="${y + fr}" width="${w - 2 * fr}" height="${h - 2 * fr}" fill="url(#glass${x_})" fill-opacity=".92"/><rect x="${x + fr}" y="${y + fr}" width="${w - 2 * fr}" height="${h - 2 * fr}" fill="url(#flute${x_})"/>`;
   } else {
     const fill = m.wood ? `url(#gr_${lk.mat}${x_})` : base;
-    o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="${dark}" stroke-opacity=".5" stroke-width="2"/>`;
+    if (lk.style === 'scallop') {
+      // the front's own outline: straight sides and bottom, a row of rounded scallops along the top
+      const sc = scallops(w);
+      let d = `M${x} ${y + h} V${y + sc.d}`;
+      for (let i = 0; i < sc.n; i++) d += ` Q${x + (i + 0.5) * sc.sw} ${y - sc.d} ${x + (i + 1) * sc.sw} ${y + sc.d}`;
+      d += ` V${y + h} Z`;
+      o += `<path d="${d}" fill="${fill}" stroke="${dark}" stroke-opacity=".55" stroke-width="2.5"/>`;
+    } else
+      o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="${dark}" stroke-opacity=".5" stroke-width="2"/>`;
     if (lk.style === 'fluted') o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#flute${x_})"/>`;
+    if (lk.style === 'grooves') o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#groove${x_})"/>`;
     // plywood shows its layers on the edge
-    if (m.ply)
+    if (m.ply && lk.style !== 'scallop')
       o += `<rect x="${x + 1}" y="${y + 1}" width="${w - 2}" height="${h - 2}" fill="none" stroke="${shade(m.wood, -0.3)}" stroke-opacity=".6" stroke-width="3" stroke-dasharray="6 3"/>`;
   }
   // a door opens away from its hinge: a light dashed V pointing at the hinge side

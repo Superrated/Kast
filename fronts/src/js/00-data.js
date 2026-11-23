@@ -68,13 +68,20 @@ const LAYOUTS = {
 /* the curated range: two styles … */
 const STYLES = {
   flat: { name: 'Flat', blurb: 'Clean and calm', f: 1 },
-  fluted: { name: 'Fluted', blurb: 'Rounded flutes, routed in', f: 1.6 }
+  fluted: { name: 'Fluted', blurb: 'Rounded flutes, routed in', f: 1.6 },
+  grooves: { name: 'Grooves', blurb: 'Fine V-grooves, calm and graphic', f: 1.3 },
+  scallop: { name: 'Scallop', blurb: 'A wavy top edge, playful', f: 1.35 }
 };
 const FLUTE = {
   pitch: [
     [12, 'Fine'],
     [20, 'Classic'],
     [32, 'Bold']
+  ],
+  gpitch: [
+    [32, 'Close'],
+    [50, 'Classic'],
+    [80, 'Wide']
   ],
   dir: [
     ['v', 'Up and down'],

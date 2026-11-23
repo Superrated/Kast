@@ -124,6 +124,31 @@ function fluteTex(dir) {
     );
   return (V3.tex[key] = t);
 }
+/* grooves as a normal map: flat, with one narrow V across the canvas */
+function grooveTex(dir) {
+  const key = 'gr' + dir;
+  if (V3.tex[key]) return V3.tex[key];
+  const N = 64,
+    t = canvasTex(
+      dir === 'v' ? N : 4,
+      dir === 'v' ? 4 : N,
+      (g, w, h) => {
+        for (let i = 0; i < N; i++) {
+          const u = i - N / 2,
+            nx = Math.abs(u) <= 2 ? (u < 0 ? 0.7 : -0.7) : 0,
+            nz = Math.sqrt(1 - nx * nx);
+          g.fillStyle =
+            dir === 'v'
+              ? `rgb(${Math.round((nx * 0.5 + 0.5) * 255)},128,${Math.round((nz * 0.5 + 0.5) * 255)})`
+              : `rgb(128,${Math.round((-nx * 0.5 + 0.5) * 255)},${Math.round((nz * 0.5 + 0.5) * 255)})`;
+          if (dir === 'v') g.fillRect(i, 0, 1, h);
+          else g.fillRect(0, i, w, 1);
+        }
+      },
+      true
+    );
+  return (V3.tex[key] = t);
+}
 function matFor(lk, f) {
   const T = V3.T,
     m = MATS[lk.mat],
@@ -137,13 +162,19 @@ function matFor(lk, f) {
     o.map = t;
     o.roughness = m.raw ? 0.85 : m.ply ? 0.6 : 0.5;
   }
-  if (lk.style === 'fluted') {
-    const n = fluteTex(S.flute.dir).clone();
+  if (lk.style === 'fluted' || lk.style === 'grooves') {
+    const gr = lk.style === 'grooves',
+      p = gr ? S.flute.gpitch : S.flute.pitch,
+      n = (gr ? grooveTex : fluteTex)(S.flute.dir).clone();
     n.needsUpdate = true;
-    if (S.flute.dir === 'v') n.repeat.set(f.w / S.flute.pitch, 1);
-    else n.repeat.set(1, f.h / S.flute.pitch);
+    if (S.flute.dir === 'v') n.repeat.set(f.w / p, 1);
+    else n.repeat.set(1, f.h / p);
     o.normalMap = n;
-    o.normalScale = new T.Vector2(1.4, 1.4);
+    o.normalScale = new T.Vector2(gr ? 2 : 1.4, gr ? 2 : 1.4);
+  }
+  // a scalloped front is an extruded outline whose texture coordinates are millimetres
+  if (lk.style === 'scallop' && o.map) {
+    o.map.repeat.set(1 / 260, 1 / 1000);
   }
   return new T.MeshStandardMaterial(o);
 }
@@ -280,6 +311,23 @@ function build3D() {
         normalScale: new T.Vector2(2, 2)
       });
       hit = box(f.w - 2 * fr, f.h - 2 * fr, 6, gm, cx, cy, cz, false);
+    } else if (lk.style === 'scallop') {
+      const sc = scallops(f.w),
+        sh = new T.Shape(),
+        hw = f.w / 2,
+        hh = f.h / 2;
+      sh.moveTo(-hw, -hh);
+      sh.lineTo(hw, -hh);
+      sh.lineTo(hw, hh - sc.d);
+      for (let i = sc.n - 1; i >= 0; i--)
+        sh.quadraticCurveTo(-hw + (i + 0.5) * sc.sw, hh + sc.d, -hw + i * sc.sw, hh - sc.d);
+      sh.lineTo(-hw, -hh);
+      const geo = new T.ExtrudeGeometry(sh, { depth: FT, bevelEnabled: false, curveSegments: 10 });
+      geo.translate(0, 0, -FT / 2);
+      hit = new T.Mesh(geo, matFor(lk, f));
+      hit.position.set(cx, cy, cz);
+      hit.castShadow = hit.receiveShadow = true;
+      root.add(hit);
     } else hit = box(f.w, f.h, FT, matFor(lk, f), cx, cy, cz);
     hit.userData.fid = f.id;
     V3.meshes.push(hit);

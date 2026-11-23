@@ -288,14 +288,28 @@ function frontsHTML(L) {
   }
   const all = { style: S.style, mat: S.mat, col: S.col };
   h += `<h3 class="big">${f ? 'All the other fronts' : 'All fronts'}</h3>${lookEdHTML('all', all)}`;
-  const anyFluted = L.fronts.some(x => lookOf(x).style === 'fluted'),
+  const used = st => L.fronts.some(x => lookOf(x).style === st || (st === 'fluted' && MATS[lookOf(x).mat].glass)),
+    anyFluted = used('fluted'),
+    anyGrooves = used('grooves'),
     anyGlass = L.fronts.some(x => MATS[lookOf(x).mat].glass);
-  if (anyFluted)
-    h += `<h3>Flutes</h3><div class="row"><label>Size</label>${seg(
-      'pitch',
-      S.flute.pitch,
-      FLUTE.pitch.map(([v, l]) => [v, `${l} <small>${v} mm</small>`])
-    )}</div><div class="row"><label>Run</label>${seg('fdir', S.flute.dir, FLUTE.dir)}</div>`;
+  if (anyFluted || anyGrooves)
+    h += `<h3>${anyFluted && anyGrooves ? 'Flutes and grooves' : anyFluted ? 'Flutes' : 'Grooves'}</h3>${
+      anyFluted
+        ? `<div class="row"><label>Flutes</label>${seg(
+            'pitch',
+            S.flute.pitch,
+            FLUTE.pitch.map(([v, l]) => [v, `${l} <small>${v} mm</small>`])
+          )}</div>`
+        : ''
+    }${
+      anyGrooves
+        ? `<div class="row"><label>Grooves</label>${seg(
+            'gpitch',
+            S.flute.gpitch,
+            FLUTE.gpitch.map(([v, l]) => [v, `${l} <small>${v} mm</small>`])
+          )}</div>`
+        : ''
+    }<div class="row"><label>Run</label>${seg('fdir', S.flute.dir, FLUTE.dir)}</div>`;
   if (anyGlass)
     h += `<h3>Glass frame</h3>${seg(
       'gframe',
@@ -377,7 +391,7 @@ function orderText() {
     P = priceAll(L);
   return [
     `BRUIS Fronts — order request (${SYS[S.sys].name})`,
-    `Handles: ${HANDLES[S.handle].name}${S.handle === 'knob' || S.handle === 'bar' || S.handle === 'tab' ? ', ' + HFIN[S.hfin].name : ''}${L.fronts.some(f => lookOf(f).style === 'fluted') ? ` · flutes ${S.flute.pitch} mm, ${S.flute.dir === 'v' ? 'vertical' : 'horizontal'}` : ''}${L.fronts.some(f => MATS[lookOf(f).mat].glass) ? ` · glass frame ${GFRAME[S.gframe].name.toLowerCase()}` : ''}`,
+    `Handles: ${HANDLES[S.handle].name}${S.handle === 'knob' || S.handle === 'bar' || S.handle === 'tab' ? ', ' + HFIN[S.hfin].name : ''}${L.fronts.some(f => lookOf(f).style === 'fluted') ? ` · flutes ${S.flute.pitch} mm, ${S.flute.dir === 'v' ? 'vertical' : 'horizontal'}` : ''}${L.fronts.some(f => lookOf(f).style === 'grooves') ? ` · grooves every ${S.flute.gpitch} mm, ${S.flute.dir === 'v' ? 'vertical' : 'horizontal'}` : ''}${L.fronts.some(f => MATS[lookOf(f).mat].glass) ? ` · glass frame ${GFRAME[S.gframe].name.toLowerCase()}` : ''}`,
     '',
     ...grouped(L).map(
       r =>
@@ -595,6 +609,9 @@ document.addEventListener('click', e => {
       break;
     case 'pitch':
       S.flute.pitch = +a;
+      break;
+    case 'gpitch':
+      S.flute.gpitch = +a;
       break;
     case 'fdir':
       S.flute.dir = a;

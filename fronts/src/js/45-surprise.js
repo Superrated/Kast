@@ -43,7 +43,7 @@ const RECIPES = [
     make(r) {
       const c = pick(r, BOLD);
       return {
-        all: { mat: 'painted', col: c, style: 'fluted' },
+        all: { mat: 'painted', col: c, style: pick(r, ['fluted', 'fluted', 'grooves']) },
         by: { drawer: { style: 'flat' } },
         hfin: DARK[c] ? 'brass' : 'black',
         say: COLOURS[c].name
@@ -109,6 +109,23 @@ const RECIPES = [
         handle: pick(r, ['push', 'tab', 'grip']),
         hfin: 'black',
         say: `Birch & ${COLOURS[c].name.toLowerCase()}`
+      };
+    }
+  },
+  {
+    name: 'Playful scallops',
+    make(r) {
+      const [a, b] = pick(
+        r,
+        PAIRS.filter(p => p[1] !== 'chalk')
+      );
+      // scallops on drawers and low doors; tall doors stay calm and flat, the top row in the partner colour
+      return {
+        all: { mat: 'painted', col: a, style: 'scallop' },
+        by: { tall: { style: 'flat' }, wall: { col: b, style: 'flat' }, top: { col: b } },
+        handle: pick(r, ['knob', 'push']),
+        hfin: DARK[a] ? 'brass' : 'black',
+        say: `Scallops in ${COLOURS[a].name.toLowerCase()}`
       };
     }
   },

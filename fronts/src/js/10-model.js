@@ -11,7 +11,7 @@ function freshState(sys) {
     sys: sys || 'pax',
     cabs: [],
     style: 'fluted',
-    flute: { pitch: 20, dir: 'v' },
+    flute: { pitch: 20, dir: 'v', gpitch: 50 },
     mat: 'painted',
     col: 'racing',
     gframe: 'black',
@@ -71,6 +71,7 @@ try {
 if (!S || !S.cabs) S = freshState('pax');
 S.flip = S.flip || {};
 S.fx = S.fx || {};
+if (!S.flute.gpitch) S.flute.gpitch = 50;
 function save() {
   try {
     localStorage.setItem(KEY, JSON.stringify(S));
@@ -282,4 +283,11 @@ function grouped(L) {
     m.get(k).n++;
   });
   return [...m.values()].sort((a, b) => lookKey(a.look).localeCompare(lookKey(b.look)) || b.h - a.h || b.w - a.w);
+}
+
+/* the scalloped top edge: about 110 mm per scallop, never fewer than 3, depth a quarter of the width, at most 28 mm */
+function scallops(w) {
+  const n = Math.max(3, Math.round(w / 110)),
+    sw = w / n;
+  return { n, sw, d: Math.min(28, sw * 0.25) };
 }
