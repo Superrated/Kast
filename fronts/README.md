@@ -2,7 +2,7 @@
 
 A configurator for custom fronts on IKEA cabinets (PAX wardrobes, METOD kitchens, BESTÅ storage), built next to Fitted on the `fronts-prototype` branch.
 
-**Build:** `python3 fronts/build.py` → `fronts/index.html` (one self-contained page).
+**Build:** `python3 fronts/build.py` → `fronts/index.html` (one self-contained page). **Check:** `python3 fronts/test.py`.
 
 It borrows from Fitted so both look the same: the colour tokens (light and dark) from `src/css/10-look.css` and the RAL colour list from `src/js/00-core-data.js` are copied in at build time.
 

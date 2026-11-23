@@ -47,7 +47,10 @@ def main():
     html = (SRC / "app.html").read_text()
     css = fitted_tokens() + "\n" + (SRC / "fronts.css").read_text()
     js = "".join(p.read_text() + "\n" for p in sorted((SRC / "js").glob("*.js")))
-    js = js.replace("/*@RAL@*/''", repr(fitted_ral()))
+    # the marker may have a space after it (code formatter): accept both
+    js, n = re.subn(r"/\*@RAL@\*/\s*''", lambda m: repr(fitted_ral()), js)
+    if n != 1:
+        raise SystemExit("RAL marker /*@RAL@*/'' not found in fronts/src/js")
     html = html.replace("/*@CSS@*/", css).replace("/*@JS@*/", js)
     (HERE / "index.html").write_text(html)
     print(f"built fronts/index.html ({len(html) // 1024} kB)")
