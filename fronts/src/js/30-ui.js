@@ -359,7 +359,7 @@ function orderHTML(L, P) {
       return `${head}<tr><td>${r.n}×</td><td>${r.kind === 'door' ? 'Door' + (r.hinge ? ` <small>hinge ${r.hinge === 'L' ? 'left' : 'right'}</small>` : '') : 'Drawer front'}</td><td class="num">${f1(r.w)} × ${f1(r.h)}<small>IKEA ${r.nom}</small></td><td class="num">${eur(r.p * r.n)}</td></tr>`;
     })
     .join('');
-  return `<h2>Your order</h2><p class="lede">${P.n} fronts with ${esc(HANDLES[S.handle].name.toLowerCase())}${S.handle === 'push' ? ' latches' : S.handle === 'grip' ? 's' : 's in ' + esc(HFIN[S.hfin].name.toLowerCase())}. Made to measure and drilled for your IKEA hinges; ready ${LEAD} after you order.</p>
+  return `<h2>Your order</h2><p class="lede">${P.n} fronts with ${esc(HANDLES[S.handle].name.toLowerCase())}${S.handle === 'push' ? ' latches' : S.handle === 'grip' ? 's' : 's in ' + esc(HFIN[S.hfin].name.toLowerCase())}. Made to measure and drilled for your IKEA hinges; ready ${leadOf(L)} after you order${L.fronts.some(f => MATS[lookOf(f).mat].paint) ? ' (painted fronts take 1–2 weeks longer: they go to our spray shop)' : ''}.</p>
     ${
       P.n
         ? `<table class="ord"><thead><tr><th></th><th>Front</th><th class="num">Size, mm</th><th class="num">Price</th></tr></thead><tbody>${rows}</tbody>

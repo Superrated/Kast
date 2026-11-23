@@ -36,7 +36,7 @@ Still to check before making real fronts: the 201-frame PAX door height (taken a
 
 ## Prototype limits
 
-- Prices, delivery and lead time are examples.
+- Painted prices are set against other makers of IKEA fronts (Nov 2026, see the note in `00-data.js`): a painted 60×80 METOD door ≈ €128 and a PAX door ≈ €260 before handles. Other prices, delivery and lead times are examples. Painted orders show 1–2 weeks extra (spray shop).
 - The order button collects name, e-mail and postcode but sends nothing; it shows the order as text to copy.
 - One system per order.
 

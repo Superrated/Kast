@@ -91,7 +91,16 @@ const FLUTE = {
 
 /* … a few materials (price per m² of front, both faces finished, edges included) … */
 const MATS = {
-  painted: { name: 'Painted', blurb: 'Smooth matt paint in one of our colours', rate: 150, paint: true },
+  // painted by our partner spray shop; priced against other makers of IKEA fronts (Nov 2026):
+  //   60×80 METOD door, painted, flat: Ogony from €111, Faktum Online €119, Bucks & Spurs ≈ €180
+  //   PAX door 50×229, painted, flat: Foxstow £226 (≈ €265); bare MDF £121 (≈ €142)
+  //   → €30 a front + €200/m²: a 60×80 door ≈ €125, a PAX door ≈ €257 (before handles), middle of the market
+  painted: {
+    name: 'Painted',
+    blurb: 'Smooth matt paint in one of our colours, by our spray shop',
+    rate: 200,
+    paint: true
+  },
   oak: { name: 'Oak veneer', blurb: 'Natural oak, oiled', rate: 235, wood: '#C9A26E', grain: '#8F6A3C' },
   walnut: { name: 'Walnut veneer', blurb: 'Deep and warm, oiled', rate: 295, wood: '#5C3A26', grain: '#2E1A0F' },
   birch: {
@@ -177,11 +186,14 @@ const HFIN = {
 };
 
 const PRICE = {
-  perFront: 22, // cutting, edging, packing
+  perFront: 30, // cutting, edging, drilling set-up, packing
   hinge: 3, // drilling the hinge cups for the IKEA hinges
   minArea: 0.08, // m² — a small front still costs a small front
   delivery: 59,
   deliveryFree: 1500
 };
 const LEAD = 'about 3–4 weeks';
+// painted fronts go to the spray shop: 1–2 weeks longer
+const LEAD_PAINTED = 'about 4–6 weeks';
+const leadOf = L => (L.fronts.some(f => MATS[lookOf(f).mat].paint) ? LEAD_PAINTED : LEAD);
 const colHex = k => (RAL[(COLOURS[k] || COLOURS.chalk).ral] || {}).hex || '#eeeeee';
