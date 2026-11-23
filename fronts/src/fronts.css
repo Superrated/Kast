@@ -1,0 +1,586 @@
+/* ==== fronts.css ====
+   BRUIS Fronts. Colours and fonts come from Fitted (its :root tokens are put in front of this file by build.py).
+   Computer: picture left, panel right, price bar at the bottom.
+   Phone: picture on top, panel below, steps and price bar at the bottom. */
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--f-b);
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+}
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+h2 {
+  font-family: var(--f-d);
+  font-weight: 400;
+  font-size: 30px;
+  margin: 4px 0 6px;
+}
+h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ink2);
+  margin: 22px 0 8px;
+}
+.lede {
+  color: var(--ink2);
+  margin: 0 0 14px;
+  line-height: 1.45;
+}
+.hint {
+  color: var(--ink2);
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+small {
+  color: var(--ink2);
+}
+.app {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100vh;
+  height: 100dvh;
+}
+header.top {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+.brand {
+  font-family: var(--f-d);
+  font-size: 24px;
+  white-space: nowrap;
+}
+.brand b {
+  font-family: var(--f-b);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  margin-right: 4px;
+}
+.brand small {
+  display: block;
+  font-family: var(--f-b);
+  font-size: 11.5px;
+  margin-top: -2px;
+}
+.steps,
+.bsteps {
+  display: flex;
+  gap: 4px;
+}
+.steps {
+  margin-left: auto;
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px;
+}
+.steps button,
+.bsteps button {
+  border: 0;
+  background: none;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-weight: 600;
+  color: var(--ink2);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.steps button i,
+.bsteps button i {
+  font-style: normal;
+  font-size: 11px;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  display: inline-grid;
+  place-items: center;
+}
+.steps button.done i,
+.bsteps button.done i {
+  background: var(--ink2);
+  border-color: var(--ink2);
+  color: var(--bg);
+}
+.steps button.on,
+.bsteps button.on {
+  background: var(--ink);
+  color: var(--bg);
+}
+.bsteps {
+  display: none;
+}
+.main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 440px);
+  min-height: 0;
+}
+.stage {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--stage);
+  padding: 14px 18px;
+}
+.stagebar {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 11px;
+  font-size: 13px;
+}
+.sw {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  flex: none;
+}
+.pic {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  padding: 10px 0;
+}
+.pic svg {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+}
+.pic .dim {
+  font: 500 44px var(--f-m);
+  fill: var(--ink2);
+}
+.pic .front.hd {
+  cursor: pointer;
+}
+.pic .front.hd:hover > rect:first-child {
+  stroke: var(--accent);
+  stroke-opacity: 1;
+  stroke-width: 8;
+}
+.pichint {
+  margin: 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--ink2);
+  min-height: 18px;
+}
+.panel {
+  overflow: auto;
+  padding: 18px 20px 30px;
+  background: var(--surface);
+  border-left: 1px solid var(--line);
+}
+.syss,
+.stcs,
+.mats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.mats {
+  grid-template-columns: repeat(2, 1fr);
+}
+.sys,
+.stc,
+.mat {
+  text-align: left;
+  border: 1.5px solid var(--line);
+  background: var(--raised);
+  border-radius: 14px;
+  padding: 10px 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.sys span {
+  font-size: 13px;
+}
+.sys small,
+.stc small,
+.mat small {
+  font-size: 11.5px;
+  line-height: 1.3;
+}
+.sys.on,
+.stc.on,
+.mat.on {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.stc svg {
+  width: 100%;
+  height: 92px;
+  margin-bottom: 4px;
+}
+.mat {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 7px;
+}
+.mat small {
+  flex-basis: 100%;
+}
+.cabs {
+  display: grid;
+  gap: 10px;
+  margin: 14px 0 10px;
+}
+.cab {
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 10px 12px;
+}
+.cabh {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.cabh b {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--bg);
+  display: inline-grid;
+  place-items: center;
+  font-size: 12px;
+}
+.sp {
+  flex: 1;
+}
+.ib {
+  border: 1px solid var(--line);
+  background: none;
+  border-radius: 8px;
+  width: 30px;
+  height: 28px;
+  font-size: 12px;
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 6px 0;
+}
+.row > label {
+  width: 58px;
+  font-size: 13px;
+  color: var(--ink2);
+  flex: none;
+}
+.seg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 3px;
+}
+.seg button {
+  border: 0;
+  background: none;
+  border-radius: 7px;
+  padding: 5px 10px;
+  font-size: 13.5px;
+  font-weight: 500;
+}
+.seg button.on {
+  background: var(--ink);
+  color: var(--bg);
+}
+.seg button.on small {
+  color: inherit;
+  opacity: 0.75;
+}
+.adds {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 10px 0;
+}
+.btn {
+  border: 1px solid var(--line);
+  background: var(--raised);
+  border-radius: 999px;
+  padding: 9px 16px;
+  font-weight: 600;
+}
+.btn.pri {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+.btn.ghost {
+  background: none;
+}
+.btn.big {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  margin-top: 14px;
+}
+.linkb {
+  border: 0;
+  background: none;
+  padding: 0;
+  color: var(--accent);
+  text-decoration: underline;
+}
+.imp {
+  margin-top: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+.imp summary {
+  font-weight: 600;
+  cursor: pointer;
+}
+textarea,
+input,
+select {
+  width: 100%;
+  font: inherit;
+  font-size: 14px;
+  padding: 9px 11px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--raised);
+  color: var(--ink);
+}
+textarea {
+  font-family: var(--f-m);
+  font-size: 12.5px;
+}
+.field {
+  display: block;
+  margin: 10px 0;
+}
+.field > span {
+  display: block;
+  font-size: 13px;
+  color: var(--ink2);
+  margin-bottom: 4px;
+}
+.sws {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.swb {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid var(--raised);
+  box-shadow: 0 0 0 1px var(--line);
+}
+.swb.on {
+  box-shadow: 0 0 0 2.5px var(--accent);
+}
+.ord {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.ord th,
+.ord td {
+  padding: 7px 4px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+.ord th {
+  font-size: 12px;
+  color: var(--ink2);
+  font-weight: 600;
+}
+.ord .num {
+  text-align: right;
+  font-family: var(--f-m);
+  font-size: 13px;
+  white-space: nowrap;
+}
+.ord td small {
+  display: block;
+  font-family: var(--f-b);
+  font-size: 11.5px;
+}
+.ord tfoot td {
+  border-bottom: 0;
+}
+.ord .tot td {
+  font-weight: 700;
+  font-size: 15px;
+  border-top: 2px solid var(--ink);
+}
+.pbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+}
+.ptot {
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+}
+.ptot span {
+  font-size: 12px;
+  color: var(--ink2);
+}
+.ptot b {
+  font-size: 22px;
+}
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 12, 14, 0.45);
+  display: grid;
+  place-items: center;
+  z-index: 50;
+  padding: 16px;
+}
+.modal[hidden] {
+  display: none;
+}
+.mbox {
+  background: var(--surface);
+  border-radius: 18px;
+  padding: 20px 22px;
+  width: min(460px, 100%);
+  max-height: 90vh;
+  overflow: auto;
+}
+.otext {
+  white-space: pre-wrap;
+  font: 12.5px/1.5 var(--f-m);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px;
+}
+.legal {
+  font-size: 11px;
+  color: var(--ink2);
+  text-align: center;
+  margin: 0;
+  padding: 6px 16px 10px;
+}
+
+/* ---------- phone ---------- */
+@media (max-width: 860px) {
+  .app {
+    height: auto;
+    display: block;
+    padding-bottom: 136px;
+  }
+  header.top {
+    padding: 10px 14px;
+  }
+  .steps {
+    display: none;
+  }
+  .main {
+    display: block;
+  }
+  .stage {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    height: 38vh;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .stagebar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .chip {
+    white-space: nowrap;
+  }
+  .panel {
+    border-left: 0;
+    padding: 14px 14px 30px;
+  }
+  .syss,
+  .stcs {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .stc svg {
+    height: 70px;
+  }
+  .mats {
+    grid-template-columns: 1fr 1fr;
+  }
+  .pbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: calc(62px + env(safe-area-inset-bottom, 0px));
+    z-index: 20;
+    padding: 8px 14px;
+  }
+  .pbar .ghost {
+    display: none;
+  }
+  .bsteps {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+    padding: 6px 6px calc(6px + env(safe-area-inset-bottom, 0px));
+    justify-content: space-around;
+  }
+  .bsteps button {
+    flex-direction: column;
+    gap: 3px;
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 12px;
+  }
+  .legal {
+    padding-bottom: 150px;
+  }
+}

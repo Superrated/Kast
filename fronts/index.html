@@ -1,0 +1,1784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BRUIS Fronts — custom fronts for IKEA PAX, METOD and BESTÅ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #f3f3f0;
+  --surface: #fafaf8;
+  --raised: #ffffff;
+  --ink: #17191b;
+  --ink2: #62676b;
+  --ink3: #6a6f74;
+  --line: #e4e5e1;
+  --accent: #3446d6;
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(52, 70, 214, 0.09);
+  --warn: #b4541a;
+  --warn-soft: rgba(180, 84, 26, 0.1);
+  --wall: #e7e7e3;
+  --hatch: #d3d5d1;
+  --stage: #ecedea;
+  --paper: #ffffff;
+  --shade: rgba(20, 22, 24, 0.2);
+  --f-d: 'Instrument Serif', Georgia, serif;
+  --f-b: 'Instrument Sans', system-ui, -apple-system, sans-serif;
+  --f-m: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #121314;
+    --surface: #18191b;
+    --raised: #202224;
+    --ink: #ecedeb;
+    --ink2: #a2a7ab;
+    --ink3: #90969b;
+    --line: #2c2f32;
+    --accent: #8f9bff;
+    --accent-ink: #0e1030;
+    --accent-soft: rgba(143, 155, 255, 0.14);
+    --warn: #f0a060;
+    --warn-soft: rgba(240, 160, 96, 0.14);
+    --wall: #232528;
+    --hatch: #34373b;
+    --stage: #16171a;
+    --paper: #1c1e20;
+    --shade: rgba(0, 0, 0, 0.35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme='dark'] {
+  --bg: #121314;
+  --surface: #18191b;
+  --raised: #202224;
+  --ink: #ecedeb;
+  --ink2: #a2a7ab;
+  --ink3: #90969b;
+  --line: #2c2f32;
+  --accent: #8f9bff;
+  --accent-ink: #0e1030;
+  --accent-soft: rgba(143, 155, 255, 0.14);
+  --warn: #f0a060;
+  --warn-soft: rgba(240, 160, 96, 0.14);
+  --wall: #232528;
+  --hatch: #34373b;
+  --stage: #16171a;
+  --paper: #1c1e20;
+  --shade: rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
+}
+/* ==== fronts.css ====
+   BRUIS Fronts. Colours and fonts come from Fitted (its :root tokens are put in front of this file by build.py).
+   Computer: picture left, panel right, price bar at the bottom.
+   Phone: picture on top, panel below, steps and price bar at the bottom. */
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--f-b);
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+}
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+h2 {
+  font-family: var(--f-d);
+  font-weight: 400;
+  font-size: 30px;
+  margin: 4px 0 6px;
+}
+h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ink2);
+  margin: 22px 0 8px;
+}
+.lede {
+  color: var(--ink2);
+  margin: 0 0 14px;
+  line-height: 1.45;
+}
+.hint {
+  color: var(--ink2);
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+small {
+  color: var(--ink2);
+}
+.app {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100vh;
+  height: 100dvh;
+}
+header.top {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+.brand {
+  font-family: var(--f-d);
+  font-size: 24px;
+  white-space: nowrap;
+}
+.brand b {
+  font-family: var(--f-b);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  margin-right: 4px;
+}
+.brand small {
+  display: block;
+  font-family: var(--f-b);
+  font-size: 11.5px;
+  margin-top: -2px;
+}
+.steps,
+.bsteps {
+  display: flex;
+  gap: 4px;
+}
+.steps {
+  margin-left: auto;
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px;
+}
+.steps button,
+.bsteps button {
+  border: 0;
+  background: none;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-weight: 600;
+  color: var(--ink2);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.steps button i,
+.bsteps button i {
+  font-style: normal;
+  font-size: 11px;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  display: inline-grid;
+  place-items: center;
+}
+.steps button.done i,
+.bsteps button.done i {
+  background: var(--ink2);
+  border-color: var(--ink2);
+  color: var(--bg);
+}
+.steps button.on,
+.bsteps button.on {
+  background: var(--ink);
+  color: var(--bg);
+}
+.bsteps {
+  display: none;
+}
+.main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 440px);
+  min-height: 0;
+}
+.stage {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--stage);
+  padding: 14px 18px;
+}
+.stagebar {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 11px;
+  font-size: 13px;
+}
+.sw {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  flex: none;
+}
+.pic {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  padding: 10px 0;
+}
+.pic svg {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+}
+.pic .dim {
+  font: 500 44px var(--f-m);
+  fill: var(--ink2);
+}
+.pic .front.hd {
+  cursor: pointer;
+}
+.pic .front.hd:hover > rect:first-child {
+  stroke: var(--accent);
+  stroke-opacity: 1;
+  stroke-width: 8;
+}
+.pichint {
+  margin: 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--ink2);
+  min-height: 18px;
+}
+.panel {
+  overflow: auto;
+  padding: 18px 20px 30px;
+  background: var(--surface);
+  border-left: 1px solid var(--line);
+}
+.syss,
+.stcs,
+.mats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.mats {
+  grid-template-columns: repeat(2, 1fr);
+}
+.sys,
+.stc,
+.mat {
+  text-align: left;
+  border: 1.5px solid var(--line);
+  background: var(--raised);
+  border-radius: 14px;
+  padding: 10px 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.sys span {
+  font-size: 13px;
+}
+.sys small,
+.stc small,
+.mat small {
+  font-size: 11.5px;
+  line-height: 1.3;
+}
+.sys.on,
+.stc.on,
+.mat.on {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.stc svg {
+  width: 100%;
+  height: 92px;
+  margin-bottom: 4px;
+}
+.mat {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 7px;
+}
+.mat small {
+  flex-basis: 100%;
+}
+.cabs {
+  display: grid;
+  gap: 10px;
+  margin: 14px 0 10px;
+}
+.cab {
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 10px 12px;
+}
+.cabh {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.cabh b {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--bg);
+  display: inline-grid;
+  place-items: center;
+  font-size: 12px;
+}
+.sp {
+  flex: 1;
+}
+.ib {
+  border: 1px solid var(--line);
+  background: none;
+  border-radius: 8px;
+  width: 30px;
+  height: 28px;
+  font-size: 12px;
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 6px 0;
+}
+.row > label {
+  width: 58px;
+  font-size: 13px;
+  color: var(--ink2);
+  flex: none;
+}
+.seg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 3px;
+}
+.seg button {
+  border: 0;
+  background: none;
+  border-radius: 7px;
+  padding: 5px 10px;
+  font-size: 13.5px;
+  font-weight: 500;
+}
+.seg button.on {
+  background: var(--ink);
+  color: var(--bg);
+}
+.seg button.on small {
+  color: inherit;
+  opacity: 0.75;
+}
+.adds {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 10px 0;
+}
+.btn {
+  border: 1px solid var(--line);
+  background: var(--raised);
+  border-radius: 999px;
+  padding: 9px 16px;
+  font-weight: 600;
+}
+.btn.pri {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+.btn.ghost {
+  background: none;
+}
+.btn.big {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  margin-top: 14px;
+}
+.linkb {
+  border: 0;
+  background: none;
+  padding: 0;
+  color: var(--accent);
+  text-decoration: underline;
+}
+.imp {
+  margin-top: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+.imp summary {
+  font-weight: 600;
+  cursor: pointer;
+}
+textarea,
+input,
+select {
+  width: 100%;
+  font: inherit;
+  font-size: 14px;
+  padding: 9px 11px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--raised);
+  color: var(--ink);
+}
+textarea {
+  font-family: var(--f-m);
+  font-size: 12.5px;
+}
+.field {
+  display: block;
+  margin: 10px 0;
+}
+.field > span {
+  display: block;
+  font-size: 13px;
+  color: var(--ink2);
+  margin-bottom: 4px;
+}
+.sws {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.swb {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid var(--raised);
+  box-shadow: 0 0 0 1px var(--line);
+}
+.swb.on {
+  box-shadow: 0 0 0 2.5px var(--accent);
+}
+.ord {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.ord th,
+.ord td {
+  padding: 7px 4px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+.ord th {
+  font-size: 12px;
+  color: var(--ink2);
+  font-weight: 600;
+}
+.ord .num {
+  text-align: right;
+  font-family: var(--f-m);
+  font-size: 13px;
+  white-space: nowrap;
+}
+.ord td small {
+  display: block;
+  font-family: var(--f-b);
+  font-size: 11.5px;
+}
+.ord tfoot td {
+  border-bottom: 0;
+}
+.ord .tot td {
+  font-weight: 700;
+  font-size: 15px;
+  border-top: 2px solid var(--ink);
+}
+.pbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+}
+.ptot {
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+}
+.ptot span {
+  font-size: 12px;
+  color: var(--ink2);
+}
+.ptot b {
+  font-size: 22px;
+}
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 12, 14, 0.45);
+  display: grid;
+  place-items: center;
+  z-index: 50;
+  padding: 16px;
+}
+.modal[hidden] {
+  display: none;
+}
+.mbox {
+  background: var(--surface);
+  border-radius: 18px;
+  padding: 20px 22px;
+  width: min(460px, 100%);
+  max-height: 90vh;
+  overflow: auto;
+}
+.otext {
+  white-space: pre-wrap;
+  font: 12.5px/1.5 var(--f-m);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px;
+}
+.legal {
+  font-size: 11px;
+  color: var(--ink2);
+  text-align: center;
+  margin: 0;
+  padding: 6px 16px 10px;
+}
+
+/* ---------- phone ---------- */
+@media (max-width: 860px) {
+  .app {
+    height: auto;
+    display: block;
+    padding-bottom: 136px;
+  }
+  header.top {
+    padding: 10px 14px;
+  }
+  .steps {
+    display: none;
+  }
+  .main {
+    display: block;
+  }
+  .stage {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    height: 38vh;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .stagebar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .chip {
+    white-space: nowrap;
+  }
+  .panel {
+    border-left: 0;
+    padding: 14px 14px 30px;
+  }
+  .syss,
+  .stcs {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .stc svg {
+    height: 70px;
+  }
+  .mats {
+    grid-template-columns: 1fr 1fr;
+  }
+  .pbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: calc(62px + env(safe-area-inset-bottom, 0px));
+    z-index: 20;
+    padding: 8px 14px;
+  }
+  .pbar .ghost {
+    display: none;
+  }
+  .bsteps {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+    padding: 6px 6px calc(6px + env(safe-area-inset-bottom, 0px));
+    justify-content: space-around;
+  }
+  .bsteps button {
+    flex-direction: column;
+    gap: 3px;
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 12px;
+  }
+  .legal {
+    padding-bottom: 150px;
+  }
+}
+
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="top">
+    <div class="brand"><b>BRUIS</b> Fronts<small>custom fronts for your IKEA cabinets · prototype</small></div>
+    <nav class="steps" id="steps" aria-label="Steps"></nav>
+  </header>
+  <main class="main">
+    <section class="stage" aria-label="Your cabinets with the new fronts">
+      <div class="stagebar" id="stagebar"></div>
+      <div class="pic" id="pic"></div>
+      <p class="pichint" id="pichint"></p>
+    </section>
+    <aside class="panel" id="panel"></aside>
+  </main>
+  <footer class="pbar" id="pbar"></footer>
+  <nav class="bsteps" id="bsteps" aria-label="Steps"></nav>
+</div>
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true"><div class="mbox" id="mbox"></div></div>
+<p class="legal">IKEA, PAX, METOD and BESTÅ are trademarks of Inter IKEA Systems B.V. BRUIS is not part of or endorsed by IKEA. Prototype — prices and delivery times are examples.</p>
+<script>
+/* ==== 00-data.js ====
+   Everything the configurator knows: the IKEA systems and their sizes, front styles, materials, colours,
+   handles and prices. Sizes from IKEA's own product pages (checked Nov 2026):
+     PAX    frames 50 / 75 / 100 wide, 201 / 236 high; hinged doors 50 or 25 wide (a 75 frame takes 50 + 25),
+            door 49.5 × 229.4 cm on a 236 frame (195 cm on a 201 frame)
+     METOD  fronts are 3 mm smaller than the cabinet both ways (39.7 × 79.7 for a 40 × 80 cabinet)
+     BESTÅ  fronts 59.6 wide; 63.7 / 37.7 / 25.7 high for the 64 / 38 / 26 positions
+   Prices are examples for the prototype.
+*/
+const SYS = {
+  pax: {
+    name: 'PAX',
+    what: 'Wardrobe',
+    blurb: 'Wardrobe frames 50, 75 or 100 cm wide, 201 or 236 cm high',
+    kinds: { frame: { label: 'Frame', widths: [50, 75, 100], heights: [201, 236] } }
+  },
+  metod: {
+    name: 'METOD',
+    what: 'Kitchen',
+    blurb: 'Base, wall and tall cabinets, 20 to 80 cm wide',
+    kinds: {
+      base: { label: 'Base cabinet', widths: [20, 30, 40, 60, 80], heights: [80], row: 'base' },
+      high: { label: 'Tall cabinet', widths: [40, 60], heights: [140, 200], row: 'base' },
+      wall: { label: 'Wall cabinet', widths: [20, 30, 40, 60, 80], heights: [40, 60, 80, 100], row: 'wall' }
+    }
+  },
+  besta: {
+    name: 'BESTÅ',
+    what: 'Storage & TV',
+    blurb: 'Frames 60 or 120 cm wide, 38 to 192 cm high',
+    kinds: { frame: { label: 'Frame', widths: [60, 120], heights: [38, 64, 128, 192] } }
+  }
+};
+
+/* how a cabinet is filled with fronts: [key, label, test(cab) → offered?] */
+const LAYOUTS = {
+  pax: [
+    ['doors', 'Doors', () => true],
+    ['open', 'No doors', () => true]
+  ],
+  metod_base: [
+    ['door', 'Door', c => c.w <= 60],
+    ['doors2', '2 doors', c => c.w >= 60],
+    ['drawer_door', 'Drawer + door', c => c.w <= 60],
+    ['drawers3', '3 drawers', () => true],
+    ['drawers2', '2 drawers', () => true],
+    ['drawers4', '4 drawers', () => true],
+    ['open', 'No front', () => true]
+  ],
+  metod_wall: [
+    ['door', 'Door', c => c.w <= 60],
+    ['doors2', '2 doors', c => c.w >= 60],
+    ['open', 'Open shelf', () => true]
+  ],
+  metod_high: [
+    ['door', 'One door', () => true],
+    ['split', 'Two doors stacked', c => c.h === 200],
+    ['open', 'No front', () => true]
+  ],
+  besta: [
+    ['door', 'Door(s)', () => true],
+    ['drawers', 'Drawers', c => c.h <= 64],
+    ['open', 'Open', () => true]
+  ]
+};
+
+/* front styles — the shape of the front */
+const STYLES = {
+  flat: { name: 'Flat', blurb: 'Clean and quiet', f: 1 },
+  fluted: { name: 'Fluted', blurb: 'Rounded flutes routed in', f: 1.6 },
+  shaker: { name: 'Shaker', blurb: 'Frame with a sunk panel', f: 1.35 },
+  arch: { name: 'Arch', blurb: 'An arch routed in the face', f: 1.45 },
+  slats: { name: 'Slats', blurb: 'Ribs with shadow gaps', f: 1.5 },
+  grid: { name: 'Grid', blurb: 'Squares cut in the face', f: 1.4 }
+};
+const FLUTE = {
+  pitch: [
+    [12, 'Fine'],
+    [20, 'Classic'],
+    [32, 'Bold']
+  ],
+  dir: [
+    ['v', 'Up and down'],
+    ['h', 'Side to side']
+  ]
+};
+
+/* materials: price per m² of front (both faces finished, edges included) and which styles they can take */
+const MATS = {
+  mdf: { name: 'Painted MDF', blurb: 'Any RAL colour, smooth matt paint', rate: 150, styles: 'all', paint: true },
+  oak: {
+    name: 'Oak veneer',
+    blurb: 'Natural oak, oiled',
+    rate: 235,
+    styles: ['flat', 'fluted', 'shaker', 'arch', 'slats'],
+    wood: '#C9A26E',
+    grain: '#8F6A3C'
+  },
+  smoked: {
+    name: 'Smoked oak',
+    blurb: 'Dark, fumed oak',
+    rate: 255,
+    styles: ['flat', 'fluted', 'shaker', 'slats'],
+    wood: '#71533A',
+    grain: '#3F2B1C'
+  },
+  walnut: {
+    name: 'Walnut veneer',
+    blurb: 'Warm and dark',
+    rate: 295,
+    styles: ['flat', 'fluted', 'shaker', 'slats'],
+    wood: '#5C3A26',
+    grain: '#2E1A0F'
+  },
+  birch: {
+    name: 'Birch plywood',
+    blurb: 'Layered edge on show',
+    rate: 160,
+    styles: ['flat', 'slats', 'grid'],
+    wood: '#DCC69E',
+    grain: '#B89B6C'
+  },
+  lino: {
+    name: 'Linoleum',
+    blurb: 'Soft, warm surface on birch ply',
+    rate: 220,
+    styles: ['flat', 'arch', 'grid'],
+    lino: true
+  }
+};
+/* linoleum colours (generic names) */
+const LINO = [
+  ['mushroom', 'Mushroom', '#B9AC97'],
+  ['pebble', 'Pebble', '#9A9A93'],
+  ['olive', 'Olive', '#6F6E4C'],
+  ['sage', 'Sage', '#8E9B85'],
+  ['iron', 'Iron', '#4A4D50'],
+  ['burgundy', 'Burgundy', '#6B2B2E'],
+  ['powder', 'Powder', '#D9C6BD'],
+  ['charcoal', 'Charcoal', '#2E2F31']
+];
+
+/* RAL colours: the full list comes from Fitted at build time; a short list is shown first */
+const RAL = {};
+/*@RAL@*/ ''.split('|').forEach(e => {
+  const m = e.match(/^(\d{4}) (.+) ([0-9A-F]{6})$/);
+  if (m) RAL[m[1]] = { name: m[2], hex: '#' + m[3] };
+});
+const RAL_PICK = [
+  '9010',
+  '9001',
+  '1013',
+  '1015',
+  '7044',
+  '7035',
+  '6021',
+  '6011',
+  '6003',
+  '5014',
+  '5011',
+  '3012',
+  '8025',
+  '7016',
+  '7021',
+  '9005'
+];
+
+/* handles: price per front (handle or latch), and how they are drawn */
+const HANDLES = {
+  push: { name: 'Push to open', blurb: 'No handle — press the front', price: 9 },
+  knob: { name: 'Knob', blurb: 'Round, 30 mm', price: 14 },
+  bar: { name: 'Bar', blurb: '160 mm, slim', price: 22 },
+  grip: { name: 'Cut-out grip', blurb: 'A half moon routed in the edge', price: 12 },
+  tab: { name: 'Leather tab', blurb: 'A soft pull on the edge', price: 16 }
+};
+const HFIN = {
+  brass: { name: 'Brass', hex: '#B8954A' },
+  black: { name: 'Black', hex: '#1E1E1E' },
+  steel: { name: 'Brushed steel', hex: '#A7AAAD' },
+  oak: { name: 'Oak', hex: '#C9A26E' },
+  match: { name: 'Same as the front', hex: null }
+};
+
+const PRICE = {
+  perFront: 22, // cutting, edging, packing
+  hinge: 3, // drilling the hinge cups for the IKEA hinges
+  minArea: 0.08, // m² — a small front still costs a small front
+  delivery: 59,
+  deliveryFree: 1500
+};
+const LEAD = 'about 3–4 weeks';
+
+/* ==== 10-model.js ====
+   The project (S), saved in this browser, and what it turns into: each cabinet's fronts with their
+   real sizes (mm) and where they sit in the picture.
+*/
+const KEY = 'bruis-fronts-v1';
+let _id = 1;
+const nid = () => 'c' + _id++ + Math.random().toString(36).slice(2, 5);
+
+function freshState(sys) {
+  const s = {
+    sys: sys || 'pax',
+    cabs: [],
+    style: 'fluted',
+    flute: { pitch: 20, dir: 'v' },
+    mat: 'mdf',
+    ral: '6021',
+    lino: 'mushroom',
+    handle: 'knob',
+    hfin: 'brass',
+    step: 'cabs',
+    flip: {}
+  };
+  if (s.sys === 'pax')
+    s.cabs = [cab('pax', 'frame', 100, 236), cab('pax', 'frame', 50, 236), cab('pax', 'frame', 100, 236)];
+  if (s.sys === 'metod') {
+    s.style = 'shaker';
+    s.ral = '6011';
+    s.cabs = [
+      cab('metod', 'high', 60, 200, 'split'),
+      cab('metod', 'base', 40, 80, 'drawers3'),
+      cab('metod', 'base', 60, 80, 'drawer_door'),
+      cab('metod', 'base', 80, 80, 'doors2'),
+      cab('metod', 'wall', 40, 80),
+      cab('metod', 'wall', 60, 80),
+      cab('metod', 'wall', 80, 80, 'doors2')
+    ];
+  }
+  if (s.sys === 'besta') {
+    s.style = 'arch';
+    s.ral = '1015';
+    s.cabs = [cab('besta', 'frame', 60, 64), cab('besta', 'frame', 120, 38, 'drawers'), cab('besta', 'frame', 60, 64)];
+  }
+  return s;
+}
+function cab(sys, kind, w, h, layout) {
+  return { id: nid(), sys, kind, w, h, layout: layout || defaultLayout(sys, kind, w, h) };
+}
+function defaultLayout(sys, kind, w) {
+  if (sys === 'pax') return 'doors';
+  if (sys === 'besta') return 'door';
+  if (kind === 'high') return 'door';
+  return w > 60 ? 'doors2' : 'door';
+}
+function layoutsFor(c) {
+  const k = c.sys === 'pax' ? 'pax' : c.sys === 'besta' ? 'besta' : 'metod_' + c.kind;
+  return (LAYOUTS[k] || []).filter(([, , ok]) => ok(c));
+}
+function fixLayout(c) {
+  if (!layoutsFor(c).some(([k]) => k === c.layout)) c.layout = layoutsFor(c)[0][0];
+}
+
+let S;
+try {
+  S = JSON.parse(localStorage.getItem(KEY) || 'null');
+} catch (e) {
+  S = null;
+}
+if (!S || !S.cabs) S = freshState('pax');
+S.flip = S.flip || {};
+function save() {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(S));
+  } catch (e) {
+    /* private browsing: works without saving */
+  }
+}
+
+/* ---------- cabinet → fronts ----------
+   A front: { id, cab, kind: 'door'|'drawer', nom: 'w×h' (IKEA's name for the size), w, h (real, mm),
+              x, y (bottom-left in the picture, mm from the left / floor), hinge: 'L'|'R'|null } */
+const PAX_H = { 236: 2294, 201: 1950 },
+  PAX_W = { 50: 495, 25: 245 };
+function frontsOf(c, x0, y0) {
+  const out = [],
+    add = (kind, nw, nh, realW, realH, x, y, hinge) =>
+      out.push({ id: c.id + ':' + out.length, cab: c.id, kind, nom: `${nw}×${nh}`, w: realW, h: realH, x, y, hinge });
+  const W = c.w * 10,
+    H = c.h * 10;
+  if (c.layout === 'open') return out;
+  if (c.sys === 'pax') {
+    const parts = c.w === 100 ? [50, 50] : c.w === 75 ? [50, 25] : [50];
+    const dh = PAX_H[c.h];
+    let x = x0 + 2.5;
+    parts.forEach((pw, i) => {
+      add(
+        'door',
+        pw,
+        c.h === 236 ? 229 : 195,
+        PAX_W[pw],
+        dh,
+        x,
+        y0 + (H - dh) / 2,
+        parts.length === 1 ? 'R' : i === 0 ? 'L' : 'R'
+      );
+      x += pw * 10;
+    });
+  } else if (c.sys === 'metod') {
+    const g = 3; // METOD fronts are 3 mm smaller than the cabinet
+    if (c.kind === 'base') {
+      const stack = {
+        door: null,
+        doors2: null,
+        drawer_door: [20, 60],
+        drawers3: [20, 20, 40],
+        drawers2: [40, 40],
+        drawers4: [20, 20, 20, 20]
+      }[c.layout];
+      if (!stack) {
+        const n = c.layout === 'doors2' ? 2 : 1;
+        for (let i = 0; i < n; i++)
+          add(
+            'door',
+            c.w / n,
+            c.h,
+            W / n - g,
+            H - g,
+            x0 + (i * W) / n + g / 2,
+            y0 + g / 2,
+            n === 1 ? 'R' : i === 0 ? 'L' : 'R'
+          );
+      } else {
+        let y = y0 + H;
+        stack.forEach((sh, i) => {
+          y -= sh * 10;
+          const isDoor = c.layout === 'drawer_door' && i === 1;
+          add(isDoor ? 'door' : 'drawer', c.w, sh, W - g, sh * 10 - g, x0 + g / 2, y + g / 2, isDoor ? 'R' : null);
+        });
+      }
+    } else if (c.kind === 'wall') {
+      const n = c.layout === 'doors2' ? 2 : 1;
+      for (let i = 0; i < n; i++)
+        add(
+          'door',
+          c.w / n,
+          c.h,
+          W / n - g,
+          H - g,
+          x0 + (i * W) / n + g / 2,
+          y0 + g / 2,
+          n === 1 ? 'R' : i === 0 ? 'L' : 'R'
+        );
+    } else {
+      const stack = c.layout === 'split' ? [140, 60] : [c.h]; // bottom door first
+      let y = y0;
+      stack.forEach(sh => {
+        add('door', c.w, sh, W - g, sh * 10 - g, x0 + g / 2, y + g / 2, 'R');
+        y += sh * 10;
+      });
+    }
+  } else if (c.sys === 'besta') {
+    const cols = c.w / 60,
+      realH = { 64: 637, 38: 377, 26: 257 };
+    for (let k = 0; k < cols; k++) {
+      const xs = x0 + k * 600 + 2;
+      let stack;
+      if (c.layout === 'drawers') stack = c.h === 64 ? [26, 38] : [c.h];
+      else stack = c.h === 38 ? [38] : Array.from({ length: c.h / 64 }, () => 64);
+      let y = y0 + H;
+      stack.forEach(sh => {
+        y -= sh * 10;
+        const isDrawer = c.layout === 'drawers';
+        add(
+          isDrawer ? 'drawer' : 'door',
+          60,
+          sh,
+          596,
+          realH[sh],
+          xs,
+          y + (sh * 10 - realH[sh]) / 2,
+          isDrawer ? null : cols > 1 && k === 0 ? 'L' : 'R'
+        );
+      });
+    }
+  }
+  out.forEach(f => {
+    if (f.hinge && S.flip[f.id]) f.hinge = f.hinge === 'L' ? 'R' : 'L';
+  });
+  return out;
+}
+
+/* ---------- the whole layout: cabinets placed side by side, kitchen wall cabinets above ---------- */
+function layout() {
+  const cabs = [],
+    fronts = [];
+  const plinth = S.sys === 'metod' ? 100 : S.sys === 'besta' ? 120 : 0;
+  let xb = 0,
+    xw = 0;
+  S.cabs.forEach(c => {
+    const kd = SYS[c.sys].kinds[c.kind] || {};
+    let x, y;
+    if (c.sys === 'metod' && kd.row === 'wall') {
+      x = xw;
+      xw += c.w * 10;
+      y = 2200 - c.h * 10; // wall cabinets hang with their tops in one line
+    } else {
+      x = xb;
+      xb += c.w * 10;
+      y = plinth;
+    }
+    const pc = { c, x, y, w: c.w * 10, h: c.h * 10 };
+    cabs.push(pc);
+    frontsOf(c, x, y).forEach(f => fronts.push(f));
+  });
+  const W = Math.max(xb, xw, 600),
+    Hmax = Math.max(...cabs.map(p => p.y + p.h), 900);
+  return { cabs, fronts, W, H: Hmax, plinth, worktop: S.sys === 'metod' && S.cabs.some(c => c.kind === 'base') };
+}
+
+/* ---------- price ---------- */
+function matOk(style, mat) {
+  const m = MATS[mat];
+  return m && (m.styles === 'all' || m.styles.includes(style));
+}
+function frontPrice(f) {
+  const m = MATS[S.mat],
+    st = STYLES[S.style],
+    area = Math.max(PRICE.minArea, (f.w * f.h) / 1e6);
+  let p = PRICE.perFront + area * m.rate * st.f + HANDLES[S.handle].price;
+  if (f.kind === 'door') p += PRICE.hinge;
+  return Math.round(p * 100) / 100;
+}
+function priceAll(L) {
+  const fr = L.fronts.map(f => ({ f, p: frontPrice(f) })),
+    sub = fr.reduce((a, b) => a + b.p, 0),
+    del = sub >= PRICE.deliveryFree || !fr.length ? 0 : PRICE.delivery;
+  return { fr, sub, del, total: sub + del, n: fr.length };
+}
+const eur = v => '€ ' + Math.round(v).toLocaleString('en-IE');
+
+/* fronts with the same size and kind, for the order list */
+function grouped(L) {
+  const m = new Map();
+  L.fronts.forEach(f => {
+    const k = `${f.kind}|${f.w}|${f.h}|${f.hinge || ''}`;
+    if (!m.has(k)) m.set(k, { kind: f.kind, w: f.w, h: f.h, nom: f.nom, hinge: f.hinge, n: 0, p: frontPrice(f) });
+    m.get(k).n++;
+  });
+  return [...m.values()].sort((a, b) => b.h - a.h || b.w - a.w);
+}
+
+/* ==== 20-draw.js ====
+   The picture: the cabinets seen from the front with the new fronts in their style, material, colour and
+   handles. Millimetres in, SVG out (y flipped so the floor is at the bottom). Tap a door to swap its hinge side.
+*/
+function faceColour() {
+  const m = MATS[S.mat];
+  if (m.paint) return (RAL[S.ral] || RAL['9010']).hex;
+  if (m.lino) return (LINO.find(l => l[0] === S.lino) || LINO[0])[2];
+  return m.wood;
+}
+function shade(hex, k) {
+  // k < 0 darker, k > 0 lighter
+  const n = parseInt(hex.slice(1), 16),
+    ch = s => Math.max(0, Math.min(255, Math.round(k < 0 ? s * (1 + k) : s + (255 - s) * k)));
+  return '#' + [n >> 16, (n >> 8) & 255, n & 255].map(v => ch(v).toString(16).padStart(2, '0')).join('');
+}
+function defsSVG() {
+  const base = faceColour(),
+    m = MATS[S.mat],
+    p = S.flute.pitch;
+  let d = `<linearGradient id="flg" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".22"/><stop offset=".35" stop-color="#fff" stop-opacity=".28"/><stop offset=".7" stop-color="#fff" stop-opacity=".05"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></linearGradient>
+  <pattern id="flute" width="${p}" height="40" patternUnits="userSpaceOnUse"${S.flute.dir === 'h' ? ' patternTransform="rotate(90)"' : ''}><rect width="${p}" height="40" fill="url(#flg)"/></pattern>
+  <linearGradient id="slg" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset=".9" stop-color="#000" stop-opacity=".06"/><stop offset="1" stop-color="#000" stop-opacity=".5"/></linearGradient>
+  <pattern id="slat" width="48" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="url(#slg)"/><rect x="40" width="8" height="40" fill="#000" fill-opacity=".55"/></pattern>`;
+  if (m.wood)
+    d += `<pattern id="grain" width="90" height="900" patternUnits="userSpaceOnUse"${S.style === 'fluted' && S.flute.dir === 'h' ? ' patternTransform="rotate(90)"' : ''}><rect width="90" height="900" fill="${base}"/>${Array.from({ length: 9 }, (_, i) => `<path d="M${6 + i * 10 + (i % 3)} 0 C ${12 + i * 10} 300, ${i * 10} 600, ${8 + i * 10} 900" stroke="${m.grain}" stroke-opacity="${0.18 + (i % 3) * 0.08}" stroke-width="${1 + (i % 2)}" fill="none"/>`).join('')}</pattern>`;
+  if (m.lino)
+    d += `<pattern id="grain" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="${base}"/><circle cx="2" cy="3" r=".7" fill="#000" fill-opacity=".06"/></pattern>`;
+  return `<defs>${d}</defs>`;
+}
+function frontSVG(f, Y) {
+  const x = f.x,
+    y = Y(f.y + f.h),
+    w = f.w,
+    h = f.h,
+    base = faceColour(),
+    fill = MATS[S.mat].wood || MATS[S.mat].lino ? 'url(#grain)' : base,
+    dark = shade(base, -0.35),
+    light = shade(base, 0.35),
+    st = S.style;
+  let o = `<g class="front${f.hinge ? ' hd' : ''}" data-f="${f.id}"><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="${dark}" stroke-opacity=".55" stroke-width="2"/>`;
+  if (st === 'fluted') o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#flute)"/>`;
+  if (st === 'slats') o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#slat)"/>`;
+  if (st === 'shaker') {
+    const i = Math.min(70, w * 0.16, h * 0.16);
+    o += `<rect x="${x + i}" y="${y + i}" width="${w - 2 * i}" height="${h - 2 * i}" fill="#000" fill-opacity=".05" stroke="${dark}" stroke-opacity=".6" stroke-width="3"/><path d="M${x + i} ${y + h - i} V${y + i} H${x + w - i}" stroke="#000" stroke-opacity=".18" stroke-width="6" fill="none"/><path d="M${x + i} ${y + h - i} H${x + w - i} V${y + i}" stroke="${light}" stroke-opacity=".7" stroke-width="3" fill="none"/>`;
+  }
+  if (st === 'arch') {
+    const i = Math.min(60, w * 0.14),
+      iw = w - 2 * i,
+      r = iw / 2,
+      top = y + i + Math.min(r, (h - 2 * i) / 2);
+    const path = `M${x + i} ${y + h - i} V${top} A${r} ${Math.min(r, (h - 2 * i) / 2)} 0 0 1 ${x + w - i} ${top} V${y + h - i} Z`;
+    o += `<path d="${path}" fill="#000" fill-opacity=".05" stroke="${dark}" stroke-opacity=".65" stroke-width="5"/><path d="${path}" fill="none" stroke="${light}" stroke-opacity=".55" stroke-width="2" transform="translate(3 3)"/>`;
+  }
+  if (st === 'grid') {
+    const i = 50,
+      nx = Math.max(1, Math.round((w - 2 * i) / 130)),
+      ny = Math.max(1, Math.round((h - 2 * i) / 130)),
+      cw = (w - 2 * i) / nx,
+      ch = (h - 2 * i) / ny;
+    let g = '';
+    for (let a = 0; a <= nx; a++) g += `M${x + i + a * cw} ${y + i} V${y + h - i}`;
+    for (let b = 0; b <= ny; b++) g += `M${x + i} ${y + i + b * ch} H${x + w - i}`;
+    o += `<path d="${g}" stroke="${dark}" stroke-opacity=".6" stroke-width="4" fill="none"/><path d="${g}" stroke="${light}" stroke-opacity=".5" stroke-width="1.5" fill="none" transform="translate(2.5 2.5)"/>`;
+  }
+  // the door opens away from its hinge: a light dashed V pointing at the hinge side
+  if (f.hinge) {
+    const hx = f.hinge === 'L' ? x : x + w,
+      ox = f.hinge === 'L' ? x + w : x;
+    o += `<path class="swing" d="M${ox} ${y} L${hx} ${y + h / 2} L${ox} ${y + h}" fill="none" stroke="${dark}" stroke-opacity=".35" stroke-width="2" stroke-dasharray="14 10"/>`;
+  }
+  o += handleSVG(f, Y, dark);
+  return o + '</g>';
+}
+function handleSVG(f, Y, dark) {
+  const hd = S.handle;
+  if (hd === 'push') return '';
+  const col = S.hfin === 'match' ? shade(faceColour(), -0.2) : HFIN[S.hfin].hex,
+    x0 = f.x,
+    x1 = f.x + f.w,
+    yT = Y(f.y + f.h),
+    yB = Y(f.y);
+  let cx, cy, vert;
+  if (f.kind === 'drawer') {
+    cx = (x0 + x1) / 2;
+    cy = f.h > 300 ? yT + 70 : (yT + yB) / 2;
+    vert = false;
+  } else {
+    cx = f.hinge === 'L' ? x1 - 45 : x0 + 45;
+    // where a hand goes: tall doors at about 1 m from the floor, wall cabinets low, base cabinets high
+    const hy = f.h > 1200 ? 1050 : null;
+    const isWall = (S.cabs.find(c => c.id === f.cab) || {}).kind === 'wall';
+    cy = hy != null ? Y(Math.max(f.y + 120, Math.min(f.y + f.h - 120, hy))) : isWall ? yB - 90 : yT + 90;
+    vert = true;
+  }
+  if (hd === 'knob')
+    return `<circle cx="${cx}" cy="${cy}" r="16" fill="${col}" stroke="#000" stroke-opacity=".25" stroke-width="2"/><circle cx="${cx - 4}" cy="${cy - 4}" r="5" fill="#fff" fill-opacity=".35"/>`;
+  if (hd === 'bar')
+    return vert
+      ? `<rect x="${cx - 6}" y="${cy - 80}" width="12" height="160" rx="6" fill="${col}" stroke="#000" stroke-opacity=".25" stroke-width="2"/>`
+      : `<rect x="${cx - 80}" y="${cy - 6}" width="160" height="12" rx="6" fill="${col}" stroke="#000" stroke-opacity=".25" stroke-width="2"/>`;
+  if (hd === 'grip') {
+    if (f.kind === 'drawer')
+      return `<path d="M${cx - 45} ${yT} A45 30 0 0 0 ${cx + 45} ${yT} Z" fill="#000" fill-opacity=".55"/>`;
+    const ex = f.hinge === 'L' ? x1 : x0,
+      s = f.hinge === 'L' ? 0 : 1;
+    return `<path d="M${ex} ${cy - 55} A30 55 0 0 ${s} ${ex} ${cy + 55} Z" fill="#000" fill-opacity=".55"/>`;
+  }
+  if (hd === 'tab') {
+    if (f.kind === 'drawer') return `<rect x="${cx - 22}" y="${yT - 18}" width="44" height="40" rx="6" fill="${col}"/>`;
+    const ex = f.hinge === 'L' ? x1 - 10 : x0 - 20;
+    return `<rect x="${ex}" y="${cy - 22}" width="30" height="44" rx="6" fill="${col}"/>`;
+  }
+  return '';
+}
+function drawPic() {
+  const L = layout(),
+    pad = 140,
+    top = Math.max(L.H, 900) + 120,
+    Y = y => top - y,
+    W = L.W;
+  let s = `<svg viewBox="${-pad} ${-20} ${W + 2 * pad} ${top + 220}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Your cabinets with the new fronts">${defsSVG()}`;
+  // floor
+  s += `<rect x="${-pad}" y="${Y(0)}" width="${W + 2 * pad}" height="40" fill="var(--wall)"/><line x1="${-pad}" x2="${W + pad}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--ink2)" stroke-width="3"/>`;
+  // carcasses (white IKEA boxes behind the fronts)
+  L.cabs.forEach(p => {
+    s += `<rect x="${p.x}" y="${Y(p.y + p.h)}" width="${p.w}" height="${p.h}" fill="#f4f4f1" stroke="#c9cac5" stroke-width="3"/>`;
+    if (p.c.layout === 'open' || p.c.sys === 'metod') {
+      // shelves when there is no front
+      if (p.c.layout === 'open')
+        for (let k = 1; k < Math.round(p.h / 350); k++)
+          s += `<line x1="${p.x + 18}" x2="${p.x + p.w - 18}" y1="${Y(p.y + (k * p.h) / Math.round(p.h / 350))}" y2="${Y(p.y + (k * p.h) / Math.round(p.h / 350))}" stroke="#c9cac5" stroke-width="10"/>`;
+    }
+  });
+  if (L.plinth && S.sys === 'metod') {
+    const bw = Math.max(0, ...L.cabs.filter(p => p.c.kind !== 'wall').map(p => p.x + p.w));
+    s += `<rect x="0" y="${Y(L.plinth)}" width="${bw}" height="${L.plinth - 10}" fill="${shade(faceColour(), -0.25)}"/>`;
+  }
+  if (S.sys === 'besta')
+    L.cabs.forEach(p => {
+      s += `<rect x="${p.x + 40}" y="${Y(L.plinth)}" width="24" height="${L.plinth}" fill="#9a9a95"/><rect x="${p.x + p.w - 64}" y="${Y(L.plinth)}" width="24" height="${L.plinth}" fill="#9a9a95"/>`;
+    });
+  if (L.worktop) {
+    const bases = L.cabs.filter(p => p.c.kind === 'base');
+    if (bases.length) {
+      const a = Math.min(...bases.map(p => p.x)),
+        b = Math.max(...bases.map(p => p.x + p.w));
+      s += `<rect x="${a - 10}" y="${Y(940)}" width="${b - a + 20}" height="40" fill="#cfc8bb" stroke="#a9a293" stroke-width="2"/>`;
+    }
+  }
+  L.fronts.forEach(f => (s += frontSVG(f, Y)));
+  // widths under the picture
+  L.cabs
+    .filter(p => p.c.kind !== 'wall')
+    .forEach(p => {
+      const yy = Y(0) + 110;
+      s += `<line x1="${p.x + 8}" x2="${p.x + p.w - 8}" y1="${yy}" y2="${yy}" stroke="var(--ink2)" stroke-width="3"/><line x1="${p.x + 8}" x2="${p.x + 8}" y1="${yy - 18}" y2="${yy + 18}" stroke="var(--ink2)" stroke-width="3"/><line x1="${p.x + p.w - 8}" x2="${p.x + p.w - 8}" y1="${yy - 18}" y2="${yy + 18}" stroke="var(--ink2)" stroke-width="3"/><text x="${p.x + p.w / 2}" y="${yy - 26}" text-anchor="middle" class="dim">${p.c.w}</text>`;
+    });
+  s += '</svg>';
+  document.getElementById('pic').innerHTML = s;
+}
+
+/* small pictures of the styles for the style cards */
+function styleThumb(k) {
+  const was = S.style,
+    wasH = S.handle;
+  S.style = k;
+  S.handle = 'push';
+  const f = { id: 't', cab: 't', kind: 'door', w: 300, h: 420, x: 10, y: 0, hinge: null };
+  const svg = `<svg viewBox="0 0 320 440" aria-hidden="true">${defsSVG()
+    .replace(/id="(\w+)"/g, 'id="$1_' + k + '"')
+    .replace(/url\(#(\w+)\)/g, 'url(#$1_' + k + ')')}${frontSVG(f, y => 430 - y)
+    .replace(/url\(#(\w+)\)/g, 'url(#$1_' + k + ')')
+    .replace(/data-f="t"/, '')}</svg>`;
+  S.style = was;
+  S.handle = wasH;
+  return svg;
+}
+
+/* ==== 30-ui.js ====
+   The four steps (1 Cabinets · 2 Fronts · 3 Handles · 4 Order), the panel for each, the price bar,
+   and every tap. One render() redraws everything from S.
+*/
+const STEPS = [
+  ['cabs', 'Cabinets'],
+  ['fronts', 'Fronts'],
+  ['handles', 'Handles'],
+  ['order', 'Order']
+];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+/* a row of choices for one cabinet: data-a is "cabinet id|value" */
+const segC = (act, c, cur, opts) =>
+  `<div class="seg">${opts.map(([k, l]) => `<button type="button" class="${String(k) === String(cur) ? 'on' : ''}" data-act="${act}" data-a="${c.id}|${k}">${l}</button>`).join('')}</div>`;
+const seg = (act, cur, opts) =>
+  `<div class="seg">${opts.map(([k, l]) => `<button type="button" class="${String(k) === String(cur) ? 'on' : ''}" data-act="${act}" data-a="${k}">${l}</button>`).join('')}</div>`;
+
+function render() {
+  if (!matOk(S.style, S.mat)) S.mat = 'mdf';
+  save();
+  const i = STEPS.findIndex(s => s[0] === S.step);
+  const stepBtns = STEPS.map(
+    ([k, l], n) =>
+      `<button type="button" class="${k === S.step ? 'on' : ''}${n < i ? ' done' : ''}" data-act="step" data-a="${k}"><i>${n < i ? '✓' : n + 1}</i><span>${l}</span></button>`
+  ).join('');
+  document.getElementById('steps').innerHTML = stepBtns;
+  document.getElementById('bsteps').innerHTML = stepBtns;
+  drawPic();
+  const L = layout(),
+    P = priceAll(L);
+  document.getElementById('stagebar').innerHTML =
+    `<span class="chip"><b>${SYS[S.sys].name}</b> ${SYS[S.sys].what}</span><span class="chip">${P.n} front${P.n === 1 ? '' : 's'}</span><span class="chip">${STYLES[S.style].name}${S.style === 'fluted' ? ' · ' + (FLUTE.pitch.find(p => p[0] === S.flute.pitch) || [0, ''])[1].toLowerCase() : ''}</span><span class="chip"><i class="sw" style="background:${faceColour()}"></i>${esc(colourName())}</span>`;
+  document.getElementById('pichint').textContent = L.fronts.some(f => f.hinge)
+    ? 'Tap a door to swap the side it hinges on.'
+    : '';
+  document.getElementById('pbar').innerHTML =
+    `<div class="ptot"><span>${P.n} front${P.n === 1 ? '' : 's'} · incl. VAT${P.del ? ' + delivery' : ''}</span><b>${eur(P.total)}</b></div>${
+      S.step === 'order'
+        ? ''
+        : `<button type="button" class="btn ghost" data-act="next">${i < STEPS.length - 2 ? 'Next: ' + STEPS[i + 1][1] : 'See the order'} →</button>`
+    }<button type="button" class="btn pri" data-act="orderNow" ${P.n ? '' : 'disabled'}>Order</button>`;
+  const panel = document.getElementById('panel');
+  panel.innerHTML = { cabs: cabsHTML, fronts: frontsHTML, handles: handlesHTML, order: orderHTML }[S.step](L, P);
+  document.getElementById('app').dataset.step = S.step;
+}
+function colourName() {
+  const m = MATS[S.mat];
+  if (m.paint) return `RAL ${S.ral} ${(RAL[S.ral] || {}).name || ''}`;
+  if (m.lino) return 'Linoleum ' + (LINO.find(l => l[0] === S.lino) || LINO[0])[1].toLowerCase();
+  return m.name;
+}
+
+/* ---------- 1 Cabinets ---------- */
+function cabsHTML() {
+  const sysBtns = Object.entries(SYS)
+    .map(
+      ([k, s]) =>
+        `<button type="button" class="sys ${k === S.sys ? 'on' : ''}" data-act="sys" data-a="${k}"><b>${s.name}</b><span>${s.what}</span><small>${s.blurb}</small></button>`
+    )
+    .join('');
+  const kinds = SYS[S.sys].kinds;
+  const card = (c, n) => {
+    const kd = kinds[c.kind];
+    return `<div class="cab"><div class="cabh"><b>${n + 1}</b><span>${S.sys === 'metod' ? kd.label : SYS[S.sys].name + ' frame'}</span><span class="sp"></span><button type="button" class="ib" data-act="mv" data-a="${c.id}|-1" aria-label="Move left">◀</button><button type="button" class="ib" data-act="mv" data-a="${c.id}|1" aria-label="Move right">▶</button><button type="button" class="ib" data-act="del" data-a="${c.id}" aria-label="Remove">✕</button></div>
+      <div class="row"><label>Width</label>${segC(
+        'cw',
+        c,
+        c.w,
+        kd.widths.map(v => [v, v])
+      )}</div>
+      ${
+        kd.heights.length > 1
+          ? `<div class="row"><label>Height</label>${segC(
+              'ch',
+              c,
+              c.h,
+              kd.heights.map(v => [v, v])
+            )}</div>`
+          : ''
+      }
+      <div class="row"><label>Fronts</label>${segC(
+        'cl',
+        c,
+        c.layout,
+        layoutsFor(c).map(([k, l]) => [k, l])
+      )}</div></div>`;
+  };
+  const cards = S.cabs.map(card).join('');
+  const adds = Object.entries(kinds)
+    .map(
+      ([k, kd]) =>
+        `<button type="button" class="btn" data-act="add" data-a="${k}">+ ${S.sys === 'metod' ? kd.label.toLowerCase() : 'frame'}</button>`
+    )
+    .join('');
+  return `<h2>What do you have?</h2><p class="lede">Pick your IKEA system, then add your cabinets from left to right. Or paste the list from the IKEA planner.</p>
+    <div class="syss">${sysBtns}</div>
+    <div class="cabs">${cards || '<p class="hint">No cabinets yet — add one below.</p>'}</div>
+    <div class="adds">${adds}</div>
+    <details class="imp"${S.impOpen ? ' open' : ''}><summary>Paste your IKEA planner list</summary>
+      <p class="hint">Copy the item list from the IKEA planner (or type it) and paste it here. Frames and cabinets are picked up with their sizes; doors, hinges and legs are skipped.</p>
+      <textarea id="impText" rows="6" placeholder="PAX Wardrobe frame, white, 100x58x236 cm   2 pcs">${esc(S.impText || '')}</textarea>
+      <div class="adds"><button type="button" class="btn pri" data-act="imp">Read the list</button><button type="button" class="btn" data-act="impEx">Try an example</button></div>
+      ${S.impMsg ? `<p class="hint">${S.impMsg}</p>` : ''}</details>`;
+}
+
+/* ---------- 2 Fronts ---------- */
+function frontsHTML() {
+  const styles = Object.entries(STYLES)
+    .map(
+      ([k, s]) =>
+        `<button type="button" class="stc ${k === S.style ? 'on' : ''}" data-act="style" data-a="${k}">${styleThumb(k)}<b>${s.name}</b><small>${s.blurb}</small></button>`
+    )
+    .join('');
+  const mats = Object.entries(MATS)
+    .map(([k, m]) => {
+      const ok = matOk(S.style, k);
+      return `<button type="button" class="mat ${k === S.mat ? 'on' : ''}" data-act="mat" data-a="${k}" ${ok ? '' : 'disabled title="Not made in this style"'}><i class="sw" style="background:${m.paint ? (RAL[S.ral] || {}).hex : m.lino ? (LINO.find(l => l[0] === S.lino) || LINO[0])[2] : m.wood}"></i><b>${m.name}</b><small>${ok ? m.blurb : 'not in ' + STYLES[S.style].name.toLowerCase()}</small></button>`;
+    })
+    .join('');
+  let col = '';
+  if (MATS[S.mat].paint)
+    col = `<h3>Colour</h3><div class="sws">${RAL_PICK.map(k => `<button type="button" class="swb ${k === S.ral ? 'on' : ''}" data-act="ral" data-a="${k}" title="RAL ${k} ${esc(RAL[k].name)}" style="background:${RAL[k].hex}"></button>`).join('')}</div>
+    <label class="field"><span>Any RAL colour</span><select data-ch="ral">${Object.entries(RAL)
+      .map(([k, r]) => `<option value="${k}" ${k === S.ral ? 'selected' : ''}>RAL ${k} ${esc(r.name)}</option>`)
+      .join('')}</select></label>`;
+  if (MATS[S.mat].lino)
+    col = `<h3>Colour</h3><div class="sws">${LINO.map(([k, n, h]) => `<button type="button" class="swb ${k === S.lino ? 'on' : ''}" data-act="lino" data-a="${k}" title="${n}" style="background:${h}"></button>`).join('')}</div>`;
+  const flute =
+    S.style === 'fluted'
+      ? `<div class="row"><label>Flutes</label>${seg(
+          'pitch',
+          S.flute.pitch,
+          FLUTE.pitch.map(([v, l]) => [v, `${l} <small>${v} mm</small>`])
+        )}</div><div class="row"><label>Direction</label>${seg('fdir', S.flute.dir, FLUTE.dir)}</div>`
+      : '';
+  return `<h2>Your fronts</h2><p class="lede">One style for every front — 19 mm thick, made to the exact IKEA sizes and drilled for the IKEA hinges you already have.</p>
+    <h3>Style</h3><div class="stcs">${styles}</div>${flute}
+    <h3>Material</h3><div class="mats">${mats}</div>${col}`;
+}
+
+/* ---------- 3 Handles ---------- */
+function handlesHTML(L) {
+  const hs = Object.entries(HANDLES)
+    .map(
+      ([k, h]) =>
+        `<button type="button" class="mat ${k === S.handle ? 'on' : ''}" data-act="handle" data-a="${k}"><b>${h.name}</b><small>${h.blurb} · ${eur(h.price)} a front</small></button>`
+    )
+    .join('');
+  const fins =
+    S.handle === 'knob' || S.handle === 'bar' || S.handle === 'tab'
+      ? `<h3>Finish</h3>${seg(
+          'hfin',
+          S.hfin,
+          Object.entries(HFIN)
+            .filter(([k]) => S.handle !== 'tab' || k !== 'steel')
+            .map(([k, f]) => [k, f.name])
+        )}`
+      : '';
+  const doors = L.fronts.filter(f => f.hinge).length;
+  return `<h2>Handles</h2><p class="lede">The same handle on every front. Doors get it on the side that opens, drawers in the middle.</p>
+    <div class="mats">${hs}</div>${fins}
+    ${doors ? `<h3>Hinge sides</h3><p class="hint">Tap a door in the picture to swap the side it hinges on — the handle moves with it. ${Object.keys(S.flip).length ? `<button type="button" class="linkb" data-act="unflip">Put all doors back</button>` : ''}</p>` : ''}`;
+}
+
+/* ---------- 4 Order ---------- */
+function orderHTML(L, P) {
+  const g = grouped(L);
+  const rows = g
+    .map(
+      r =>
+        `<tr><td>${r.n}×</td><td>${r.kind === 'door' ? 'Door' + (r.hinge ? ` <small>hinge ${r.hinge === 'L' ? 'left' : 'right'}</small>` : '') : 'Drawer front'}</td><td class="num">${f1(r.w)} × ${f1(r.h)}<small>IKEA ${r.nom}</small></td><td class="num">${eur(r.p * r.n)}</td></tr>`
+    )
+    .join('');
+  return `<h2>Your order</h2><p class="lede">${P.n} fronts in ${esc(STYLES[S.style].name.toLowerCase())} ${esc(colourName())}, with ${esc(HANDLES[S.handle].name.toLowerCase())}${S.handle === 'push' ? ' latches' : S.handle === 'grip' ? 's' : 's in ' + esc(HFIN[S.hfin].name.toLowerCase())}. Made to measure and drilled for your IKEA hinges; ready ${LEAD} after you order.</p>
+    ${
+      P.n
+        ? `<table class="ord"><thead><tr><th></th><th>Front</th><th class="num">Size, mm</th><th class="num">Price</th></tr></thead><tbody>${rows}</tbody>
+    <tfoot><tr><td></td><td colspan="2">Fronts</td><td class="num">${eur(P.sub)}</td></tr><tr><td></td><td colspan="2">Delivery${P.del ? ` <small>free from ${eur(PRICE.deliveryFree)}</small>` : ' — free'}</td><td class="num">${P.del ? eur(P.del) : '€ 0'}</td></tr><tr class="tot"><td></td><td colspan="2">Total incl. VAT</td><td class="num">${eur(P.total)}</td></tr></tfoot></table>
+    <button type="button" class="btn pri big" data-act="orderNow">Order these fronts</button>`
+        : '<p class="hint">Add a cabinet with fronts first.</p>'
+    }
+    <p class="hint">Keep your IKEA frames, hinges and drawers — only the fronts change. Hinges and drawer fittings are not included.</p>`;
+}
+const f1 = v => (Math.round(v * 10) / 10).toString();
+
+/* ---------- order form (prototype: nothing is sent) ---------- */
+function openOrder() {
+  const L = layout(),
+    P = priceAll(L);
+  if (!P.n) return;
+  const box = document.getElementById('mbox');
+  box.innerHTML = `<h2>Order your fronts</h2><p class="lede">${P.n} fronts · <b>${eur(P.total)}</b> incl. VAT and delivery. We check every size with you before we cut.</p>
+    <label class="field"><span>Your name</span><input id="oName" autocomplete="name"></label>
+    <label class="field"><span>E-mail</span><input id="oMail" type="email" autocomplete="email"></label>
+    <label class="field"><span>Postcode</span><input id="oZip" autocomplete="postal-code"></label>
+    <label class="field"><span>Anything we should know?</span><textarea id="oNote" rows="3" placeholder="e.g. the left wall is not straight"></textarea></label>
+    <div class="adds"><button type="button" class="btn pri" data-act="send">Send order request</button><button type="button" class="btn" data-act="close">Not now</button></div>
+    <p class="hint">This is a prototype: the request is not sent anywhere yet.</p>`;
+  document.getElementById('modal').hidden = false;
+  setTimeout(() => document.getElementById('oName').focus(), 30);
+}
+function orderText() {
+  const L = layout(),
+    P = priceAll(L);
+  return [
+    `BRUIS Fronts — order request`,
+    `${SYS[S.sys].name} · ${STYLES[S.style].name}${S.style === 'fluted' ? ` (${S.flute.pitch} mm, ${S.flute.dir === 'v' ? 'vertical' : 'horizontal'})` : ''} · ${MATS[S.mat].name} · ${colourName()}`,
+    `Handles: ${HANDLES[S.handle].name}${S.handle === 'knob' || S.handle === 'bar' || S.handle === 'tab' ? ', ' + HFIN[S.hfin].name : ''}`,
+    '',
+    ...grouped(L).map(
+      r =>
+        `${r.n} × ${r.kind === 'door' ? 'door' : 'drawer front'} ${f1(r.w)} × ${f1(r.h)} mm (IKEA ${r.nom})${r.hinge ? ', hinge ' + (r.hinge === 'L' ? 'left' : 'right') : ''}`
+    ),
+    '',
+    `Total ${eur(P.total)} incl. VAT${P.del ? ' and delivery' : ''}`
+  ].join('\n');
+}
+function sendOrder() {
+  const v = id => (document.getElementById(id).value || '').trim();
+  if (!v('oName') || !/.+@.+\..+/.test(v('oMail'))) {
+    document.querySelector('#mbox .hint').textContent = 'Please fill in your name and a valid e-mail address.';
+    return;
+  }
+  const txt = orderText() + `\n\nFrom: ${v('oName')} <${v('oMail')}>, ${v('oZip')}\n${v('oNote')}`;
+  try {
+    const all = JSON.parse(localStorage.getItem('bruis-fronts-orders') || '[]');
+    all.push({ at: Date.now(), txt });
+    localStorage.setItem('bruis-fronts-orders', JSON.stringify(all));
+  } catch (e) {
+    /* fine */
+  }
+  document.getElementById('mbox').innerHTML =
+    `<h2>Thank you, ${esc(v('oName').split(' ')[0])}!</h2><p class="lede">In the real shop BRUIS would now e-mail you to check the sizes and send a payment link. In this prototype nothing was sent — here is the order as text:</p><pre class="otext">${esc(txt)}</pre><div class="adds"><button type="button" class="btn pri" data-act="copyOrder">Copy</button><button type="button" class="btn" data-act="close">Close</button></div>`;
+  S.lastOrder = txt;
+  save();
+}
+
+/* ---------- taps ---------- */
+document.addEventListener('click', e => {
+  const fr = e.target.closest('#pic .front.hd');
+  if (fr && !e.target.closest('[data-act]')) {
+    const id = fr.dataset.f;
+    if (S.flip[id]) delete S.flip[id];
+    else S.flip[id] = 1;
+    render();
+    return;
+  }
+  const b = e.target.closest('[data-act]');
+  if (!b || b.disabled) return;
+  const a = b.dataset.a || '',
+    [id, val] = a.split('|'),
+    c = S.cabs.find(x => x.id === id);
+  switch (b.dataset.act) {
+    case 'step':
+      S.step = a;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      break;
+    case 'next': {
+      const i = STEPS.findIndex(s => s[0] === S.step);
+      S.step = STEPS[Math.min(STEPS.length - 1, i + 1)][0];
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      break;
+    }
+    case 'sys':
+      if (a !== S.sys) {
+        // another system starts from an example row of its cabinets; the look you chose stays
+        const keep = {
+          style: S.style,
+          flute: S.flute,
+          mat: S.mat,
+          ral: S.ral,
+          lino: S.lino,
+          handle: S.handle,
+          hfin: S.hfin
+        };
+        S = Object.assign(freshState(a), keep, { step: 'cabs' });
+      }
+      break;
+    case 'cw':
+      if (c) {
+        c.w = +val;
+        fixLayout(c);
+      }
+      break;
+    case 'ch':
+      if (c) {
+        c.h = +val;
+        fixLayout(c);
+      }
+      break;
+    case 'cl':
+      if (c) c.layout = val;
+      break;
+    case 'mv': {
+      const i = S.cabs.indexOf(c),
+        j = i + +val;
+      if (c && j >= 0 && j < S.cabs.length) [S.cabs[i], S.cabs[j]] = [S.cabs[j], S.cabs[i]];
+      break;
+    }
+    case 'del':
+      S.cabs = S.cabs.filter(x => x !== c);
+      break;
+    case 'add': {
+      const kd = SYS[S.sys].kinds[a];
+      S.cabs.push(
+        cab(
+          S.sys,
+          a,
+          kd.widths.includes(60) ? 60 : kd.widths[kd.widths.length - 1],
+          kd.heights[
+            kd.heights.length > 1 && S.sys === 'pax' ? 1 : kd.heights.includes(80) ? kd.heights.indexOf(80) : 0
+          ]
+        )
+      );
+      break;
+    }
+    case 'impEx':
+      S.impText = IMPORT_EXAMPLE;
+      S.impOpen = true;
+      S.impMsg = '';
+      break;
+    case 'imp': {
+      const t = document.getElementById('impText').value;
+      S.impText = t;
+      S.impOpen = true;
+      const r = parsePlanner(t);
+      if (!r.found.length) {
+        S.impMsg =
+          'No PAX, METOD or BESTÅ frames found in that list. Each line needs the name and a size like 60x60x80 cm.';
+        break;
+      }
+      const bySys = {};
+      r.found.forEach(x => (bySys[x.sys] = (bySys[x.sys] || 0) + 1));
+      const main = Object.entries(bySys).sort((p, q) => q[1] - p[1])[0][0];
+      S.sys = main;
+      S.cabs = r.found.filter(x => x.sys === main);
+      S.flip = {};
+      const other = Object.entries(bySys).filter(([k]) => k !== main);
+      S.impMsg = `Found ${S.cabs.length} ${SYS[main].name} cabinet${S.cabs.length === 1 ? '' : 's'}.${other.length ? ` The list also has ${other.map(([k, n]) => `${n} ${SYS[k].name}`).join(' and ')} — one system per order for now; switch above to do those next.` : ''}${r.skipped.length ? ` Skipped ${r.skipped.length} line${r.skipped.length === 1 ? '' : 's'} that are not frames.` : ''}`;
+      break;
+    }
+    case 'style':
+      S.style = a;
+      if (!matOk(a, S.mat)) S.mat = 'mdf';
+      break;
+    case 'pitch':
+      S.flute.pitch = +a;
+      break;
+    case 'fdir':
+      S.flute.dir = a;
+      break;
+    case 'mat':
+      S.mat = a;
+      break;
+    case 'ral':
+      S.ral = a;
+      break;
+    case 'lino':
+      S.lino = a;
+      break;
+    case 'handle':
+      S.handle = a;
+      if (a === 'tab' && S.hfin === 'steel') S.hfin = 'black';
+      break;
+    case 'hfin':
+      S.hfin = a;
+      break;
+    case 'unflip':
+      S.flip = {};
+      break;
+    case 'orderNow':
+      openOrder();
+      return;
+    case 'send':
+      sendOrder();
+      return;
+    case 'copyOrder':
+      try {
+        navigator.clipboard.writeText(S.lastOrder || orderText());
+        b.textContent = 'Copied';
+      } catch (er) {
+        /* ignore */
+      }
+      return;
+    case 'close':
+      document.getElementById('modal').hidden = true;
+      return;
+    default:
+      return;
+  }
+  render();
+});
+document.addEventListener('change', e => {
+  if (e.target.dataset.ch === 'ral') {
+    S.ral = e.target.value;
+    render();
+  }
+});
+document.addEventListener(
+  'toggle',
+  e => {
+    if (e.target.classList && e.target.classList.contains('imp')) S.impOpen = e.target.open;
+  },
+  true
+);
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.getElementById('modal').hidden = true;
+});
+document.getElementById('modal').addEventListener('click', e => {
+  if (e.target.id === 'modal') e.currentTarget.hidden = true;
+});
+render();
+
+/* ==== 40-import.js ====
+   Read the item list from the IKEA planner (copied as text, or typed): every line with a PAX, METOD or BESTÅ
+   frame/cabinet and its size becomes a cabinet. Doors, hinges, legs and the rest are skipped.
+   Understands quantities like "2 x …", "2× …", "… 2 pcs", "Qty: 2", and sizes like 60x60x80 cm (width first).
+*/
+const IMPORT_EXAMPLE = `PAX Wardrobe frame, white, 100x58x236 cm   2 pcs
+PAX Wardrobe frame, white, 50x58x236 cm   1 pcs
+KOMPLEMENT Hinge with damper, 4 pack   3
+METOD Base cabinet frame, white, 60x60x80 cm   Qty: 2
+METOD Wall cabinet frame, white, 40x37x80 cm   1
+METOD High cabinet frame, white, 60x60x200 cm   1
+BESTÅ Frame, white, 120x40x38 cm   1`;
+
+function parsePlanner(text, only) {
+  const found = [],
+    skipped = [];
+  String(text || '')
+    .split(/\r?\n/)
+    .map(l => l.trim())
+    .filter(Boolean)
+    .forEach(line => {
+      const up = line.toUpperCase(),
+        sys = /\bPAX\b/.test(up)
+          ? 'pax'
+          : /\bMETOD\b/.test(up)
+            ? 'metod'
+            : /\bBEST[AÅ](?![A-Z])/.test(up)
+              ? 'besta'
+              : null;
+      const isFrame =
+        /FRAME|CABINET|STOMME|KORPUS|CORPS|KAST/.test(up) &&
+        !/DOOR|FRONT|HINGE|LEG|PLINTH|SHELF|RAIL|DRAWER(?! UNIT)/.test(up.replace(/CABINET FRAME/, ''));
+      const dm = line.match(/(\d{2,3})\s*[x×]\s*(\d{2,3})(?:\s*[x×]\s*(\d{2,3}))?\s*cm/i);
+      if (!sys || !isFrame || !dm) {
+        if (sys && !isFrame) skipped.push(line);
+        return;
+      }
+      if (only && sys !== only) {
+        skipped.push(line);
+        return;
+      }
+      const a = +dm[1],
+        c3 = dm[3] ? +dm[3] : null;
+      // width × depth × height (IKEA's order); with two numbers: width × height
+      const w = a,
+        h = c3 != null ? c3 : +dm[2];
+      let kind = 'frame';
+      if (sys === 'metod') kind = /WALL/.test(up) ? 'wall' : /HIGH|TALL/.test(up) ? 'high' : 'base';
+      const kd = SYS[sys].kinds[kind];
+      const W = kd.widths.reduce((b, v) => (Math.abs(v - w) < Math.abs(b - w) ? v : b), kd.widths[0]),
+        Hh = kd.heights.reduce((b, v) => (Math.abs(v - h) < Math.abs(b - h) ? v : b), kd.heights[0]);
+      const q = +(
+        (line.match(/^(\d+)\s*[x×]\s+/i) || [])[1] ||
+        (line.match(/(?:qty|quantity|antal|aantal)\s*:?\s*(\d+)/i) || [])[1] ||
+        (line.match(/(\d+)\s*(?:pcs|pc|st|stk|pieces|x)\s*$/i) || [])[1] ||
+        (line.match(/\s(\d{1,2})\s*$/) || [])[1] ||
+        1
+      );
+      for (let i = 0; i < Math.min(q, 20); i++) found.push(cab(sys, kind, W, Hh));
+    });
+  return { found, skipped };
+}
+
+
+</script>
+</body>
+</html>
