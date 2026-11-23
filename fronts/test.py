@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Quick check of the BRUIS Fronts prototype in a headless Chrome: the page starts without errors, all four
-steps render for PAX, METOD and BESTÅ, the planner example is read, and every cabinet size and front layout
-gives fronts that stay inside their cabinet without overlapping.  Run after  python3 fronts/build.py"""
+steps render for PAX, METOD and BESTÅ, the planner example is read, every cabinet size and front layout
+gives fronts that stay inside their cabinet without overlapping, Surprise me gives valid looks, a front can get its
+own look, typed widths and quick starts work, and (with THREE_JS set to a local three.min.js) 3D draws.  Run after  python3 fronts/build.py"""
 import os, pathlib, sys
 from playwright.sync_api import sync_playwright
 
@@ -18,6 +19,18 @@ CHECK = """(()=>{const bad=[];
       for (let i=0;i<fr.length;i++) for (let j=i+1;j<fr.length;j++) { const a=fr[i],b=fr[j];
         if (Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x)>0.1&&Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y)>0.1) bad.push(`fronts overlap ${sys} ${k} ${w}x${h} ${lk}`) } } }
   if (Object.keys(RAL).length<200) bad.push('RAL list missing');
+  Object.entries(COLOURS).forEach(([k,c])=>{ if(!RAL[c.ral]) bad.push('colour '+k+' has no RAL '+c.ral) });
+  // surprise: every recipe, every system, gives valid looks
+  for (const sys of ['pax','metod','besta']) for (let seed=1; seed<40; seed++) { S=freshState(sys); surprise(seed);
+    layout().fronts.forEach(f=>{ const lk=lookOf(f); if(!MATS[lk.mat]||!STYLES[lk.style]||!matOk(lk.style,lk.mat)) bad.push(`surprise ${sys} ${seed}: bad look ${JSON.stringify(lk)}`) });
+    if(!S.recipe) bad.push('surprise gave no recipe'); }
+  // a look for one front: own, change, copy to the cabinet, back to the rest
+  S=freshState('pax'); render(); const f0=layout().fronts[0]; S.sel=f0.id; S.fx[f0.id]={style:'flat',mat:'walnut',col:'chalk'};
+  if (lookOf(f0).mat!=='walnut') bad.push('own look not used'); setLook(f0.id,'mat','glass'); if (lookOf(f0).style!=='fluted') bad.push('glass must be fluted');
+  S.step='fronts'; render(); if(!document.querySelector('.selcard')) bad.push('no card for the selected front');
+  // typed widths
+  if (parseWidths('100 50 2x100', SYS.pax.kinds.frame.widths).join()!=='100,50,100,100') bad.push('typed widths: '+parseWidths('100 50 2x100', SYS.pax.kinds.frame.widths));
+  for (const sys of ['pax','metod','besta']) QUICK[sys].forEach(q=>{ S=freshState(sys); S.cabs=quickMake(q[1]); if(!layout().fronts.length) bad.push('quick start '+q[0]+' has no fronts') });
   return [...new Set(bad)] })()"""
 
 with sync_playwright() as pw:
@@ -26,12 +39,30 @@ with sync_playwright() as pw:
     errs = []
     p.on("pageerror", lambda e: errs.append(str(e)))
     p.on("console", lambda m: m.type == "error" and errs.append(m.text))
-    p.route("**/*", lambda r: r.fulfill(path=str(PAGE)) if r.request.url.startswith("http://fronts.test/") else r.fulfill(status=200, body="", content_type="text/css"))
+    three = os.environ.get("THREE_JS")
+
+    def route(r):
+        u = r.request.url
+        if u.startswith("http://fronts.test/"):
+            return r.fulfill(path=str(PAGE))
+        if "three" in u and u.endswith(".js") and three:
+            return r.fulfill(path=three, content_type="application/javascript")
+        return r.fulfill(status=200, body="", content_type="text/css")
+
+    p.route("**/*", route)
     p.goto("http://fronts.test/")
     p.evaluate("localStorage.clear()")
     p.reload()
     p.wait_for_timeout(300)
     bad = errs + (p.evaluate(CHECK) if not errs else [])
+    if not bad and os.environ.get("THREE_JS"):
+        # 3D: open it, draw, and tap the middle of the picture
+        p.evaluate("S=freshState('metod');S.view='3d';render()")
+        p.wait_for_function("V3.ready&&V3.meshes.length>0", timeout=20000)
+        n = p.evaluate("V3.meshes.length")
+        if n < 5:
+            bad.append(f"3D: only {n} fronts")
+        bad += errs
     br.close()
 print("\n".join(bad) or "all fine")
 sys.exit(1 if bad else 0)

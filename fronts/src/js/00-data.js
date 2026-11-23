@@ -5,7 +5,8 @@
             door 49.5 × 229.4 cm on a 236 frame (195 cm on a 201 frame)
      METOD  fronts are 3 mm smaller than the cabinet both ways (39.7 × 79.7 for a 40 × 80 cabinet)
      BESTÅ  fronts 59.6 wide; 63.7 / 37.7 / 25.7 high for the 64 / 38 / 26 positions
-   Prices are examples for the prototype.
+   The range is curated: Flat or Fluted; painted in a few bold colours, oak, walnut, birch ply, fluted glass,
+   and two budget boards (raw MDF, untreated birch ply). Prices are examples for the prototype.
 */
 const SYS = {
   pax: {
@@ -64,14 +65,10 @@ const LAYOUTS = {
   ]
 };
 
-/* front styles — the shape of the front */
+/* the curated range: two styles … */
 const STYLES = {
-  flat: { name: 'Flat', blurb: 'Clean and quiet', f: 1 },
-  fluted: { name: 'Fluted', blurb: 'Rounded flutes routed in', f: 1.6 },
-  shaker: { name: 'Shaker', blurb: 'Frame with a sunk panel', f: 1.35 },
-  arch: { name: 'Arch', blurb: 'An arch routed in the face', f: 1.45 },
-  slats: { name: 'Slats', blurb: 'Ribs with shadow gaps', f: 1.5 },
-  grid: { name: 'Grid', blurb: 'Squares cut in the face', f: 1.4 }
+  flat: { name: 'Flat', blurb: 'Clean and calm', f: 1 },
+  fluted: { name: 'Fluted', blurb: 'Rounded flutes, routed in', f: 1.6 }
 };
 const FLUTE = {
   pitch: [
@@ -85,85 +82,66 @@ const FLUTE = {
   ]
 };
 
-/* materials: price per m² of front (both faces finished, edges included) and which styles they can take */
+/* … a few materials (price per m² of front, both faces finished, edges included) … */
 const MATS = {
-  mdf: { name: 'Painted MDF', blurb: 'Any RAL colour, smooth matt paint', rate: 150, styles: 'all', paint: true },
-  oak: {
-    name: 'Oak veneer',
-    blurb: 'Natural oak, oiled',
-    rate: 235,
-    styles: ['flat', 'fluted', 'shaker', 'arch', 'slats'],
-    wood: '#C9A26E',
-    grain: '#8F6A3C'
-  },
-  smoked: {
-    name: 'Smoked oak',
-    blurb: 'Dark, fumed oak',
-    rate: 255,
-    styles: ['flat', 'fluted', 'shaker', 'slats'],
-    wood: '#71533A',
-    grain: '#3F2B1C'
-  },
-  walnut: {
-    name: 'Walnut veneer',
-    blurb: 'Warm and dark',
-    rate: 295,
-    styles: ['flat', 'fluted', 'shaker', 'slats'],
-    wood: '#5C3A26',
-    grain: '#2E1A0F'
-  },
+  painted: { name: 'Painted', blurb: 'Smooth matt paint in one of our colours', rate: 150, paint: true },
+  oak: { name: 'Oak veneer', blurb: 'Natural oak, oiled', rate: 235, wood: '#C9A26E', grain: '#8F6A3C' },
+  walnut: { name: 'Walnut veneer', blurb: 'Deep and warm, oiled', rate: 295, wood: '#5C3A26', grain: '#2E1A0F' },
   birch: {
     name: 'Birch plywood',
-    blurb: 'Layered edge on show',
+    blurb: 'Clear lacquer, layered edge on show',
     rate: 160,
-    styles: ['flat', 'slats', 'grid'],
     wood: '#DCC69E',
-    grain: '#B89B6C'
+    grain: '#B89B6C',
+    ply: true
   },
-  lino: {
-    name: 'Linoleum',
-    blurb: 'Soft, warm surface on birch ply',
-    rate: 220,
-    styles: ['flat', 'arch', 'grid'],
-    lino: true
+  glass: { name: 'Fluted glass', blurb: 'Reeded glass in a slim frame', rate: 340, glass: true, only: 'fluted' },
+  rawmdf: {
+    name: 'Raw MDF',
+    blurb: 'Sanded, ready for your own paint',
+    rate: 85,
+    wood: '#B39874',
+    budget: true,
+    raw: true
+  },
+  rawply: {
+    name: 'Untreated birch ply',
+    blurb: 'No lacquer — oil, wax or paint it yourself',
+    rate: 115,
+    wood: '#E3D2B0',
+    grain: '#C9AF84',
+    ply: true,
+    budget: true
   }
 };
-/* linoleum colours (generic names) */
-const LINO = [
-  ['mushroom', 'Mushroom', '#B9AC97'],
-  ['pebble', 'Pebble', '#9A9A93'],
-  ['olive', 'Olive', '#6F6E4C'],
-  ['sage', 'Sage', '#8E9B85'],
-  ['iron', 'Iron', '#4A4D50'],
-  ['burgundy', 'Burgundy', '#6B2B2E'],
-  ['powder', 'Powder', '#D9C6BD'],
-  ['charcoal', 'Charcoal', '#2E2F31']
-];
+/* … the frame around fluted glass … */
+const GFRAME = {
+  black: { name: 'Black', hex: '#1F1F1F' },
+  alu: { name: 'Aluminium', hex: '#B9BCBE' },
+  oak: { name: 'Oak', hex: '#C9A26E' }
+};
+/* … and a short list of bold colours, each one a RAL colour so any paint shop can match it */
+const COLOURS = {
+  cobalt: { name: 'Cobalt', ral: '5002' },
+  midnight: { name: 'Midnight', ral: '5011' },
+  racing: { name: 'Racing green', ral: '6005' },
+  sage: { name: 'Sage', ral: '6021' },
+  mustard: { name: 'Mustard', ral: '1005' },
+  terracotta: { name: 'Terracotta', ral: '8023' },
+  tomato: { name: 'Tomato', ral: '3013' },
+  oxblood: { name: 'Oxblood', ral: '3005' },
+  plum: { name: 'Plum', ral: '4007' },
+  blush: { name: 'Blush', ral: '3015' },
+  chalk: { name: 'Chalk white', ral: '9010' },
+  black: { name: 'Soft black', ral: '9005' }
+};
 
-/* RAL colours: the full list comes from Fitted at build time; a short list is shown first */
+/* RAL colours: the full list comes from Fitted at build time (names and colours for the curated list) */
 const RAL = {};
 /*@RAL@*/ ''.split('|').forEach(e => {
   const m = e.match(/^(\d{4}) (.+) ([0-9A-F]{6})$/);
   if (m) RAL[m[1]] = { name: m[2], hex: '#' + m[3] };
 });
-const RAL_PICK = [
-  '9010',
-  '9001',
-  '1013',
-  '1015',
-  '7044',
-  '7035',
-  '6021',
-  '6011',
-  '6003',
-  '5014',
-  '5011',
-  '3012',
-  '8025',
-  '7016',
-  '7021',
-  '9005'
-];
 
 /* handles: price per front (handle or latch), and how they are drawn */
 const HANDLES = {
@@ -189,3 +167,4 @@ const PRICE = {
   deliveryFree: 1500
 };
 const LEAD = 'about 3–4 weeks';
+const colHex = k => (RAL[(COLOURS[k] || COLOURS.chalk).ral] || {}).hex || '#eeeeee';

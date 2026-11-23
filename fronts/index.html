@@ -658,6 +658,177 @@ textarea {
   }
 }
 
+/* ---------- round 2: 3D, a look per front, surprise, quick setup ---------- */
+.pic[hidden] {
+  display: none;
+}
+.pic3d {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  padding: 0;
+  margin: 10px 0 6px;
+}
+.pic3d canvas {
+  display: block;
+  cursor: grab;
+}
+.pic3d .c3 {
+  margin: auto;
+  text-align: center;
+}
+.stagebar {
+  align-items: center;
+}
+.stagebar .seg button {
+  padding: 4px 12px;
+}
+.btn.sm {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+.btn.surp {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--bg);
+}
+.chip.rec {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.pic .front {
+  cursor: pointer;
+}
+.pic .front:hover > rect:first-child {
+  stroke: var(--accent);
+  stroke-opacity: 1;
+  stroke-width: 8;
+}
+.stcs.two {
+  grid-template-columns: repeat(2, 1fr);
+}
+.stcs.two .stc svg {
+  height: 110px;
+}
+.mat .tag {
+  font-style: normal;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: var(--warn-soft);
+  color: var(--warn);
+  border-radius: 5px;
+  padding: 1px 5px;
+}
+.sw.gl {
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.6) 0 2px,
+    rgba(0, 0, 0, 0.12) 2px 4px
+  ) !important;
+}
+.sws {
+  gap: 10px;
+}
+.swb {
+  width: 54px;
+  height: 54px;
+  border-radius: 12px;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.swb span {
+  position: absolute;
+  top: calc(100% + 3px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10.5px;
+  color: var(--ink2);
+  white-space: nowrap;
+}
+.sws {
+  padding-bottom: 18px;
+}
+.selcard {
+  border: 2px solid var(--accent);
+  border-radius: 14px;
+  padding: 10px 12px;
+  margin: 12px 0;
+  background: var(--accent-soft);
+}
+.selcard .seg {
+  margin: 6px 0;
+}
+h3.big {
+  font-size: 13px;
+  color: var(--ink);
+  margin-top: 26px;
+}
+.qks {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.qk {
+  text-align: left;
+  border: 1.5px solid var(--line);
+  background: var(--raised);
+  border-radius: 12px;
+  padding: 9px 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.qk:hover {
+  border-color: var(--accent);
+}
+.qk small {
+  font-size: 11.5px;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.syss .sys {
+  align-items: flex-start;
+}
+.ord .lkh td {
+  padding-top: 14px;
+  font-weight: 600;
+  border-bottom: 0;
+}
+.ord .lkh .sw {
+  vertical-align: -2px;
+  margin-right: 6px;
+}
+@media (max-width: 860px) {
+  .stagebar .chip.rec {
+    display: none;
+  }
+  .stagebar {
+    gap: 5px;
+  }
+  .stcs.two .stc svg {
+    height: 80px;
+  }
+  .swb {
+    width: 46px;
+    height: 46px;
+  }
+}
+
+.stagebar .seg {
+  flex-wrap: nowrap;
+  flex: none;
+}
+.btn.surp {
+  white-space: nowrap;
+}
+
 </style>
 </head>
 <body>
@@ -670,6 +841,7 @@ textarea {
     <section class="stage" aria-label="Your cabinets with the new fronts">
       <div class="stagebar" id="stagebar"></div>
       <div class="pic" id="pic"></div>
+      <div class="pic pic3d" id="pic3d" hidden></div>
       <p class="pichint" id="pichint"></p>
     </section>
     <aside class="panel" id="panel"></aside>
@@ -687,7 +859,8 @@ textarea {
             door 49.5 × 229.4 cm on a 236 frame (195 cm on a 201 frame)
      METOD  fronts are 3 mm smaller than the cabinet both ways (39.7 × 79.7 for a 40 × 80 cabinet)
      BESTÅ  fronts 59.6 wide; 63.7 / 37.7 / 25.7 high for the 64 / 38 / 26 positions
-   Prices are examples for the prototype.
+   The range is curated: Flat or Fluted; painted in a few bold colours, oak, walnut, birch ply, fluted glass,
+   and two budget boards (raw MDF, untreated birch ply). Prices are examples for the prototype.
 */
 const SYS = {
   pax: {
@@ -746,14 +919,10 @@ const LAYOUTS = {
   ]
 };
 
-/* front styles — the shape of the front */
+/* the curated range: two styles … */
 const STYLES = {
-  flat: { name: 'Flat', blurb: 'Clean and quiet', f: 1 },
-  fluted: { name: 'Fluted', blurb: 'Rounded flutes routed in', f: 1.6 },
-  shaker: { name: 'Shaker', blurb: 'Frame with a sunk panel', f: 1.35 },
-  arch: { name: 'Arch', blurb: 'An arch routed in the face', f: 1.45 },
-  slats: { name: 'Slats', blurb: 'Ribs with shadow gaps', f: 1.5 },
-  grid: { name: 'Grid', blurb: 'Squares cut in the face', f: 1.4 }
+  flat: { name: 'Flat', blurb: 'Clean and calm', f: 1 },
+  fluted: { name: 'Fluted', blurb: 'Rounded flutes, routed in', f: 1.6 }
 };
 const FLUTE = {
   pitch: [
@@ -767,85 +936,66 @@ const FLUTE = {
   ]
 };
 
-/* materials: price per m² of front (both faces finished, edges included) and which styles they can take */
+/* … a few materials (price per m² of front, both faces finished, edges included) … */
 const MATS = {
-  mdf: { name: 'Painted MDF', blurb: 'Any RAL colour, smooth matt paint', rate: 150, styles: 'all', paint: true },
-  oak: {
-    name: 'Oak veneer',
-    blurb: 'Natural oak, oiled',
-    rate: 235,
-    styles: ['flat', 'fluted', 'shaker', 'arch', 'slats'],
-    wood: '#C9A26E',
-    grain: '#8F6A3C'
-  },
-  smoked: {
-    name: 'Smoked oak',
-    blurb: 'Dark, fumed oak',
-    rate: 255,
-    styles: ['flat', 'fluted', 'shaker', 'slats'],
-    wood: '#71533A',
-    grain: '#3F2B1C'
-  },
-  walnut: {
-    name: 'Walnut veneer',
-    blurb: 'Warm and dark',
-    rate: 295,
-    styles: ['flat', 'fluted', 'shaker', 'slats'],
-    wood: '#5C3A26',
-    grain: '#2E1A0F'
-  },
+  painted: { name: 'Painted', blurb: 'Smooth matt paint in one of our colours', rate: 150, paint: true },
+  oak: { name: 'Oak veneer', blurb: 'Natural oak, oiled', rate: 235, wood: '#C9A26E', grain: '#8F6A3C' },
+  walnut: { name: 'Walnut veneer', blurb: 'Deep and warm, oiled', rate: 295, wood: '#5C3A26', grain: '#2E1A0F' },
   birch: {
     name: 'Birch plywood',
-    blurb: 'Layered edge on show',
+    blurb: 'Clear lacquer, layered edge on show',
     rate: 160,
-    styles: ['flat', 'slats', 'grid'],
     wood: '#DCC69E',
-    grain: '#B89B6C'
+    grain: '#B89B6C',
+    ply: true
   },
-  lino: {
-    name: 'Linoleum',
-    blurb: 'Soft, warm surface on birch ply',
-    rate: 220,
-    styles: ['flat', 'arch', 'grid'],
-    lino: true
+  glass: { name: 'Fluted glass', blurb: 'Reeded glass in a slim frame', rate: 340, glass: true, only: 'fluted' },
+  rawmdf: {
+    name: 'Raw MDF',
+    blurb: 'Sanded, ready for your own paint',
+    rate: 85,
+    wood: '#B39874',
+    budget: true,
+    raw: true
+  },
+  rawply: {
+    name: 'Untreated birch ply',
+    blurb: 'No lacquer — oil, wax or paint it yourself',
+    rate: 115,
+    wood: '#E3D2B0',
+    grain: '#C9AF84',
+    ply: true,
+    budget: true
   }
 };
-/* linoleum colours (generic names) */
-const LINO = [
-  ['mushroom', 'Mushroom', '#B9AC97'],
-  ['pebble', 'Pebble', '#9A9A93'],
-  ['olive', 'Olive', '#6F6E4C'],
-  ['sage', 'Sage', '#8E9B85'],
-  ['iron', 'Iron', '#4A4D50'],
-  ['burgundy', 'Burgundy', '#6B2B2E'],
-  ['powder', 'Powder', '#D9C6BD'],
-  ['charcoal', 'Charcoal', '#2E2F31']
-];
+/* … the frame around fluted glass … */
+const GFRAME = {
+  black: { name: 'Black', hex: '#1F1F1F' },
+  alu: { name: 'Aluminium', hex: '#B9BCBE' },
+  oak: { name: 'Oak', hex: '#C9A26E' }
+};
+/* … and a short list of bold colours, each one a RAL colour so any paint shop can match it */
+const COLOURS = {
+  cobalt: { name: 'Cobalt', ral: '5002' },
+  midnight: { name: 'Midnight', ral: '5011' },
+  racing: { name: 'Racing green', ral: '6005' },
+  sage: { name: 'Sage', ral: '6021' },
+  mustard: { name: 'Mustard', ral: '1005' },
+  terracotta: { name: 'Terracotta', ral: '8023' },
+  tomato: { name: 'Tomato', ral: '3013' },
+  oxblood: { name: 'Oxblood', ral: '3005' },
+  plum: { name: 'Plum', ral: '4007' },
+  blush: { name: 'Blush', ral: '3015' },
+  chalk: { name: 'Chalk white', ral: '9010' },
+  black: { name: 'Soft black', ral: '9005' }
+};
 
-/* RAL colours: the full list comes from Fitted at build time; a short list is shown first */
+/* RAL colours: the full list comes from Fitted at build time (names and colours for the curated list) */
 const RAL = {};
 '1000 Green beige CDBA88|1001 Beige D0B084|1002 Sand yellow D2AA6D|1003 Signal yellow F9A800|1004 Golden yellow E49E00|1005 Honey yellow CB8E00|1006 Maize yellow E29000|1007 Daffodil yellow E88C00|1011 Brown beige AF804F|1012 Lemon yellow DDAF27|1013 Oyster white E3D9C6|1014 Ivory DDC49A|1015 Light ivory E6D2B5|1016 Sulfur yellow F1DD38|1017 Saffron yellow F6A950|1018 Zinc yellow FACA30|1019 Grey beige A48F7A|1020 Olive yellow A08F65|1021 Rape yellow F6B600|1023 Traffic yellow F7B500|1024 Ochre yellow BA8F4C|1026 Luminous yellow FFFF00|1027 Curry A77F0E|1028 Melon yellow FF9B00|1032 Broom yellow E2A300|1033 Dahlia yellow F99A1C|1034 Pastel yellow EB9C52|1035 Pearl beige 908370|1036 Pearl gold 80643F|1037 Sun yellow F09200|2000 Yellow orange DA6E00|2001 Red orange BA481B|2002 Vermilion BF3922|2003 Pastel orange F67828|2004 Pure orange E25303|2005 Luminous orange FF4D06|2007 Luminous bright orange FFB200|2008 Bright red orange ED6B21|2009 Traffic orange DE5307|2010 Signal orange D05D28|2011 Deep orange E26E0E|2012 Salmon orange D5654D|2013 Pearl orange 923E25|2017 RAL orange FC5500|3000 Flame red A72920|3001 Signal red 9B2423|3002 Carmine red 9B2321|3003 Ruby red 861A22|3004 Purple red 6B1C23|3005 Wine red 59191F|3007 Black red 3E2022|3009 Oxide red 6D342D|3011 Brown red 792423|3012 Beige red C6846D|3013 Tomato red 972E25|3014 Antique pink CB7375|3015 Light pink D8A0A6|3016 Coral red A63D2F|3017 Rose CB555D|3018 Strawberry red C73F4A|3020 Traffic red BB1E10|3022 Salmon pink CF6955|3024 Luminous red FF2D21|3026 Luminous bright red FF2A1B|3027 Raspberry red AB273C|3028 Pure red CC2C24|3031 Orient red A63437|3032 Pearl ruby red 701D23|3033 Pearl pink A53A2D|4001 Red lilac 816183|4002 Red violet 8D3C4B|4003 Heather violet C4618C|4004 Claret violet 651E38|4005 Blue lilac 76689A|4006 Traffic purple 903373|4007 Purple violet 47243C|4008 Signal violet 844C82|4009 Pastel violet 9D8692|4010 Telemagenta BC4077|4011 Pearl violet 6E6387|4012 Pearl blackberry 6B6B7F|5000 Violet blue 314F6F|5001 Green blue 0F4C64|5002 Ultramarine blue 00387B|5003 Sapphire blue 1F3855|5004 Black blue 191E28|5005 Signal blue 005387|5007 Brilliant blue 376B8C|5008 Grey blue 2B3A44|5009 Azure blue 225F78|5010 Gentian blue 004F7C|5011 Steel blue 1A2B3C|5012 Light blue 0089B6|5013 Cobalt blue 193153|5014 Pigeon blue 637D96|5015 Sky blue 007CB0|5017 Traffic blue 005B8C|5018 Turquoise blue 048B8C|5019 Capri blue 005E83|5020 Ocean blue 00414B|5021 Water blue 007577|5022 Night blue 222D5A|5023 Distant blue 42698C|5024 Pastel blue 6093AC|5025 Pearl gentian blue 21697C|5026 Pearl night blue 0F3052|6000 Patina green 3C7460|6001 Emerald green 366735|6002 Leaf green 325928|6003 Olive green 50533C|6004 Blue green 024442|6005 Moss green 114232|6006 Grey olive 3C392E|6007 Bottle green 2C3222|6008 Brown green 37342A|6009 Fir green 27352A|6010 Grass green 4D6F39|6011 Reseda green 6C7C59|6012 Black green 303D3A|6013 Reed green 7D765A|6014 Yellow olive 474135|6015 Black olive 3D3D36|6016 Turquoise green 00694C|6017 May green 587F40|6018 Yellow green 61993B|6019 Pastel green B9CEAC|6020 Chrome green 37422F|6021 Pale green 8A9977|6022 Olive drab 3A3327|6024 Traffic green 008351|6025 Fern green 5E6E3B|6026 Opal green 005F4E|6027 Light green 7EBAB5|6028 Pine green 315442|6029 Mint green 006F3D|6032 Signal green 237F52|6033 Mint turquoise 46877F|6034 Pastel turquoise 7AACAC|6035 Pearl dark green 194D25|6036 Pearl opal green 04574B|6037 Pure green 008B29|6038 Luminous green 00B51B|6039 Fibrous green B3C43E|7000 Squirrel grey 7A888E|7001 Silver grey 8C969D|7002 Olive grey 817863|7003 Moss grey 7A7669|7004 Signal grey 9B9B9B|7005 Mouse grey 6C6E6B|7006 Beige grey 766A5E|7008 Khaki grey 745E3D|7009 Green grey 5D6058|7010 Tarpaulin grey 585C56|7011 Iron grey 52595D|7012 Basalt grey 575D5E|7013 Brown grey 575044|7015 Slate grey 4F5358|7016 Anthracite grey 383E42|7021 Black grey 2F3234|7022 Umbra grey 4C4A44|7023 Concrete grey 808076|7024 Graphite grey 45494E|7026 Granite grey 374345|7030 Stone grey 928E85|7031 Blue grey 5B686D|7032 Pebble grey B5B0A1|7033 Cement grey 7F8274|7034 Yellow grey 92886F|7035 Light grey C5C7C4|7036 Platinum grey 979392|7037 Dusty grey 7A7B7A|7038 Agate grey B0B0A9|7039 Quartz grey 6B665E|7040 Window grey 989EA1|7042 Traffic grey A 8E9291|7043 Traffic grey B 4F5250|7044 Silk grey B7B3A8|7045 Telegrey 1 8D9295|7046 Telegrey 2 7F868A|7047 Telegrey 4 C8C8C7|7048 Pearl mouse grey 817B73|8000 Green brown 89693F|8001 Ochre brown 9D622B|8002 Signal brown 794D3E|8003 Clay brown 7E4B26|8004 Copper brown 8D4931|8007 Fawn brown 70452A|8008 Olive brown 724A25|8011 Nut brown 5A3826|8012 Red brown 66332B|8014 Sepia brown 4A3526|8015 Chestnut brown 5E2F26|8016 Mahogany brown 4C2B20|8017 Chocolate brown 442F29|8019 Grey brown 3D3635|8022 Black brown 1A1718|8023 Orange brown A45729|8024 Beige brown 795038|8025 Pale brown 755847|8028 Terra brown 513A2A|8029 Pearl copper 7F4031|9001 Cream E9E0D2|9002 Grey white D7D5CB|9003 Signal white ECECE7|9004 Signal black 2B2B2C|9005 Jet black 0E0E10|9006 White aluminium A1A1A0|9007 Grey aluminium 878581|9010 Pure white F1ECE1|9011 Graphite black 27292B|9012 Clean room white F8F2E1|9016 Traffic white F1F0EA|9017 Traffic black 2A292A|9018 Papyrus white C8CBC4|9022 Pearl light grey 858583|9023 Pearl dark grey 797B7A'.split('|').forEach(e => {
   const m = e.match(/^(\d{4}) (.+) ([0-9A-F]{6})$/);
   if (m) RAL[m[1]] = { name: m[2], hex: '#' + m[3] };
 });
-const RAL_PICK = [
-  '9010',
-  '9001',
-  '1013',
-  '1015',
-  '7044',
-  '7035',
-  '6021',
-  '6011',
-  '6003',
-  '5014',
-  '5011',
-  '3012',
-  '8025',
-  '7016',
-  '7021',
-  '9005'
-];
 
 /* handles: price per front (handle or latch), and how they are drawn */
 const HANDLES = {
@@ -871,12 +1021,13 @@ const PRICE = {
   deliveryFree: 1500
 };
 const LEAD = 'about 3–4 weeks';
+const colHex = k => (RAL[(COLOURS[k] || COLOURS.chalk).ral] || {}).hex || '#eeeeee';
 
 /* ==== 10-model.js ====
    The project (S), saved in this browser, and what it turns into: each cabinet's fronts with their
    real sizes (mm) and where they sit in the picture.
 */
-const KEY = 'bruis-fronts-v1';
+const KEY = 'bruis-fronts-v2';
 let _id = 1;
 const nid = () => 'c' + _id++ + Math.random().toString(36).slice(2, 5);
 
@@ -886,19 +1037,22 @@ function freshState(sys) {
     cabs: [],
     style: 'fluted',
     flute: { pitch: 20, dir: 'v' },
-    mat: 'mdf',
-    ral: '6021',
-    lino: 'mushroom',
+    mat: 'painted',
+    col: 'racing',
+    gframe: 'black',
     handle: 'knob',
     hfin: 'brass',
     step: 'cabs',
-    flip: {}
+    view: '2d',
+    flip: {},
+    fx: {}, // fronts with their own look: id → { style, mat, col }
+    sel: null // the front you tapped
   };
   if (s.sys === 'pax')
     s.cabs = [cab('pax', 'frame', 100, 236), cab('pax', 'frame', 50, 236), cab('pax', 'frame', 100, 236)];
   if (s.sys === 'metod') {
-    s.style = 'shaker';
-    s.ral = '6011';
+    s.style = 'flat';
+    s.col = 'cobalt';
     s.cabs = [
       cab('metod', 'high', 60, 200, 'split'),
       cab('metod', 'base', 40, 80, 'drawers3'),
@@ -910,8 +1064,8 @@ function freshState(sys) {
     ];
   }
   if (s.sys === 'besta') {
-    s.style = 'arch';
-    s.ral = '1015';
+    s.style = 'fluted';
+    s.mat = 'walnut';
     s.cabs = [cab('besta', 'frame', 60, 64), cab('besta', 'frame', 120, 38, 'drawers'), cab('besta', 'frame', 60, 64)];
   }
   return s;
@@ -941,6 +1095,7 @@ try {
 }
 if (!S || !S.cabs) S = freshState('pax');
 S.flip = S.flip || {};
+S.fx = S.fx || {};
 function save() {
   try {
     localStorage.setItem(KEY, JSON.stringify(S));
@@ -957,7 +1112,19 @@ const PAX_H = { 236: 2294, 201: 1950 },
 function frontsOf(c, x0, y0) {
   const out = [],
     add = (kind, nw, nh, realW, realH, x, y, hinge) =>
-      out.push({ id: c.id + ':' + out.length, cab: c.id, kind, nom: `${nw}×${nh}`, w: realW, h: realH, x, y, hinge });
+      out.push({
+        id: c.id + ':' + out.length,
+        cab: c.id,
+        ckind: c.kind,
+        sys: c.sys,
+        kind,
+        nom: `${nw}×${nh}`,
+        w: realW,
+        h: realH,
+        x,
+        y,
+        hinge
+      });
   const W = c.w * 10,
     H = c.h * 10;
   if (c.layout === 'open') return out;
@@ -1090,16 +1257,34 @@ function layout() {
   return { cabs, fronts, W, H: Hmax, plinth, worktop: S.sys === 'metod' && S.cabs.some(c => c.kind === 'base') };
 }
 
-/* ---------- price ---------- */
+/* ---------- the look of a front: the overall choice, unless this front has its own ---------- */
 function matOk(style, mat) {
   const m = MATS[mat];
-  return m && (m.styles === 'all' || m.styles.includes(style));
+  return !!m && (!m.only || m.only === style);
 }
+function lookOf(f) {
+  const o = (f && S.fx[f.id]) || {},
+    lk = { style: o.style || S.style, mat: o.mat || S.mat, col: o.col || S.col, own: !!S.fx[f && f.id] };
+  if (!MATS[lk.mat]) lk.mat = 'painted';
+  if (!COLOURS[lk.col]) lk.col = 'chalk';
+  if (MATS[lk.mat].only) lk.style = MATS[lk.mat].only;
+  return lk;
+}
+function lookName(lk) {
+  const m = MATS[lk.mat];
+  return `${STYLES[lk.style].name} ${m.paint ? COLOURS[lk.col].name.toLowerCase() : m.name.toLowerCase()}`;
+}
+function lookKey(lk) {
+  return `${lk.style}|${lk.mat}|${MATS[lk.mat].paint ? lk.col : ''}`;
+}
+
+/* ---------- price ---------- */
 function frontPrice(f) {
-  const m = MATS[S.mat],
-    st = STYLES[S.style],
+  const lk = lookOf(f),
+    m = MATS[lk.mat],
+    st = STYLES[lk.style],
     area = Math.max(PRICE.minArea, (f.w * f.h) / 1e6);
-  let p = PRICE.perFront + area * m.rate * st.f + HANDLES[S.handle].price;
+  let p = PRICE.perFront + area * m.rate * (m.glass ? 1 : st.f) + HANDLES[S.handle].price;
   if (f.kind === 'door') p += PRICE.hinge;
   return Math.round(p * 100) / 100;
 }
@@ -1111,25 +1296,28 @@ function priceAll(L) {
 }
 const eur = v => '€ ' + Math.round(v).toLocaleString('en-IE');
 
-/* fronts with the same size and kind, for the order list */
+/* fronts with the same size, kind, hinge side and look, for the order list */
 function grouped(L) {
   const m = new Map();
   L.fronts.forEach(f => {
-    const k = `${f.kind}|${f.w}|${f.h}|${f.hinge || ''}`;
-    if (!m.has(k)) m.set(k, { kind: f.kind, w: f.w, h: f.h, nom: f.nom, hinge: f.hinge, n: 0, p: frontPrice(f) });
+    const lk = lookOf(f),
+      k = `${f.kind}|${f.w}|${f.h}|${f.hinge || ''}|${lookKey(lk)}`;
+    if (!m.has(k))
+      m.set(k, { kind: f.kind, w: f.w, h: f.h, nom: f.nom, hinge: f.hinge, look: lk, n: 0, p: frontPrice(f) });
     m.get(k).n++;
   });
-  return [...m.values()].sort((a, b) => b.h - a.h || b.w - a.w);
+  return [...m.values()].sort((a, b) => lookKey(a.look).localeCompare(lookKey(b.look)) || b.h - a.h || b.w - a.w);
 }
 
 /* ==== 20-draw.js ====
-   The picture: the cabinets seen from the front with the new fronts in their style, material, colour and
-   handles. Millimetres in, SVG out (y flipped so the floor is at the bottom). Tap a door to swap its hinge side.
+   The flat picture: the cabinets seen from the front with the new fronts, each in its own look (style,
+   material, colour) and with its handle. Millimetres in, SVG out (y flipped so the floor is at the bottom).
+   Tap a front to select it. 25-3d.js draws the same fronts in 3D.
 */
-function faceColour() {
-  const m = MATS[S.mat];
-  if (m.paint) return (RAL[S.ral] || RAL['9010']).hex;
-  if (m.lino) return (LINO.find(l => l[0] === S.lino) || LINO[0])[2];
+function faceHex(lk) {
+  const m = MATS[lk.mat];
+  if (m.paint) return colHex(lk.col);
+  if (m.glass) return '#cfdcd8';
   return m.wood;
 }
 function shade(hex, k) {
@@ -1138,102 +1326,100 @@ function shade(hex, k) {
     ch = s => Math.max(0, Math.min(255, Math.round(k < 0 ? s * (1 + k) : s + (255 - s) * k)));
   return '#' + [n >> 16, (n >> 8) & 255, n & 255].map(v => ch(v).toString(16).padStart(2, '0')).join('');
 }
-function defsSVG() {
-  const base = faceColour(),
-    m = MATS[S.mat],
-    p = S.flute.pitch;
-  let d = `<linearGradient id="flg" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".22"/><stop offset=".35" stop-color="#fff" stop-opacity=".28"/><stop offset=".7" stop-color="#fff" stop-opacity=".05"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></linearGradient>
-  <pattern id="flute" width="${p}" height="40" patternUnits="userSpaceOnUse"${S.flute.dir === 'h' ? ' patternTransform="rotate(90)"' : ''}><rect width="${p}" height="40" fill="url(#flg)"/></pattern>
-  <linearGradient id="slg" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset=".9" stop-color="#000" stop-opacity=".06"/><stop offset="1" stop-color="#000" stop-opacity=".5"/></linearGradient>
-  <pattern id="slat" width="48" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="url(#slg)"/><rect x="40" width="8" height="40" fill="#000" fill-opacity=".55"/></pattern>`;
-  if (m.wood)
-    d += `<pattern id="grain" width="90" height="900" patternUnits="userSpaceOnUse"${S.style === 'fluted' && S.flute.dir === 'h' ? ' patternTransform="rotate(90)"' : ''}><rect width="90" height="900" fill="${base}"/>${Array.from({ length: 9 }, (_, i) => `<path d="M${6 + i * 10 + (i % 3)} 0 C ${12 + i * 10} 300, ${i * 10} 600, ${8 + i * 10} 900" stroke="${m.grain}" stroke-opacity="${0.18 + (i % 3) * 0.08}" stroke-width="${1 + (i % 2)}" fill="none"/>`).join('')}</pattern>`;
-  if (m.lino)
-    d += `<pattern id="grain" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="${base}"/><circle cx="2" cy="3" r=".7" fill="#000" fill-opacity=".06"/></pattern>`;
+function defsSVG(sfx) {
+  const x = sfx || '',
+    p = S.flute.pitch,
+    rot = S.flute.dir === 'h' ? ' patternTransform="rotate(90)"' : '';
+  let d = `<linearGradient id="flg${x}" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".24"/><stop offset=".35" stop-color="#fff" stop-opacity=".3"/><stop offset=".7" stop-color="#fff" stop-opacity=".05"/><stop offset="1" stop-color="#000" stop-opacity=".26"/></linearGradient>
+  <pattern id="flute${x}" width="${p}" height="40" patternUnits="userSpaceOnUse"${rot}><rect width="${p}" height="40" fill="url(#flg${x})"/></pattern>
+  <linearGradient id="glass${x}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e9f1ee"/><stop offset=".55" stop-color="#c9d8d3"/><stop offset="1" stop-color="#b3c6c0"/></linearGradient>`;
+  Object.entries(MATS).forEach(([k, m]) => {
+    if (!m.wood) return;
+    if (m.raw && !m.grain) {
+      d += `<pattern id="gr_${k}${x}" width="14" height="14" patternUnits="userSpaceOnUse"><rect width="14" height="14" fill="${m.wood}"/><circle cx="3" cy="4" r=".9" fill="#000" fill-opacity=".08"/><circle cx="10" cy="10" r=".8" fill="#fff" fill-opacity=".12"/></pattern>`;
+      return;
+    }
+    d += `<pattern id="gr_${k}${x}" width="90" height="900" patternUnits="userSpaceOnUse"><rect width="90" height="900" fill="${m.wood}"/>${Array.from(
+      { length: 9 },
+      (_, i) =>
+        `<path d="M${6 + i * 10 + (i % 3)} 0 C ${12 + i * 10} 300, ${i * 10} 600, ${8 + i * 10} 900" stroke="${m.grain}" stroke-opacity="${(m.ply ? 0.1 : 0.18) + (i % 3) * 0.07}" stroke-width="${1 + (i % 2)}" fill="none"/>`
+    ).join('')}</pattern>`;
+  });
   return `<defs>${d}</defs>`;
 }
-function frontSVG(f, Y) {
-  const x = f.x,
+function frontSVG(f, Y, sfx) {
+  const x_ = sfx || '',
+    lk = lookOf(f),
+    m = MATS[lk.mat],
+    x = f.x,
     y = Y(f.y + f.h),
     w = f.w,
     h = f.h,
-    base = faceColour(),
-    fill = MATS[S.mat].wood || MATS[S.mat].lino ? 'url(#grain)' : base,
-    dark = shade(base, -0.35),
-    light = shade(base, 0.35),
-    st = S.style;
-  let o = `<g class="front${f.hinge ? ' hd' : ''}" data-f="${f.id}"><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="${dark}" stroke-opacity=".55" stroke-width="2"/>`;
-  if (st === 'fluted') o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#flute)"/>`;
-  if (st === 'slats') o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#slat)"/>`;
-  if (st === 'shaker') {
-    const i = Math.min(70, w * 0.16, h * 0.16);
-    o += `<rect x="${x + i}" y="${y + i}" width="${w - 2 * i}" height="${h - 2 * i}" fill="#000" fill-opacity=".05" stroke="${dark}" stroke-opacity=".6" stroke-width="3"/><path d="M${x + i} ${y + h - i} V${y + i} H${x + w - i}" stroke="#000" stroke-opacity=".18" stroke-width="6" fill="none"/><path d="M${x + i} ${y + h - i} H${x + w - i} V${y + i}" stroke="${light}" stroke-opacity=".7" stroke-width="3" fill="none"/>`;
+    base = faceHex(lk),
+    dark = shade(base, -0.38),
+    sel = S.sel === f.id;
+  let o = `<g class="front${sel ? ' sel' : ''}" data-f="${f.id}">`;
+  if (m.glass) {
+    // fluted glass in a slim frame; the white inside of the cabinet shows through
+    const fr = 22,
+      fc = GFRAME[S.gframe].hex;
+    o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fc}"/><rect x="${x + fr}" y="${y + fr}" width="${w - 2 * fr}" height="${h - 2 * fr}" fill="url(#glass${x_})" fill-opacity=".92"/><rect x="${x + fr}" y="${y + fr}" width="${w - 2 * fr}" height="${h - 2 * fr}" fill="url(#flute${x_})"/>`;
+  } else {
+    const fill = m.wood ? `url(#gr_${lk.mat}${x_})` : base;
+    o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="${dark}" stroke-opacity=".5" stroke-width="2"/>`;
+    if (lk.style === 'fluted') o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#flute${x_})"/>`;
+    // plywood shows its layers on the edge
+    if (m.ply)
+      o += `<rect x="${x + 1}" y="${y + 1}" width="${w - 2}" height="${h - 2}" fill="none" stroke="${shade(m.wood, -0.3)}" stroke-opacity=".6" stroke-width="3" stroke-dasharray="6 3"/>`;
   }
-  if (st === 'arch') {
-    const i = Math.min(60, w * 0.14),
-      iw = w - 2 * i,
-      r = iw / 2,
-      top = y + i + Math.min(r, (h - 2 * i) / 2);
-    const path = `M${x + i} ${y + h - i} V${top} A${r} ${Math.min(r, (h - 2 * i) / 2)} 0 0 1 ${x + w - i} ${top} V${y + h - i} Z`;
-    o += `<path d="${path}" fill="#000" fill-opacity=".05" stroke="${dark}" stroke-opacity=".65" stroke-width="5"/><path d="${path}" fill="none" stroke="${light}" stroke-opacity=".55" stroke-width="2" transform="translate(3 3)"/>`;
-  }
-  if (st === 'grid') {
-    const i = 50,
-      nx = Math.max(1, Math.round((w - 2 * i) / 130)),
-      ny = Math.max(1, Math.round((h - 2 * i) / 130)),
-      cw = (w - 2 * i) / nx,
-      ch = (h - 2 * i) / ny;
-    let g = '';
-    for (let a = 0; a <= nx; a++) g += `M${x + i + a * cw} ${y + i} V${y + h - i}`;
-    for (let b = 0; b <= ny; b++) g += `M${x + i} ${y + i + b * ch} H${x + w - i}`;
-    o += `<path d="${g}" stroke="${dark}" stroke-opacity=".6" stroke-width="4" fill="none"/><path d="${g}" stroke="${light}" stroke-opacity=".5" stroke-width="1.5" fill="none" transform="translate(2.5 2.5)"/>`;
-  }
-  // the door opens away from its hinge: a light dashed V pointing at the hinge side
+  // a door opens away from its hinge: a light dashed V pointing at the hinge side
   if (f.hinge) {
     const hx = f.hinge === 'L' ? x : x + w,
       ox = f.hinge === 'L' ? x + w : x;
-    o += `<path class="swing" d="M${ox} ${y} L${hx} ${y + h / 2} L${ox} ${y + h}" fill="none" stroke="${dark}" stroke-opacity=".35" stroke-width="2" stroke-dasharray="14 10"/>`;
+    o += `<path d="M${ox} ${y} L${hx} ${y + h / 2} L${ox} ${y + h}" fill="none" stroke="${dark}" stroke-opacity=".3" stroke-width="2" stroke-dasharray="14 10"/>`;
   }
-  o += handleSVG(f, Y, dark);
+  o += handleSVG(f, Y, lk);
+  if (sel)
+    o += `<rect x="${x + 4}" y="${y + 4}" width="${w - 8}" height="${h - 8}" fill="none" stroke="var(--accent)" stroke-width="10"/>`;
   return o + '</g>';
 }
-function handleSVG(f, Y, dark) {
+/* where the handle goes (mm, in the picture): doors on the side that opens, drawers in the middle at the top */
+function handlePos(f) {
+  if (f.kind === 'drawer') return { x: f.x + f.w / 2, y: f.h > 300 ? f.y + f.h - 70 : f.y + f.h / 2, vert: false };
+  const x = f.hinge === 'L' ? f.x + f.w - 45 : f.x + 45;
+  // where a hand goes: tall doors at about 1 m from the floor, wall cabinets low, base cabinets high
+  let y;
+  if (f.h > 1200) y = Math.max(f.y + 120, Math.min(f.y + f.h - 120, 1050));
+  else y = f.ckind === 'wall' ? f.y + 90 : f.y + f.h - 90;
+  return { x, y, vert: true };
+}
+function handleHex(lk) {
+  return S.hfin === 'match' ? shade(faceHex(lk), -0.2) : HFIN[S.hfin].hex;
+}
+function handleSVG(f, Y, lk) {
   const hd = S.handle;
   if (hd === 'push') return '';
-  const col = S.hfin === 'match' ? shade(faceColour(), -0.2) : HFIN[S.hfin].hex,
-    x0 = f.x,
-    x1 = f.x + f.w,
-    yT = Y(f.y + f.h),
-    yB = Y(f.y);
-  let cx, cy, vert;
-  if (f.kind === 'drawer') {
-    cx = (x0 + x1) / 2;
-    cy = f.h > 300 ? yT + 70 : (yT + yB) / 2;
-    vert = false;
-  } else {
-    cx = f.hinge === 'L' ? x1 - 45 : x0 + 45;
-    // where a hand goes: tall doors at about 1 m from the floor, wall cabinets low, base cabinets high
-    const hy = f.h > 1200 ? 1050 : null;
-    const isWall = (S.cabs.find(c => c.id === f.cab) || {}).kind === 'wall';
-    cy = hy != null ? Y(Math.max(f.y + 120, Math.min(f.y + f.h - 120, hy))) : isWall ? yB - 90 : yT + 90;
-    vert = true;
-  }
+  const col = handleHex(lk),
+    P = handlePos(f),
+    cx = P.x,
+    cy = Y(P.y);
   if (hd === 'knob')
     return `<circle cx="${cx}" cy="${cy}" r="16" fill="${col}" stroke="#000" stroke-opacity=".25" stroke-width="2"/><circle cx="${cx - 4}" cy="${cy - 4}" r="5" fill="#fff" fill-opacity=".35"/>`;
   if (hd === 'bar')
-    return vert
+    return P.vert
       ? `<rect x="${cx - 6}" y="${cy - 80}" width="12" height="160" rx="6" fill="${col}" stroke="#000" stroke-opacity=".25" stroke-width="2"/>`
       : `<rect x="${cx - 80}" y="${cy - 6}" width="160" height="12" rx="6" fill="${col}" stroke="#000" stroke-opacity=".25" stroke-width="2"/>`;
+  const yT = Y(f.y + f.h);
   if (hd === 'grip') {
     if (f.kind === 'drawer')
       return `<path d="M${cx - 45} ${yT} A45 30 0 0 0 ${cx + 45} ${yT} Z" fill="#000" fill-opacity=".55"/>`;
-    const ex = f.hinge === 'L' ? x1 : x0,
+    const ex = f.hinge === 'L' ? f.x + f.w : f.x,
       s = f.hinge === 'L' ? 0 : 1;
     return `<path d="M${ex} ${cy - 55} A30 55 0 0 ${s} ${ex} ${cy + 55} Z" fill="#000" fill-opacity=".55"/>`;
   }
   if (hd === 'tab') {
     if (f.kind === 'drawer') return `<rect x="${cx - 22}" y="${yT - 18}" width="44" height="40" rx="6" fill="${col}"/>`;
-    const ex = f.hinge === 'L' ? x1 - 10 : x0 - 20;
+    const ex = f.hinge === 'L' ? f.x + f.w - 10 : f.x - 20;
     return `<rect x="${ex}" y="${cy - 22}" width="30" height="44" rx="6" fill="${col}"/>`;
   }
   return '';
@@ -1245,21 +1431,19 @@ function drawPic() {
     Y = y => top - y,
     W = L.W;
   let s = `<svg viewBox="${-pad} ${-20} ${W + 2 * pad} ${top + 220}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Your cabinets with the new fronts">${defsSVG()}`;
-  // floor
   s += `<rect x="${-pad}" y="${Y(0)}" width="${W + 2 * pad}" height="40" fill="var(--wall)"/><line x1="${-pad}" x2="${W + pad}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--ink2)" stroke-width="3"/>`;
-  // carcasses (white IKEA boxes behind the fronts)
+  // the white IKEA boxes behind the fronts (shelves when there is no front)
   L.cabs.forEach(p => {
     s += `<rect x="${p.x}" y="${Y(p.y + p.h)}" width="${p.w}" height="${p.h}" fill="#f4f4f1" stroke="#c9cac5" stroke-width="3"/>`;
-    if (p.c.layout === 'open' || p.c.sys === 'metod') {
-      // shelves when there is no front
-      if (p.c.layout === 'open')
-        for (let k = 1; k < Math.round(p.h / 350); k++)
-          s += `<line x1="${p.x + 18}" x2="${p.x + p.w - 18}" y1="${Y(p.y + (k * p.h) / Math.round(p.h / 350))}" y2="${Y(p.y + (k * p.h) / Math.round(p.h / 350))}" stroke="#c9cac5" stroke-width="10"/>`;
+    if (p.c.layout === 'open') {
+      const n = Math.max(2, Math.round(p.h / 350));
+      for (let k = 1; k < n; k++)
+        s += `<line x1="${p.x + 18}" x2="${p.x + p.w - 18}" y1="${Y(p.y + (k * p.h) / n)}" y2="${Y(p.y + (k * p.h) / n)}" stroke="#c9cac5" stroke-width="10"/>`;
     }
   });
   if (L.plinth && S.sys === 'metod') {
     const bw = Math.max(0, ...L.cabs.filter(p => p.c.kind !== 'wall').map(p => p.x + p.w));
-    s += `<rect x="0" y="${Y(L.plinth)}" width="${bw}" height="${L.plinth - 10}" fill="${shade(faceColour(), -0.25)}"/>`;
+    s += `<rect x="0" y="${Y(L.plinth)}" width="${bw}" height="${L.plinth - 10}" fill="${shade(faceHex(lookOf(null)), -0.3)}"/>`;
   }
   if (S.sys === 'besta')
     L.cabs.forEach(p => {
@@ -1274,7 +1458,6 @@ function drawPic() {
     }
   }
   L.fronts.forEach(f => (s += frontSVG(f, Y)));
-  // widths under the picture
   L.cabs
     .filter(p => p.c.kind !== 'wall')
     .forEach(p => {
@@ -1285,26 +1468,469 @@ function drawPic() {
   document.getElementById('pic').innerHTML = s;
 }
 
-/* small pictures of the styles for the style cards */
-function styleThumb(k) {
-  const was = S.style,
-    wasH = S.handle;
-  S.style = k;
-  S.handle = 'push';
-  const f = { id: 't', cab: 't', kind: 'door', w: 300, h: 420, x: 10, y: 0, hinge: null };
-  const svg = `<svg viewBox="0 0 320 440" aria-hidden="true">${defsSVG()
-    .replace(/id="(\w+)"/g, 'id="$1_' + k + '"')
-    .replace(/url\(#(\w+)\)/g, 'url(#$1_' + k + ')')}${frontSVG(f, y => 430 - y)
-    .replace(/url\(#(\w+)\)/g, 'url(#$1_' + k + ')')
-    .replace(/data-f="t"/, '')}</svg>`;
-  S.style = was;
-  S.handle = wasH;
+/* a small picture of one look, for the style and material cards */
+function lookThumb(style, mat, col, key) {
+  const was = { fx: S.fx, style: S.style, mat: S.mat, col: S.col, handle: S.handle, sel: S.sel };
+  Object.assign(S, { fx: {}, style, mat, col, handle: 'push', sel: null });
+  const f = { id: 'thumb', cab: 't', kind: 'door', w: 300, h: 420, x: 10, y: 0, hinge: null },
+    k = '_' + key;
+  const svg = `<svg viewBox="0 0 320 440" aria-hidden="true">${defsSVG(k)}${frontSVG(f, y => 430 - y, k).replace('data-f="thumb"', '')}</svg>`;
+  Object.assign(S, was);
   return svg;
 }
 
+/* ==== 25-3d.js ====
+   The 3D view: the white IKEA boxes with the new fronts on them, in their real materials — matt paint, oak and
+   walnut grain, birch ply, raw MDF, flutes as a light-catching relief, fluted glass in its frame — and the handles.
+   three.js r159 (the same as Fitted) loads only when you first open 3D. Drag to turn, scroll or pinch to zoom,
+   tap a front to select it.
+*/
+const V3 = { ready: false, loading: false, yaw: -0.42, pitch: 0.1, zoom: 1, tex: {}, meshes: [] };
+const THREE_URL = 'https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.min.js';
+
+function open3D() {
+  const el = document.getElementById('pic3d');
+  if (window.THREE) return start3D(el);
+  if (V3.loading) return;
+  V3.loading = true;
+  el.innerHTML = '<p class="hint c3">Loading 3D…</p>';
+  const sc = document.createElement('script');
+  sc.src = THREE_URL;
+  sc.onload = () => start3D(el);
+  sc.onerror = () =>
+    (el.innerHTML =
+      '<p class="hint c3">3D could not load (no internet?). The flat picture still shows everything.</p>');
+  document.head.appendChild(sc);
+}
+function start3D(el) {
+  if (!window.THREE) return;
+  if (!V3.ready) {
+    const T = THREE,
+      r = new T.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+    r.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+    r.outputColorSpace = T.SRGBColorSpace;
+    r.toneMapping = T.ACESFilmicToneMapping;
+    r.toneMappingExposure = 1.05;
+    r.shadowMap.enabled = true;
+    r.shadowMap.type = T.PCFSoftShadowMap;
+    const sc = new T.Scene();
+    sc.background = new T.Color('#e9e7e2');
+    const cam = new T.PerspectiveCamera(32, 1, 10, 60000);
+    sc.add(new T.HemisphereLight(0xffffff, 0xcfc6b8, 1.5));
+    const sun = new T.DirectionalLight(0xfff4e6, 2.4);
+    sun.position.set(-2600, 4200, 3600);
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(2048, 2048);
+    sun.shadow.bias = -0.0004;
+    sc.add(sun, sun.target);
+    const fill = new T.DirectionalLight(0xe6eeff, 0.6);
+    fill.position.set(3000, 1500, 2500);
+    sc.add(fill);
+    Object.assign(V3, { T, r, sc, cam, sun, ready: true, root: null });
+    el.innerHTML = '';
+    el.appendChild(r.domElement);
+    controls3D(r.domElement);
+    new ResizeObserver(() => draw3D()).observe(el);
+  } else if (!el.contains(V3.r.domElement)) {
+    el.innerHTML = '';
+    el.appendChild(V3.r.domElement);
+  }
+  build3D();
+}
+
+/* ---------- textures, made once ---------- */
+function canvasTex(w, h, paint, normal) {
+  const c = document.createElement('canvas');
+  c.width = w;
+  c.height = h;
+  paint(c.getContext('2d'), w, h);
+  const t = new V3.T.CanvasTexture(c);
+  t.wrapS = t.wrapT = V3.T.RepeatWrapping;
+  if (!normal) t.colorSpace = V3.T.SRGBColorSpace;
+  t.anisotropy = 4;
+  return t;
+}
+function woodTex(k) {
+  if (V3.tex['w' + k]) return V3.tex['w' + k];
+  const m = MATS[k];
+  const t = canvasTex(256, 1024, (g, w, h) => {
+    g.fillStyle = m.wood;
+    g.fillRect(0, 0, w, h);
+    const r = prng(k.length * 97 + 7);
+    if (m.raw && !m.grain) {
+      // raw MDF: fine, even speckle
+      for (let i = 0; i < 5000; i++) {
+        g.fillStyle = r() < 0.5 ? 'rgba(0,0,0,.05)' : 'rgba(255,255,255,.06)';
+        g.fillRect(r() * w, r() * h, 1.5, 1.5);
+      }
+      return;
+    }
+    for (let i = 0; i < 70; i++) {
+      const x = r() * w,
+        a = (m.ply ? 0.05 : 0.1) + r() * (m.ply ? 0.06 : 0.14);
+      g.strokeStyle = m.grain;
+      g.globalAlpha = a;
+      g.lineWidth = 0.6 + r() * 2.2;
+      g.beginPath();
+      g.moveTo(x, 0);
+      g.bezierCurveTo(x + (r() - 0.5) * 30, h * 0.33, x + (r() - 0.5) * 30, h * 0.66, x + (r() - 0.5) * 16, h);
+      g.stroke();
+    }
+    g.globalAlpha = 1;
+  });
+  return (V3.tex['w' + k] = t);
+}
+/* flutes as a normal map: one rounded flute across the width of the canvas */
+function fluteTex(dir) {
+  const key = 'fl' + dir;
+  if (V3.tex[key]) return V3.tex[key];
+  const N = 64,
+    t = canvasTex(
+      dir === 'v' ? N : 4,
+      dir === 'v' ? 4 : N,
+      (g, w, h) => {
+        for (let i = 0; i < N; i++) {
+          const u = (i + 0.5) / N,
+            s = Math.cos(u * Math.PI) * 0.85, // slope across the flute: left side faces left, right side faces right
+            nx = -s,
+            nz = Math.sqrt(Math.max(0, 1 - nx * nx));
+          const col = `rgb(${Math.round((nx * 0.5 + 0.5) * 255)},128,${Math.round((nz * 0.5 + 0.5) * 255)})`;
+          g.fillStyle =
+            dir === 'v' ? col : `rgb(128,${Math.round((-nx * 0.5 + 0.5) * 255)},${Math.round((nz * 0.5 + 0.5) * 255)})`;
+          if (dir === 'v') g.fillRect(i, 0, 1, h);
+          else g.fillRect(0, i, w, 1);
+        }
+      },
+      true
+    );
+  return (V3.tex[key] = t);
+}
+function matFor(lk, f) {
+  const T = V3.T,
+    m = MATS[lk.mat],
+    o = { roughness: 0.62, metalness: 0 };
+  if (m.paint) o.color = new T.Color(colHex(lk.col));
+  else if (m.glass) return null;
+  else {
+    const t = woodTex(lk.mat).clone();
+    t.needsUpdate = true;
+    t.repeat.set(f.w / 260, f.h / 1000);
+    o.map = t;
+    o.roughness = m.raw ? 0.85 : m.ply ? 0.6 : 0.5;
+  }
+  if (lk.style === 'fluted') {
+    const n = fluteTex(S.flute.dir).clone();
+    n.needsUpdate = true;
+    if (S.flute.dir === 'v') n.repeat.set(f.w / S.flute.pitch, 1);
+    else n.repeat.set(1, f.h / S.flute.pitch);
+    o.normalMap = n;
+    o.normalScale = new T.Vector2(1.4, 1.4);
+  }
+  return new T.MeshStandardMaterial(o);
+}
+
+/* ---------- the scene ---------- */
+const DEPTH = { pax: 580, metod: { base: 600, high: 600, wall: 370 }, besta: 420 };
+function build3D() {
+  if (!V3.ready) return;
+  const T = V3.T,
+    L = layout();
+  if (V3.root) {
+    V3.sc.remove(V3.root);
+    V3.root.traverse(o => {
+      if (o.geometry) o.geometry.dispose();
+      if (o.material && o.material.dispose) o.material.dispose();
+    });
+  }
+  const root = new T.Group();
+  V3.root = root;
+  V3.meshes = [];
+  const box = (w, h, d, mat, x, y, z, cast = true) => {
+    const ms = new T.Mesh(new T.BoxGeometry(w, h, d), mat);
+    ms.position.set(x, y, z);
+    ms.castShadow = cast;
+    ms.receiveShadow = true;
+    root.add(ms);
+    return ms;
+  };
+  const white = new T.MeshStandardMaterial({ color: '#f2f1ec', roughness: 0.7 }),
+    inner = new T.MeshStandardMaterial({ color: '#e6e4dd', roughness: 0.8 });
+  // floor and wall
+  const W = L.W,
+    floor = new T.Mesh(
+      new T.PlaneGeometry(W + 6000, 6000),
+      new T.MeshStandardMaterial({ color: '#d8cfc1', roughness: 0.9 })
+    );
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.set(W / 2, 0, 1500);
+  floor.receiveShadow = true;
+  root.add(floor);
+  const wall = new T.Mesh(
+    new T.PlaneGeometry(W + 6000, 4000),
+    new T.MeshStandardMaterial({ color: '#efece6', roughness: 0.95 })
+  );
+  wall.position.set(W / 2, 2000, -(S.sys === 'metod' ? 600 : S.sys === 'besta' ? 420 : 580) - 2);
+  wall.receiveShadow = true;
+  root.add(wall);
+  // the IKEA boxes: open at the front, so glass and open shelves show the inside
+  L.cabs.forEach(p => {
+    const d = S.sys === 'metod' ? DEPTH.metod[p.c.kind] : DEPTH[S.sys],
+      t = 16,
+      z0 = -d;
+    box(t, p.h, d, white, p.x + t / 2, p.y + p.h / 2, z0 + d / 2);
+    box(t, p.h, d, white, p.x + p.w - t / 2, p.y + p.h / 2, z0 + d / 2);
+    box(p.w, t, d, white, p.x + p.w / 2, p.y + t / 2, z0 + d / 2);
+    box(p.w, t, d, white, p.x + p.w / 2, p.y + p.h - t / 2, z0 + d / 2);
+    box(p.w, p.h, 4, inner, p.x + p.w / 2, p.y + p.h / 2, z0 + 2, false);
+    const n = Math.max(1, Math.round(p.h / 380));
+    for (let k = 1; k < n; k++)
+      box(p.w - 2 * t, t, d - 30, white, p.x + p.w / 2, p.y + (k * p.h) / n, z0 + (d - 30) / 2, false);
+  });
+  if (S.sys === 'metod') {
+    const bases = L.cabs.filter(p => p.c.kind !== 'wall');
+    if (bases.length) {
+      const a = Math.min(...bases.map(p => p.x)),
+        b = Math.max(...bases.map(p => p.x + p.w));
+      box(
+        b - a,
+        L.plinth - 10,
+        18,
+        new T.MeshStandardMaterial({ color: shade(faceHex(lookOf(null)), -0.3), roughness: 0.7 }),
+        (a + b) / 2,
+        (L.plinth - 10) / 2,
+        -40
+      );
+      const tops = L.cabs.filter(p => p.c.kind === 'base');
+      if (tops.length) {
+        const a2 = Math.min(...tops.map(p => p.x)),
+          b2 = Math.max(...tops.map(p => p.x + p.w));
+        box(
+          b2 - a2 + 20,
+          40,
+          640,
+          new T.MeshStandardMaterial({ color: '#cfc8bb', roughness: 0.45 }),
+          (a2 + b2) / 2,
+          920,
+          -600 + 320 + 20
+        );
+      }
+    }
+  }
+  if (S.sys === 'besta') {
+    const leg = new T.MeshStandardMaterial({ color: '#8f8f8a', roughness: 0.4, metalness: 0.6 });
+    L.cabs.forEach(p => {
+      [p.x + 52, p.x + p.w - 52].forEach(x => {
+        const c = new T.Mesh(new T.CylinderGeometry(12, 12, L.plinth, 16), leg);
+        c.position.set(x, L.plinth / 2, -60);
+        root.add(c);
+      });
+    });
+  }
+  // the fronts
+  const FT = 19,
+    hcache = {};
+  L.fronts.forEach(f => {
+    const lk = lookOf(f),
+      m = MATS[lk.mat],
+      cx = f.x + f.w / 2,
+      cy = f.y + f.h / 2,
+      cz = FT / 2 + 1;
+    let hit;
+    if (m.glass) {
+      const fr = 22,
+        fm = new T.MeshStandardMaterial({
+          color: GFRAME[S.gframe].hex,
+          roughness: S.gframe === 'oak' ? 0.5 : 0.35,
+          metalness: S.gframe === 'oak' ? 0 : 0.6
+        });
+      box(f.w, fr, FT, fm, cx, f.y + f.h - fr / 2, cz);
+      box(f.w, fr, FT, fm, cx, f.y + fr / 2, cz);
+      box(fr, f.h - 2 * fr, FT, fm, f.x + fr / 2, cy, cz);
+      box(fr, f.h - 2 * fr, FT, fm, f.x + f.w - fr / 2, cy, cz);
+      const n = fluteTex(S.flute.dir).clone();
+      n.needsUpdate = true;
+      if (S.flute.dir === 'v') n.repeat.set((f.w - 2 * fr) / S.flute.pitch, 1);
+      else n.repeat.set(1, (f.h - 2 * fr) / S.flute.pitch);
+      const gm = new T.MeshStandardMaterial({
+        color: '#dfe9e5',
+        roughness: 0.18,
+        metalness: 0.1,
+        transparent: true,
+        opacity: 0.55,
+        normalMap: n,
+        normalScale: new T.Vector2(2, 2)
+      });
+      hit = box(f.w - 2 * fr, f.h - 2 * fr, 6, gm, cx, cy, cz, false);
+    } else hit = box(f.w, f.h, FT, matFor(lk, f), cx, cy, cz);
+    hit.userData.fid = f.id;
+    V3.meshes.push(hit);
+    if (S.sel === f.id) {
+      // the selected front: a crisp blue outline just in front of it
+      const sel = new T.LineSegments(
+        new T.EdgesGeometry(new T.BoxGeometry(f.w + 6, f.h + 6, FT + 4)),
+        new T.LineBasicMaterial({ color: '#3446d6' })
+      );
+      sel.position.set(cx, cy, cz);
+      root.add(sel);
+      [-1, 1].forEach(sx =>
+        [-1, 1].forEach(sy => {
+          const k = new T.Mesh(new T.BoxGeometry(sx ? 10 : 10, 10, 4), new T.MeshBasicMaterial({ color: '#3446d6' }));
+          k.position.set(cx + sx * (f.w / 2 + 3), cy + sy * (f.h / 2 + 3), FT + 4);
+          root.add(k);
+        })
+      );
+    }
+    handle3D(f, lk, root, hcache, FT);
+  });
+  V3.sc.add(root);
+  // the sun's shadow covers the whole row
+  const sh = V3.sun.shadow.camera,
+    R = Math.max(W, L.H) * 0.8 + 800;
+  Object.assign(sh, { left: -R, right: R, top: R, bottom: -R, near: 100, far: 20000 });
+  sh.updateProjectionMatrix();
+  V3.sun.target.position.set(W / 2, L.H / 2, 0);
+  V3.sun.position.set(W / 2 - 2600, 4200, 3600);
+  V3.L = L;
+  draw3D();
+}
+function handle3D(f, lk, root, cache, FT) {
+  if (S.handle === 'push') return;
+  const T = V3.T,
+    P = handlePos(f),
+    hex = handleHex(lk),
+    mk =
+      cache[hex] ||
+      (cache[hex] = new T.MeshStandardMaterial({
+        color: hex,
+        roughness: S.hfin === 'oak' || S.hfin === 'match' ? 0.55 : 0.3,
+        metalness: S.hfin === 'brass' || S.hfin === 'steel' ? 0.85 : 0.1
+      })),
+    z = FT + 1;
+  const add = (geo, x, y, zz, rx, rz) => {
+    const ms = new T.Mesh(geo, mk);
+    ms.position.set(x, y, zz);
+    if (rx) ms.rotation.x = rx;
+    if (rz) ms.rotation.z = rz;
+    ms.castShadow = true;
+    root.add(ms);
+  };
+  if (S.handle === 'knob') {
+    add(new T.CylinderGeometry(6, 6, 18, 16), P.x, P.y, z + 9, Math.PI / 2);
+    add(new T.SphereGeometry(16, 24, 16), P.x, P.y, z + 26);
+  } else if (S.handle === 'bar') {
+    add(new T.CylinderGeometry(6, 6, 160, 16), P.x, P.y, z + 28, 0, P.vert ? 0 : Math.PI / 2);
+    [-64, 64].forEach(d =>
+      add(new T.CylinderGeometry(4, 4, 28, 12), P.vert ? P.x : P.x + d, P.vert ? P.y + d : P.y, z + 14, Math.PI / 2)
+    );
+  } else if (S.handle === 'tab') {
+    const x = f.kind === 'drawer' ? P.x : f.hinge === 'L' ? f.x + f.w + 4 : f.x - 4,
+      y = f.kind === 'drawer' ? f.y + f.h + 4 : P.y;
+    add(new T.BoxGeometry(f.kind === 'drawer' ? 44 : 22, f.kind === 'drawer' ? 22 : 44, 4), x, y, z + 2);
+  } else if (S.handle === 'grip') {
+    const dark = new T.MeshStandardMaterial({ color: '#1b1b1b', roughness: 0.9 }),
+      g = new T.Mesh(new T.BoxGeometry(f.kind === 'drawer' ? 90 : 14, f.kind === 'drawer' ? 14 : 110, 3), dark);
+    g.position.set(
+      f.kind === 'drawer' ? P.x : f.hinge === 'L' ? f.x + f.w - 7 : f.x + 7,
+      f.kind === 'drawer' ? f.y + f.h - 7 : P.y,
+      z + 0.5
+    );
+    root.add(g);
+  }
+}
+
+/* ---------- camera, turning and tapping ---------- */
+function draw3D() {
+  if (!V3.ready || !V3.L) return;
+  const el = V3.r.domElement.parentElement;
+  if (!el || !el.clientWidth) return;
+  const w = el.clientWidth,
+    h = el.clientHeight;
+  V3.r.setSize(w, h, false);
+  V3.r.domElement.style.width = w + 'px';
+  V3.r.domElement.style.height = h + 'px';
+  const L = V3.L,
+    cam = V3.cam,
+    tgt = new V3.T.Vector3(L.W / 2, Math.max(L.H, 900) / 2, 0);
+  cam.aspect = w / h;
+  const span = Math.max(L.W / cam.aspect, Math.max(L.H, 900)) * 1.25,
+    dist = (span / 2 / Math.tan((cam.fov * Math.PI) / 360)) * V3.zoom;
+  cam.position.set(
+    tgt.x + Math.sin(V3.yaw) * Math.cos(V3.pitch) * dist,
+    tgt.y + Math.sin(V3.pitch) * dist,
+    Math.cos(V3.yaw) * Math.cos(V3.pitch) * dist
+  );
+  cam.lookAt(tgt);
+  cam.updateProjectionMatrix();
+  V3.r.render(V3.sc, cam);
+}
+function controls3D(cv) {
+  const pts = new Map();
+  let moved = 0,
+    pinch = 0;
+  cv.style.touchAction = 'none';
+  cv.addEventListener('pointerdown', e => {
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    cv.setPointerCapture(e.pointerId);
+    moved = 0;
+    if (pts.size === 2) {
+      const [a, b] = [...pts.values()];
+      pinch = Math.hypot(a.x - b.x, a.y - b.y);
+    }
+  });
+  cv.addEventListener('pointermove', e => {
+    const p = pts.get(e.pointerId);
+    if (!p) return;
+    const dx = e.clientX - p.x,
+      dy = e.clientY - p.y;
+    p.x = e.clientX;
+    p.y = e.clientY;
+    moved += Math.abs(dx) + Math.abs(dy);
+    if (pts.size === 2) {
+      const [a, b] = [...pts.values()],
+        d = Math.hypot(a.x - b.x, a.y - b.y);
+      if (pinch) V3.zoom = Math.max(0.35, Math.min(2.2, V3.zoom * (pinch / d)));
+      pinch = d;
+    } else {
+      V3.yaw = Math.max(-1.25, Math.min(1.25, V3.yaw - dx * 0.006));
+      V3.pitch = Math.max(-0.05, Math.min(0.9, V3.pitch + dy * 0.004));
+    }
+    draw3D();
+  });
+  const up = e => {
+    pts.delete(e.pointerId);
+    if (pts.size < 2) pinch = 0;
+    if (moved < 6 && e.type === 'pointerup') tap3D(e);
+  };
+  cv.addEventListener('pointerup', up);
+  cv.addEventListener('pointercancel', up);
+  cv.addEventListener(
+    'wheel',
+    e => {
+      e.preventDefault();
+      V3.zoom = Math.max(0.35, Math.min(2.2, V3.zoom * (e.deltaY > 0 ? 1.1 : 0.9)));
+      draw3D();
+    },
+    { passive: false }
+  );
+  cv.addEventListener('dblclick', () => {
+    Object.assign(V3, { yaw: -0.42, pitch: 0.1, zoom: 1 });
+    draw3D();
+  });
+}
+function tap3D(e) {
+  const T = V3.T,
+    rc = V3.r.domElement.getBoundingClientRect(),
+    v = new T.Vector2(((e.clientX - rc.left) / rc.width) * 2 - 1, -((e.clientY - rc.top) / rc.height) * 2 + 1),
+    ray = new T.Raycaster();
+  ray.setFromCamera(v, V3.cam);
+  const hit = ray.intersectObjects(V3.meshes, false)[0];
+  selectFront(hit ? hit.object.userData.fid : null);
+}
+
 /* ==== 30-ui.js ====
-   The four steps (1 Cabinets · 2 Fronts · 3 Handles · 4 Order), the panel for each, the price bar,
-   and every tap. One render() redraws everything from S.
+   The four steps (1 Cabinets · 2 Fronts · 3 Handles · 4 Order), the panel for each, the picture switch
+   (Front | 3D), Surprise me, the price bar and every tap. One render() redraws everything from S.
+   Tapping a front selects it: in Fronts it can get its own look, in Handles its hinge side can swap.
 */
 const STEPS = [
   ['cabs', 'Cabinets'],
@@ -1313,14 +1939,18 @@ const STEPS = [
   ['order', 'Order']
 ];
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const seg = (act, cur, opts) =>
+  `<div class="seg">${opts.map(([k, l]) => `<button type="button" class="${String(k) === String(cur) ? 'on' : ''}" data-act="${act}" data-a="${k}">${l}</button>`).join('')}</div>`;
 /* a row of choices for one cabinet: data-a is "cabinet id|value" */
 const segC = (act, c, cur, opts) =>
   `<div class="seg">${opts.map(([k, l]) => `<button type="button" class="${String(k) === String(cur) ? 'on' : ''}" data-act="${act}" data-a="${c.id}|${k}">${l}</button>`).join('')}</div>`;
-const seg = (act, cur, opts) =>
-  `<div class="seg">${opts.map(([k, l]) => `<button type="button" class="${String(k) === String(cur) ? 'on' : ''}" data-act="${act}" data-a="${k}">${l}</button>`).join('')}</div>`;
+const f1 = v => (Math.round(v * 10) / 10).toString();
 
 function render() {
-  if (!matOk(S.style, S.mat)) S.mat = 'mdf';
+  if (!matOk(S.style, S.mat)) S.mat = 'painted';
+  const L = layout(),
+    P = priceAll(L);
+  if (S.sel && !L.fronts.some(f => f.id === S.sel)) S.sel = null;
   save();
   const i = STEPS.findIndex(s => s[0] === S.step);
   const stepBtns = STEPS.map(
@@ -1329,13 +1959,20 @@ function render() {
   ).join('');
   document.getElementById('steps').innerHTML = stepBtns;
   document.getElementById('bsteps').innerHTML = stepBtns;
-  drawPic();
-  const L = layout(),
-    P = priceAll(L);
-  document.getElementById('stagebar').innerHTML =
-    `<span class="chip"><b>${SYS[S.sys].name}</b> ${SYS[S.sys].what}</span><span class="chip">${P.n} front${P.n === 1 ? '' : 's'}</span><span class="chip">${STYLES[S.style].name}${S.style === 'fluted' ? ' · ' + (FLUTE.pitch.find(p => p[0] === S.flute.pitch) || [0, ''])[1].toLowerCase() : ''}</span><span class="chip"><i class="sw" style="background:${faceColour()}"></i>${esc(colourName())}</span>`;
-  document.getElementById('pichint').textContent = L.fronts.some(f => f.hinge)
-    ? 'Tap a door to swap the side it hinges on.'
+  // the picture: flat or 3D
+  const v3 = S.view === '3d';
+  document.getElementById('pic').hidden = v3;
+  document.getElementById('pic3d').hidden = !v3;
+  if (v3) open3D();
+  else drawPic();
+  document.getElementById('stagebar').innerHTML = `${seg('view', S.view, [
+    ['2d', 'Front'],
+    ['3d', '3D']
+  ])}<span class="chip"><b>${SYS[S.sys].name}</b> ${P.n} front${P.n === 1 ? '' : 's'}</span>${S.recipe ? `<span class="chip rec">✨ ${esc(S.recipeSay || S.recipe)}</span>` : ''}<span class="sp"></span><button type="button" class="btn sm surp" data-act="surprise">✨ Surprise me</button>`;
+  document.getElementById('pichint').textContent = L.fronts.length
+    ? v3
+      ? 'Drag to turn · scroll or pinch to zoom · tap a front to change just that one'
+      : 'Tap a front to change just that one'
     : '';
   document.getElementById('pbar').innerHTML =
     `<div class="ptot"><span>${P.n} front${P.n === 1 ? '' : 's'} · incl. VAT${P.del ? ' + delivery' : ''}</span><b>${eur(P.total)}</b></div>${
@@ -1343,29 +1980,152 @@ function render() {
         ? ''
         : `<button type="button" class="btn ghost" data-act="next">${i < STEPS.length - 2 ? 'Next: ' + STEPS[i + 1][1] : 'See the order'} →</button>`
     }<button type="button" class="btn pri" data-act="orderNow" ${P.n ? '' : 'disabled'}>Order</button>`;
-  const panel = document.getElementById('panel');
-  panel.innerHTML = { cabs: cabsHTML, fronts: frontsHTML, handles: handlesHTML, order: orderHTML }[S.step](L, P);
+  document.getElementById('panel').innerHTML = {
+    cabs: cabsHTML,
+    fronts: frontsHTML,
+    handles: handlesHTML,
+    order: orderHTML
+  }[S.step](L, P);
   document.getElementById('app').dataset.step = S.step;
 }
-function colourName() {
-  const m = MATS[S.mat];
-  if (m.paint) return `RAL ${S.ral} ${(RAL[S.ral] || {}).name || ''}`;
-  if (m.lino) return 'Linoleum ' + (LINO.find(l => l[0] === S.lino) || LINO[0])[1].toLowerCase();
-  return m.name;
+function selectFront(id) {
+  S.sel = id && S.sel !== id ? id : null;
+  if (S.sel && S.step !== 'handles') S.step = 'fronts';
+  render();
+  if (S.sel && innerWidth <= 860) {
+    const el = document.getElementById('panel');
+    window.scrollTo({ top: el.offsetTop - document.querySelector('.stage').offsetHeight, behavior: 'smooth' });
+  }
 }
 
 /* ---------- 1 Cabinets ---------- */
+const QUICK = {
+  pax: [
+    [
+      'Three wide',
+      [
+        [100, 236],
+        [100, 236],
+        [100, 236]
+      ]
+    ],
+    [
+      'Wide · narrow · wide',
+      [
+        [100, 236],
+        [50, 236],
+        [100, 236]
+      ]
+    ],
+    [
+      'Two 75s',
+      [
+        [75, 236],
+        [75, 236]
+      ]
+    ],
+    [
+      'Under a low ceiling',
+      [
+        [100, 201],
+        [100, 201]
+      ]
+    ]
+  ],
+  metod: [
+    ['Small kitchen', { base: [60, 60, 60], wall: [60, 60, 60] }],
+    ['With a tall cabinet', { high: [60], base: [40, 60, 80], wall: [40, 60, 80] }],
+    ['Long run', { base: [60, 40, 60, 80, 60], wall: [60, 40, 60, 80, 60] }]
+  ],
+  besta: [
+    [
+      'TV bench',
+      [
+        [60, 38, 'drawers'],
+        [60, 38, 'drawers'],
+        [60, 38, 'drawers']
+      ]
+    ],
+    [
+      'Low sideboard',
+      [
+        [120, 64],
+        [120, 64]
+      ]
+    ],
+    [
+      'Tall wall',
+      [
+        [60, 192],
+        [60, 192],
+        [60, 192]
+      ]
+    ]
+  ]
+};
+function quickMake(q) {
+  if (Array.isArray(q)) return q.map(([w, h, lay]) => cab(S.sys, 'frame', w, h, lay));
+  const out = [];
+  ['high', 'base', 'wall'].forEach(k =>
+    (q[k] || []).forEach(w =>
+      out.push(cab('metod', k, w, SYS.metod.kinds[k].heights[k === 'high' ? 1 : k === 'wall' ? 2 : 0]))
+    )
+  );
+  return out;
+}
+/* "100 50 100" or "2x100 50" → widths, each snapped to the nearest IKEA width */
+function parseWidths(txt, widths) {
+  const out = [];
+  String(txt || '')
+    .replace(/,/g, ' ')
+    .split(/\s+/)
+    .filter(Boolean)
+    .forEach(t => {
+      const m = t.match(/^(?:(\d+)\s*[x×*])?(\d{2,3})$/i);
+      if (!m) return;
+      const n = Math.min(12, +(m[1] || 1)),
+        w = widths.reduce((b, v) => (Math.abs(v - +m[2]) < Math.abs(b - +m[2]) ? v : b), widths[0]);
+      for (let i = 0; i < n; i++) out.push(w);
+    });
+  return out;
+}
 function cabsHTML() {
   const sysBtns = Object.entries(SYS)
     .map(
       ([k, s]) =>
-        `<button type="button" class="sys ${k === S.sys ? 'on' : ''}" data-act="sys" data-a="${k}"><b>${s.name}</b><span>${s.what}</span><small>${s.blurb}</small></button>`
+        `<button type="button" class="sys ${k === S.sys ? 'on' : ''}" data-act="sys" data-a="${k}"><b>${s.name}</b><span>${s.what}</span></button>`
     )
     .join('');
-  const kinds = SYS[S.sys].kinds;
+  const kinds = SYS[S.sys].kinds,
+    qh =
+      S.qh && kinds.frame && kinds.frame.heights.includes(S.qh)
+        ? S.qh
+        : kinds.frame
+          ? kinds.frame.heights[S.sys === 'pax' ? 1 : 1]
+          : 80;
+  const quick = QUICK[S.sys]
+    .map(
+      (q, n) =>
+        `<button type="button" class="qk" data-act="quick" data-a="${n}"><b>${q[0]}</b><small>${quickWords(q[1])}</small></button>`
+    )
+    .join('');
+  const typeRow =
+    S.sys === 'metod'
+      ? `<label class="field"><span>Base cabinets, left to right</span><input id="twBase" inputmode="numeric" placeholder="60 40 80" value="${esc(S.twBase || '')}"></label><label class="field"><span>Wall cabinets, left to right</span><input id="twWall" inputmode="numeric" placeholder="60 40 80" value="${esc(S.twWall || '')}"></label>`
+      : `<label class="field"><span>Widths in cm, left to right</span><input id="twFrame" inputmode="numeric" placeholder="${S.sys === 'pax' ? '100 50 100' : '60 120 60'}" value="${esc(S.twFrame || '')}"></label><div class="row"><label>Height</label>${seg(
+          'qh',
+          qh,
+          kinds.frame.heights.map(v => [v, v])
+        )}</div>`;
+  const addRows = Object.entries(kinds)
+    .map(
+      ([k, kd]) =>
+        `<div class="row"><label>${S.sys === 'metod' ? kd.label.replace(' cabinet', '') : 'Add'}</label><div class="chips">${kd.widths.map(w => `<button type="button" class="btn sm" data-act="addw" data-a="${k}|${w}">+ ${w}</button>`).join('')}</div></div>`
+    )
+    .join('');
   const card = (c, n) => {
     const kd = kinds[c.kind];
-    return `<div class="cab"><div class="cabh"><b>${n + 1}</b><span>${S.sys === 'metod' ? kd.label : SYS[S.sys].name + ' frame'}</span><span class="sp"></span><button type="button" class="ib" data-act="mv" data-a="${c.id}|-1" aria-label="Move left">◀</button><button type="button" class="ib" data-act="mv" data-a="${c.id}|1" aria-label="Move right">▶</button><button type="button" class="ib" data-act="del" data-a="${c.id}" aria-label="Remove">✕</button></div>
+    return `<div class="cab"><div class="cabh"><b>${n + 1}</b><span>${S.sys === 'metod' ? kd.label : SYS[S.sys].name + ' frame'} · ${c.w}${kd.heights.length > 1 ? ' × ' + c.h : ''}</span><span class="sp"></span><button type="button" class="ib" data-act="mv" data-a="${c.id}|-1" aria-label="Move left">◀</button><button type="button" class="ib" data-act="mv" data-a="${c.id}|1" aria-label="Move right">▶</button><button type="button" class="ib" data-act="del" data-a="${c.id}" aria-label="Remove">✕</button></div>
       <div class="row"><label>Width</label>${segC(
         'cw',
         c,
@@ -1389,57 +2149,89 @@ function cabsHTML() {
         layoutsFor(c).map(([k, l]) => [k, l])
       )}</div></div>`;
   };
-  const cards = S.cabs.map(card).join('');
-  const adds = Object.entries(kinds)
-    .map(
-      ([k, kd]) =>
-        `<button type="button" class="btn" data-act="add" data-a="${k}">+ ${S.sys === 'metod' ? kd.label.toLowerCase() : 'frame'}</button>`
-    )
-    .join('');
-  return `<h2>What do you have?</h2><p class="lede">Pick your IKEA system, then add your cabinets from left to right. Or paste the list from the IKEA planner.</p>
+  return `<h2>What do you have?</h2><p class="lede">Pick your IKEA system and set up your cabinets the quickest way for you.</p>
     <div class="syss">${sysBtns}</div>
-    <div class="cabs">${cards || '<p class="hint">No cabinets yet — add one below.</p>'}</div>
-    <div class="adds">${adds}</div>
-    <details class="imp"${S.impOpen ? ' open' : ''}><summary>Paste your IKEA planner list</summary>
-      <p class="hint">Copy the item list from the IKEA planner (or type it) and paste it here. Frames and cabinets are picked up with their sizes; doors, hinges and legs are skipped.</p>
+    <h3>Start from a common layout</h3><div class="qks">${quick}</div>
+    <h3>Or type your widths</h3>${typeRow}<div class="adds"><button type="button" class="btn pri" data-act="typed">Make these cabinets</button></div>
+    <h3>Or add one at a time</h3>${addRows}
+    <h3>Your cabinets, left to right</h3>
+    <div class="cabs">${S.cabs.map(card).join('') || '<p class="hint">No cabinets yet.</p>'}</div>
+    <details class="imp"${S.impOpen ? ' open' : ''}><summary>Have an IKEA planner list? Paste it</summary>
+      <p class="hint">Copy the item list from the IKEA planner (or your order confirmation) and paste it here. Frames and cabinets are picked up with their sizes; doors, hinges and legs are skipped.</p>
       <textarea id="impText" rows="6" placeholder="PAX Wardrobe frame, white, 100x58x236 cm   2 pcs">${esc(S.impText || '')}</textarea>
       <div class="adds"><button type="button" class="btn pri" data-act="imp">Read the list</button><button type="button" class="btn" data-act="impEx">Try an example</button></div>
       ${S.impMsg ? `<p class="hint">${S.impMsg}</p>` : ''}</details>`;
 }
+function quickWords(q) {
+  if (Array.isArray(q)) return q.map(x => x[0]).join(' + ') + (q[0][1] ? ` · ${q[0][1]} high` : '');
+  return ['high', 'base', 'wall']
+    .filter(k => q[k])
+    .map(k => `${q[k].length} ${k === 'high' ? 'tall' : k}`)
+    .join(' · ');
+}
 
 /* ---------- 2 Fronts ---------- */
-function frontsHTML() {
+/* the look editor: for all fronts (target "all") or for one front (its id) */
+function lookEdHTML(target, lk) {
+  const t = target;
   const styles = Object.entries(STYLES)
-    .map(
-      ([k, s]) =>
-        `<button type="button" class="stc ${k === S.style ? 'on' : ''}" data-act="style" data-a="${k}">${styleThumb(k)}<b>${s.name}</b><small>${s.blurb}</small></button>`
-    )
+    .map(([k, s]) => {
+      const ok = matOk(k, lk.mat) || !MATS[lk.mat].only;
+      return `<button type="button" class="stc ${k === lk.style ? 'on' : ''}" data-act="lk" data-a="${t}|style|${k}" ${ok ? '' : 'disabled'}>${lookThumb(k, lk.mat === 'glass' && k === 'flat' ? 'painted' : lk.mat, lk.col, t + k)}<b>${s.name}</b><small>${s.blurb}</small></button>`;
+    })
     .join('');
   const mats = Object.entries(MATS)
     .map(([k, m]) => {
-      const ok = matOk(S.style, k);
-      return `<button type="button" class="mat ${k === S.mat ? 'on' : ''}" data-act="mat" data-a="${k}" ${ok ? '' : 'disabled title="Not made in this style"'}><i class="sw" style="background:${m.paint ? (RAL[S.ral] || {}).hex : m.lino ? (LINO.find(l => l[0] === S.lino) || LINO[0])[2] : m.wood}"></i><b>${m.name}</b><small>${ok ? m.blurb : 'not in ' + STYLES[S.style].name.toLowerCase()}</small></button>`;
+      const sw = m.paint ? colHex(lk.col) : m.glass ? '#cfdcd8' : m.wood;
+      return `<button type="button" class="mat ${k === lk.mat ? 'on' : ''}" data-act="lk" data-a="${t}|mat|${k}"><i class="sw${m.glass ? ' gl' : ''}" style="background:${sw}"></i><b>${m.name}</b>${m.budget ? '<em class="tag">Budget</em>' : ''}<small>${m.blurb} · from ${eur(m.rate * (m.glass ? 1 : 1))}/m²</small></button>`;
     })
     .join('');
-  let col = '';
-  if (MATS[S.mat].paint)
-    col = `<h3>Colour</h3><div class="sws">${RAL_PICK.map(k => `<button type="button" class="swb ${k === S.ral ? 'on' : ''}" data-act="ral" data-a="${k}" title="RAL ${k} ${esc(RAL[k].name)}" style="background:${RAL[k].hex}"></button>`).join('')}</div>
-    <label class="field"><span>Any RAL colour</span><select data-ch="ral">${Object.entries(RAL)
-      .map(([k, r]) => `<option value="${k}" ${k === S.ral ? 'selected' : ''}>RAL ${k} ${esc(r.name)}</option>`)
-      .join('')}</select></label>`;
-  if (MATS[S.mat].lino)
-    col = `<h3>Colour</h3><div class="sws">${LINO.map(([k, n, h]) => `<button type="button" class="swb ${k === S.lino ? 'on' : ''}" data-act="lino" data-a="${k}" title="${n}" style="background:${h}"></button>`).join('')}</div>`;
-  const flute =
-    S.style === 'fluted'
-      ? `<div class="row"><label>Flutes</label>${seg(
-          'pitch',
-          S.flute.pitch,
-          FLUTE.pitch.map(([v, l]) => [v, `${l} <small>${v} mm</small>`])
-        )}</div><div class="row"><label>Direction</label>${seg('fdir', S.flute.dir, FLUTE.dir)}</div>`
-      : '';
-  return `<h2>Your fronts</h2><p class="lede">One style for every front — 19 mm thick, made to the exact IKEA sizes and drilled for the IKEA hinges you already have.</p>
-    <h3>Style</h3><div class="stcs">${styles}</div>${flute}
-    <h3>Material</h3><div class="mats">${mats}</div>${col}`;
+  const cols = MATS[lk.mat].paint
+    ? `<h3>Colour</h3><div class="sws">${Object.entries(COLOURS)
+        .map(
+          ([k, c]) =>
+            `<button type="button" class="swb ${k === lk.col ? 'on' : ''}" data-act="lk" data-a="${t}|col|${k}" title="${esc(c.name)} · RAL ${c.ral}" style="background:${colHex(k)}"><span>${esc(c.name)}</span></button>`
+        )
+        .join(
+          ''
+        )}</div><p class="hint">${esc(COLOURS[lk.col].name)} is RAL ${COLOURS[lk.col].ral} ${esc((RAL[COLOURS[lk.col].ral] || {}).name || '')}, so any paint shop can match it later.</p>`
+    : '';
+  return `<h3>Style</h3><div class="stcs two">${styles}</div><h3>Material</h3><div class="mats">${mats}</div>${cols}`;
+}
+function frontsHTML(L) {
+  let h = `<h2>Your fronts</h2><p class="lede">19 mm thick, made to the exact IKEA sizes and drilled for the IKEA hinges you already have. Choose one look for all of them, then tap any front in the picture to give it its own.</p>
+    <div class="adds"><button type="button" class="btn surp" data-act="surprise">✨ Surprise me</button>${S.recipe ? `<span class="hint">${esc(S.recipe)}: ${esc(S.recipeSay || '')} — tap again for another idea</span>` : ''}</div>`;
+  const f = S.sel && L.fronts.find(x => x.id === S.sel);
+  if (f) {
+    const lk = lookOf(f),
+      c = S.cabs.find(x => x.id === f.cab),
+      n = S.cabs.indexOf(c) + 1,
+      sib = L.fronts.filter(x => x.cab === f.cab).length;
+    h += `<div class="selcard"><div class="cabh"><b>${n}</b><span><strong>This ${f.kind === 'door' ? 'door' : 'drawer front'}</strong> · ${f1(f.w)} × ${f1(f.h)} mm</span><span class="sp"></span><button type="button" class="ib" data-act="desel" aria-label="Done">✕</button></div>
+      ${seg('own', lk.own ? 'own' : 'same', [
+        ['same', 'Same as the rest'],
+        ['own', 'Its own look']
+      ])}
+      ${lk.own ? lookEdHTML(f.id, lk) : ''}
+      <div class="adds">${lk.own && sib > 1 ? `<button type="button" class="btn sm" data-act="copycab">Same for the whole cabinet</button>` : ''}${f.hinge ? `<button type="button" class="btn sm" data-act="flip">Hinge ${f.hinge === 'L' ? 'left' : 'right'} → swap</button>` : ''}</div></div>`;
+  }
+  const all = { style: S.style, mat: S.mat, col: S.col };
+  h += `<h3 class="big">${f ? 'All the other fronts' : 'All fronts'}</h3>${lookEdHTML('all', all)}`;
+  const anyFluted = L.fronts.some(x => lookOf(x).style === 'fluted'),
+    anyGlass = L.fronts.some(x => MATS[lookOf(x).mat].glass);
+  if (anyFluted)
+    h += `<h3>Flutes</h3><div class="row"><label>Size</label>${seg(
+      'pitch',
+      S.flute.pitch,
+      FLUTE.pitch.map(([v, l]) => [v, `${l} <small>${v} mm</small>`])
+    )}</div><div class="row"><label>Run</label>${seg('fdir', S.flute.dir, FLUTE.dir)}</div>`;
+  if (anyGlass)
+    h += `<h3>Glass frame</h3>${seg(
+      'gframe',
+      S.gframe,
+      Object.entries(GFRAME).map(([k, g]) => [k, g.name])
+    )}`;
+  return h;
 }
 
 /* ---------- 3 Handles ---------- */
@@ -1460,22 +2252,29 @@ function handlesHTML(L) {
             .map(([k, f]) => [k, f.name])
         )}`
       : '';
-  const doors = L.fronts.filter(f => f.hinge).length;
+  const f = S.sel && L.fronts.find(x => x.id === S.sel);
+  const doors = L.fronts.filter(x => x.hinge).length;
   return `<h2>Handles</h2><p class="lede">The same handle on every front. Doors get it on the side that opens, drawers in the middle.</p>
     <div class="mats">${hs}</div>${fins}
-    ${doors ? `<h3>Hinge sides</h3><p class="hint">Tap a door in the picture to swap the side it hinges on — the handle moves with it. ${Object.keys(S.flip).length ? `<button type="button" class="linkb" data-act="unflip">Put all doors back</button>` : ''}</p>` : ''}`;
+    ${doors ? `<h3>Hinge sides</h3>${f && f.hinge ? `<div class="selcard"><b>This door</b> hinges on the ${f.hinge === 'L' ? 'left' : 'right'}. <button type="button" class="btn sm" data-act="flip">Swap to the ${f.hinge === 'L' ? 'right' : 'left'}</button></div>` : '<p class="hint">Tap a door in the picture to swap the side it hinges on — the handle moves with it.</p>'}${Object.keys(S.flip).length ? `<button type="button" class="linkb" data-act="unflip">Put all doors back</button>` : ''}` : ''}`;
 }
 
 /* ---------- 4 Order ---------- */
 function orderHTML(L, P) {
   const g = grouped(L);
+  let last = '';
   const rows = g
-    .map(
-      r =>
-        `<tr><td>${r.n}×</td><td>${r.kind === 'door' ? 'Door' + (r.hinge ? ` <small>hinge ${r.hinge === 'L' ? 'left' : 'right'}</small>` : '') : 'Drawer front'}</td><td class="num">${f1(r.w)} × ${f1(r.h)}<small>IKEA ${r.nom}</small></td><td class="num">${eur(r.p * r.n)}</td></tr>`
-    )
+    .map(r => {
+      const key = lookKey(r.look),
+        head =
+          key !== last
+            ? `<tr class="lkh"><td colspan="4"><i class="sw${MATS[r.look.mat].glass ? ' gl' : ''}" style="background:${faceHex(r.look)}"></i>${esc(lookName(r.look))}</td></tr>`
+            : '';
+      last = key;
+      return `${head}<tr><td>${r.n}×</td><td>${r.kind === 'door' ? 'Door' + (r.hinge ? ` <small>hinge ${r.hinge === 'L' ? 'left' : 'right'}</small>` : '') : 'Drawer front'}</td><td class="num">${f1(r.w)} × ${f1(r.h)}<small>IKEA ${r.nom}</small></td><td class="num">${eur(r.p * r.n)}</td></tr>`;
+    })
     .join('');
-  return `<h2>Your order</h2><p class="lede">${P.n} fronts in ${esc(STYLES[S.style].name.toLowerCase())} ${esc(colourName())}, with ${esc(HANDLES[S.handle].name.toLowerCase())}${S.handle === 'push' ? ' latches' : S.handle === 'grip' ? 's' : 's in ' + esc(HFIN[S.hfin].name.toLowerCase())}. Made to measure and drilled for your IKEA hinges; ready ${LEAD} after you order.</p>
+  return `<h2>Your order</h2><p class="lede">${P.n} fronts with ${esc(HANDLES[S.handle].name.toLowerCase())}${S.handle === 'push' ? ' latches' : S.handle === 'grip' ? 's' : 's in ' + esc(HFIN[S.hfin].name.toLowerCase())}. Made to measure and drilled for your IKEA hinges; ready ${LEAD} after you order.</p>
     ${
       P.n
         ? `<table class="ord"><thead><tr><th></th><th>Front</th><th class="num">Size, mm</th><th class="num">Price</th></tr></thead><tbody>${rows}</tbody>
@@ -1483,17 +2282,16 @@ function orderHTML(L, P) {
     <button type="button" class="btn pri big" data-act="orderNow">Order these fronts</button>`
         : '<p class="hint">Add a cabinet with fronts first.</p>'
     }
-    <p class="hint">Keep your IKEA frames, hinges and drawers — only the fronts change. Hinges and drawer fittings are not included.</p>`;
+    <p class="hint">Keep your IKEA frames, hinges and drawers — only the fronts change. Hinges and drawer fittings are not included.${L.fronts.some(f => MATS[lookOf(f).mat].budget) ? ' Raw MDF and untreated ply come sanded and unfinished: paint, oil or wax them before you hang them.' : ''}</p>`;
 }
-const f1 = v => (Math.round(v * 10) / 10).toString();
 
 /* ---------- order form (prototype: nothing is sent) ---------- */
 function openOrder() {
   const L = layout(),
     P = priceAll(L);
   if (!P.n) return;
-  const box = document.getElementById('mbox');
-  box.innerHTML = `<h2>Order your fronts</h2><p class="lede">${P.n} fronts · <b>${eur(P.total)}</b> incl. VAT and delivery. We check every size with you before we cut.</p>
+  document.getElementById('mbox').innerHTML =
+    `<h2>Order your fronts</h2><p class="lede">${P.n} fronts · <b>${eur(P.total)}</b> incl. VAT and delivery. We check every size with you before we cut.</p>
     <label class="field"><span>Your name</span><input id="oName" autocomplete="name"></label>
     <label class="field"><span>E-mail</span><input id="oMail" type="email" autocomplete="email"></label>
     <label class="field"><span>Postcode</span><input id="oZip" autocomplete="postal-code"></label>
@@ -1507,13 +2305,12 @@ function orderText() {
   const L = layout(),
     P = priceAll(L);
   return [
-    `BRUIS Fronts — order request`,
-    `${SYS[S.sys].name} · ${STYLES[S.style].name}${S.style === 'fluted' ? ` (${S.flute.pitch} mm, ${S.flute.dir === 'v' ? 'vertical' : 'horizontal'})` : ''} · ${MATS[S.mat].name} · ${colourName()}`,
-    `Handles: ${HANDLES[S.handle].name}${S.handle === 'knob' || S.handle === 'bar' || S.handle === 'tab' ? ', ' + HFIN[S.hfin].name : ''}`,
+    `BRUIS Fronts — order request (${SYS[S.sys].name})`,
+    `Handles: ${HANDLES[S.handle].name}${S.handle === 'knob' || S.handle === 'bar' || S.handle === 'tab' ? ', ' + HFIN[S.hfin].name : ''}${L.fronts.some(f => lookOf(f).style === 'fluted') ? ` · flutes ${S.flute.pitch} mm, ${S.flute.dir === 'v' ? 'vertical' : 'horizontal'}` : ''}${L.fronts.some(f => MATS[lookOf(f).mat].glass) ? ` · glass frame ${GFRAME[S.gframe].name.toLowerCase()}` : ''}`,
     '',
     ...grouped(L).map(
       r =>
-        `${r.n} × ${r.kind === 'door' ? 'door' : 'drawer front'} ${f1(r.w)} × ${f1(r.h)} mm (IKEA ${r.nom})${r.hinge ? ', hinge ' + (r.hinge === 'L' ? 'left' : 'right') : ''}`
+        `${r.n} × ${r.kind === 'door' ? 'door' : 'drawer front'} ${f1(r.w)} × ${f1(r.h)} mm (IKEA ${r.nom})${r.hinge ? ', hinge ' + (r.hinge === 'L' ? 'left' : 'right') : ''} — ${lookName(r.look)}${MATS[r.look.mat].paint ? ' (RAL ' + COLOURS[r.look.col].ral + ')' : ''}`
     ),
     '',
     `Total ${eur(P.total)} incl. VAT${P.del ? ' and delivery' : ''}`
@@ -1539,14 +2336,28 @@ function sendOrder() {
   save();
 }
 
+/* ---------- a look change, for all fronts or for one ---------- */
+function setLook(target, field, val) {
+  if (target === 'all') {
+    S[field] = val;
+    if (field === 'mat' && MATS[val].only) S.style = MATS[val].only;
+    if (field === 'style' && !matOk(val, S.mat)) S.mat = 'painted';
+    S.recipe = null;
+    return;
+  }
+  const cur = lookOf({ id: target }),
+    nx = { style: cur.style, mat: cur.mat, col: cur.col };
+  nx[field] = val;
+  if (field === 'mat' && MATS[val].only) nx.style = MATS[val].only;
+  if (field === 'style' && !matOk(val, nx.mat)) nx.mat = 'painted';
+  S.fx[target] = nx;
+}
+
 /* ---------- taps ---------- */
 document.addEventListener('click', e => {
-  const fr = e.target.closest('#pic .front.hd');
-  if (fr && !e.target.closest('[data-act]')) {
-    const id = fr.dataset.f;
-    if (S.flip[id]) delete S.flip[id];
-    else S.flip[id] = 1;
-    render();
+  const fr = e.target.closest('#pic .front');
+  if (fr) {
+    selectFront(fr.dataset.f);
     return;
   }
   const b = e.target.closest('[data-act]');
@@ -1565,6 +2376,13 @@ document.addEventListener('click', e => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       break;
     }
+    case 'view':
+      S.view = a;
+      break;
+    case 'surprise':
+      surprise();
+      if (S.step === 'cabs') S.step = 'fronts';
+      break;
     case 'sys':
       if (a !== S.sys) {
         // another system starts from an example row of its cabinets; the look you chose stays
@@ -1572,14 +2390,58 @@ document.addEventListener('click', e => {
           style: S.style,
           flute: S.flute,
           mat: S.mat,
-          ral: S.ral,
-          lino: S.lino,
+          col: S.col,
+          gframe: S.gframe,
           handle: S.handle,
-          hfin: S.hfin
+          hfin: S.hfin,
+          view: S.view
         };
         S = Object.assign(freshState(a), keep, { step: 'cabs' });
       }
       break;
+    case 'quick':
+      S.cabs = quickMake(QUICK[S.sys][+a][1]);
+      S.flip = {};
+      S.fx = {};
+      break;
+    case 'qh':
+      S.qh = +a;
+      break;
+    case 'typed': {
+      const kinds = SYS[S.sys].kinds,
+        got = [];
+      if (S.sys === 'metod') {
+        S.twBase = document.getElementById('twBase').value;
+        S.twWall = document.getElementById('twWall').value;
+        parseWidths(S.twBase, kinds.base.widths).forEach(w => got.push(cab('metod', 'base', w, 80)));
+        parseWidths(S.twWall, kinds.wall.widths).forEach(w => got.push(cab('metod', 'wall', w, 80)));
+        // keep the tall cabinets you already had
+        S.cabs.filter(x => x.kind === 'high').forEach(x => got.unshift(x));
+      } else {
+        S.twFrame = document.getElementById('twFrame').value;
+        const h = S.qh && kinds.frame.heights.includes(S.qh) ? S.qh : kinds.frame.heights[1];
+        parseWidths(S.twFrame, kinds.frame.widths).forEach(w => got.push(cab(S.sys, 'frame', w, h)));
+      }
+      if (got.length) {
+        S.cabs = got;
+        S.flip = {};
+        S.fx = {};
+      }
+      break;
+    }
+    case 'addw': {
+      const kd = SYS[S.sys].kinds[id],
+        h =
+          kd.heights.length === 1
+            ? kd.heights[0]
+            : S.sys === 'metod'
+              ? kd.heights[id === 'wall' ? 2 : 1]
+              : S.qh && kd.heights.includes(S.qh)
+                ? S.qh
+                : kd.heights[1];
+      S.cabs.push(cab(S.sys, id, +val, h));
+      break;
+    }
     case 'cw':
       if (c) {
         c.w = +val;
@@ -1604,20 +2466,6 @@ document.addEventListener('click', e => {
     case 'del':
       S.cabs = S.cabs.filter(x => x !== c);
       break;
-    case 'add': {
-      const kd = SYS[S.sys].kinds[a];
-      S.cabs.push(
-        cab(
-          S.sys,
-          a,
-          kd.widths.includes(60) ? 60 : kd.widths[kd.widths.length - 1],
-          kd.heights[
-            kd.heights.length > 1 && S.sys === 'pax' ? 1 : kd.heights.includes(80) ? kd.heights.indexOf(80) : 0
-          ]
-        )
-      );
-      break;
-    }
     case 'impEx':
       S.impText = IMPORT_EXAMPLE;
       S.impOpen = true;
@@ -1639,13 +2487,40 @@ document.addEventListener('click', e => {
       S.sys = main;
       S.cabs = r.found.filter(x => x.sys === main);
       S.flip = {};
+      S.fx = {};
       const other = Object.entries(bySys).filter(([k]) => k !== main);
       S.impMsg = `Found ${S.cabs.length} ${SYS[main].name} cabinet${S.cabs.length === 1 ? '' : 's'}.${other.length ? ` The list also has ${other.map(([k, n]) => `${n} ${SYS[k].name}`).join(' and ')} — one system per order for now; switch above to do those next.` : ''}${r.skipped.length ? ` Skipped ${r.skipped.length} line${r.skipped.length === 1 ? '' : 's'} that are not frames.` : ''}`;
       break;
     }
-    case 'style':
-      S.style = a;
-      if (!matOk(a, S.mat)) S.mat = 'mdf';
+    case 'lk': {
+      const [t, field, v] = a.split('|');
+      setLook(t, field, v);
+      break;
+    }
+    case 'own':
+      if (S.sel) {
+        if (a === 'same') delete S.fx[S.sel];
+        else S.fx[S.sel] = { style: S.style, mat: S.mat, col: S.col };
+      }
+      break;
+    case 'copycab': {
+      const L = layout(),
+        f = L.fronts.find(x => x.id === S.sel);
+      if (f && S.fx[f.id])
+        L.fronts.filter(x => x.cab === f.cab).forEach(x => (S.fx[x.id] = Object.assign({}, S.fx[f.id])));
+      break;
+    }
+    case 'desel':
+      S.sel = null;
+      break;
+    case 'flip':
+      if (S.sel) {
+        if (S.flip[S.sel]) delete S.flip[S.sel];
+        else S.flip[S.sel] = 1;
+      }
+      break;
+    case 'unflip':
+      S.flip = {};
       break;
     case 'pitch':
       S.flute.pitch = +a;
@@ -1653,14 +2528,8 @@ document.addEventListener('click', e => {
     case 'fdir':
       S.flute.dir = a;
       break;
-    case 'mat':
-      S.mat = a;
-      break;
-    case 'ral':
-      S.ral = a;
-      break;
-    case 'lino':
-      S.lino = a;
+    case 'gframe':
+      S.gframe = a;
       break;
     case 'handle':
       S.handle = a;
@@ -1668,9 +2537,6 @@ document.addEventListener('click', e => {
       break;
     case 'hfin':
       S.hfin = a;
-      break;
-    case 'unflip':
-      S.flip = {};
       break;
     case 'orderNow':
       openOrder();
@@ -1694,12 +2560,6 @@ document.addEventListener('click', e => {
   }
   render();
 });
-document.addEventListener('change', e => {
-  if (e.target.dataset.ch === 'ral') {
-    S.ral = e.target.value;
-    render();
-  }
-});
 document.addEventListener(
   'toggle',
   e => {
@@ -1709,11 +2569,11 @@ document.addEventListener(
 );
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') document.getElementById('modal').hidden = true;
+  if (e.key === 'Enter' && e.target && /^tw/.test(e.target.id)) document.querySelector('[data-act=typed]').click();
 });
 document.getElementById('modal').addEventListener('click', e => {
   if (e.target.id === 'modal') e.currentTarget.hidden = true;
 });
-render();
 
 /* ==== 40-import.js ====
    Read the item list from the IKEA planner (copied as text, or typed): every line with a PAX, METOD or BESTÅ
@@ -1777,6 +2637,170 @@ function parsePlanner(text, only) {
     });
   return { found, skipped };
 }
+
+/* ==== 45-surprise.js ====
+   "Surprise me": not a dice roll but a recipe, like Fitted's. Each recipe is a small rule set a designer would use —
+   one bold colour, wood with one colour, two colours that go together, a glass accent, birch, walnut — and gives
+   every front its look by what it is: a tall door, a drawer, a wall cabinet, the top row. Handles follow the colours:
+   brass on dark and saturated colours, black on light colours and birch, the same colour for a quiet look.
+*/
+function prng(seed) {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const pick = (r, a) => a[Math.floor(r() * a.length)];
+const BOLD = ['cobalt', 'midnight', 'racing', 'mustard', 'terracotta', 'tomato', 'oxblood', 'plum'];
+const DARK = { cobalt: 1, midnight: 1, racing: 1, oxblood: 1, plum: 1, black: 1, terracotta: 1, tomato: 1 };
+// colours that sit well together (first the main one, then the partner)
+const PAIRS = [
+  ['cobalt', 'chalk'],
+  ['racing', 'blush'],
+  ['oxblood', 'blush'],
+  ['terracotta', 'sage'],
+  ['midnight', 'mustard'],
+  ['plum', 'sage'],
+  ['tomato', 'chalk'],
+  ['racing', 'mustard'],
+  ['black', 'terracotta']
+];
+/* what a front is, for the rules */
+function roleOf(f) {
+  if (f.kind === 'drawer') return 'drawer';
+  if (f.ckind === 'wall') return 'wall';
+  if (f.sys === 'besta') return f.y > 700 ? 'top' : 'low';
+  if (f.h > 1200) return 'tall';
+  return 'door';
+}
+const RECIPES = [
+  {
+    name: 'One bold colour',
+    make(r) {
+      const c = pick(r, BOLD);
+      return {
+        all: { mat: 'painted', col: c, style: 'fluted' },
+        by: { drawer: { style: 'flat' } },
+        hfin: DARK[c] ? 'brass' : 'black',
+        say: COLOURS[c].name
+      };
+    }
+  },
+  {
+    name: 'Wood and one colour',
+    make(r) {
+      const wood = pick(r, ['oak', 'walnut']),
+        c = pick(
+          r,
+          wood === 'oak'
+            ? ['racing', 'cobalt', 'terracotta', 'midnight', 'tomato']
+            : ['mustard', 'blush', 'sage', 'chalk', 'terracotta']
+        );
+      return {
+        all: { mat: wood, style: pick(r, ['flat', 'fluted']) },
+        by: {
+          drawer: { mat: 'painted', col: c, style: 'flat' },
+          wall: { mat: 'painted', col: c, style: 'flat' },
+          top: { mat: 'painted', col: c, style: 'flat' }
+        },
+        hfin: wood === 'walnut' ? 'brass' : 'black',
+        say: `${MATS[wood].name.replace(' veneer', '')} & ${COLOURS[c].name.toLowerCase()}`
+      };
+    }
+  },
+  {
+    name: 'Two colours',
+    make(r) {
+      const [a, b] = pick(r, PAIRS);
+      return {
+        all: { mat: 'painted', col: a, style: 'fluted' },
+        by: { wall: { col: b, style: 'flat' }, top: { col: b, style: 'flat' }, drawer: { col: a, style: 'flat' } },
+        hfin: DARK[a] ? 'brass' : 'black',
+        say: `${COLOURS[a].name} & ${COLOURS[b].name.toLowerCase()}`
+      };
+    }
+  },
+  {
+    name: 'Glass accent',
+    make(r) {
+      const base = pick(r, ['walnut', 'oak', 'painted']),
+        c = pick(r, ['midnight', 'racing', 'oxblood', 'black', 'chalk']);
+      const look = base === 'painted' ? { mat: 'painted', col: c, style: 'flat' } : { mat: base, style: 'flat' };
+      return {
+        all: look,
+        by: { wall: { mat: 'glass' }, top: { mat: 'glass' }, tall: { mat: 'glass', every: 2 } },
+        gframe: base === 'oak' ? 'oak' : pick(r, ['black', 'alu']),
+        hfin: base === 'walnut' || DARK[c] ? 'brass' : 'black',
+        say: `${base === 'painted' ? COLOURS[c].name : MATS[base].name.replace(' veneer', '')} & fluted glass`
+      };
+    }
+  },
+  {
+    name: 'Birch with colour',
+    make(r) {
+      const c = pick(r, ['tomato', 'cobalt', 'mustard', 'racing', 'blush']);
+      return {
+        all: { mat: 'birch', style: 'flat' },
+        by: { drawer: { mat: 'painted', col: c, style: 'flat' } },
+        handle: pick(r, ['push', 'tab', 'grip']),
+        hfin: 'black',
+        say: `Birch & ${COLOURS[c].name.toLowerCase()}`
+      };
+    }
+  },
+  {
+    name: 'Walnut, quietly',
+    make() {
+      return {
+        all: { mat: 'walnut', style: 'fluted' },
+        by: { drawer: { style: 'flat' } },
+        handle: 'bar',
+        hfin: 'brass',
+        say: 'Walnut'
+      };
+    }
+  }
+];
+function surprise(seed) {
+  const r = prng(seed || Date.now() & 0xffffffff),
+    L = layout();
+  // glass needs something to show off: skip glass recipes when nothing suits it
+  const okR = RECIPES.filter(
+    x => x.name !== 'Glass accent' || L.fronts.some(f => ['wall', 'top', 'tall'].includes(roleOf(f)))
+  );
+  let rec = pick(r, okR);
+  if (okR.length > 1 && rec.name === S.recipe)
+    rec = okR[(okR.indexOf(rec) + 1 + Math.floor(r() * (okR.length - 1))) % okR.length];
+  const plan = rec.make(r);
+  S.style = plan.all.style || 'flat';
+  S.mat = plan.all.mat;
+  if (plan.all.col) S.col = plan.all.col;
+  S.fx = {};
+  const count = {};
+  L.fronts.forEach(f => {
+    const role = roleOf(f),
+      o = plan.by[role];
+    if (!o) return;
+    count[role] = (count[role] || 0) + 1;
+    if (o.every && count[role] % o.every) return; // e.g. every other tall door in glass
+    const lk = Object.assign({}, plan.all, o);
+    delete lk.every;
+    if (lk.mat !== S.mat || lk.style !== S.style || (lk.col && lk.col !== S.col)) S.fx[f.id] = lk;
+  });
+  if (plan.gframe) S.gframe = plan.gframe;
+  S.handle = plan.handle || pick(r, ['knob', 'bar', 'knob', 'push']);
+  S.hfin = S.handle === 'tab' ? 'black' : plan.hfin || 'brass';
+  S.recipe = rec.name;
+  S.recipeSay = plan.say;
+  S.sel = null;
+}
+
+/* ==== 99-start.js ==== draw the first screen once every file is loaded */
+render();
 
 
 </script>

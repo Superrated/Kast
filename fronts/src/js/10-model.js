@@ -2,7 +2,7 @@
    The project (S), saved in this browser, and what it turns into: each cabinet's fronts with their
    real sizes (mm) and where they sit in the picture.
 */
-const KEY = 'bruis-fronts-v1';
+const KEY = 'bruis-fronts-v2';
 let _id = 1;
 const nid = () => 'c' + _id++ + Math.random().toString(36).slice(2, 5);
 
@@ -12,19 +12,22 @@ function freshState(sys) {
     cabs: [],
     style: 'fluted',
     flute: { pitch: 20, dir: 'v' },
-    mat: 'mdf',
-    ral: '6021',
-    lino: 'mushroom',
+    mat: 'painted',
+    col: 'racing',
+    gframe: 'black',
     handle: 'knob',
     hfin: 'brass',
     step: 'cabs',
-    flip: {}
+    view: '2d',
+    flip: {},
+    fx: {}, // fronts with their own look: id → { style, mat, col }
+    sel: null // the front you tapped
   };
   if (s.sys === 'pax')
     s.cabs = [cab('pax', 'frame', 100, 236), cab('pax', 'frame', 50, 236), cab('pax', 'frame', 100, 236)];
   if (s.sys === 'metod') {
-    s.style = 'shaker';
-    s.ral = '6011';
+    s.style = 'flat';
+    s.col = 'cobalt';
     s.cabs = [
       cab('metod', 'high', 60, 200, 'split'),
       cab('metod', 'base', 40, 80, 'drawers3'),
@@ -36,8 +39,8 @@ function freshState(sys) {
     ];
   }
   if (s.sys === 'besta') {
-    s.style = 'arch';
-    s.ral = '1015';
+    s.style = 'fluted';
+    s.mat = 'walnut';
     s.cabs = [cab('besta', 'frame', 60, 64), cab('besta', 'frame', 120, 38, 'drawers'), cab('besta', 'frame', 60, 64)];
   }
   return s;
@@ -67,6 +70,7 @@ try {
 }
 if (!S || !S.cabs) S = freshState('pax');
 S.flip = S.flip || {};
+S.fx = S.fx || {};
 function save() {
   try {
     localStorage.setItem(KEY, JSON.stringify(S));
@@ -83,7 +87,19 @@ const PAX_H = { 236: 2294, 201: 1950 },
 function frontsOf(c, x0, y0) {
   const out = [],
     add = (kind, nw, nh, realW, realH, x, y, hinge) =>
-      out.push({ id: c.id + ':' + out.length, cab: c.id, kind, nom: `${nw}×${nh}`, w: realW, h: realH, x, y, hinge });
+      out.push({
+        id: c.id + ':' + out.length,
+        cab: c.id,
+        ckind: c.kind,
+        sys: c.sys,
+        kind,
+        nom: `${nw}×${nh}`,
+        w: realW,
+        h: realH,
+        x,
+        y,
+        hinge
+      });
   const W = c.w * 10,
     H = c.h * 10;
   if (c.layout === 'open') return out;
@@ -216,16 +232,34 @@ function layout() {
   return { cabs, fronts, W, H: Hmax, plinth, worktop: S.sys === 'metod' && S.cabs.some(c => c.kind === 'base') };
 }
 
-/* ---------- price ---------- */
+/* ---------- the look of a front: the overall choice, unless this front has its own ---------- */
 function matOk(style, mat) {
   const m = MATS[mat];
-  return m && (m.styles === 'all' || m.styles.includes(style));
+  return !!m && (!m.only || m.only === style);
 }
+function lookOf(f) {
+  const o = (f && S.fx[f.id]) || {},
+    lk = { style: o.style || S.style, mat: o.mat || S.mat, col: o.col || S.col, own: !!S.fx[f && f.id] };
+  if (!MATS[lk.mat]) lk.mat = 'painted';
+  if (!COLOURS[lk.col]) lk.col = 'chalk';
+  if (MATS[lk.mat].only) lk.style = MATS[lk.mat].only;
+  return lk;
+}
+function lookName(lk) {
+  const m = MATS[lk.mat];
+  return `${STYLES[lk.style].name} ${m.paint ? COLOURS[lk.col].name.toLowerCase() : m.name.toLowerCase()}`;
+}
+function lookKey(lk) {
+  return `${lk.style}|${lk.mat}|${MATS[lk.mat].paint ? lk.col : ''}`;
+}
+
+/* ---------- price ---------- */
 function frontPrice(f) {
-  const m = MATS[S.mat],
-    st = STYLES[S.style],
+  const lk = lookOf(f),
+    m = MATS[lk.mat],
+    st = STYLES[lk.style],
     area = Math.max(PRICE.minArea, (f.w * f.h) / 1e6);
-  let p = PRICE.perFront + area * m.rate * st.f + HANDLES[S.handle].price;
+  let p = PRICE.perFront + area * m.rate * (m.glass ? 1 : st.f) + HANDLES[S.handle].price;
   if (f.kind === 'door') p += PRICE.hinge;
   return Math.round(p * 100) / 100;
 }
@@ -237,13 +271,15 @@ function priceAll(L) {
 }
 const eur = v => '€ ' + Math.round(v).toLocaleString('en-IE');
 
-/* fronts with the same size and kind, for the order list */
+/* fronts with the same size, kind, hinge side and look, for the order list */
 function grouped(L) {
   const m = new Map();
   L.fronts.forEach(f => {
-    const k = `${f.kind}|${f.w}|${f.h}|${f.hinge || ''}`;
-    if (!m.has(k)) m.set(k, { kind: f.kind, w: f.w, h: f.h, nom: f.nom, hinge: f.hinge, n: 0, p: frontPrice(f) });
+    const lk = lookOf(f),
+      k = `${f.kind}|${f.w}|${f.h}|${f.hinge || ''}|${lookKey(lk)}`;
+    if (!m.has(k))
+      m.set(k, { kind: f.kind, w: f.w, h: f.h, nom: f.nom, hinge: f.hinge, look: lk, n: 0, p: frontPrice(f) });
     m.get(k).n++;
   });
-  return [...m.values()].sort((a, b) => b.h - a.h || b.w - a.w);
+  return [...m.values()].sort((a, b) => lookKey(a.look).localeCompare(lookKey(b.look)) || b.h - a.h || b.w - a.w);
 }

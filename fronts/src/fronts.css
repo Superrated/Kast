@@ -584,3 +584,174 @@ textarea {
     padding-bottom: 150px;
   }
 }
+
+/* ---------- round 2: 3D, a look per front, surprise, quick setup ---------- */
+.pic[hidden] {
+  display: none;
+}
+.pic3d {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  padding: 0;
+  margin: 10px 0 6px;
+}
+.pic3d canvas {
+  display: block;
+  cursor: grab;
+}
+.pic3d .c3 {
+  margin: auto;
+  text-align: center;
+}
+.stagebar {
+  align-items: center;
+}
+.stagebar .seg button {
+  padding: 4px 12px;
+}
+.btn.sm {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+.btn.surp {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--bg);
+}
+.chip.rec {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.pic .front {
+  cursor: pointer;
+}
+.pic .front:hover > rect:first-child {
+  stroke: var(--accent);
+  stroke-opacity: 1;
+  stroke-width: 8;
+}
+.stcs.two {
+  grid-template-columns: repeat(2, 1fr);
+}
+.stcs.two .stc svg {
+  height: 110px;
+}
+.mat .tag {
+  font-style: normal;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: var(--warn-soft);
+  color: var(--warn);
+  border-radius: 5px;
+  padding: 1px 5px;
+}
+.sw.gl {
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.6) 0 2px,
+    rgba(0, 0, 0, 0.12) 2px 4px
+  ) !important;
+}
+.sws {
+  gap: 10px;
+}
+.swb {
+  width: 54px;
+  height: 54px;
+  border-radius: 12px;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.swb span {
+  position: absolute;
+  top: calc(100% + 3px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10.5px;
+  color: var(--ink2);
+  white-space: nowrap;
+}
+.sws {
+  padding-bottom: 18px;
+}
+.selcard {
+  border: 2px solid var(--accent);
+  border-radius: 14px;
+  padding: 10px 12px;
+  margin: 12px 0;
+  background: var(--accent-soft);
+}
+.selcard .seg {
+  margin: 6px 0;
+}
+h3.big {
+  font-size: 13px;
+  color: var(--ink);
+  margin-top: 26px;
+}
+.qks {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.qk {
+  text-align: left;
+  border: 1.5px solid var(--line);
+  background: var(--raised);
+  border-radius: 12px;
+  padding: 9px 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.qk:hover {
+  border-color: var(--accent);
+}
+.qk small {
+  font-size: 11.5px;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.syss .sys {
+  align-items: flex-start;
+}
+.ord .lkh td {
+  padding-top: 14px;
+  font-weight: 600;
+  border-bottom: 0;
+}
+.ord .lkh .sw {
+  vertical-align: -2px;
+  margin-right: 6px;
+}
+@media (max-width: 860px) {
+  .stagebar .chip.rec {
+    display: none;
+  }
+  .stagebar {
+    gap: 5px;
+  }
+  .stcs.two .stc svg {
+    height: 80px;
+  }
+  .swb {
+    width: 46px;
+    height: 46px;
+  }
+}
+
+.stagebar .seg {
+  flex-wrap: nowrap;
+  flex: none;
+}
+.btn.surp {
+  white-space: nowrap;
+}
