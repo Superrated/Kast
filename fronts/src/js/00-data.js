@@ -68,8 +68,8 @@ const LAYOUTS = {
 /* the curated range: two styles … */
 const STYLES = {
   flat: { name: 'Flat', blurb: 'Clean and calm', f: 1 },
-  fluted: { name: 'Fluted', blurb: 'Rounded flutes, routed in', f: 1.3 },
-  grooves: { name: 'Grooves', blurb: 'Fine V-grooves, calm and graphic', f: 1.3 },
+  fluted: { name: 'Fluted', blurb: 'Rounded flutes, routed into MDF', f: 1.3, mdf: true },
+  grooves: { name: 'Grooves', blurb: 'Fine V-grooves in MDF, calm and graphic', f: 1.3, mdf: true },
   scallop: { name: 'Scallop', blurb: 'A wavy top edge, playful', f: 1.35 }
 };
 const FLUTE = {
@@ -96,6 +96,7 @@ const MATS = {
   //   PAX door 50×229, painted, flat: Foxstow £226 (≈ €265); bare MDF £121 (≈ €142)
   //   → €30 a front + €200/m²: a 60×80 door ≈ €125, a PAX door ≈ €257 (before handles), middle of the market
   painted: {
+    mdf: true,
     name: 'Painted',
     blurb: 'Smooth matt paint in one of our colours, by our spray shop',
     rate: 200,
@@ -123,6 +124,7 @@ const MATS = {
   },
   glass: { name: 'Fluted glass', blurb: 'Reeded glass in a slim frame', rate: 340, glass: true, only: 'fluted' },
   rawmdf: {
+    mdf: true,
     name: 'Raw MDF',
     blurb: 'Sanded, ready for your own paint',
     rate: 85,

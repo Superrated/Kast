@@ -61,7 +61,7 @@ const RECIPES = [
             : ['mustard', 'blush', 'sage', 'chalk', 'terracotta']
         );
       return {
-        all: { mat: wood, style: pick(r, ['flat', 'fluted']) },
+        all: { mat: wood, style: pick(r, ['flat', 'flat', 'scallop']) },
         by: {
           drawer: { mat: 'painted', col: c, style: 'flat' },
           wall: { mat: 'painted', col: c, style: 'flat' },
@@ -134,8 +134,8 @@ const RECIPES = [
     name: 'Walnut, quietly',
     make() {
       return {
-        all: { mat: 'walnut', style: 'fluted' },
-        by: { drawer: { style: 'flat' } },
+        all: { mat: 'walnut', style: 'flat' },
+        by: {},
         handle: 'bar',
         hfin: 'brass',
         say: 'Walnut'

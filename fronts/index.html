@@ -922,8 +922,8 @@ const LAYOUTS = {
 /* the curated range: two styles … */
 const STYLES = {
   flat: { name: 'Flat', blurb: 'Clean and calm', f: 1 },
-  fluted: { name: 'Fluted', blurb: 'Rounded flutes, routed in', f: 1.3 },
-  grooves: { name: 'Grooves', blurb: 'Fine V-grooves, calm and graphic', f: 1.3 },
+  fluted: { name: 'Fluted', blurb: 'Rounded flutes, routed into MDF', f: 1.3, mdf: true },
+  grooves: { name: 'Grooves', blurb: 'Fine V-grooves in MDF, calm and graphic', f: 1.3, mdf: true },
   scallop: { name: 'Scallop', blurb: 'A wavy top edge, playful', f: 1.35 }
 };
 const FLUTE = {
@@ -950,6 +950,7 @@ const MATS = {
   //   PAX door 50×229, painted, flat: Foxstow £226 (≈ €265); bare MDF £121 (≈ €142)
   //   → €30 a front + €200/m²: a 60×80 door ≈ €125, a PAX door ≈ €257 (before handles), middle of the market
   painted: {
+    mdf: true,
     name: 'Painted',
     blurb: 'Smooth matt paint in one of our colours, by our spray shop',
     rate: 200,
@@ -977,6 +978,7 @@ const MATS = {
   },
   glass: { name: 'Fluted glass', blurb: 'Reeded glass in a slim frame', rate: 340, glass: true, only: 'fluted' },
   rawmdf: {
+    mdf: true,
     name: 'Raw MDF',
     blurb: 'Sanded, ready for your own paint',
     rate: 85,
@@ -1290,14 +1292,19 @@ function layout() {
 /* ---------- the look of a front: the overall choice, unless this front has its own ---------- */
 function matOk(style, mat) {
   const m = MATS[mat];
-  return !!m && (!m.only || m.only === style);
+  if (!m || !STYLES[style]) return false;
+  if (m.only) return m.only === style;
+  /* flutes and grooves are routed into MDF only (painted or raw); wood and ply stay flat or scalloped */
+  return !STYLES[style].mdf || !!m.mdf;
 }
 function lookOf(f) {
   const o = (f && S.fx[f.id]) || {},
     lk = { style: o.style || S.style, mat: o.mat || S.mat, col: o.col || S.col, own: !!S.fx[f && f.id] };
   if (!MATS[lk.mat]) lk.mat = 'painted';
   if (!COLOURS[lk.col]) lk.col = 'chalk';
+  if (!STYLES[lk.style]) lk.style = 'flat';
   if (MATS[lk.mat].only) lk.style = MATS[lk.mat].only;
+  else if (!matOk(lk.style, lk.mat)) lk.style = 'flat';
   return lk;
 }
 function lookName(lk) {
@@ -2092,7 +2099,7 @@ const segC = (act, c, cur, opts) =>
 const f1 = v => (Math.round(v * 10) / 10).toString();
 
 function render() {
-  if (!matOk(S.style, S.mat)) S.mat = 'painted';
+  if (!matOk(S.style, S.mat)) S.style = MATS[S.mat] && MATS[S.mat].only ? MATS[S.mat].only : 'flat';
   const L = layout(),
     P = priceAll(L);
   if (S.sel && !L.fronts.some(f => f.id === S.sel)) S.sel = null;
@@ -2341,7 +2348,7 @@ function lookEdHTML(target, lk) {
           ''
         )}</div><p class="hint">${esc(COLOURS[lk.col].name)} is RAL ${COLOURS[lk.col].ral} ${esc((RAL[COLOURS[lk.col].ral] || {}).name || '')}, so any paint shop can match it later.</p>`
     : '';
-  return `<h3>Style</h3><div class="stcs two">${styles}</div><h3>Material</h3><div class="mats">${mats}</div>${cols}`;
+  return `<h3>Style</h3><div class="stcs two">${styles}</div><h3>Material</h3><p class="hint">Fluted and grooved fronts are routed into MDF, so wood and plywood come flat or scalloped.</p><div class="mats">${mats}</div>${cols}`;
 }
 function frontsHTML(L) {
   let h = `<h2>Your fronts</h2><p class="lede">19 mm thick, made to the exact IKEA sizes and drilled for the IKEA hinges you already have. Choose one look for all of them, then tap any front in the picture to give it its own.</p>
@@ -2496,19 +2503,21 @@ function sendOrder() {
 }
 
 /* ---------- a look change, for all fronts or for one ---------- */
+/* fluted or grooves picked on wood: budget ply goes to raw MDF, the rest to painted */
+const mdfFor = mat => (MATS[mat] && MATS[mat].budget ? 'rawmdf' : 'painted');
 function setLook(target, field, val) {
   if (target === 'all') {
     S[field] = val;
-    if (field === 'mat' && MATS[val].only) S.style = MATS[val].only;
-    if (field === 'style' && !matOk(val, S.mat)) S.mat = 'painted';
+    if (field === 'mat' && !matOk(S.style, val)) S.style = MATS[val].only || 'flat';
+    if (field === 'style' && !matOk(val, S.mat)) S.mat = mdfFor(S.mat);
     S.recipe = null;
     return;
   }
   const cur = lookOf({ id: target }),
     nx = { style: cur.style, mat: cur.mat, col: cur.col };
   nx[field] = val;
-  if (field === 'mat' && MATS[val].only) nx.style = MATS[val].only;
-  if (field === 'style' && !matOk(val, nx.mat)) nx.mat = 'painted';
+  if (field === 'mat' && !matOk(nx.style, val)) nx.style = MATS[val].only || 'flat';
+  if (field === 'style' && !matOk(val, nx.mat)) nx.mat = mdfFor(nx.mat);
   S.fx[target] = nx;
 }
 
@@ -2863,7 +2872,7 @@ const RECIPES = [
             : ['mustard', 'blush', 'sage', 'chalk', 'terracotta']
         );
       return {
-        all: { mat: wood, style: pick(r, ['flat', 'fluted']) },
+        all: { mat: wood, style: pick(r, ['flat', 'flat', 'scallop']) },
         by: {
           drawer: { mat: 'painted', col: c, style: 'flat' },
           wall: { mat: 'painted', col: c, style: 'flat' },
@@ -2936,8 +2945,8 @@ const RECIPES = [
     name: 'Walnut, quietly',
     make() {
       return {
-        all: { mat: 'walnut', style: 'fluted' },
-        by: { drawer: { style: 'flat' } },
+        all: { mat: 'walnut', style: 'flat' },
+        by: {},
         handle: 'bar',
         hfin: 'brass',
         say: 'Walnut'

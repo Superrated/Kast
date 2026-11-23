@@ -236,14 +236,19 @@ function layout() {
 /* ---------- the look of a front: the overall choice, unless this front has its own ---------- */
 function matOk(style, mat) {
   const m = MATS[mat];
-  return !!m && (!m.only || m.only === style);
+  if (!m || !STYLES[style]) return false;
+  if (m.only) return m.only === style;
+  /* flutes and grooves are routed into MDF only (painted or raw); wood and ply stay flat or scalloped */
+  return !STYLES[style].mdf || !!m.mdf;
 }
 function lookOf(f) {
   const o = (f && S.fx[f.id]) || {},
     lk = { style: o.style || S.style, mat: o.mat || S.mat, col: o.col || S.col, own: !!S.fx[f && f.id] };
   if (!MATS[lk.mat]) lk.mat = 'painted';
   if (!COLOURS[lk.col]) lk.col = 'chalk';
+  if (!STYLES[lk.style]) lk.style = 'flat';
   if (MATS[lk.mat].only) lk.style = MATS[lk.mat].only;
+  else if (!matOk(lk.style, lk.mat)) lk.style = 'flat';
   return lk;
 }
 function lookName(lk) {

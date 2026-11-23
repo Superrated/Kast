@@ -18,7 +18,7 @@ const segC = (act, c, cur, opts) =>
 const f1 = v => (Math.round(v * 10) / 10).toString();
 
 function render() {
-  if (!matOk(S.style, S.mat)) S.mat = 'painted';
+  if (!matOk(S.style, S.mat)) S.style = MATS[S.mat] && MATS[S.mat].only ? MATS[S.mat].only : 'flat';
   const L = layout(),
     P = priceAll(L);
   if (S.sel && !L.fronts.some(f => f.id === S.sel)) S.sel = null;
@@ -267,7 +267,7 @@ function lookEdHTML(target, lk) {
           ''
         )}</div><p class="hint">${esc(COLOURS[lk.col].name)} is RAL ${COLOURS[lk.col].ral} ${esc((RAL[COLOURS[lk.col].ral] || {}).name || '')}, so any paint shop can match it later.</p>`
     : '';
-  return `<h3>Style</h3><div class="stcs two">${styles}</div><h3>Material</h3><div class="mats">${mats}</div>${cols}`;
+  return `<h3>Style</h3><div class="stcs two">${styles}</div><h3>Material</h3><p class="hint">Fluted and grooved fronts are routed into MDF, so wood and plywood come flat or scalloped.</p><div class="mats">${mats}</div>${cols}`;
 }
 function frontsHTML(L) {
   let h = `<h2>Your fronts</h2><p class="lede">19 mm thick, made to the exact IKEA sizes and drilled for the IKEA hinges you already have. Choose one look for all of them, then tap any front in the picture to give it its own.</p>
@@ -422,19 +422,21 @@ function sendOrder() {
 }
 
 /* ---------- a look change, for all fronts or for one ---------- */
+/* fluted or grooves picked on wood: budget ply goes to raw MDF, the rest to painted */
+const mdfFor = mat => (MATS[mat] && MATS[mat].budget ? 'rawmdf' : 'painted');
 function setLook(target, field, val) {
   if (target === 'all') {
     S[field] = val;
-    if (field === 'mat' && MATS[val].only) S.style = MATS[val].only;
-    if (field === 'style' && !matOk(val, S.mat)) S.mat = 'painted';
+    if (field === 'mat' && !matOk(S.style, val)) S.style = MATS[val].only || 'flat';
+    if (field === 'style' && !matOk(val, S.mat)) S.mat = mdfFor(S.mat);
     S.recipe = null;
     return;
   }
   const cur = lookOf({ id: target }),
     nx = { style: cur.style, mat: cur.mat, col: cur.col };
   nx[field] = val;
-  if (field === 'mat' && MATS[val].only) nx.style = MATS[val].only;
-  if (field === 'style' && !matOk(val, nx.mat)) nx.mat = 'painted';
+  if (field === 'mat' && !matOk(nx.style, val)) nx.style = MATS[val].only || 'flat';
+  if (field === 'style' && !matOk(val, nx.mat)) nx.mat = mdfFor(nx.mat);
   S.fx[target] = nx;
 }
 
