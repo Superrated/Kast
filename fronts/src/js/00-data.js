@@ -69,8 +69,7 @@ const LAYOUTS = {
 const STYLES = {
   flat: { name: 'Flat', blurb: 'Clean and calm', f: 1 },
   fluted: { name: 'Fluted', blurb: 'Rounded flutes, routed into MDF', f: 1.3, mdf: true },
-  grooves: { name: 'Grooves', blurb: 'Fine V-grooves in MDF, calm and graphic', f: 1.3, mdf: true },
-  scallop: { name: 'Scallop', blurb: 'A wavy top edge, playful', f: 1.35 }
+  grooves: { name: 'Grooves', blurb: 'Fine V-grooves in MDF, calm and graphic', f: 1.3, mdf: true }
 };
 const FLUTE = {
   pitch: [

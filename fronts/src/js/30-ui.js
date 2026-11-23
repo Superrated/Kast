@@ -267,7 +267,7 @@ function lookEdHTML(target, lk) {
           ''
         )}</div><p class="hint">${esc(COLOURS[lk.col].name)} is RAL ${COLOURS[lk.col].ral} ${esc((RAL[COLOURS[lk.col].ral] || {}).name || '')}, so any paint shop can match it later.</p>`
     : '';
-  return `<h3>Style</h3><div class="stcs two">${styles}</div><h3>Material</h3><p class="hint">Fluted and grooved fronts are routed into MDF, so wood and plywood come flat or scalloped.</p><div class="mats">${mats}</div>${cols}`;
+  return `<h3>Style</h3><div class="stcs two">${styles}</div><h3>Material</h3><p class="hint">Fluted and grooved fronts are routed into MDF, so wood and plywood come flat.</p><div class="mats">${mats}</div>${cols}`;
 }
 function frontsHTML(L) {
   let h = `<h2>Your fronts</h2><p class="lede">19 mm thick, made to the exact IKEA sizes and drilled for the IKEA hinges you already have. Choose one look for all of them, then tap any front in the picture to give it its own.</p>

@@ -203,10 +203,6 @@ function matFor(lk, f) {
     o.normalMap = n;
     o.normalScale = new T.Vector2(gr ? 2 : 1.4, gr ? 2 : 1.4);
   }
-  // a scalloped front is an extruded outline whose texture coordinates are millimetres
-  if (lk.style === 'scallop' && o.map) {
-    o.map.repeat.set(1 / 260, 1 / 1000);
-  }
   return new T.MeshStandardMaterial(o);
 }
 
@@ -342,23 +338,6 @@ function build3D() {
         normalScale: new T.Vector2(2, 2)
       });
       hit = box(f.w - 2 * fr, f.h - 2 * fr, 6, gm, cx, cy, cz, false);
-    } else if (lk.style === 'scallop') {
-      const sc = scallops(f.w),
-        sh = new T.Shape(),
-        hw = f.w / 2,
-        hh = f.h / 2;
-      sh.moveTo(-hw, -hh);
-      sh.lineTo(hw, -hh);
-      sh.lineTo(hw, hh - sc.d);
-      for (let i = sc.n - 1; i >= 0; i--)
-        sh.quadraticCurveTo(-hw + (i + 0.5) * sc.sw, hh + sc.d, -hw + i * sc.sw, hh - sc.d);
-      sh.lineTo(-hw, -hh);
-      const geo = new T.ExtrudeGeometry(sh, { depth: FT, bevelEnabled: false, curveSegments: 10 });
-      geo.translate(0, 0, -FT / 2);
-      hit = new T.Mesh(geo, matFor(lk, f));
-      hit.position.set(cx, cy, cz);
-      hit.castShadow = hit.receiveShadow = true;
-      root.add(hit);
     } else hit = box(f.w, f.h, FT, matFor(lk, f), cx, cy, cz);
     hit.userData.fid = f.id;
     V3.meshes.push(hit);

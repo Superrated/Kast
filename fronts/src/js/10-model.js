@@ -238,7 +238,7 @@ function matOk(style, mat) {
   const m = MATS[mat];
   if (!m || !STYLES[style]) return false;
   if (m.only) return m.only === style;
-  /* flutes and grooves are routed into MDF only (painted or raw); wood and ply stay flat or scalloped */
+  /* flutes and grooves are routed into MDF only (painted or raw); wood and ply stay flat */
   return !STYLES[style].mdf || !!m.mdf;
 }
 function lookOf(f) {
@@ -288,11 +288,4 @@ function grouped(L) {
     m.get(k).n++;
   });
   return [...m.values()].sort((a, b) => lookKey(a.look).localeCompare(lookKey(b.look)) || b.h - a.h || b.w - a.w);
-}
-
-/* the scalloped top edge: about 110 mm per scallop, never fewer than 3, depth a quarter of the width, at most 28 mm */
-function scallops(w) {
-  const n = Math.max(3, Math.round(w / 110)),
-    sw = w / n;
-  return { n, sw, d: Math.min(28, sw * 0.25) };
 }

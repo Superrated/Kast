@@ -75,19 +75,11 @@ function frontSVG(f, Y, sfx) {
     o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fc}"/><rect x="${x + fr}" y="${y + fr}" width="${w - 2 * fr}" height="${h - 2 * fr}" fill="url(#glass${x_})" fill-opacity=".92"/><rect x="${x + fr}" y="${y + fr}" width="${w - 2 * fr}" height="${h - 2 * fr}" fill="url(#flute${x_})"/>`;
   } else {
     const fill = m.wood ? `url(#gr_${lk.mat}${x_})` : base;
-    if (lk.style === 'scallop') {
-      // the front's own outline: straight sides and bottom, a row of rounded scallops along the top
-      const sc = scallops(w);
-      let d = `M${x} ${y + h} V${y + sc.d}`;
-      for (let i = 0; i < sc.n; i++) d += ` Q${x + (i + 0.5) * sc.sw} ${y - sc.d} ${x + (i + 1) * sc.sw} ${y + sc.d}`;
-      d += ` V${y + h} Z`;
-      o += `<path d="${d}" fill="${fill}" stroke="${dark}" stroke-opacity=".55" stroke-width="2.5"/>`;
-    } else
-      o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="${dark}" stroke-opacity=".5" stroke-width="2"/>`;
+    o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="${dark}" stroke-opacity=".5" stroke-width="2"/>`;
     if (lk.style === 'fluted') o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#flute${x_})"/>`;
     if (lk.style === 'grooves') o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#groove${x_})"/>`;
     // plywood shows its layers on the edge
-    if (m.ply && lk.style !== 'scallop')
+    if (m.ply)
       o += `<rect x="${x + 1}" y="${y + 1}" width="${w - 2}" height="${h - 2}" fill="none" stroke="${shade(m.wood, -0.3)}" stroke-opacity=".6" stroke-width="3" stroke-dasharray="6 3"/>`;
   }
   // a door opens away from its hinge: a light dashed V pointing at the hinge side

@@ -923,8 +923,7 @@ const LAYOUTS = {
 const STYLES = {
   flat: { name: 'Flat', blurb: 'Clean and calm', f: 1 },
   fluted: { name: 'Fluted', blurb: 'Rounded flutes, routed into MDF', f: 1.3, mdf: true },
-  grooves: { name: 'Grooves', blurb: 'Fine V-grooves in MDF, calm and graphic', f: 1.3, mdf: true },
-  scallop: { name: 'Scallop', blurb: 'A wavy top edge, playful', f: 1.35 }
+  grooves: { name: 'Grooves', blurb: 'Fine V-grooves in MDF, calm and graphic', f: 1.3, mdf: true }
 };
 const FLUTE = {
   pitch: [
@@ -1294,7 +1293,7 @@ function matOk(style, mat) {
   const m = MATS[mat];
   if (!m || !STYLES[style]) return false;
   if (m.only) return m.only === style;
-  /* flutes and grooves are routed into MDF only (painted or raw); wood and ply stay flat or scalloped */
+  /* flutes and grooves are routed into MDF only (painted or raw); wood and ply stay flat */
   return !STYLES[style].mdf || !!m.mdf;
 }
 function lookOf(f) {
@@ -1344,13 +1343,6 @@ function grouped(L) {
     m.get(k).n++;
   });
   return [...m.values()].sort((a, b) => lookKey(a.look).localeCompare(lookKey(b.look)) || b.h - a.h || b.w - a.w);
-}
-
-/* the scalloped top edge: about 110 mm per scallop, never fewer than 3, depth a quarter of the width, at most 28 mm */
-function scallops(w) {
-  const n = Math.max(3, Math.round(w / 110)),
-    sw = w / n;
-  return { n, sw, d: Math.min(28, sw * 0.25) };
 }
 
 /* ==== 20-draw.js ====
@@ -1430,19 +1422,11 @@ function frontSVG(f, Y, sfx) {
     o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fc}"/><rect x="${x + fr}" y="${y + fr}" width="${w - 2 * fr}" height="${h - 2 * fr}" fill="url(#glass${x_})" fill-opacity=".92"/><rect x="${x + fr}" y="${y + fr}" width="${w - 2 * fr}" height="${h - 2 * fr}" fill="url(#flute${x_})"/>`;
   } else {
     const fill = m.wood ? `url(#gr_${lk.mat}${x_})` : base;
-    if (lk.style === 'scallop') {
-      // the front's own outline: straight sides and bottom, a row of rounded scallops along the top
-      const sc = scallops(w);
-      let d = `M${x} ${y + h} V${y + sc.d}`;
-      for (let i = 0; i < sc.n; i++) d += ` Q${x + (i + 0.5) * sc.sw} ${y - sc.d} ${x + (i + 1) * sc.sw} ${y + sc.d}`;
-      d += ` V${y + h} Z`;
-      o += `<path d="${d}" fill="${fill}" stroke="${dark}" stroke-opacity=".55" stroke-width="2.5"/>`;
-    } else
-      o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="${dark}" stroke-opacity=".5" stroke-width="2"/>`;
+    o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="${dark}" stroke-opacity=".5" stroke-width="2"/>`;
     if (lk.style === 'fluted') o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#flute${x_})"/>`;
     if (lk.style === 'grooves') o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#groove${x_})"/>`;
     // plywood shows its layers on the edge
-    if (m.ply && lk.style !== 'scallop')
+    if (m.ply)
       o += `<rect x="${x + 1}" y="${y + 1}" width="${w - 2}" height="${h - 2}" fill="none" stroke="${shade(m.wood, -0.3)}" stroke-opacity=".6" stroke-width="3" stroke-dasharray="6 3"/>`;
   }
   // a door opens away from its hinge: a light dashed V pointing at the hinge side
@@ -1757,10 +1741,6 @@ function matFor(lk, f) {
     o.normalMap = n;
     o.normalScale = new T.Vector2(gr ? 2 : 1.4, gr ? 2 : 1.4);
   }
-  // a scalloped front is an extruded outline whose texture coordinates are millimetres
-  if (lk.style === 'scallop' && o.map) {
-    o.map.repeat.set(1 / 260, 1 / 1000);
-  }
   return new T.MeshStandardMaterial(o);
 }
 
@@ -1896,23 +1876,6 @@ function build3D() {
         normalScale: new T.Vector2(2, 2)
       });
       hit = box(f.w - 2 * fr, f.h - 2 * fr, 6, gm, cx, cy, cz, false);
-    } else if (lk.style === 'scallop') {
-      const sc = scallops(f.w),
-        sh = new T.Shape(),
-        hw = f.w / 2,
-        hh = f.h / 2;
-      sh.moveTo(-hw, -hh);
-      sh.lineTo(hw, -hh);
-      sh.lineTo(hw, hh - sc.d);
-      for (let i = sc.n - 1; i >= 0; i--)
-        sh.quadraticCurveTo(-hw + (i + 0.5) * sc.sw, hh + sc.d, -hw + i * sc.sw, hh - sc.d);
-      sh.lineTo(-hw, -hh);
-      const geo = new T.ExtrudeGeometry(sh, { depth: FT, bevelEnabled: false, curveSegments: 10 });
-      geo.translate(0, 0, -FT / 2);
-      hit = new T.Mesh(geo, matFor(lk, f));
-      hit.position.set(cx, cy, cz);
-      hit.castShadow = hit.receiveShadow = true;
-      root.add(hit);
     } else hit = box(f.w, f.h, FT, matFor(lk, f), cx, cy, cz);
     hit.userData.fid = f.id;
     V3.meshes.push(hit);
@@ -2348,7 +2311,7 @@ function lookEdHTML(target, lk) {
           ''
         )}</div><p class="hint">${esc(COLOURS[lk.col].name)} is RAL ${COLOURS[lk.col].ral} ${esc((RAL[COLOURS[lk.col].ral] || {}).name || '')}, so any paint shop can match it later.</p>`
     : '';
-  return `<h3>Style</h3><div class="stcs two">${styles}</div><h3>Material</h3><p class="hint">Fluted and grooved fronts are routed into MDF, so wood and plywood come flat or scalloped.</p><div class="mats">${mats}</div>${cols}`;
+  return `<h3>Style</h3><div class="stcs two">${styles}</div><h3>Material</h3><p class="hint">Fluted and grooved fronts are routed into MDF, so wood and plywood come flat.</p><div class="mats">${mats}</div>${cols}`;
 }
 function frontsHTML(L) {
   let h = `<h2>Your fronts</h2><p class="lede">19 mm thick, made to the exact IKEA sizes and drilled for the IKEA hinges you already have. Choose one look for all of them, then tap any front in the picture to give it its own.</p>
@@ -2872,7 +2835,7 @@ const RECIPES = [
             : ['mustard', 'blush', 'sage', 'chalk', 'terracotta']
         );
       return {
-        all: { mat: wood, style: pick(r, ['flat', 'flat', 'scallop']) },
+        all: { mat: wood, style: 'flat' },
         by: {
           drawer: { mat: 'painted', col: c, style: 'flat' },
           wall: { mat: 'painted', col: c, style: 'flat' },
@@ -2921,23 +2884,6 @@ const RECIPES = [
         handle: pick(r, ['push', 'tab', 'grip']),
         hfin: 'black',
         say: `${ply === 'pine' ? 'Pine' : 'Birch'} & ${COLOURS[c].name.toLowerCase()}`
-      };
-    }
-  },
-  {
-    name: 'Playful scallops',
-    make(r) {
-      const [a, b] = pick(
-        r,
-        PAIRS.filter(p => p[1] !== 'chalk')
-      );
-      // scallops on drawers and low doors; tall doors stay calm and flat, the top row in the partner colour
-      return {
-        all: { mat: 'painted', col: a, style: 'scallop' },
-        by: { tall: { style: 'flat' }, wall: { col: b, style: 'flat' }, top: { col: b } },
-        handle: pick(r, ['knob', 'push']),
-        hfin: DARK[a] ? 'brass' : 'black',
-        say: `Scallops in ${COLOURS[a].name.toLowerCase()}`
       };
     }
   },
