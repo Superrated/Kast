@@ -102,6 +102,16 @@ const MATS = {
     grain: '#B89B6C',
     ply: true
   },
+  // the other plywood: pine (Douglas fir / spruce) with its bold, flame-shaped grain
+  pine: {
+    name: 'Pine plywood',
+    blurb: 'Bold flame grain, warm and honest',
+    rate: 140,
+    wood: '#DDBB86',
+    grain: '#A86E35',
+    ply: true,
+    flame: true
+  },
   glass: { name: 'Fluted glass', blurb: 'Reeded glass in a slim frame', rate: 340, glass: true, only: 'fluted' },
   rawmdf: {
     name: 'Raw MDF',

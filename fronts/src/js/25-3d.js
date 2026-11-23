@@ -76,6 +76,37 @@ function woodTex(k) {
     g.fillStyle = m.wood;
     g.fillRect(0, 0, w, h);
     const r = prng(k.length * 97 + 7);
+    if (m.flame) {
+      // pine plywood: nested flame arches with a few straight streaks between them
+      for (let i = 0; i < 26; i++) {
+        g.strokeStyle = m.grain;
+        g.globalAlpha = 0.06 + r() * 0.06;
+        g.lineWidth = 1 + r() * 2;
+        const x = r() * w;
+        g.beginPath();
+        g.moveTo(x, 0);
+        g.lineTo(x + (r() - 0.5) * 10, h);
+        g.stroke();
+      }
+      [
+        [w * 0.3, h * 0.05],
+        [w * 0.78, h * 0.5]
+      ].forEach(([cx, oy]) => {
+        for (let j = 0; j < 9; j++) {
+          const hw = 10 + j * 9 + r() * 4,
+            top = oy + 30 + j * 30;
+          g.globalAlpha = 0.22 + (j % 3) * 0.1;
+          g.lineWidth = 2 + (j % 2) * 3;
+          g.beginPath();
+          g.moveTo(cx - hw, oy + h * 0.5);
+          g.bezierCurveTo(cx - hw, top + 160, cx - hw * 0.62, top, cx, top);
+          g.bezierCurveTo(cx + hw * 0.62, top, cx + hw, top + 160, cx + hw, oy + h * 0.5);
+          g.stroke();
+        }
+      });
+      g.globalAlpha = 1;
+      return;
+    }
     if (m.raw && !m.grain) {
       // raw MDF: fine, even speckle
       for (let i = 0; i < 5000; i++) {

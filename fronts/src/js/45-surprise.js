@@ -100,15 +100,16 @@ const RECIPES = [
     }
   },
   {
-    name: 'Birch with colour',
+    name: 'Plywood with colour',
     make(r) {
-      const c = pick(r, ['tomato', 'cobalt', 'mustard', 'racing', 'blush']);
+      const c = pick(r, ['tomato', 'cobalt', 'mustard', 'racing', 'blush']),
+        ply = pick(r, ['birch', 'birch', 'pine']);
       return {
-        all: { mat: 'birch', style: 'flat' },
+        all: { mat: ply, style: 'flat' },
         by: { drawer: { mat: 'painted', col: c, style: 'flat' } },
         handle: pick(r, ['push', 'tab', 'grip']),
         hfin: 'black',
-        say: `Birch & ${COLOURS[c].name.toLowerCase()}`
+        say: `${ply === 'pine' ? 'Pine' : 'Birch'} & ${COLOURS[c].name.toLowerCase()}`
       };
     }
   },

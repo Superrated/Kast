@@ -25,6 +25,25 @@ function defsSVG(sfx) {
   <linearGradient id="glass${x}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e9f1ee"/><stop offset=".55" stop-color="#c9d8d3"/><stop offset="1" stop-color="#b3c6c0"/></linearGradient>`;
   Object.entries(MATS).forEach(([k, m]) => {
     if (!m.wood) return;
+    if (m.flame) {
+      let arcs = '';
+      // two flames per tile; the second is drawn again one tile higher so it runs on without a seam
+      [
+        [70, 0],
+        [210, 260],
+        [210, -260]
+      ].forEach(([cx, oy]) => {
+        for (let j = 0; j < 7; j++) {
+          const hw = 16 + j * 12,
+            top = oy + 40 + j * 28;
+          arcs += `<path d="M${cx - hw} ${oy + 560} C ${cx - hw} ${top + 140}, ${cx - hw * 0.62} ${top}, ${cx} ${top} C ${cx + hw * 0.62} ${top}, ${cx + hw} ${top + 140}, ${cx + hw} ${oy + 560}" stroke="${m.grain}" stroke-opacity="${0.2 + (j % 3) * 0.08}" stroke-width="${2 + (j % 2) * 2.5}" fill="none"/>`;
+        }
+      });
+      for (let i = 0; i < 9; i++)
+        arcs += `<line x1="${(i * 31) % 280}" x2="${(i * 31 + 4) % 280}" y1="0" y2="520" stroke="${m.grain}" stroke-opacity=".08" stroke-width="${1 + (i % 2)}"/>`;
+      d += `<pattern id="gr_${k}${x}" width="280" height="520" patternUnits="userSpaceOnUse"><rect width="280" height="520" fill="${m.wood}"/>${arcs}</pattern>`;
+      return;
+    }
     if (m.raw && !m.grain) {
       d += `<pattern id="gr_${k}${x}" width="14" height="14" patternUnits="userSpaceOnUse"><rect width="14" height="14" fill="${m.wood}"/><circle cx="3" cy="4" r=".9" fill="#000" fill-opacity=".08"/><circle cx="10" cy="10" r=".8" fill="#fff" fill-opacity=".12"/></pattern>`;
       return;
