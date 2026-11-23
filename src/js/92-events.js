@@ -240,16 +240,26 @@ document.addEventListener('click', e => {
   switch (act) {
     case 'tab': {
       const t = a === 'design' ? ui.dmode || 'elev' : a; // the Design tab opens Front or 3D, whichever was used last
-      if (PN_GROUP[t]) {
-        PN.last = t;
-        pnSave();
-      }
-      showTab(t);
+      // a view of Order or Build: open it through its sub-tab so the step and sub-tab light up
+      if (PN_GROUP[t])
+        pnGo(
+          {
+            cut: PN.psub || 'list',
+            draw: PN.dsub || 'tech',
+            sheets: 'sheets',
+            loft: 'loft',
+            work: 'work',
+            guide: 'guide'
+          }[t]
+        );
+      else showTab(t);
       break;
     }
+    case 'step':
+      stepGo(a);
+      break;
     case 'pnTop':
-      if (a === 'area') showTab(pnLast());
-      else pnGo(a);
+      pnGo(a);
       break;
     case 'pnGo':
       pnGo(a);
@@ -782,6 +792,7 @@ document.addEventListener('click', e => {
     case 'mmenu': {
       const m = document.getElementById('mmenu');
       m.hidden = !m.hidden;
+      if (!m.hidden) mmSetPut();
       b.setAttribute('aria-expanded', String(!m.hidden));
       break;
     }
@@ -1424,9 +1435,10 @@ document.addEventListener('click', e => {
       groupsCache = null;
       renderSide();
       renderViews();
+      mmSetPut();
       toast(
         EXP
-          ? 'Experimental on: more walls and corner cabinets under “Walls in this room”'
+          ? 'Experimental on: more walls and corner cabinets under Room → Walls in this room'
           : 'Experimental off: one wall at a time'
       );
       break;
@@ -1438,6 +1450,7 @@ document.addEventListener('click', e => {
         oops('events #5', er, 1);
       }
       renderSide();
+      mmSetPut();
       toast(ui.simple ? 'Simple view — the rest is under “More options”' : 'Expert view — every setting is shown');
       break;
     case 'ztbClose':
@@ -2648,6 +2661,12 @@ document.addEventListener('click', e => {
     }
     case 'pane':
       ui.pane = a;
+      if (a === 'room') ui.step = 'room';
+      else {
+        ui.step = 'design';
+        ui.dpane = a;
+      }
+      stepsOn();
       renderSide();
       document.getElementById('side').scrollTop = 0;
       if (isSheet()) {

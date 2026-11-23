@@ -636,7 +636,7 @@ function cornerCheck(G, St) {
       })
     )
       G.warns.push(
-        `Corner with ${c.name}: the side strip is only ${f0(side)} mm — doors and handles in the corner can hit the other wall’s fronts. Make the side strips at least 50 mm (Build → Closing strips).`
+        `Corner with ${c.name}: the side strip is only ${f0(side)} mm — doors and handles in the corner can hit the other wall’s fronts. Make the side strips at least 50 mm (Design → Construction → Closing strips).`
       );
   });
   if (C.R && (C.R.deg || 90) < 85)

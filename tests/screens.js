@@ -9,11 +9,32 @@
   await step('views', () => { renderSide(); renderViews() });
   for (const t of ['elev', '3d', 'guide', 'cut', 'sheets', 'draw', 'loft', 'work'])
     await step('tab ' + t, () => showTab(t));
-  await step('design tab', () => {
+  await step('design step', () => {
     showTab('3d');
-    pnGo('cut');
-    document.querySelector('[data-act=tab][data-a=design]').click();
+    pnGo('list');
+    document.querySelector('[data-act=step][data-a=design]').click();
     if (ui.tab !== '3d') throw new Error('Design did not return to 3D, got ' + ui.tab);
+    showTab('elev');
+  });
+  await step('four steps', () => {
+    const side = () => getComputedStyle(document.getElementById('side')).display !== 'none';
+    for (const [s, panes, sideOn] of [['room', ['room'], true], ['design', ['layout', 'look', 'build'], true], ['order', null, false], ['build', null, false]]) {
+      document.querySelector(`[data-act=step][data-a=${s}]`).click();
+      if (stepNow() !== s) throw new Error(`step ${s}: got ${stepNow()}`);
+      if (document.querySelector('.app').dataset.step !== s) throw new Error(`step ${s}: page not marked`);
+      if (side() !== sideOn) throw new Error(`step ${s}: settings panel ${sideOn ? 'hidden' : 'shown'}`);
+      if (panes) {
+        const tabs = [...document.querySelectorAll('#side .spane [data-act=pane]')].map(b => b.dataset.a);
+        if (panes.length > 1 && tabs.join() !== panes.join()) throw new Error(`step ${s}: side tabs ${tabs}`);
+        if (!panes.includes(ui.pane)) throw new Error(`step ${s}: pane ${ui.pane}`);
+      } else if (!document.querySelector(`#v-${ui.tab} .pnav`)) throw new Error(`step ${s}: no sub-tabs`);
+    }
+    for (const k of ['list', 'sheets', 'buy', 'price', 'tech', 'loft', 'files', 'work', 'guide']) {
+      pnGo(k);
+      const on = document.querySelector(`#v-${ui.tab} .pnav [data-a=${k}].on`);
+      if (!on) throw new Error(`sub-tab ${k} not lit`);
+    }
+    document.querySelector('[data-act=step][data-a=design]').click();
     showTab('elev');
   });
   await step('sizes', () => {

@@ -41,6 +41,7 @@ The version is `APP_VERSION` in `src/js/81-room-photo.js`. Each update adds 0.00
   Compared with `tests/expected/*.json`; any difference fails and is shown. When a change is meant to change
   results, check the differences, then `python3 tests/run.py --update`.
 - `tests/screens.js`: on the starters, every tab, workshop 3D, drawing sheets, DXF and both shop forms.
+- `tests/screens.js` also walks the four steps and every sub-tab ("four steps").
 - `tests/drill_check.js`: on every design, workshop sanity: holes off their part, Ø5/Ø8 holes running into each other, hinge plates not 37 mm from the front, doors hinged on an upright without plate holes, boards overlapping in 3D (backs in grooves and header rails in notches allowed).
 - A test fails on any page error, any problem reported with `oops()`, or a drilled part without a 3D board.
 - Offline: set `THREE_JS=/path/to/three.min.js` (e.g. from `npm i three@0.159.0`) and the page gets that copy.
@@ -136,3 +137,10 @@ The version is `APP_VERSION` in `src/js/81-room-photo.js`. Each update adds 0.00
 - Fixings (v0.133): side `drill()` also fixes the desk top (`secs` with `desk`) and `linings`. `fixUprights(items, H)` runs after `linkPanels`: finds each upright's board under/over it in 3D, maps the world point to the part (`toPart`, inverse of the board's flat mapping) and drills Ø8 × 12 dowel holes; `H.vdDowels`, `H.slopeBrk` feed the hardware list. `q.under` is the top's outline moved down square to each piece, corners where neighbouring pieces cross.
 - 3D steps: `tdPartName` takes the lowest fixed board of the box as the Bottom (`c.lowY`), and keeps the cut-list name for non-door front parts. `asHW` draws a pin only where a shelf rests.
 - Experimental mode (v0.134): `EXP` / `expOn()` in `00-core-data.js` (localStorage `fitted-exp`, synced in `58-sync-settings.js`, switch `expMode` in `92-events.js`). Gated: `cornerCheck` in `build()`, `pjSync` in `changed()`, the corner in `elevSVG` (`CRN`), other walls in 3D (`80-3d.js`, the "Other walls" button), the "Walls in this room" panel and the wall-width note in `40-side-panel.js`. `S.proj` itself is never touched by the switch.
+
+## The four steps (v0.135)
+
+- `93-steps.js`: `STEPS` (room, design, order, build), `stepGo(s)`, `stepNow()` (Order/Build from `PN_GROUP[ui.tab]`, Room/Design from `ui.step`), `stepsOn()` lights the step buttons (`data-act="step"`, header `#tabs` and phone `#bnav`) and sets `.app[data-step]`. `STEP_PANES` limits the side-panel tabs: Room → `room`; Design → `layout`, `look`, `build` (labelled Construction). `mmSetHTML()` puts Simple/Expert and Experimental in the ☰ menu (`#mmset`).
+- `91-parts-nav.js`: `PN_ORDER` / `PN_BUILD` sub-tabs, `pnGo(key)` (old keys parts/drawings/workshop still work), `pnPut(view)` puts the sub-tab row on top of each Order/Build view (also Workshop and Guide now).
+- `90-bar-views.js`: `renderBar()` builds one toolbar row; `viewMenuHTML()` is the 3D View menu (`ui.vmOpen` keeps it open while you use it).
+- `50-steps.css`: hides the side panel in Order and Build, styles the step bar, sub-tabs, menu groups and the View menu.

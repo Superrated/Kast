@@ -9,13 +9,21 @@ function dswHTML() {
 function renderBar() {
   const b = document.getElementById('bar');
   const w = geo.warns;
-  let h = ui.tab === 'elev' || ui.tab === '3d' ? dswHTML() : '';
+  /* one row: Front | 3D · fronts (Design) · show items · look inside · zoom (Front) or View ▾ (3D) · colours (Design) */
+  const dz = ui.tab === 'elev' || ui.tab === '3d',
+    inDesign = dz && stepNow() === 'design';
+  let h = dz ? dswHTML() : '';
+  if (inDesign)
+    h += `${fmodeHTML()}<button class="btn sm ${ui.props ? 'on' : ''}" data-act="props" title="Show books, clothes, boxes and decoration at real size">Show items</button><button type="button" class="btn sm ${ui.peek ? 'on' : ''}" data-act="peek" title="Make the selected compartment's doors see-through">Look inside</button>`;
   if (ui.tab === 'elev')
-    h += `<button class="btn sm ${ui.props ? 'on' : ''}" data-act="props" title="Show books, clothes, boxes and decoration at real size">Show items</button>${fmodeHTML()}<button class="btn sm" data-act="zoom" data-a="-1" aria-label="Zoom out">−</button><button class="btn sm" data-act="zoom" data-a="1" aria-label="Zoom in">+</button>`;
-  if (ui.tab === '3d')
-    h += `<button class="btn sm ${ui.photoOn ? 'on' : ''}" data-act="photo" title="Line the design up with a photo of your room">${ui.photoOn ? 'Photo on' : PH.img ? 'Room photo' : '+ Room photo'}</button>${S.proj && expOn() ? `<button class="btn sm ${ui.others3D === false ? '' : 'on'}" data-act="others3D" title="Show the other walls of the room around this one">Other walls</button>` : ''}<button class="btn sm" data-act="light3d" title="Change the light: daylight, morning, evening, lamps">Light: ${(LIGHTS[ui.light || ''] || LIGHTS[''])[1]}</button><button class="btn sm" data-act="cam" data-a="front">Straight on</button><button class="btn sm" data-act="cam" data-a="angle">Right ¾</button><button class="btn sm" data-act="cam" data-a="left">Left ¾</button><button class="btn sm ${ui.props ? 'on' : ''}" data-act="props" title="Show books, clothes, boxes and decoration at real size">Show items</button>${fmodeHTML()}<button class="btn sm" data-act="aiOpen" title="Hand this picture to a picture AI to make it look like a photo">🪄 AI render</button><button class="btn sm ${ui.see && ui.see.size ? 'on' : ''}" data-act="seeClear" title="Tap any door, panel or shelf in the 3D view to see through it">${ui.see && ui.see.size ? `Solid again (${ui.see.size})` : 'Tap a piece to see through'}</button><button class="btn sm ${ui.room3D ? 'on' : ''}" data-act="room3D">Room</button><button class="btn sm ${ui.exOn ? 'on' : ''}" data-act="explode" title="Pull every column and every part apart">Exploded</button><button class="btn sm ${ui.iso ? 'on' : ''}" data-act="iso" title="Show one column on its own">${ui.iso ? 'Column ' + (ui.sel + 1) : 'One column'}</button>${ui.iso ? `<button class="btn sm" data-act="isoSec" data-a="-1" aria-label="Previous column">◀</button><button class="btn sm" data-act="isoSec" data-a="1" aria-label="Next column">▶</button>` : ''}`;
-  if (ui.tab === 'elev' || ui.tab === '3d')
-    h += `<span class="sp"></span><span class="note" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">Fronts ${finSel('front')} Carcass ${finSel('carcass')}</span>`;
+    h += `<span class="bzoom"><button class="btn sm" data-act="zoom" data-a="-1" aria-label="Zoom out">−</button><button class="btn sm" data-act="zoom" data-a="1" aria-label="Zoom in">+</button></span>`;
+  if (ui.tab === '3d') {
+    h += viewMenuHTML();
+    if (ui.iso)
+      h += `<button class="btn sm on" data-act="iso" title="Show the whole cabinet again">Column ${ui.sel + 1} ✕</button><button class="btn sm" data-act="isoSec" data-a="-1" aria-label="Previous column">◀</button><button class="btn sm" data-act="isoSec" data-a="1" aria-label="Next column">▶</button>`;
+  }
+  if (inDesign)
+    h += `<span class="sp"></span><span class="note bcols" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">Fronts ${finSel('front')} Carcass ${finSel('carcass')}</span>`;
   else h += '<span class="sp"></span>';
   if (ui.tab === 'elev' || ui.tab === '3d')
     h += `<button class="btn sm mobonly" data-act="bigView" aria-label="${ui.big ? 'Smaller drawing' : 'Bigger drawing'}">${ui.big ? '⤡ Smaller' : '⤢ Bigger'}</button>`;
@@ -89,7 +97,7 @@ const FM_ICON = {
   off: '<svg viewBox="0 0 20 20"><rect x="4" y="2.5" width="12" height="15" rx="1" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="2.5 2"/><line x1="3" y1="17" x2="17" y2="3" stroke="currentColor" stroke-width="1.6"/></svg>'
 };
 function fmodeHTML() {
-  return `<button type="button" class="btn sm ${ui.peek ? 'on' : ''}" data-act="peek" title="Make the selected compartment's doors see-through">Look inside selected</button><div class="fmode inl" role="group" aria-label="Show fronts">${[
+  return `<div class="fmode inl" role="group" aria-label="Show fronts">${[
     ['solid', 'Doors'],
     ['glass', 'See-through'],
     ['off', 'Hidden']
@@ -569,7 +577,7 @@ function showTab(a) {
       x.classList.toggle('on', x.dataset.a === a || (x.dataset.a === 'design' && (a === 'elev' || a === '3d')))
     );
   try {
-    pnTabsOn(a);
+    stepsOn();
   } catch (e) {
     oops('bar-views #11', e);
   }
@@ -588,3 +596,36 @@ function showTab(a) {
     T3.req();
   }
 }
+
+/* 3D: everything about how you look at it, in one menu */
+function viewMenuHTML() {
+  const b = (act, a, label, on, title) =>
+    `<button type="button" class="${on ? 'on' : ''}" data-act="${act}"${a != null ? ` data-a="${a}"` : ''}${title ? ` title="${title}"` : ''}>${label}</button>`;
+  return `<details class="vmenu"${ui.vmOpen ? ' open' : ''}><summary class="btn sm">View ▾</summary><div class="vpop">
+    <span class="vh">Look from</span><div class="vrow">${b('cam', 'front', 'Straight on')}${b('cam', 'angle', 'Right ¾')}${b('cam', 'left', 'Left ¾')}</div>
+    <span class="vh">Show</span>
+    ${b('room3D', null, 'The room around it', !!ui.room3D)}
+    ${b('explode', null, 'Exploded — every part pulled apart', !!ui.exOn, 'Pull every column and every part apart')}
+    ${b('iso', null, 'One column on its own', !!ui.iso)}
+    ${b('seeClear', null, ui.see && ui.see.size ? `Make solid again (${ui.see.size})` : 'Tap a piece to see through it', !!(ui.see && ui.see.size))}
+    ${S.proj && expOn() ? b('others3D', null, 'Other walls of the room', ui.others3D !== false) : ''}
+    <span class="vh">Light &amp; photo</span>
+    ${b('light3d', null, `Light: ${(LIGHTS[ui.light || ''] || LIGHTS[''])[1]}`, false, 'Daylight, morning, evening, lamps')}
+    ${b('photo', null, ui.photoOn ? 'Room photo: on' : PH.img ? 'Room photo' : '+ Line up with a room photo', !!ui.photoOn)}
+    ${b('aiOpen', null, '🪄 AI render (photo-real picture)')}
+  </div></details>`;
+}
+document.addEventListener(
+  'toggle',
+  e => {
+    if (e.target && e.target.classList && e.target.classList.contains('vmenu')) ui.vmOpen = e.target.open;
+  },
+  true
+);
+document.addEventListener('click', e => {
+  // close the View menu when tapping elsewhere
+  if (ui.vmOpen && !e.target.closest('.vmenu')) {
+    ui.vmOpen = false;
+    document.querySelectorAll('.vmenu[open]').forEach(d => (d.open = false));
+  }
+});

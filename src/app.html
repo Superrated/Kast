@@ -13,16 +13,9 @@
   <header class="top">
     <button class="btn dsk sidet" data-act="sideT" id="sidet" aria-label="Hide or show the settings panel" aria-pressed="false" title="Hide or show the settings panel"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="3.5" x2="8" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
     <div class="brand" title="Fitted by BRUIS __KAST_VERSION__">Fitted<span class="bybr">by BRUIS</span><small>built-in wardrobes & cabinets, drawn and cut · __KAST_VERSION__</small></div>
-    <nav class="tabs" id="tabs">
-      <button data-act="tab" data-a="design" class="on">Design</button>
-      <button data-act="pnTop" data-a="parts">Parts</button>
-      <button data-act="pnTop" data-a="drawings">Drawings</button>
-      <button data-act="pnTop" data-a="workshop">Workshop</button>
-      <button data-act="tab" data-a="guide">Build guide</button>
-    </nav>
+    <nav class="tabs steps" id="tabs" aria-label="Steps"><button data-act="step" data-a="room"><i>1</i>Room</button><button data-act="step" data-a="design" class="on"><i>2</i>Design</button><button data-act="step" data-a="order"><i>3</i>Order</button><button data-act="step" data-a="build"><i>4</i>Build</button></nav>
     <div class="acts">
-      <button class="btn" data-act="undo" id="bUndo" aria-label="Undo" title="Undo (Ctrl+Z)" disabled>↶</button><button class="btn" data-act="redo" id="bRedo" aria-label="Redo" title="Redo" disabled>↷</button><button class="btn dsk" data-act="newHub" title="Start a new design: ready-made designs, the step-by-step wizard or a saved room">New</button>
-      <button class="btn dsk" data-act="ioShare1" title="Share this design, download it as a file or PDF, or open one someone sent you">Share</button><button class="btn dsb" data-act="io" id="dsBtn">Save</button><button class="btn" data-act="mmenu" aria-label="More" aria-expanded="false" title="More">☰</button>
+      <button class="btn" data-act="undo" id="bUndo" aria-label="Undo" title="Undo (Ctrl+Z)" disabled>↶</button><button class="btn" data-act="redo" id="bRedo" aria-label="Redo" title="Redo" disabled>↷</button>      <button class="btn dsk" data-act="ioShare1" title="Share this design, download it as a file or PDF, or open one someone sent you">Share</button><button class="btn dsb" data-act="io" id="dsBtn">Save</button><button class="btn" data-act="mmenu" aria-label="More" aria-expanded="false" title="More">☰</button>
     </div>
   </header>
   <div class="main">
@@ -30,7 +23,6 @@
     <section class="stage">
       <div class="bar" id="bar"></div>
       <div class="fmode" id="fmode" role="group" aria-label="Show fronts"></div>
-      <div class="psw phone" id="psw" role="tablist"><button data-act="pnTop" data-a="parts">Parts</button><button data-act="pnTop" data-a="drawings">Drawings</button><button data-act="pnTop" data-a="workshop">Workshop</button></div>
       <div class="mfloat phone" id="mfloat"></div>
       <button type="button" class="bigfab mobonly" data-act="bigView" id="bigfab" aria-label="Bigger drawing">⤢</button>
       <div class="view" id="v-elev" data-comment-target><div id="elevWrap"></div></div>
@@ -46,14 +38,8 @@
   </div>
 </div>
 
-<nav class="bnav" id="bnav" aria-label="Views">
-  <button data-act="tab" data-a="design" class="on"><svg viewBox="0 0 24 24"><path d="M3 21V9l9-6 9 6v12z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 21v-7h8v7M12 14v7" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>Design</span></button>
-  <button data-act="pnTop" data-a="area"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 9h8M8 13h8M8 17h5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>Parts</span></button>
-  
-  
-  <button data-act="tab" data-a="guide"><svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="9" cy="9" r="1.6" fill="currentColor"/><path d="M12 9h4M8 14h8M8 17.5h6" stroke="currentColor" stroke-width="1.6"/></svg><span>Guide</span></button>
-</nav>
-<div class="mmenu" id="mmenu" hidden><button type="button" data-act="io" id="dsBtnM">My designs</button><button type="button" data-act="ioRooms">My rooms</button><button type="button" data-act="ioShare1">Share &amp; files</button><button type="button" data-act="newHub">New design</button><button type="button" data-act="pdf">Download PDF</button><button type="button" data-act="tdOpen">Technical drawings (PDF, DXF)</button><hr><button type="button" data-act="ntOpen" id="ntBtnM">Notes</button><button type="button" class="cmtb" data-act="cmt" hidden>Comment on the drawing</button><button type="button" data-act="aiOpen">AI render (photo-real picture)</button><hr><button type="button" data-act="fbOpen">Talk to BRUIS — thanks, bugs, ideas, coffee</button><button type="button" data-act="gloss">Words explained</button><button type="button" data-act="lang" data-m="1" hidden></button><button type="button" data-act="install" id="instBtnM" hidden>Install app</button></div>
+<nav class="bnav steps" id="bnav" aria-label="Steps"><button data-act="step" data-a="room"><svg viewBox="0 0 24 24"><path d="M4 20V5h16v15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M2 20h20M4 9l5-4" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>Room</span></button><button data-act="step" data-a="design" class="on"><svg viewBox="0 0 24 24"><path d="M4 3h16v18H4zM12 3v18M4 11h8M12 15h8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span>Design</span></button><button data-act="step" data-a="order"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 9h8M8 13h8M8 17h5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>Order</span></button><button data-act="step" data-a="build"><svg viewBox="0 0 24 24"><path d="M14 4l6 6-3 3-6-6zM11 7L3 15v6h6l8-8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span>Build</span></button></nav>
+<div class="mmenu" id="mmenu" hidden><p class="mmh">Designs</p><button type="button" data-act="io" id="dsBtnM">My designs</button><button type="button" data-act="newHub">New design</button><button type="button" data-act="ioRooms">My rooms</button><button type="button" data-act="ioShare1">Share &amp; files</button><button type="button" data-act="pdf">Download PDF</button><button type="button" data-act="ntOpen" id="ntBtnM">Notes</button><button type="button" class="cmtb" data-act="cmt" hidden>Comment on the drawing</button><hr><p class="mmh">Settings</p><div id="mmset"></div><button type="button" data-act="lang" data-m="1" hidden></button><button type="button" data-act="install" id="instBtnM" hidden>Install app</button><hr><p class="mmh">Help</p><button type="button" data-act="gloss">Words explained</button><button type="button" data-act="fbOpen">Talk to BRUIS — thanks, bugs, ideas, coffee</button></div>
 <div class="pcal" id="pcal" hidden role="dialog" aria-label="Line up your room photo"><header><b>Line up your photo</b><span class="sp"></span><label class="btn sm" style="position:relative;overflow:hidden;cursor:pointer">Other photo<input type="file" accept="image/*" data-photoin style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0"></label><button type="button" class="btn sm" data-act="pcalClose">Cancel</button></header><div class="pstage" id="pstage"></div><footer id="pfoot"></footer></div>
 <input type="file" id="photoIn" accept="image/*" hidden>
 <div class="modal" id="wiz" hidden>

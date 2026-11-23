@@ -248,7 +248,7 @@ const PANES = [
   ],
   ['layout', 'Layout', 'The columns and what goes in them.', ['secs']],
   ['look', 'Look', 'Colours, boards, handles.', ['mat', 'hd']],
-  ['build', 'Build', 'How it goes together.', ['con', 'sk', 'lad', 'wt', 'plan']]
+  ['build', 'Construction', 'How it goes together: boxes, joints, hinges, plinth.', ['con', 'sk', 'lad', 'wt', 'plan']]
 ];
 const PANE_ICON = {
   room: '<svg viewBox="0 0 20 20"><path d="M3 17V8l7-5 7 5v9z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
@@ -272,7 +272,8 @@ const SIMPLE_KEEP =
   SIMPLE_HIDE = { site: 1, ppl: 1, scr: 1, lad: 1 };
 function simplifySide(el) {
   const head = el.querySelector('.shead');
-  if (head && !el.querySelector('.viewsw'))
+  // Simple / Expert and Experimental live in the ☰ menu (93-steps.js)
+  if (false && head && !el.querySelector('.viewsw'))
     head.insertAdjacentHTML(
       'afterend',
       `<div class="viewsw"><div class="seg" role="group" aria-label="How much to show"><button type="button" class="${ui.simple ? 'on' : ''}" data-act="viewMode" data-a="s">Simple</button><button type="button" class="${ui.simple ? '' : 'on'}" data-act="viewMode" data-a="x">Expert</button></div><span>${ui.simple ? 'The settings most people use' : 'Every setting'}</span></div><label class="chk expsw"><input type="checkbox" data-act="expMode" ${expOn() ? 'checked' : ''}> Experimental: more walls in one room and corner cabinets</label>`
@@ -532,7 +533,11 @@ function renderSide() {
   const el = document.getElementById('side'),
     op = k => (openState[k] || (k === 'secs' && isSheet()) ? 'open' : ''),
     R = S.room;
-  const pane = PANES.find(x => x[0] === (ui.pane || 'layout')) || PANES[1];
+  // only the side-panel tabs of the current step (Room: Room; Design: Layout · Look · Construction)
+  const okP = stepPanes();
+  if (!okP.includes(ui.pane || 'layout')) ui.pane = okP[0];
+  const pane = PANES.find(x => x[0] === ui.pane) || PANES[1],
+    myPanes = PANES.filter(x => okP.includes(x[0]));
   let h = `<details class="acc" data-k="room" ${op('room')}><summary>Wall</summary><div class="accb">
     <div class="grid2">${S.proj && expOn() ? `<div class="fld"><span>Wall width</span><span class="note" style="padding:8px 0">${f0(R.W)} mm for cabinets — the wall length is set under “Walls in this room”</span></div>` : fld('Wall width', 'room.W')}${fld('Full ceiling height', 'room.H')}${fld('Cabinet depth', 'room.D')}${fld('Ceiling lower at the back by', 'room.drop')}</div>
     <div style="display:grid;gap:8px">${chk('The back wall is not parallel to the cabinet front', 'room.skew.on')}${
@@ -615,7 +620,7 @@ function renderSide() {
   if (expOn())
     h += `<details class="acc" data-k="walls" ${op('walls')}><summary>Walls in this room <span class="exptag">experimental</span>${S.proj ? ` (${S.proj.walls.length})` : ''}</summary><div class="accb">${pjHTML()}</div></details>`;
   else if (S.proj)
-    h += `<details class="acc" data-k="walls" ${op('walls')}><summary>Walls in this room (${S.proj.walls.length})</summary><div class="accb"><p class="hintp" style="margin:0">This design has ${S.proj.walls.length} walls with corner cabinets — an experimental feature. You are seeing only “${esc((S.proj.walls[S.proj.at] || {}).name || 'this wall')}”; nothing is lost. <button type="button" class="linkb" data-act="expMode">Turn on Experimental</button> to see and change the others.</p></div></details>`;
+    h += `<details class="acc" data-k="walls" ${op('walls')}><summary>Walls in this room (${S.proj.walls.length})</summary><div class="accb"><p class="hintp" style="margin:0">This design has ${S.proj.walls.length} walls with corner cabinets — an experimental feature. You are seeing only “${esc((S.proj.walls[S.proj.at] || {}).name || 'this wall')}”; nothing is lost. <button type="button" class="linkb" data-act="expMode">Turn on Experimental</button> (also in the ☰ menu under Settings) to see and change the others.</p></div></details>`;
   {
     const F = R.front || {};
     h += `<details class="acc" data-k="front" ${op('front')}><summary>Space in front · hallway</summary><div class="accb">
@@ -997,7 +1002,7 @@ function renderSide() {
   el.dataset.flow = pane[0] === 'layout' ? flowNow() : 'home';
   if (isSheet()) setTimeout(renderBar, 0);
   el.innerHTML =
-    `<div class="shead"><div class="shandle" data-sgrab="1" aria-hidden="true"><i></i></div><div class="spane" role="tablist">${PANES.map(([k, l]) => `<button type="button" role="tab" aria-selected="${k === pane[0]}" class="${k === pane[0] ? 'on' : ''}" data-act="pane" data-a="${k}">${PANE_ICON[k]}<span>${l}</span></button>`).join('')}</div><div class="crumb">${pane[0] === 'layout' ? crumbHTML() : ''}</div></div><p class="panelede">${pane[2]} <button type="button" class="linkb" data-act="gloss">What do the words mean?</button></p>` +
+    `<div class="shead"><div class="shandle" data-sgrab="1" aria-hidden="true"><i></i></div><div class="spane${myPanes.length < 2 ? ' one' : ''}" role="tablist">${(myPanes.length < 2 ? [] : myPanes).map(([k, l]) => `<button type="button" role="tab" aria-selected="${k === pane[0]}" class="${k === pane[0] ? 'on' : ''}" data-act="pane" data-a="${k}">${PANE_ICON[k]}<span>${l}</span></button>`).join('')}</div><div class="crumb">${pane[0] === 'layout' ? crumbHTML() : ''}</div></div><p class="panelede">${myPanes.length < 2 ? `<b class="sptitle">${pane[1]}</b>` : ''}${pane[2]} <button type="button" class="linkb" data-act="gloss">What do the words mean?</button></p>` +
     lockBanner() +
     pane[3].map(k => parts[k] || '').join('');
   el.classList.toggle('locked', isLocked());

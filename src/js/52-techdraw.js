@@ -1729,7 +1729,7 @@ function tdBodyHTML(inline) {
     <div class="fld"><span>Paper</span><div class="seg">${['A3', 'A4'].map(p => `<button type="button" class="${TD.paper === p ? 'on' : ''}" data-act="tdPaper" data-a="${p}">${p}${p === 'A3' ? ' — usual for makers' : ' — easy to print at home'}</button>`).join('')}</div></div>
     <div class="tdk">${TD_KINDS.map(([k, l, d]) => `<label class="tdkb ${TD.sheets[k] ? 'on' : ''}"><input type="checkbox" data-tdk="${k}" ${TD.sheets[k] ? 'checked' : ''}><b>${l}</b><small>${d}</small></label>`).join('')}</div>
     <div class="dbtns"><button type="button" class="btn pri" data-act="tdPDF">Download drawings (PDF)</button><button type="button" class="btn" data-act="tdDXF">Download the whole wall (DXF)</button></div>
-    <p class="hintp" style="margin:0">The DXF has the front view, the plan and every section at full size (1 unit = 1 mm), with layers for walls, carcass, fronts, shelves, backs, plinth and dimensions — it opens in AutoCAD, SketchUp, Fusion, LibreCAD and most CAD programs. For CNC files of the separate parts, see Labels &amp; files.</p>`;
+    <p class="hintp" style="margin:0">The DXF has the front view, the plan and every section at full size (1 unit = 1 mm), with layers for walls, carcass, fronts, shelves, backs, plinth and dimensions — it opens in AutoCAD, SketchUp, Fusion, LibreCAD and most CAD programs. For CNC files of the separate parts, see Order → Files.</p>`;
 }
 function tdRender() {
   const m = document.getElementById('tdm');

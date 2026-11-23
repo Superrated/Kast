@@ -1,27 +1,31 @@
 /* ==== 91-parts-nav.js ====
-   The Parts area, split by what you are doing:
-     Parts     — what to cut and buy:  List · Sheets · Shopping · Price
-     Drawings  — everything on paper:  Technical drawings · Shaped parts · Labels & files
-     Workshop  — building it:          lock status · Cut · Assemble (3D per box) · Build steps
-   Views: v-cut (List / Shopping / Price, one render split in sections), v-sheets, v-draw, v-loft, v-work.
-   The last tab you used is remembered.
+   The Order and Build steps (see 93-steps.js for the four steps Room → Design → Order → Build):
+     Order — everything to buy, cut and send:  Parts · Sheets · Shopping · Price · Drawings · Shaped parts · Files
+     Build — making it:                        Workshop (cut, assemble in 3D, build steps) · Build guide
+   Views: v-cut (Parts / Shopping / Price, one render split in sections), v-sheets, v-draw (Drawings / Files),
+   v-loft, v-work, v-guide. The last sub-tab you used in each step is remembered.
 */
-const PN_GROUP = { cut: 'parts', sheets: 'parts', draw: 'drawings', loft: 'drawings', work: 'workshop' };
-const PN_PARTS = [
-  ['list', 'cut', 'List'],
+const PN_GROUP = { cut: 'order', sheets: 'order', draw: 'order', loft: 'order', work: 'build', guide: 'build' };
+const PN_ORDER = [
+  ['list', 'cut', 'Parts'],
   ['sheets', 'sheets', 'Sheets'],
   ['buy', 'cut', 'Shopping'],
-  ['price', 'cut', 'Price']
-];
-const PN_DRAW = [
-  ['tech', 'draw', 'Technical drawings'],
+  ['price', 'cut', 'Price'],
+  ['tech', 'draw', 'Drawings'],
   ['loft', 'loft', 'Shaped parts'],
-  ['files', 'draw', 'Labels & files']
+  ['files', 'draw', 'Files']
 ];
-let PN = { last: 'cut', psub: 'list', dsub: 'tech' };
+const PN_BUILD = [
+  ['work', 'work', 'Workshop'],
+  ['guide', 'guide', 'Build guide']
+];
+// older names still used by buttons here and there
+const PN_ALIAS = { parts: 'list', drawings: 'tech', workshop: 'work', area: null, order: null, build: null };
+let PN = { last: 'cut', osub: 'list', bsub: 'work', psub: 'list', dsub: 'tech' };
 try {
   const o = JSON.parse(localStorage.getItem('fitted-pn') || 'null');
   if (o) PN = Object.assign(PN, o);
+  if (o && !o.osub) PN.osub = o.psub || 'list';
 } catch (e) {
   oops('parts-nav #1', e, 1);
 }
@@ -32,28 +36,22 @@ function pnSave() {
     oops('parts-nav #2', e, 1);
   }
 }
-/* open a place in the Parts area: g = 'parts'|'drawings'|'workshop', or a sub key */
+/* open a place in Order or Build by its sub key (list, sheets, buy, price, tech, loft, files, work, guide) */
 function pnGo(key) {
-  let tab = 'cut';
-  if (key === 'parts') {
-    key = PN.psub || 'list';
-  } else if (key === 'drawings') {
-    key = PN.dsub || 'tech';
-  } else if (key === 'workshop') {
-    key = 'work';
+  if (key in PN_ALIAS) key = PN_ALIAS[key] || (key === 'build' ? PN.bsub || 'work' : PN.osub || 'list');
+  const o = PN_ORDER.find(x => x[0] === key),
+    b = PN_BUILD.find(x => x[0] === key),
+    hit = o || b || PN_ORDER[0];
+  if (b) PN.bsub = key;
+  else {
+    PN.osub = hit[0];
+    // which sections the shared views show
+    if (hit[1] === 'cut') PN.psub = hit[0];
+    if (hit[1] === 'draw') PN.dsub = hit[0];
   }
-  const p = PN_PARTS.find(x => x[0] === key),
-    d = PN_DRAW.find(x => x[0] === key);
-  if (p) {
-    PN.psub = key;
-    tab = p[1];
-  } else if (d) {
-    PN.dsub = key;
-    tab = d[1];
-  } else if (key === 'work') tab = 'work';
-  PN.last = tab;
+  PN.last = hit[1];
   pnSave();
-  showTab(tab);
+  showTab(hit[1]);
 }
 function pnLast() {
   return PN.last && PN_GROUP[PN.last] ? PN.last : 'cut';
@@ -61,9 +59,14 @@ function pnLast() {
 function pnNav(t) {
   const g = PN_GROUP[t];
   if (!g) return '';
-  const sub = g === 'parts' ? PN_PARTS : g === 'drawings' ? PN_DRAW : null,
-    cur = g === 'parts' ? PN.psub : PN.dsub;
-  return `<nav class="pnav" aria-label="${g === 'parts' ? 'Parts' : 'Drawings'} sections">${sub ? `<div class="pnsub seg" role="tablist">${sub.map(([k, , l]) => `<button type="button" role="tab" class="${k === cur ? 'on' : ''}" aria-selected="${k === cur}" data-act="pnGo" data-a="${k}">${l}</button>`).join('')}</div>` : ''}</nav>`;
+  const sub = g === 'order' ? PN_ORDER : PN_BUILD,
+    cur = g === 'order' ? PN.osub : PN.bsub;
+  return `<nav class="pnav" aria-label="${g === 'order' ? 'Order' : 'Build'}"><div class="pnsub seg" role="tablist">${sub
+    .map(
+      ([k, , l]) =>
+        `<button type="button" role="tab" class="${k === cur ? 'on' : ''}" aria-selected="${k === cur}" data-act="pnGo" data-a="${k}">${l}</button>`
+    )
+    .join('')}</div></nav>`;
 }
 function pnPut(t) {
   const el = document.getElementById('v-' + t);
@@ -71,28 +74,20 @@ function pnPut(t) {
   const old = el.querySelector(':scope>.pnav');
   if (old) old.remove();
   el.insertAdjacentHTML('afterbegin', pnNav(t));
-  if (t === 'cut') el.dataset.psub = PN.psub === 'sheets' ? 'list' : PN.psub;
-  if (t === 'draw') el.dataset.dsub = PN.dsub === 'loft' ? 'tech' : PN.dsub;
-  pnTabsOn(t);
+  if (t === 'cut') el.dataset.psub = ['list', 'buy', 'price'].includes(PN.psub) ? PN.psub : 'list';
+  if (t === 'draw') el.dataset.dsub = ['tech', 'files'].includes(PN.dsub) ? PN.dsub : 'tech';
+  stepsOn();
 }
-function pnTabsOn(t) {
-  const g = PN_GROUP[t];
-  document.querySelectorAll('[data-act="tab"],[data-act="pnTop"]').forEach(x => {
-    const a = x.dataset.a;
-    const on =
-      x.dataset.act === 'pnTop'
-        ? a === g
-        : a === t ||
-          (a === 'design' && (t === 'elev' || t === '3d')) ||
-          (PN_GROUP[a] && PN_GROUP[a] === g && (x.closest('#bnav') || (a === 'cut' && g === 'parts')));
-    x.classList.toggle('on', !!on);
-  });
+function pnTabsOn() {
+  stepsOn();
 }
 /* wrap the renders of the views so the section bar is always on top */
-['renderCut', 'renderSheets', 'renderLoft'].forEach(fnm => {
+['renderCut', 'renderSheets', 'renderLoft', 'renderWork', 'renderGuide'].forEach(fnm => {
   const f = window[fnm];
   if (typeof f !== 'function') return;
-  const t = { renderCut: 'cut', renderSheets: 'sheets', renderLoft: 'loft' }[fnm];
+  const t = { renderCut: 'cut', renderSheets: 'sheets', renderLoft: 'loft', renderWork: 'work', renderGuide: 'guide' }[
+    fnm
+  ];
   window[fnm] = function () {
     const r = f.apply(this, arguments);
     try {

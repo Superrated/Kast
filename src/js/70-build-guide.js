@@ -1873,7 +1873,7 @@ function renderGuide() {
   );
   el.innerHTML =
     partBar() +
-    `<h2>Build guide</h2><div style="margin:0 0 10px"><button type="button" class="btn" data-act="pnTop" data-a="workshop">Workshop</button> <span class="hintp" style="display:inline">one cut or step at a time, in big letters, with ticks — for your phone in the workshop</span></div><p class="lede">${S.opts.noToons ? '' : 'With <b>Bolt &amp; Pip</b>, two builders who get every step wrong first — so you don’t have to. '}Step by step, like flat-pack instructions: prepare, build each cabinet on the floor, install, fit the fronts, finish. Part numbers match the cut list and the shaped-part drawings. ${secs.length} columns · ${total} parts · about ${hours} hours of work (see “Your plan” below).</p><label class="chk" style="margin:-6px 0 14px"><input type="checkbox" data-act="toonsT" ${S.opts.noToons ? '' : 'checked'}> Show Bolt &amp; Pip</label><div class="guide">${out.join('')}</div>`;
+    `<h2>Build guide</h2><p class="lede">${S.opts.noToons ? '' : 'With <b>Bolt &amp; Pip</b>, two builders who get every step wrong first — so you don’t have to. '}Step by step, like flat-pack instructions: prepare, build each cabinet on the floor, install, fit the fronts, finish. Part numbers match the cut list and the shaped-part drawings. ${secs.length} columns · ${total} parts · about ${hours} hours of work (see “Your plan” below).</p><label class="chk" style="margin:-6px 0 14px"><input type="checkbox" data-act="toonsT" ${S.opts.noToons ? '' : 'checked'}> Show Bolt &amp; Pip</label><div class="guide">${out.join('')}</div>`;
 }
 
 function renderSheets() {

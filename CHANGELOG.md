@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.135
+
+**One way through the app: Room → Design → Order → Build.** The same four steps in the top bar on a computer and the bottom bar on a phone; each step shows only its own settings and screens.
+
+- **1 Room** — the wall: size, slopes, beams, sockets, getting it in (the side panel shows only the room settings).
+- **2 Design** — the cabinet: side panel with Layout · Look · Construction (the old "Build" settings tab, renamed so it isn't confused with the Build step), next to the front drawing or 3D.
+- **3 Order** — Parts · Sheets · Shopping · Price · Drawings · Shaped parts · Files, full width (no settings panel). Technical drawings, labels, PDFs and CNC files now live here.
+- **4 Build** — Workshop · Build guide, full width.
+- Replaces four overlapping navigations (top tabs, side-panel tabs, the phone's bottom bar and its extra Parts/Drawings/Workshop switch).
+- **Drawing toolbar in one row**: Front | 3D · Doors / See-through / Hidden · Show items · Look inside · zoom, with the colours at the end. In 3D everything about looking — camera angles, the room, exploded, one column, see-through, light, room photo, AI render — sits in one **View ▾** menu.
+- **☰ menu in groups**: Designs (my designs, new, rooms, share, PDF, notes), Settings (Simple / Expert and Experimental — moved out of the side panel), Help. Duplicates removed (technical drawings and AI render each have one home now); "New" moved from the header into the menu.
+- Help texts point to the new places (e.g. "Design → Construction → Closing strips", "Order → Files").
+- Tests: a new check walks the four steps and every sub-tab.
+
 ## v0.134
 
 - **Experimental mode**: more walls in one room and the corner cabinets between them are now behind one switch, "Experimental", at the top of the side panel (under Simple / Expert). It is off by default, remembered on this device and synced with your other settings. When it is off the app works with one wall: no "Walls in this room", no corner check or corner parts, no corner in the front drawing, no other walls in 3D. A design that already has more walls keeps them untouched and shows a short note with a "Turn on Experimental" button.
