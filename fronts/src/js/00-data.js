@@ -65,6 +65,39 @@ const LAYOUTS = {
   ]
 };
 
+/* Rubio Monocoat Oil Plus 2C: one coat of hardwax oil, in four tints. mix = how much of the tint covers the wood */
+const OILS = {
+  pure: { name: 'Pure', blurb: 'Clear, the wood as it is', hex: '#000000', mix: 0 },
+  white5: { name: 'White 5%', blurb: 'A light Nordic wash', hex: '#F4EFE7', mix: 0.38 },
+  smoke5: { name: 'Smoke 5%', blurb: 'Soft grey, like weathered wood', hex: '#C9C1B6', mix: 0.42 },
+  charcoal: { name: 'Charcoal', blurb: 'Near black, the grain still shows', hex: '#34302D', mix: 0.74 }
+};
+/* the rounded or chamfered edge on every front */
+const EDGES = {
+  round: { name: 'Round', blurb: '2 mm radius, soft and hard-wearing' },
+  chamfer: { name: 'Chamfer', blurb: '45°, crisp; shows the ply layers as a line' }
+};
+function mixHex(a, b, t) {
+  const p = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)),
+    x = p(a),
+    y = p(b);
+  return (
+    '#' +
+    x
+      .map((v, i) =>
+        Math.round(v + (y[i] - v) * t)
+          .toString(16)
+          .padStart(2, '0')
+      )
+      .join('')
+  );
+}
+/* the wood and grain colour of a material after its oil */
+function woodCol(mat, oil) {
+  const m = MATS[mat],
+    o = (m.oil && OILS[oil]) || OILS.pure;
+  return { wood: mixHex(m.wood, o.hex, o.mix), grain: mixHex(m.grain || m.wood, o.hex, o.mix * 0.75) };
+}
 /* the curated range: two styles … */
 const STYLES = {
   flat: { name: 'Flat', blurb: 'Clean and calm', f: 1 },
@@ -101,11 +134,26 @@ const MATS = {
     rate: 200,
     paint: true
   },
-  oak: { name: 'Oak veneer', blurb: 'Natural oak, oiled', rate: 235, wood: '#C9A26E', grain: '#8F6A3C' },
-  walnut: { name: 'Walnut veneer', blurb: 'Deep and warm, oiled', rate: 295, wood: '#5C3A26', grain: '#2E1A0F' },
+  oak: {
+    name: 'Oak veneer',
+    blurb: 'Natural oak, hardwax oil',
+    rate: 235,
+    wood: '#C9A26E',
+    grain: '#8F6A3C',
+    oil: true
+  },
+  walnut: {
+    name: 'Walnut veneer',
+    blurb: 'Deep and warm, hardwax oil',
+    rate: 295,
+    wood: '#5C3A26',
+    grain: '#2E1A0F',
+    oil: true
+  },
   birch: {
     name: 'Birch plywood',
-    blurb: 'Clear lacquer, layered edge on show',
+    blurb: 'Hardwax oil, layered edge on show',
+    oil: true,
     rate: 160,
     wood: '#DCC69E',
     grain: '#B89B6C',
@@ -114,7 +162,8 @@ const MATS = {
   // the other plywood: pine (Douglas fir / spruce) with its bold, flame-shaped grain
   pine: {
     name: 'Pine plywood',
-    blurb: 'Bold flame grain, warm and honest',
+    blurb: 'Bold flame grain, hardwax oil',
+    oil: true,
     rate: 140,
     wood: '#DDBB86',
     grain: '#A86E35',

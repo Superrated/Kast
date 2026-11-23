@@ -69,9 +69,10 @@ function canvasTex(w, h, paint, normal) {
   t.anisotropy = 4;
   return t;
 }
-function woodTex(k) {
-  if (V3.tex['w' + k]) return V3.tex['w' + k];
-  const m = MATS[k];
+function woodTex(k, oil) {
+  const tk = 'w' + k + (MATS[k].oil ? oil || 'pure' : '');
+  if (V3.tex[tk]) return V3.tex[tk];
+  const m = Object.assign({}, MATS[k], woodCol(k, oil));
   const t = canvasTex(256, 1024, (g, w, h) => {
     g.fillStyle = m.wood;
     g.fillRect(0, 0, w, h);
@@ -128,7 +129,7 @@ function woodTex(k) {
     }
     g.globalAlpha = 1;
   });
-  return (V3.tex['w' + k] = t);
+  return (V3.tex[tk] = t);
 }
 /* flutes as a normal map: one rounded flute across the width of the canvas */
 function fluteTex(dir) {
@@ -187,7 +188,7 @@ function matFor(lk, f) {
   if (m.paint) o.color = new T.Color(colHex(lk.col));
   else if (m.glass) return null;
   else {
-    const t = woodTex(lk.mat).clone();
+    const t = woodTex(lk.mat, lk.oil).clone();
     t.needsUpdate = true;
     t.repeat.set(f.w / 260, f.h / 1000);
     o.map = t;

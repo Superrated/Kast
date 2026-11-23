@@ -14,6 +14,8 @@ function freshState(sys) {
     flute: { pitch: 20, dir: 'v', gpitch: 50 },
     mat: 'painted',
     col: 'racing',
+    oil: 'pure',
+    edge: 'round',
     gframe: 'black',
     handle: 'knob',
     hfin: 'brass',
@@ -72,6 +74,8 @@ if (!S || !S.cabs) S = freshState('pax');
 S.flip = S.flip || {};
 S.fx = S.fx || {};
 if (!S.flute.gpitch) S.flute.gpitch = 50;
+if (!OILS[S.oil]) S.oil = 'pure';
+if (!EDGES[S.edge]) S.edge = 'round';
 function save() {
   try {
     localStorage.setItem(KEY, JSON.stringify(S));
@@ -243,9 +247,16 @@ function matOk(style, mat) {
 }
 function lookOf(f) {
   const o = (f && S.fx[f.id]) || {},
-    lk = { style: o.style || S.style, mat: o.mat || S.mat, col: o.col || S.col, own: !!S.fx[f && f.id] };
+    lk = {
+      style: o.style || S.style,
+      mat: o.mat || S.mat,
+      col: o.col || S.col,
+      oil: o.oil || S.oil,
+      own: !!S.fx[f && f.id]
+    };
   if (!MATS[lk.mat]) lk.mat = 'painted';
   if (!COLOURS[lk.col]) lk.col = 'chalk';
+  if (!OILS[lk.oil]) lk.oil = 'pure';
   if (!STYLES[lk.style]) lk.style = 'flat';
   if (MATS[lk.mat].only) lk.style = MATS[lk.mat].only;
   else if (!matOk(lk.style, lk.mat)) lk.style = 'flat';
@@ -253,10 +264,11 @@ function lookOf(f) {
 }
 function lookName(lk) {
   const m = MATS[lk.mat];
-  return `${STYLES[lk.style].name} ${m.paint ? COLOURS[lk.col].name.toLowerCase() : m.name.toLowerCase()}`;
+  return `${STYLES[lk.style].name} ${m.paint ? COLOURS[lk.col].name.toLowerCase() : m.name.toLowerCase()}${m.oil ? ', oil ' + OILS[lk.oil].name : ''}`;
 }
 function lookKey(lk) {
-  return `${lk.style}|${lk.mat}|${MATS[lk.mat].paint ? lk.col : ''}`;
+  const m = MATS[lk.mat];
+  return `${lk.style}|${lk.mat}|${m.paint ? lk.col : m.oil ? lk.oil : ''}`;
 }
 
 /* ---------- price ---------- */

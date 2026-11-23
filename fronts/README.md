@@ -11,8 +11,8 @@ It borrows from Fitted so both look the same: the colour tokens (light and dark)
 Four steps, like Fitted: **1 Cabinets → 2 Fronts → 3 Handles → 4 Order**, with a live picture (flat front view or 3D) and the price always in view.
 
 - **Cabinets**: start from a common layout, type the widths ("100 50 100", "2x100"), add one at a time, or paste the IKEA planner list.
-- **Fronts**: one look for all fronts, then tap any front to give it its own (or copy it to its whole cabinet). The range is curated: Flat, Fluted, Grooves (fine V-grooves, close / classic / wide); no Shaker or Scallop; fluted and grooves are MDF only (painted or raw), wood and ply come flat; painted in 12 colours (each a RAL colour), oak veneer, walnut veneer, birch plywood, pine plywood (bold flame grain), fluted glass in a slim frame, and two budget boards — raw MDF and untreated birch ply.
-- **Surprise me**: a recipe, not a dice roll (one bold colour, wood and one colour, two colours that go together, a glass accent, birch or pine ply with colour, walnut) applied by what each front is: tall door, drawer, wall cabinet, top row.
+- **Fronts**: one look for all fronts, then tap any front to give it its own (or copy it to its whole cabinet). The range is curated: Flat, Fluted, Grooves (fine V-grooves, close / classic / wide); no Shaker or Scallop; fluted and grooves are MDF only (painted or raw), wood and ply come flat; painted in 12 colours (each a RAL colour), oak veneer, walnut veneer, birch plywood, pine plywood (bold flame grain) — all in hardwax oil with 4 Rubio Monocoat tints (Pure, White 5%, Smoke 5%, Charcoal), fluted glass in a slim frame, and two budget boards — raw MDF and untreated birch ply.
+- **Surprise me**: a recipe, not a dice roll (one bold colour, wood and one colour, two colours that go together, a glass accent, birch or pine ply with colour, charcoal oak, walnut); one edge for all fronts: round 2 mm or chamfer) applied by what each front is: tall door, drawer, wall cabinet, top row.
 - **3D**: three.js r159 (same as Fitted), loaded the first time you open 3D.
 
 | File | What it does |

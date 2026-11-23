@@ -105,11 +105,24 @@ const RECIPES = [
       const c = pick(r, ['tomato', 'cobalt', 'mustard', 'racing', 'blush']),
         ply = pick(r, ['birch', 'birch', 'pine']);
       return {
-        all: { mat: ply, style: 'flat' },
+        all: { mat: ply, style: 'flat', oil: pick(r, ['pure', 'white5', 'smoke5']) },
         by: { drawer: { mat: 'painted', col: c, style: 'flat' } },
         handle: pick(r, ['push', 'tab', 'grip']),
         hfin: 'black',
         say: `${ply === 'pine' ? 'Pine' : 'Birch'} & ${COLOURS[c].name.toLowerCase()}`
+      };
+    }
+  },
+  {
+    name: 'Charcoal oak',
+    make(r) {
+      const c = pick(r, ['mustard', 'terracotta', 'sage', 'blush']);
+      return {
+        all: { mat: 'oak', style: 'flat', oil: 'charcoal' },
+        by: { drawer: { mat: 'painted', col: c, style: 'grooves' } },
+        handle: 'bar',
+        hfin: 'brass',
+        say: `Charcoal-oiled oak & ${COLOURS[c].name.toLowerCase()} grooves`
       };
     }
   },
@@ -140,6 +153,7 @@ function surprise(seed) {
   S.style = plan.all.style || 'flat';
   S.mat = plan.all.mat;
   if (plan.all.col) S.col = plan.all.col;
+  S.oil = plan.all.oil || 'pure';
   S.fx = {};
   const count = {};
   L.fronts.forEach(f => {
@@ -150,7 +164,8 @@ function surprise(seed) {
     if (o.every && count[role] % o.every) return; // e.g. every other tall door in glass
     const lk = Object.assign({}, plan.all, o);
     delete lk.every;
-    if (lk.mat !== S.mat || lk.style !== S.style || (lk.col && lk.col !== S.col)) S.fx[f.id] = lk;
+    if (lk.mat !== S.mat || lk.style !== S.style || (lk.col && lk.col !== S.col) || (lk.oil && lk.oil !== S.oil))
+      S.fx[f.id] = lk;
   });
   if (plan.gframe) S.gframe = plan.gframe;
   S.handle = plan.handle || pick(r, ['knob', 'bar', 'knob', 'push']);

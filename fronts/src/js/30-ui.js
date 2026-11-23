@@ -248,12 +248,12 @@ function lookEdHTML(target, lk) {
   const styles = Object.entries(STYLES)
     .map(([k, s]) => {
       const ok = matOk(k, lk.mat) || !MATS[lk.mat].only;
-      return `<button type="button" class="stc ${k === lk.style ? 'on' : ''}" data-act="lk" data-a="${t}|style|${k}" ${ok ? '' : 'disabled'}>${lookThumb(k, lk.mat === 'glass' && k === 'flat' ? 'painted' : lk.mat, lk.col, t + k)}<b>${s.name}</b><small>${s.blurb}</small></button>`;
+      return `<button type="button" class="stc ${k === lk.style ? 'on' : ''}" data-act="lk" data-a="${t}|style|${k}" ${ok ? '' : 'disabled'}>${lookThumb(k, lk.mat === 'glass' && k === 'flat' ? 'painted' : lk.mat, lk.col, t + k, lk.oil)}<b>${s.name}</b><small>${s.blurb}</small></button>`;
     })
     .join('');
   const mats = Object.entries(MATS)
     .map(([k, m]) => {
-      const sw = m.paint ? colHex(lk.col) : m.glass ? '#cfdcd8' : m.wood;
+      const sw = m.paint ? colHex(lk.col) : m.glass ? '#cfdcd8' : woodCol(k, lk.oil).wood;
       return `<button type="button" class="mat ${k === lk.mat ? 'on' : ''}" data-act="lk" data-a="${t}|mat|${k}"><i class="sw${m.glass ? ' gl' : ''}" style="background:${sw}"></i><b>${m.name}</b>${m.budget ? '<em class="tag">Budget</em>' : ''}<small>${m.blurb} · from ${eur(m.rate * (m.glass ? 1 : 1))}/m²</small></button>`;
     })
     .join('');
@@ -266,7 +266,16 @@ function lookEdHTML(target, lk) {
         .join(
           ''
         )}</div><p class="hint">${esc(COLOURS[lk.col].name)} is RAL ${COLOURS[lk.col].ral} ${esc((RAL[COLOURS[lk.col].ral] || {}).name || '')}, so any paint shop can match it later.</p>`
-    : '';
+    : MATS[lk.mat].oil
+      ? `<h3>Oil colour</h3><div class="sws">${Object.entries(OILS)
+          .map(
+            ([k, o]) =>
+              `<button type="button" class="swb ${k === lk.oil ? 'on' : ''}" data-act="lk" data-a="${t}|oil|${k}" title="Rubio Monocoat ${esc(o.name)} — ${esc(o.blurb)}" style="background:${woodCol(lk.mat, k).wood}"><span>${esc(o.name)}</span></button>`
+          )
+          .join(
+            ''
+          )}</div><p class="hint">Rubio Monocoat Oil Plus 2C, ${esc(OILS[lk.oil].name)}: ${esc(OILS[lk.oil].blurb.toLowerCase())}. One coat, food-safe once cured, and you can touch up a scratch with a drop of oil.</p>`
+      : '';
   return `<h3>Style</h3><div class="stcs two">${styles}</div><h3>Material</h3><p class="hint">Fluted and grooved fronts are routed into MDF, so wood and plywood come flat.</p><div class="mats">${mats}</div>${cols}`;
 }
 function frontsHTML(L) {
@@ -286,8 +295,13 @@ function frontsHTML(L) {
       ${lk.own ? lookEdHTML(f.id, lk) : ''}
       <div class="adds">${lk.own && sib > 1 ? `<button type="button" class="btn sm" data-act="copycab">Same for the whole cabinet</button>` : ''}${f.hinge ? `<button type="button" class="btn sm" data-act="flip">Hinge ${f.hinge === 'L' ? 'left' : 'right'} → swap</button>` : ''}</div></div>`;
   }
-  const all = { style: S.style, mat: S.mat, col: S.col };
+  const all = { style: S.style, mat: S.mat, col: S.col, oil: S.oil };
   h += `<h3 class="big">${f ? 'All the other fronts' : 'All fronts'}</h3>${lookEdHTML('all', all)}`;
+  h += `<h3>Edges</h3>${seg(
+    'edge',
+    S.edge,
+    Object.entries(EDGES).map(([k, e]) => [k, e.name])
+  )}<p class="hint">${esc(EDGES[S.edge].blurb)} — the same on every front.</p>`;
   const used = st => L.fronts.some(x => lookOf(x).style === st || (st === 'fluted' && MATS[lookOf(x).mat].glass)),
     anyFluted = used('fluted'),
     anyGrooves = used('grooves'),
@@ -391,7 +405,7 @@ function orderText() {
     P = priceAll(L);
   return [
     `BRUIS Fronts — order request (${SYS[S.sys].name})`,
-    `Handles: ${HANDLES[S.handle].name}${S.handle === 'knob' || S.handle === 'bar' || S.handle === 'tab' ? ', ' + HFIN[S.hfin].name : ''}${L.fronts.some(f => lookOf(f).style === 'fluted') ? ` · flutes ${S.flute.pitch} mm, ${S.flute.dir === 'v' ? 'vertical' : 'horizontal'}` : ''}${L.fronts.some(f => lookOf(f).style === 'grooves') ? ` · grooves every ${S.flute.gpitch} mm, ${S.flute.dir === 'v' ? 'vertical' : 'horizontal'}` : ''}${L.fronts.some(f => MATS[lookOf(f).mat].glass) ? ` · glass frame ${GFRAME[S.gframe].name.toLowerCase()}` : ''}`,
+    `Edges: ${EDGES[S.edge].name.toLowerCase()} · Handles: ${HANDLES[S.handle].name}${S.handle === 'knob' || S.handle === 'bar' || S.handle === 'tab' ? ', ' + HFIN[S.hfin].name : ''}${L.fronts.some(f => lookOf(f).style === 'fluted') ? ` · flutes ${S.flute.pitch} mm, ${S.flute.dir === 'v' ? 'vertical' : 'horizontal'}` : ''}${L.fronts.some(f => lookOf(f).style === 'grooves') ? ` · grooves every ${S.flute.gpitch} mm, ${S.flute.dir === 'v' ? 'vertical' : 'horizontal'}` : ''}${L.fronts.some(f => MATS[lookOf(f).mat].glass) ? ` · glass frame ${GFRAME[S.gframe].name.toLowerCase()}` : ''}`,
     '',
     ...grouped(L).map(
       r =>
@@ -433,7 +447,7 @@ function setLook(target, field, val) {
     return;
   }
   const cur = lookOf({ id: target }),
-    nx = { style: cur.style, mat: cur.mat, col: cur.col };
+    nx = { style: cur.style, mat: cur.mat, col: cur.col, oil: cur.oil };
   nx[field] = val;
   if (field === 'mat' && !matOk(nx.style, val)) nx.style = MATS[val].only || 'flat';
   if (field === 'style' && !matOk(val, nx.mat)) nx.mat = mdfFor(nx.mat);
@@ -478,6 +492,8 @@ document.addEventListener('click', e => {
           flute: S.flute,
           mat: S.mat,
           col: S.col,
+          oil: S.oil,
+          edge: S.edge,
           gframe: S.gframe,
           handle: S.handle,
           hfin: S.hfin,
@@ -587,7 +603,7 @@ document.addEventListener('click', e => {
     case 'own':
       if (S.sel) {
         if (a === 'same') delete S.fx[S.sel];
-        else S.fx[S.sel] = { style: S.style, mat: S.mat, col: S.col };
+        else S.fx[S.sel] = { style: S.style, mat: S.mat, col: S.col, oil: S.oil };
       }
       break;
     case 'copycab': {
@@ -620,6 +636,9 @@ document.addEventListener('click', e => {
       break;
     case 'gframe':
       S.gframe = a;
+      break;
+    case 'edge':
+      S.edge = a;
       break;
     case 'handle':
       S.handle = a;
