@@ -30,21 +30,15 @@ function render() {
   ).join('');
   document.getElementById('steps').innerHTML = stepBtns;
   document.getElementById('bsteps').innerHTML = stepBtns;
-  // the picture: flat or 3D
-  const v3 = S.view === '3d';
+  // the picture: a still render of a room; the flat drawing only when 3D can't run
+  const v3 = !V3.failed;
   document.getElementById('pic').hidden = v3;
   document.getElementById('pic3d').hidden = !v3;
   if (v3) open3D();
   else drawPic();
-  document.getElementById('stagebar').innerHTML = `${seg('view', S.view, [
-    ['2d', 'Front'],
-    ['3d', '3D']
-  ])}<span class="chip"><b>${SYS[S.sys].name}</b> ${countWords(P)}</span>${S.recipe ? `<span class="chip rec">✨ ${esc(S.recipeSay || S.recipe)}</span>` : ''}<span class="sp"></span><button type="button" class="btn sm surp" data-act="surprise" aria-label="Surprise me">✨<span> Surprise me</span></button>`;
-  document.getElementById('pichint').textContent = L.fronts.length
-    ? v3
-      ? 'Drag to turn · scroll or pinch to zoom · tap a front to change just that one'
-      : 'Tap a front to change just that one'
-    : '';
+  document.getElementById('stagebar').innerHTML =
+    `<span class="chip"><b>${SYS[S.sys].name}</b> ${countWords(P)}</span>${S.recipe ? `<span class="chip rec">✨ ${esc(S.recipeSay || S.recipe)}</span>` : ''}<span class="sp"></span><button type="button" class="btn sm surp" data-act="surprise" aria-label="Surprise me">✨<span> Surprise me</span></button>`;
+  document.getElementById('pichint').textContent = L.fronts.length ? 'Tap a front to change just that one' : '';
   document.getElementById('pbar').innerHTML =
     `${chipHTML()}<div class="ptot"><span>${countWords(P)} · incl. VAT${P.del ? ' + delivery' : ''}</span><b>${eur(P.total)}</b></div>${
       S.step === 'order'

@@ -1,58 +1,130 @@
 /* ==== 25-3d.js ====
-   The 3D view: the white IKEA boxes with the new fronts on them, in their real materials — matt paint, oak and
-   walnut grain, birch ply, raw MDF, flutes as a light-catching relief, fluted glass in its frame — and the handles.
-   three.js r159 (the same as Fitted) loads only when you first open 3D. Drag to turn, scroll or pinch to zoom,
-   tap a front to select it.
+   The picture: one still, ray-traced render of your cabinets with the new fronts — matt paint, oak and walnut
+   grain, birch and pine ply, raw MDF, flutes and grooves as real relief, fluted glass in its frame, the handles.
+   three.js draws a quick first frame; three-gpu-pathtracer then traces light rays (soft shadows, light bouncing
+   off the floor and between the doors) and refines the same still image over a second or two.
+   The camera does not move. Tap a front to select it: a drawn outline shows which one.
+   If 3D can't load (no internet, no WebGL), the flat drawing from 20-draw.js is shown instead.
+   three r170 and the path tracer come from jsDelivr through the import map in app.html.
 */
-const V3 = { ready: false, loading: false, yaw: -0.42, pitch: 0.1, zoom: 1, tex: {}, meshes: [] };
-const THREE_URL = 'https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.min.js';
+const V3 = { ready: false, loading: false, failed: false, tex: {}, meshes: [], gen: 0 };
+const PT_MAX = () => (innerWidth <= 860 ? 96 : 220); // samples per still: enough to clear the noise
 
 function open3D() {
   const el = document.getElementById('pic3d');
-  if (window.THREE) return start3D(el);
+  if (V3.ready) return start3D(el);
   if (V3.loading) return;
   V3.loading = true;
-  el.innerHTML = '<p class="hint c3">Loading 3D…</p>';
-  const sc = document.createElement('script');
-  sc.src = THREE_URL;
-  sc.onload = () => start3D(el);
-  sc.onerror = () =>
-    (el.innerHTML =
-      '<p class="hint c3">3D could not load (no internet?). The flat picture still shows everything.</p>');
-  document.head.appendChild(sc);
+  el.innerHTML = '<p class="hint c3">Setting up the render…</p>';
+  Promise.all([import('three'), import('three-gpu-pathtracer').catch(() => null)])
+    .then(([T, PT]) => {
+      V3.T = T;
+      V3.PT = PT;
+      start3D(el);
+    })
+    .catch(() => {
+      V3.failed = true;
+      V3.loading = false;
+      render();
+    });
+}
+/* a soft studio sky: bright from the front-left like a big window, darker below; HDR so the window lights the scene */
+function envTex(T) {
+  const w = 128,
+    h = 64,
+    d = new Float32Array(w * h * 4);
+  for (let y = 0; y < h; y++)
+    for (let x = 0; x < w; x++) {
+      const v = 1 - y / (h - 1), // 1 = up, 0 = down
+        u = x / w,
+        // the window: a soft patch up and to the front-left
+        du = Math.min(Math.abs(u - 0.36), 1 - Math.abs(u - 0.36)),
+        win = Math.exp(-((du / 0.08) ** 2) - ((v - 0.64) / 0.12) ** 2) * 4,
+        base = v > 0.5 ? 0.85 + 0.35 * (v - 0.5) : 0.42 + 0.86 * v,
+        k = (y * w + x) * 4;
+      d[k] = base * 0.98 + win;
+      d[k + 1] = base * 0.97 + win * 0.96;
+      d[k + 2] = base * 0.94 + win * 0.9;
+      d[k + 3] = 1;
+    }
+  const t = new T.DataTexture(d, w, h, T.RGBAFormat, T.FloatType);
+  t.mapping = T.EquirectangularReflectionMapping;
+  t.magFilter = t.minFilter = T.LinearFilter;
+  t.needsUpdate = true;
+  return t;
 }
 function start3D(el) {
-  if (!window.THREE) return;
+  const T = V3.T;
+  if (!T) return;
   if (!V3.ready) {
-    const T = THREE,
+    let r;
+    try {
       r = new T.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+    } catch (e) {
+      V3.failed = true;
+      return render();
+    }
     r.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
     r.outputColorSpace = T.SRGBColorSpace;
     r.toneMapping = T.ACESFilmicToneMapping;
-    r.toneMappingExposure = 1.05;
+    r.toneMappingExposure = 0.95;
     r.shadowMap.enabled = true;
     r.shadowMap.type = T.PCFSoftShadowMap;
     const sc = new T.Scene();
-    sc.background = new T.Color('#e9e7e2');
-    const cam = new T.PerspectiveCamera(32, 1, 10, 60000);
-    sc.add(new T.HemisphereLight(0xffffff, 0xcfc6b8, 1.5));
-    const sun = new T.DirectionalLight(0xfff4e6, 2.4);
-    sun.position.set(-2600, 4200, 3600);
+    sc.background = new T.Color('#e6e7e2');
+    sc.environment = envTex(T);
+    const cam = new T.PerspectiveCamera(24, 1, 10, 80000);
+    // a weak sun for the quick first frame's shadows; the path tracer gets most of its light from the sky
+    const sun = new T.DirectionalLight(0xffeedb, 2.6);
     sun.castShadow = true;
     sun.shadow.mapSize.set(2048, 2048);
     sun.shadow.bias = -0.0004;
     sc.add(sun, sun.target);
-    const fill = new T.DirectionalLight(0xe6eeff, 0.6);
-    fill.position.set(3000, 1500, 2500);
-    sc.add(fill);
-    Object.assign(V3, { T, r, sc, cam, sun, ready: true, root: null });
-    el.innerHTML = '';
-    el.appendChild(r.domElement);
-    controls3D(r.domElement);
-    new ResizeObserver(() => draw3D()).observe(el);
+    let pt = null;
+    if (V3.PT && V3.PT.WebGLPathTracer)
+      try {
+        pt = new V3.PT.WebGLPathTracer(r);
+        pt.bounces = 4;
+        pt.minSamples = 3;
+        pt.fadeDuration = 400;
+        pt.renderDelay = 0;
+        pt.filterGlossyFactor = 0.5;
+        pt.renderScale = innerWidth <= 860 ? 0.75 : 1;
+        if (innerWidth <= 860) pt.tiles.set(2, 2);
+        // a light edge-aware denoise as the traced image goes to the screen, stronger while samples are few
+        if (V3.PT.DenoiseMaterial) {
+          const dn = new V3.PT.DenoiseMaterial({
+            map: null,
+            blending: T.NoBlending,
+            transparent: true,
+            premultipliedAlpha: r.getContextAttributes().premultipliedAlpha
+          });
+          pt.renderToCanvasCallback = (target, renderer, quad) => {
+            const m = quad.material,
+              n = pt.samples;
+            dn.map = m.map;
+            dn.opacity = m.opacity;
+            dn.sigma = n < 16 ? 4 : n < 64 ? 2.5 : 1.6;
+            dn.threshold = n < 16 ? 0.08 : n < 64 ? 0.04 : 0.025;
+            quad.material = dn;
+            const ac = renderer.autoClear;
+            renderer.autoClear = false;
+            quad.render(renderer);
+            renderer.autoClear = ac;
+            quad.material = m;
+          };
+        }
+      } catch (e) {
+        pt = null;
+      }
+    Object.assign(V3, { r, sc, cam, sun, pt, ready: true, loading: false, root: null });
+    el.innerHTML = '<div class="rmsg" id="rmsg"></div><svg class="rover" id="rover" aria-hidden="true"></svg>';
+    el.prepend(r.domElement);
+    r.domElement.addEventListener('click', tap3D);
+    new ResizeObserver(() => draw3D(true)).observe(el);
   } else if (!el.contains(V3.r.domElement)) {
-    el.innerHTML = '';
-    el.appendChild(V3.r.domElement);
+    el.innerHTML = '<div class="rmsg" id="rmsg"></div><svg class="rover" id="rover" aria-hidden="true"></svg>';
+    el.prepend(V3.r.domElement);
   }
   build3D();
 }
@@ -209,7 +281,30 @@ function matFor(lk, f) {
 
 /* ---------- the scene ---------- */
 const DEPTH = { pax: 580, metod: { base: 600, high: 600, wall: 370 }, besta: 420 };
+/* what the picture shows; the scene is only rebuilt (and traced again) when this changes */
+function sceneKey() {
+  return JSON.stringify([
+    S.sys,
+    S.cabs,
+    S.fx,
+    S.flip,
+    S.style,
+    S.mat,
+    S.col,
+    S.oil,
+    S.handle,
+    S.hfin,
+    S.gframe,
+    S.flute,
+    S.sides,
+    S.edge
+  ]);
+}
 function build3D() {
+  if (!V3.ready) return;
+  const key = sceneKey();
+  if (key === V3.key && V3.L) return overlay3D();
+  V3.key = key;
   if (!V3.ready) return;
   const T = V3.T,
     L = layout();
@@ -233,23 +328,8 @@ function build3D() {
   };
   const white = new T.MeshStandardMaterial({ color: '#f2f1ec', roughness: 0.7 }),
     inner = new T.MeshStandardMaterial({ color: '#e6e4dd', roughness: 0.8 });
-  // floor and wall
-  const W = L.W,
-    floor = new T.Mesh(
-      new T.PlaneGeometry(W + 6000, 6000),
-      new T.MeshStandardMaterial({ color: '#d8cfc1', roughness: 0.9 })
-    );
-  floor.rotation.x = -Math.PI / 2;
-  floor.position.set(W / 2, 0, 1500);
-  floor.receiveShadow = true;
-  root.add(floor);
-  const wall = new T.Mesh(
-    new T.PlaneGeometry(W + 6000, 4000),
-    new T.MeshStandardMaterial({ color: '#efece6', roughness: 0.95 })
-  );
-  wall.position.set(W / 2, 2000, -(S.sys === 'metod' ? 600 : S.sys === 'besta' ? 420 : 580) - 2);
-  wall.receiveShadow = true;
-  root.add(wall);
+  const W = L.W;
+  room3D(T, root, L, box);
   // the IKEA boxes: open at the front, so glass and open shelves show the inside
   L.cabs.forEach(p => {
     const d = S.sys === 'metod' ? DEPTH.metod[p.c.kind] : DEPTH[S.sys],
@@ -334,12 +414,13 @@ function build3D() {
       n.needsUpdate = true;
       if (S.flute.dir === 'v') n.repeat.set((f.w - 2 * fr) / S.flute.pitch, 1);
       else n.repeat.set(1, (f.h - 2 * fr) / S.flute.pitch);
-      const gm = new T.MeshStandardMaterial({
-        color: '#dfe9e5',
-        roughness: 0.18,
-        metalness: 0.1,
-        transparent: true,
-        opacity: 0.55,
+      const gm = new T.MeshPhysicalMaterial({
+        color: '#eef4f1',
+        roughness: 0.12,
+        metalness: 0,
+        transmission: 1,
+        thickness: 6,
+        ior: 1.5,
         normalMap: n,
         normalScale: new T.Vector2(2, 2)
       });
@@ -347,33 +428,19 @@ function build3D() {
     } else hit = box(f.w, f.h, FT, matFor(lk, f), cx, cy, cz);
     hit.userData.fid = f.id;
     V3.meshes.push(hit);
-    if (S.sel === f.id) {
-      // the selected front: a crisp blue outline just in front of it
-      const sel = new T.LineSegments(
-        new T.EdgesGeometry(new T.BoxGeometry(f.w + 6, f.h + 6, FT + 4)),
-        new T.LineBasicMaterial({ color: '#3446d6' })
-      );
-      sel.position.set(cx, cy, cz);
-      root.add(sel);
-      [-1, 1].forEach(sx =>
-        [-1, 1].forEach(sy => {
-          const k = new T.Mesh(new T.BoxGeometry(sx ? 10 : 10, 10, 4), new T.MeshBasicMaterial({ color: '#3446d6' }));
-          k.position.set(cx + sx * (f.w / 2 + 3), cy + sy * (f.h / 2 + 3), FT + 4);
-          root.add(k);
-        })
-      );
-    }
     handle3D(f, lk, root, hcache, FT);
   });
   V3.sc.add(root);
   // the sun's shadow covers the whole row
   const sh = V3.sun.shadow.camera,
-    R = Math.max(W, L.H) * 0.8 + 800;
+    R = Math.max(W, L.H) * 0.8 + 3200;
   Object.assign(sh, { left: -R, right: R, top: R, bottom: -R, near: 100, far: 20000 });
   sh.updateProjectionMatrix();
-  V3.sun.target.position.set(W / 2, L.H / 2, 0);
-  V3.sun.position.set(W / 2 - 2600, 4200, 3600);
+  // late-morning sun through the window in the left wall
+  V3.sun.target.position.set(W / 2 + 400, 300, -300);
+  V3.sun.position.set(W / 2 - 7200, 4600, 2600);
   V3.L = L;
+  V3.dirty = true;
   draw3D();
 }
 function handle3D(f, lk, root, cache, FT) {
@@ -422,83 +489,261 @@ function handle3D(f, lk, root, cache, FT) {
 }
 
 /* ---------- camera, turning and tapping ---------- */
-function draw3D() {
+/* ---------- the room around the cabinets ----------
+   Oak plank floor, a warm plaster wall with a skirting board, a side wall on the left with a tall window the
+   sun comes through, a wool rug and a plant. All in millimetres, the cabinets' back against the wall (z < 0). */
+function plankTex() {
+  if (V3.tex.planks) return V3.tex.planks;
+  // 8 planks of 180 mm side by side, 2400 mm long, ends staggered
+  const t = canvasTex(512, 1024, (g, w, h) => {
+    const r = prng(41),
+      pw = w / 8;
+    g.fillStyle = 'rgb(200,168,126)';
+    g.fillRect(0, 0, w, h);
+    for (let i = 0; i < 8; i++) {
+      const off = r() * h * 0.62;
+      for (let k = -1; k < 3; k++) {
+        const y0 = off + k * h * 0.62,
+          len = h * 0.62;
+        const l = 0.92 + r() * 0.14;
+        g.fillStyle = `rgb(${Math.round(203 * l)},${Math.round(170 * l)},${Math.round(128 * l)})`;
+        g.fillRect(i * pw, y0, pw, len);
+        g.strokeStyle = 'rgba(110,80,45,.10)';
+        for (let q = 0; q < 9; q++) {
+          const x = i * pw + 4 + r() * (pw - 8);
+          g.lineWidth = 0.6 + r() * 1.4;
+          g.beginPath();
+          g.moveTo(x, y0);
+          g.bezierCurveTo(x + (r() - 0.5) * 8, y0 + len * 0.3, x + (r() - 0.5) * 8, y0 + len * 0.7, x, y0 + len);
+          g.stroke();
+        }
+        g.fillStyle = 'rgba(70,50,30,.35)';
+        g.fillRect(i * pw, y0, pw, 1.5);
+      }
+      g.fillStyle = 'rgba(70,50,30,.4)';
+      g.fillRect(i * pw, 0, 1.5, h);
+    }
+  });
+  return (V3.tex.planks = t);
+}
+function plasterTex() {
+  if (V3.tex.plaster) return V3.tex.plaster;
+  const t = canvasTex(256, 256, (g, w, h) => {
+    g.fillStyle = '#ece8e0';
+    g.fillRect(0, 0, w, h);
+    const r = prng(7);
+    for (let i = 0; i < 2600; i++) {
+      g.fillStyle = r() < 0.5 ? 'rgba(0,0,0,.025)' : 'rgba(255,255,255,.05)';
+      const s = 1 + r() * 3;
+      g.fillRect(r() * w, r() * h, s, s);
+    }
+  });
+  return (V3.tex.plaster = t);
+}
+function room3D(T, root, L, box) {
+  const W = L.W,
+    D = S.sys === 'metod' ? 600 : S.sys === 'besta' ? 420 : 580,
+    xl = -1500, // the side wall
+    xr = W + 4500,
+    zf = 6500,
+    wallH = 3200;
+  // floor
+  const ft = plankTex().clone();
+  ft.needsUpdate = true;
+  ft.repeat.set((xr - xl) / 1440, (zf + D) / 2400);
+  const floor = new T.Mesh(
+    new T.PlaneGeometry(xr - xl, zf + D),
+    new T.MeshStandardMaterial({ map: ft, roughness: 0.55, color: '#ffffff' })
+  );
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.set((xl + xr) / 2, 0, (zf - D) / 2);
+  floor.receiveShadow = true;
+  root.add(floor);
+  // back wall and skirting
+  const pt = plasterTex().clone();
+  pt.needsUpdate = true;
+  pt.repeat.set((xr - xl) / 900, wallH / 900);
+  const plaster = new T.MeshStandardMaterial({ map: pt, roughness: 0.95 });
+  const back = new T.Mesh(new T.PlaneGeometry(xr - xl, wallH), plaster);
+  back.position.set((xl + xr) / 2, wallH / 2, -D - 2);
+  back.receiveShadow = true;
+  root.add(back);
+  const skirt = new T.MeshStandardMaterial({ color: '#f3f1ec', roughness: 0.6 });
+  box(xr - xl, 80, 14, skirt, (xl + xr) / 2, 40, -D + 5);
+  // side wall with a tall window (the opening lets the sun and the sky in)
+  const t = 140,
+    w0 = 700,
+    w1 = 2300, // window from z = 700 to 2300
+    y0 = 650,
+    y1 = 2550;
+  const side = (z0, z1, ya, yb) => {
+    const ms = box(t, yb - ya, z1 - z0, plaster, xl - t / 2, (ya + yb) / 2, (z0 + z1) / 2);
+    ms.receiveShadow = true;
+  };
+  side(-D - 2, w0, 0, wallH);
+  side(w1, zf, 0, wallH);
+  side(w0, w1, 0, y0);
+  side(w0, w1, y1, wallH);
+  // a slim dark steel window frame and a deep sill
+  const steel = new T.MeshStandardMaterial({ color: '#2b2d2f', roughness: 0.4, metalness: 0.5 });
+  box(30, y1 - y0, 30, steel, xl + 10, (y0 + y1) / 2, w0 + 15);
+  box(30, y1 - y0, 30, steel, xl + 10, (y0 + y1) / 2, w1 - 15);
+  box(30, 30, w1 - w0, steel, xl + 10, y1 - 15, (w0 + w1) / 2);
+  box(30, 30, w1 - w0, steel, xl + 10, (y0 + y1) / 2, (w0 + w1) / 2);
+  box(
+    t + 60,
+    30,
+    w1 - w0 + 40,
+    new T.MeshStandardMaterial({ color: '#d9d4ca', roughness: 0.7 }),
+    xl - t / 2 + 20,
+    y0 - 15,
+    (w0 + w1) / 2
+  );
+  // a wool rug in front of the cabinets
+  const rw = Math.min(W * 0.75, 3000),
+    rug = box(rw, 10, 1500, new T.MeshStandardMaterial({ color: '#cbbfa9', roughness: 1 }), W / 2, 5, 1250);
+  rug.castShadow = false;
+  // a plant in a stone pot, to the right of the run
+  const px = W + 520,
+    pz = -D + 420;
+  const pot = new T.Mesh(
+    new T.CylinderGeometry(190, 150, 420, 32),
+    new T.MeshStandardMaterial({ color: '#d7d0c4', roughness: 0.85 })
+  );
+  pot.position.set(px, 210, pz);
+  pot.castShadow = pot.receiveShadow = true;
+  root.add(pot);
+  const soil = new T.Mesh(
+    new T.CylinderGeometry(175, 175, 10, 24),
+    new T.MeshStandardMaterial({ color: '#3b2f25', roughness: 1 })
+  );
+  soil.position.set(px, 412, pz);
+  root.add(soil);
+  const leaf = new T.MeshStandardMaterial({ color: '#4f6b43', roughness: 0.6, side: T.DoubleSide }),
+    stem = new T.MeshStandardMaterial({ color: '#6b5a3e', roughness: 0.8 }),
+    r = prng(5);
+  for (let i = 0; i < 14; i++) {
+    const a = (i / 14) * Math.PI * 2 + r() * 0.5,
+      tilt = 0.35 + r() * 0.5,
+      len = 520 + r() * 420,
+      base = new T.Vector3(px, 415, pz),
+      dir = new T.Vector3(Math.sin(a) * Math.sin(tilt), Math.cos(tilt), Math.cos(a) * Math.sin(tilt)),
+      tip = base.clone().addScaledVector(dir, len);
+    const st = new T.Mesh(new T.CylinderGeometry(5, 7, len, 6), stem);
+    st.position.copy(base).addScaledVector(dir, len / 2);
+    st.quaternion.setFromUnitVectors(new T.Vector3(0, 1, 0), dir);
+    root.add(st);
+    const lf = new T.Mesh(new T.SphereGeometry(1, 16, 10), leaf);
+    lf.scale.set(70 + r() * 35, 230 + r() * 110, 9);
+    lf.position.copy(tip);
+    lf.quaternion.setFromUnitVectors(new T.Vector3(0, 1, 0), dir);
+    lf.rotateY(r() * Math.PI);
+    lf.castShadow = true;
+    root.add(lf);
+  }
+}
+
+/* the fixed camera: a little to the left and above, looking at the middle of the run, everything in frame */
+function draw3D(resized) {
   if (!V3.ready || !V3.L) return;
   const el = V3.r.domElement.parentElement;
   if (!el || !el.clientWidth) return;
   const w = el.clientWidth,
-    h = el.clientHeight;
+    h = el.clientHeight,
+    L = V3.L,
+    cam = V3.cam,
+    T = V3.T;
   V3.r.setSize(w, h, false);
   V3.r.domElement.style.width = w + 'px';
   V3.r.domElement.style.height = h + 'px';
-  const L = V3.L,
-    cam = V3.cam,
-    tgt = new V3.T.Vector3(L.W / 2, Math.max(L.H, 900) / 2, 0);
+  const H = Math.max(L.H, 900),
+    tgt = new T.Vector3((L.W + 200) / 2, H / 2 + 60, 0),
+    yaw = -0.2,
+    pitch = 0.06;
   cam.aspect = w / h;
-  const span = Math.max(L.W / cam.aspect, Math.max(L.H, 900)) * 1.25,
-    dist = (span / 2 / Math.tan((cam.fov * Math.PI) / 360)) * V3.zoom;
+  const span = Math.max((L.W + 1700) / cam.aspect, H + 500) * 1.08,
+    dist = span / 2 / Math.tan((cam.fov * Math.PI) / 360);
   cam.position.set(
-    tgt.x + Math.sin(V3.yaw) * Math.cos(V3.pitch) * dist,
-    tgt.y + Math.sin(V3.pitch) * dist,
-    Math.cos(V3.yaw) * Math.cos(V3.pitch) * dist
+    tgt.x + Math.sin(yaw) * Math.cos(pitch) * dist,
+    tgt.y + Math.sin(pitch) * dist,
+    Math.cos(yaw) * Math.cos(pitch) * dist
   );
   cam.lookAt(tgt);
   cam.updateProjectionMatrix();
-  V3.r.render(V3.sc, cam);
+  overlay3D();
+  if (!V3.pt) {
+    V3.r.render(V3.sc, cam);
+    return msg3D('');
+  }
+  if (V3.dirty) {
+    msg3D('Rendering…');
+    try {
+      V3.pt.setScene(V3.sc, cam);
+    } catch (e) {
+      V3.pt = null;
+      V3.r.render(V3.sc, cam);
+      return msg3D('');
+    }
+    V3.dirty = false;
+  } else if (resized) V3.pt.updateCamera();
+  trace3D();
 }
-function controls3D(cv) {
-  const pts = new Map();
-  let moved = 0,
-    pinch = 0;
-  cv.style.touchAction = 'none';
-  cv.addEventListener('pointerdown', e => {
-    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    cv.setPointerCapture(e.pointerId);
-    moved = 0;
-    if (pts.size === 2) {
-      const [a, b] = [...pts.values()];
-      pinch = Math.hypot(a.x - b.x, a.y - b.y);
+/* refine the still: one path-traced sample per frame until it is clean, then stop */
+function trace3D() {
+  const g = ++V3.gen,
+    pt = V3.pt,
+    max = PT_MAX();
+  const step = () => {
+    if (g !== V3.gen || !V3.r.domElement.isConnected) return;
+    try {
+      pt.renderSample();
+    } catch (e) {
+      V3.pt = null;
+      V3.r.render(V3.sc, V3.cam);
+      return msg3D('');
     }
-  });
-  cv.addEventListener('pointermove', e => {
-    const p = pts.get(e.pointerId);
-    if (!p) return;
-    const dx = e.clientX - p.x,
-      dy = e.clientY - p.y;
-    p.x = e.clientX;
-    p.y = e.clientY;
-    moved += Math.abs(dx) + Math.abs(dy);
-    if (pts.size === 2) {
-      const [a, b] = [...pts.values()],
-        d = Math.hypot(a.x - b.x, a.y - b.y);
-      if (pinch) V3.zoom = Math.max(0.35, Math.min(2.2, V3.zoom * (pinch / d)));
-      pinch = d;
-    } else {
-      V3.yaw = Math.max(-1.25, Math.min(1.25, V3.yaw - dx * 0.006));
-      V3.pitch = Math.max(-0.05, Math.min(0.9, V3.pitch + dy * 0.004));
-    }
-    draw3D();
-  });
-  const up = e => {
-    pts.delete(e.pointerId);
-    if (pts.size < 2) pinch = 0;
-    if (moved < 6 && e.type === 'pointerup') tap3D(e);
+    const n = Math.floor(pt.samples);
+    if (n < max) {
+      msg3D(`Rendering ${Math.round((n / max) * 100)}%`);
+      requestAnimationFrame(step);
+    } else msg3D('');
   };
-  cv.addEventListener('pointerup', up);
-  cv.addEventListener('pointercancel', up);
-  cv.addEventListener(
-    'wheel',
-    e => {
-      e.preventDefault();
-      V3.zoom = Math.max(0.35, Math.min(2.2, V3.zoom * (e.deltaY > 0 ? 1.1 : 0.9)));
-      draw3D();
-    },
-    { passive: false }
-  );
-  cv.addEventListener('dblclick', () => {
-    Object.assign(V3, { yaw: -0.42, pitch: 0.1, zoom: 1 });
-    draw3D();
-  });
+  requestAnimationFrame(step);
+}
+function msg3D(t) {
+  const m = document.getElementById('rmsg');
+  if (m) {
+    m.textContent = t;
+    m.hidden = !t;
+  }
+}
+/* on top of the render: the outline of the selected front, at its place in the picture */
+function overlay3D() {
+  const svg = document.getElementById('rover');
+  if (!svg) return;
+  const T = V3.T,
+    cam = V3.cam,
+    el = V3.r.domElement,
+    w = el.clientWidth,
+    h = el.clientHeight,
+    P = (x, y, z) => {
+      const v = new T.Vector3(x, y, z).project(cam);
+      return [((v.x + 1) / 2) * w, ((1 - v.y) / 2) * h];
+    };
+  svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  let o = '';
+  const f = S.sel && V3.L.fronts.find(x => x.id === S.sel);
+  if (f) {
+    const z = 21,
+      pts = [
+        P(f.x - 4, f.y - 4, z),
+        P(f.x + f.w + 4, f.y - 4, z),
+        P(f.x + f.w + 4, f.y + f.h + 4, z),
+        P(f.x - 4, f.y + f.h + 4, z)
+      ];
+    o += `<polygon points="${pts.map(p => p.join(',')).join(' ')}" class="osel"/>`;
+  }
+  svg.innerHTML = o;
 }
 function tap3D(e) {
   const T = V3.T,

@@ -2,7 +2,7 @@
 """Quick check of the BRUIS Fronts prototype in a headless Chrome: the page starts without errors, all four
 steps render for PAX, METOD and BESTÅ, the planner example is read, every cabinet size and front layout
 gives fronts that stay inside their cabinet without overlapping, Surprise me gives valid looks, a front can get its
-own look, typed widths and quick starts work, and (with THREE_JS set to a local three.min.js) 3D draws.  Run after  python3 fronts/build.py"""
+own look, typed widths and quick starts work, and (with NPM_DIR set to a node_modules with three@0.170, three-mesh-bvh and three-gpu-pathtracer) the render draws.  Run after  python3 fronts/build.py"""
 import os, pathlib, sys
 from playwright.sync_api import sync_playwright
 
@@ -54,19 +54,25 @@ CHECK = """(()=>{const bad=[];
   return [...new Set(bad)] })()"""
 
 with sync_playwright() as pw:
-    br = pw.chromium.launch(executable_path=os.environ.get("CHROME", "/usr/bin/google-chrome"), args=["--no-sandbox"])
+    br = pw.chromium.launch(executable_path=os.environ.get("CHROME", "/usr/bin/google-chrome"), args=["--no-sandbox", "--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"])
     p = br.new_page()
     errs = []
     p.on("pageerror", lambda e: errs.append(str(e)))
     p.on("console", lambda m: m.type == "error" and errs.append(m.text))
-    three = os.environ.get("THREE_JS")
+    npm = os.environ.get("NPM_DIR")
 
     def route(r):
         u = r.request.url
         if u.startswith("http://fronts.test/"):
             return r.fulfill(path=str(PAGE))
-        if "three" in u and u.endswith(".js") and three:
-            return r.fulfill(path=three, content_type="application/javascript")
+        # 3D: serve three and the path tracer from a local node_modules (NPM_DIR) instead of jsDelivr
+        if "cdn.jsdelivr.net/npm/" in u and npm:
+            import re as _re
+            m = _re.match(r".*/npm/((?:@[^/]+/)?[^@/]+)@[^/]+/(.*)", u)
+            if m:
+                f = pathlib.Path(npm) / m.group(1) / m.group(2)
+                if f.exists():
+                    return r.fulfill(path=str(f), content_type="application/javascript")
         return r.fulfill(status=200, body="", content_type="text/css")
 
     p.route("**/*", route)
@@ -75,9 +81,9 @@ with sync_playwright() as pw:
     p.reload()
     p.wait_for_timeout(300)
     bad = errs + (p.evaluate(CHECK) if not errs else [])
-    if not bad and os.environ.get("THREE_JS"):
+    if not bad and npm:
         # 3D: open it, draw, and tap the middle of the picture
-        p.evaluate("S=freshState('metod');S.view='3d';render()")
+        p.evaluate("S=freshState('metod');render()")
         p.wait_for_function("V3.ready&&V3.meshes.length>0", timeout=20000)
         n = p.evaluate("V3.meshes.length")
         if n < 5:
