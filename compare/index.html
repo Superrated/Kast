@@ -166,6 +166,16 @@ footer p { margin: 0 0 6px; max-width: 52em; }
 .pm { font-size: 13px; color: var(--ink3); }
 .vant { display: inline-flex; gap: 6px; align-items: center; font-size: 14px; cursor: pointer; }
 .vant input { accent-color: var(--ink); }
+
+.keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 28px; border-top: 1px solid var(--line); }
+.kc { padding: 14px 16px 14px 0; }
+.kc + .kc { padding-left: 16px; border-left: 1px solid var(--line); }
+.kn { font-weight: 600; display: flex; gap: 8px; align-items: center; }
+.kw { font-size: 13px; color: var(--ink2); margin: 2px 0 8px; }
+.kl { font-size: 14px; }
+.kl a, td a { color: var(--ink); text-underline-offset: 3px; }
+.kl a:hover, td a:hover { color: var(--ink2); }
+@media (max-width: 720px) { .keys { grid-template-columns: 1fr 1fr; } .kc:nth-child(3) { padding-left: 0; border-left: 0; } .kc:nth-child(n+3) { border-top: 1px solid var(--line); } }
 </style>
 </head>
 <body>
@@ -181,7 +191,7 @@ footer p { margin: 0 0 6px; max-width: 52em; }
   <div class="hero">
     <h1>Which BRUIS should you start first?</h1>
     <p class="lede">Fronts, Tables, Workshops and Objects over three years: money, time and what you lose if it goes wrong. Move the sliders to say what matters to you.</p>
-    <div class="key" id="key"></div>
+    <div class="keys" id="key"></div>
   </div>
 
   <section>
@@ -290,6 +300,7 @@ const IDEAS = [
     limit: 'Small batches, test at one market first, a bought CE-marked LED module, a warning card with every candle holder.' }
 ];
 
+const LINKS = {fronts: { site: 'https://claude.ai/artifact/Tc6UC5ZcFp6XLm8RLnDVMx', road: 'https://claude.ai/artifact/XxtHQCPJ8nLRT35rMg5ast', plan: 'https://claude.ai/artifact/8qeEBFpPbccb2s1rvuYJTw' }, tables: { site: 'https://claude.ai/artifact/T2oqdE58pfwEdyjtS8i3K1', road: 'https://claude.ai/artifact/9N8ZcwptFzEesuWFNni7Eo', plan: 'https://claude.ai/artifact/Dr1k7qUhT6e2rRFs4wDV8T' }, workshops: { site: 'https://claude.ai/artifact/8D48bM9VkNdHRa1CaTxndv', road: 'https://claude.ai/artifact/W1zvtcXTRKGFNJur8pT6zm', plan: 'https://claude.ai/artifact/9fcFeTgGchC5VfwiJB7m6v' }, objects: { site: 'https://claude.ai/artifact/YEuEXJzCFmmT4pMdZGJPcY', road: 'https://claude.ai/artifact/3Tc3YpTKqzmNacSNdb5yt6', plan: 'https://claude.ai/artifact/BGtVRwHDMFwTrwTA1DbCFG' }};
 let S = 'real', VANON = true;
 const VAN = 7200, RENTC = '#c4a77a', VANC = '#8e9db1';
 const vanCost = y => VANON && y >= 2 ? VAN : 0;
@@ -364,10 +375,10 @@ function scen() {
 }
 document.querySelectorAll('.tog button').forEach(b => b.addEventListener('click', () => { S = b.dataset.s; all(); }));
 
+const lk = (i, sep = ' · ') => [['site', 'Site'], ['road', 'Roadbook'], ['plan', 'Financial plan']].map(([k, t]) => `<a href="${LINKS[i.id][k]}" target="_blank" rel="noopener">${t}</a>`).join(sep);
 function key() {
-  document.getElementById('key').innerHTML = IDEAS.map(i => `<span><i class="dot" style="background:${COL(i.id)}"></i>${i.name}: ${i.what}</span>`).join('');
+  document.getElementById('key').innerHTML = IDEAS.map(i => `<div class="kc"><div class="kn"><i class="dot" style="background:${COL(i.id)}"></i>${i.name}</div><div class="kw">${i.what}</div><div class="kl">${lk(i)}</div></div>`).join('');
 }
-
 
 /* one cell: real benefit per month, split into income, rent and van */
 function benCell(b, col, mx, sub) {
@@ -511,7 +522,7 @@ function totals() {
 let tY = 1;
 function table() {
   yrs('tyrs', () => tY, y => { tY = y; table(); });
-  const rows = [['What', i => i.what], ['Sold', i => `${i.units[S][tY - 1]} ${i.unit}`],
+  const rows = [['What', i => i.what], ['Pages', i => lk(i, '<br>')], ['Sold', i => `${i.units[S][tY - 1]} ${i.unit}`],
     ...METRICS.map(m => [m.label + (m.y ? ` (year ${tY})` : ''), i => m.fmt(m.get(i, tY))]),
     ['Kept, three years together', i => eur(tot3(i))]];
   document.getElementById('tbl').innerHTML = `<thead><tr><th></th>${IDEAS.map(i => `<th>${i.name}</th>`).join('')}</tr></thead>
