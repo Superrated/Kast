@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BRUIS Energie — home batteries, inverters and chargers (prototype)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&display=swap">
+<style>
+:root {
+  --bg: #f2f1ec; --raised: #fbfaf6; --ink: #161616; --ink2: #575652; --ink3: #898781; --line: #d9d7cf;
+  --sun: #2f6fb0; --dark: #1f2a30; --ok: #2f7a4f; --off: #b4452f;
+  --f: 'Bricolage Grotesque', system-ui, -apple-system, sans-serif;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+button, input, select, textarea { font: inherit; color: inherit; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.wrap { max-width: 1160px; margin: 0 auto; padding: 0 28px; }
+header.top { border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 10; background: var(--bg); }
+header.top .wrap { display: flex; align-items: baseline; gap: 26px; padding-top: 14px; padding-bottom: 14px; }
+.brand { display: flex; gap: 8px; align-items: baseline; text-decoration: none; }
+.brand b { font-weight: 800; font-size: 22px; }
+.brand small { color: var(--ink3); font-size: 13px; }
+nav.links { margin-left: auto; display: flex; gap: 22px; font-size: 14px; align-items: baseline; }
+nav.links a { text-decoration: none; color: var(--ink2); }
+nav.links .call { color: var(--ink); font-weight: 600; }
+
+/* hero: the inverter display */
+.hero { display: grid; grid-template-columns: 6fr 5fr; gap: 48px; align-items: center; padding: 52px 0 44px; }
+h1 { font-weight: 400; font-size: clamp(44px, 7vw, 92px); line-height: 0.92; letter-spacing: -0.035em; margin: 0 0 20px; font-variation-settings: 'wdth' 78, 'opsz' 96; }
+.lede { font-size: 19px; color: var(--ink2); max-width: 30em; margin: 0 0 24px; }
+.btns { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn { display: inline-block; border: 1px solid var(--ink); background: none; padding: 12px 18px; border-radius: 2px; cursor: pointer; text-decoration: none; font-weight: 500; font-size: 15px; }
+.btn.pri { background: var(--ink); color: var(--raised); }
+.box { background: #d8d6cf; border-radius: 6px; padding: 22px; box-shadow: inset 0 0 0 1px #c6c3ba; }
+.screen { background: var(--dark); color: #cfe3d8; border-radius: 3px; padding: 16px 18px; font-variant-numeric: tabular-nums; }
+.screen .st { display: flex; justify-content: space-between; font-size: 13px; color: #8fa6b0; }
+.screen .err { color: #ff9b85; font-weight: 600; font-size: 22px; margin: 10px 0 4px; letter-spacing: 0.02em; }
+.screen .w { font-size: 44px; font-weight: 300; line-height: 1; margin: 6px 0; }
+.leds { display: flex; gap: 14px; margin-top: 14px; font-size: 12px; color: var(--ink2); }
+.leds i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; background: #9c9a93; }
+.leds .r i { background: var(--off); box-shadow: 0 0 8px var(--off); }
+.flip { margin-top: 12px; font-size: 13px; color: var(--ink3); }
+
+section.block { border-top: 1px solid var(--line); padding: 56px 0; }
+h2 { font-weight: 400; font-size: clamp(30px, 3.8vw, 46px); letter-spacing: -0.02em; line-height: 1.02; margin: 0 0 12px; font-variation-settings: 'wdth' 86, 'opsz' 72; }
+.sub { color: var(--ink2); max-width: 38em; margin: 0 0 30px; }
+
+.calc { display: grid; grid-template-columns: 6fr 5fr; gap: 48px; align-items: start; }
+.field { margin-bottom: 20px; }
+.field > span { display: block; font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 1px solid var(--line); background: var(--raised); padding: 8px 12px; border-radius: 2px; cursor: pointer; font-size: 14px; }
+.chip[aria-pressed=true] { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.res { background: var(--dark); color: #e9eef0; padding: 24px 26px; position: sticky; top: 76px; }
+.res .row { display: flex; justify-content: space-between; padding: 7px 0; font-size: 15px; border-top: 1px solid rgba(255,255,255,.14); }
+.res .row:first-child { border-top: 0; }
+.res .loss { color: #ffb4a3; }
+.res .big { font-size: 32px; font-weight: 600; }
+.res .note { font-size: 12.5px; color: #a9b8bf; margin: 12px 0 0; }
+.res .btn { border-color: #e9eef0; color: #e9eef0; width: 100%; text-align: center; margin-top: 14px; }
+
+table.prices { width: 100%; border-collapse: collapse; font-size: 15px; }
+table.prices th, table.prices td { text-align: left; padding: 12px 10px 12px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.prices th { font-weight: 600; font-size: 13px; color: var(--ink2); }
+table.prices td.p { font-weight: 600; white-space: nowrap; text-align: right; }
+table.prices th.p { text-align: right; }
+
+.steps { list-style: none; counter-reset: s; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--ink); }
+.steps li { counter-increment: s; padding: 18px 20px 0 0; }
+.steps li::before { content: counter(s); display: block; font-size: 40px; font-weight: 300; line-height: 1; margin-bottom: 10px; color: var(--sun); font-variation-settings: 'wdth' 75; }
+.steps b { display: block; margin-bottom: 4px; }
+.steps p { margin: 0; color: var(--ink2); font-size: 15px; }
+
+.faq details { border-bottom: 1px solid var(--line); padding: 14px 0; }
+.faq summary { cursor: pointer; font-weight: 600; font-size: 17px; }
+.faq p { color: var(--ink2); margin: 8px 0 0; max-width: 46em; }
+
+form.ask { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 760px; }
+form.ask label { font-size: 14px; color: var(--ink2); }
+form.ask input, form.ask select, form.ask textarea { width: 100%; border: 1px solid var(--line); background: #fff; padding: 10px 12px; border-radius: 2px; margin-top: 4px; }
+form.ask .full { grid-column: 1 / -1; }
+#sent { margin: 12px 0 0; font-weight: 600; }
+footer { border-top: 1px solid var(--line); padding: 26px 0 50px; color: var(--ink3); font-size: 13px; }
+
+@media (max-width: 860px) {
+  nav.links a:not(.call) { display: none; }
+  .hero, .calc { grid-template-columns: 1fr; }
+  .res { position: static; }
+  .steps { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 520px) {
+  .wrap { padding: 0 18px; }
+  .steps { grid-template-columns: 1fr; }
+  form.ask { grid-template-columns: 1fr; }
+  table.prices th:nth-child(2), table.prices td:nth-child(2) { display: none; }
+}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="#"><b>BRUIS</b><small>Energie</small></a>
+  <nav class="links"><a href="#calc">What a battery saves</a><a href="#prices">Prices</a><a href="#how">How it works</a><a href="#faq">Questions</a><a class="call" href="#ask">Ask for a quote</a></nav>
+</div></header>
+
+<main class="wrap">
+  <section class="hero">
+    <div>
+      <h1>Keep your own sun for the evening.</h1>
+      <p class="lede">A home battery, a new inverter or a charger for your car, fitted by one qualified electrician who also does the paperwork: the AREI inspection and the report to Fluvius. Kortrijk and the rest of West Flanders.</p>
+      <div class="btns"><a class="btn pri" href="#ask">Ask for a quote</a><a class="btn" href="#calc">See what a battery saves</a></div>
+    </div>
+    <div class="box" aria-label="Example of a home battery app at night">
+      <div class="screen">
+        <div class="st"><span>Home battery</span><span>21:40</span></div>
+        <div class="err" style="color:#9fd3a8">FROM BATTERY</div>
+        <div class="w">1.2 kW</div>
+        <div class="st"><span>Battery 64%</span><span>Grid 0 W</span></div>
+      </div>
+      <div class="leds"><span class="r" style="--off:#2f7a4f"><i style="background:#2f7a4f;box-shadow:0 0 8px #2f7a4f"></i>Battery</span><span><i></i>Solar</span><span><i></i>Grid</span></div>
+      <p class="flip">Without a battery you sell your extra sun for a few cents and buy it back in the evening for about 30.</p>
+    </div>
+  </section>
+
+  <section class="block" id="calc">
+    <h2>What a battery saves you</h2>
+    <p class="sub">A rough estimate. A battery pays back when your panels make more than you use during the day.</p>
+    <div class="calc">
+      <div>
+        <div class="field"><span>Size of your solar panels</span><div class="chips" data-k="kwp"></div></div>
+        <div class="field"><span>Battery</span><div class="chips" data-k="bat"></div></div>
+        <div class="field"><span>Your inverter now</span><div class="chips" data-k="inv"></div></div>
+      </div>
+      <aside class="res" aria-live="polite">
+        <div class="row"><span>Saved per year</span><b id="save">–</b></div>
+        <div class="row"><span>Pays itself back in</span><b id="back">–</b></div>
+        <div class="row"><span>Fitted, all in</span><b class="big" id="price">–</b></div>
+        <p class="note" id="note"></p>
+        <a class="btn" href="#ask">Ask for a quote</a>
+      </aside>
+    </div>
+  </section>
+
+  <section class="block" id="prices">
+    <h2>Fixed prices</h2>
+    <p class="sub">Incl. 6% VAT for homes older than 10 years. Fitting, the AREI inspection and the report to Fluvius are in the price.</p>
+    <table class="prices">
+      <thead><tr><th>What</th><th>For</th><th class="p">Price</th></tr></thead>
+      <tbody>
+        <tr><td>Battery 5 kWh with hybrid inverter</td><td>3–5 kWp of panels</td><td class="p">€3,750</td></tr>
+        <tr><td>Battery 10 kWh with hybrid inverter</td><td>6–10 kWp of panels</td><td class="p">€6,500</td></tr>
+        <tr><td>Battery only</td><td>If you already have a hybrid inverter</td><td class="p">from €3,000</td></tr>
+        <tr><td>Inverter swap</td><td>Broken inverter up to 3.6 kW</td><td class="p">€1,400</td></tr>
+        <tr><td>Car charger, 1 phase</td><td>Charging from your own panels</td><td class="p">from €1,300</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="block" id="how">
+    <h2>How it works</h2>
+    <p class="sub">From your first call to a working battery in about three weeks, most of it waiting for the inspection.</p>
+    <ol class="steps">
+      <li><b>Send your numbers</b><p>A photo of your inverter and your yearly use from the Fluvius app. We tell you if a battery pays off for you.</p></li>
+      <li><b>Home visit</b><p>We check the fuse box and where the battery can go, and give a fixed price.</p></li>
+      <li><b>Fitting</b><p>Usually one day. Set up in the app, tested, and explained.</p></li>
+      <li><b>Paperwork</b><p>AREI inspection booked and the report to Fluvius made for you.</p></li>
+    </ol>
+  </section>
+
+  <section class="block faq" id="faq">
+    <h2>Questions</h2>
+    <details><summary>Is there still a premium for a battery?</summary><p>No, Flanders stopped it. You do get 6% VAT instead of 21% if your home is older than 10 years and an installer fits it.</p></details>
+    <details><summary>Does a battery pay off?</summary><p>Usually in 8 to 15 years, depending on how much sun you have left over. We tell you honestly if it doesn't for you.</p></details>
+    <details><summary>Why does it need an inspection?</summary><p>A battery, a new inverter and a car charger all change your installation, so an AREI inspection and a report to Fluvius are required. We arrange both.</p></details>
+    <details><summary>What warranty do I get?</summary><p>The maker's warranty on the battery and inverter (usually 10 years) and 2 years on our work.</p></details>
+    <details><summary>Can my broken inverter be repaired instead?</summary><p>Sometimes, and then it's cheaper. We check that first and tell you.</p></details>
+  </section>
+
+  <section class="block" id="ask">
+    <h2>Ask for a quote</h2>
+    <p class="sub">Leave your details. We call you back within one working day.</p>
+    <form class="ask" id="form">
+      <label>Name<input required name="n" autocomplete="name"></label>
+      <label>Phone<input required name="p" type="tel" autocomplete="tel"></label>
+      <label>Postcode<input required name="z" inputmode="numeric" autocomplete="postal-code"></label>
+      <label>What do you need?<select name="w"><option>Home battery</option><option>Inverter swap</option><option>Car charger</option><option>Not sure yet</option></select></label>
+      <label class="full">Photo of your inverter (optional)<input type="file" name="f" accept="image/*"></label>
+      <label class="full">Anything else?<textarea name="t" rows="3"></textarea></label>
+      <div class="full"><button class="btn pri" type="submit">Send</button><p id="sent" hidden>Request noted. This is a prototype: nothing was sent.</p></div>
+    </form>
+  </section>
+</main>
+<footer><div class="wrap">BRUIS Energie · Kortrijk · Prototype: nothing on this page is sold, booked or sent. Prices are estimates incl. 6% VAT for homes older than 10 years.</div></footer>
+
+<script>
+/* a Belgian roof makes about 950 kWh per kWp a year; a battery moves about 250 full cycles a year of extra sun to the evening,
+   each kWh worth about €0.30 bought minus €0.03 sold = €0.27 */
+const OPTS = {
+  kwp: [['3', 'About 3 kWp (12 panels)', 3], ['5', 'About 5 kWp (20 panels)', 5], ['8', 'About 8 kWp (32 panels)', 8]],
+  bat: [['5', '5 kWh', 5], ['10', '10 kWh', 10]],
+  inv: [['old', 'An ordinary inverter', 0], ['hyb', 'Already a hybrid one', 1]]
+};
+const S = { kwp: '5', bat: '5', inv: 'old' };
+const eur = n => '€' + Math.round(n).toLocaleString('en-US');
+document.querySelectorAll('.chips').forEach(box => {
+  const k = box.dataset.k;
+  box.innerHTML = OPTS[k].map(o => `<button type="button" class="chip" data-v="${o[0]}">${o[1]}</button>`).join('');
+  box.addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; S[k] = b.dataset.v; calc(); });
+});
+function calc() {
+  document.querySelectorAll('.chips').forEach(box => box.querySelectorAll('.chip').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === S[box.dataset.k])));
+  const g = k => OPTS[k].find(o => o[0] === S[k])[2];
+  const spare = g('kwp') * 950 * 0.45;                // about 45% of what panels make is left over during the day
+  const moved = Math.min(spare, g('bat') * 250 * 0.9);
+  const save = moved * 0.27;
+  const price = g('bat') === 5 ? (g('inv') ? 3000 : 3750) : (g('inv') ? 5700 : 6500);
+  document.getElementById('save').textContent = eur(save);
+  document.getElementById('back').textContent = (price / save).toFixed(0) + ' years';
+  document.getElementById('price').textContent = eur(price);
+  document.getElementById('note').textContent = moved < g('bat') * 225 ? 'Your panels can\'t fill this battery most days: a smaller one pays back sooner.' : 'Price incl. 6% VAT for homes older than 10 years. Real savings depend on when you use power.';
+}
+calc();
+document.getElementById('form').addEventListener('submit', e => { e.preventDefault(); document.getElementById('sent').hidden = false; });
+</script>
+</body>
+</html>
