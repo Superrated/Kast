@@ -8,7 +8,7 @@ const DEMOS = [
   {
     name: 'Celery & walnut',
     trend: true,
-    say: 'Fluted celery green, walnut wall cabinets, mixed metals, on feet',
+    say: 'Fluted celery green, walnut wall cabinets, oak handles',
     sys: 'metod',
     cabs: [
       ['high', 60, 200, 'split'],
@@ -21,15 +21,15 @@ const DEMOS = [
     all: { mat: 'painted', col: 'celery', style: 'fluted' },
     by: { wall: { mat: 'walnut', style: 'flat' }, drawer: { style: 'flat' } },
     handle: 'bar',
-    hfin: 'mixed',
+    hfin: 'oak',
     sides: 'both',
     edge: 'round',
-    plinth: 'feet'
+    plinth: 'match'
   },
   {
     name: 'Olive wardrobe',
     trend: true,
-    say: 'Fluted olive green, polished nickel bars, panels on both sides',
+    say: 'Fluted olive green, oak handles, panels on both sides',
     sys: 'pax',
     cabs: [
       ['frame', 100, 236, 'doors'],
@@ -39,14 +39,14 @@ const DEMOS = [
     all: { mat: 'painted', col: 'olive', style: 'fluted' },
     by: {},
     handle: 'bar',
-    hfin: 'nickel',
+    hfin: 'oak',
     sides: 'both',
     edge: 'round'
   },
   {
     name: 'Two woods',
     trend: true,
-    say: 'Chocolate-oiled oak below, pale oak above, brass bars, on feet',
+    say: 'Chocolate-oiled oak below, pale oak above, finger holes',
     sys: 'metod',
     cabs: [
       ['base', 80, 80, 'doors2'],
@@ -59,15 +59,15 @@ const DEMOS = [
     ],
     all: { mat: 'oak', style: 'flat', oil: 'chocolate' },
     by: { wall: { oil: 'pure' } },
-    handle: 'bar',
-    hfin: 'brass',
+    handle: 'hole',
+    hfin: 'oak',
     sides: 'both',
     edge: 'round',
-    plinth: 'feet'
+    plinth: 'match'
   },
   {
     name: 'Sage kitchen',
-    say: 'Fluted sage green with calm flat drawers and brass knobs',
+    say: 'Fluted sage green with calm flat drawers and walnut knobs',
     sys: 'metod',
     cabs: [
       ['high', 60, 200, 'split'],
@@ -82,13 +82,13 @@ const DEMOS = [
     all: { mat: 'painted', col: 'sage', style: 'fluted' },
     by: { drawer: { style: 'flat' } },
     handle: 'knob',
-    hfin: 'brass',
+    hfin: 'walnut',
     sides: 'both',
     edge: 'round'
   },
   {
     name: 'Charcoal oak kitchen',
-    say: 'Oak oiled in Charcoal, mustard grooved drawers, brass bars',
+    say: 'Oak oiled in Charcoal, mustard grooved drawers, oak handles',
     sys: 'metod',
     cabs: [
       ['base', 80, 80, 'doors2'],
@@ -104,13 +104,13 @@ const DEMOS = [
     all: { mat: 'oak', style: 'flat', oil: 'charcoal' },
     by: { drawer: { mat: 'painted', col: 'mustard', style: 'grooves' } },
     handle: 'bar',
-    hfin: 'brass',
+    hfin: 'oak',
     sides: 'both',
     edge: 'round'
   },
   {
     name: 'Midnight wardrobe',
-    say: 'Deep blue flutes, push to open, panels on both sides',
+    say: 'Deep blue flutes, finger holes, panels on both sides',
     sys: 'pax',
     cabs: [
       ['frame', 100, 236, 'doors'],
@@ -119,13 +119,14 @@ const DEMOS = [
     ],
     all: { mat: 'painted', col: 'midnight', style: 'fluted' },
     by: {},
-    handle: 'push',
+    handle: 'hole',
+    hfin: 'oak',
     sides: 'both',
     edge: 'round'
   },
   {
     name: 'Birch under the eaves',
-    say: 'Low PAX in birch ply, White 5% oil, cut-out grips, chamfered edges',
+    say: 'Low PAX in birch ply, White 5% oil, finger holes, chamfered edges',
     sys: 'pax',
     cabs: [
       ['frame', 100, 201, 'doors'],
@@ -134,13 +135,14 @@ const DEMOS = [
     ],
     all: { mat: 'birch', style: 'flat', oil: 'white5' },
     by: {},
-    handle: 'grip',
+    handle: 'hole',
+    hfin: 'oak',
     sides: 'right',
     edge: 'chamfer'
   },
   {
     name: 'Walnut media wall',
-    say: 'Walnut with fluted glass up top in oak frames',
+    say: 'Walnut with fluted glass up top in oak frames, oak handles',
     sys: 'besta',
     cabs: [
       ['frame', 60, 192, 'door'],
@@ -151,13 +153,13 @@ const DEMOS = [
     by: { top: { mat: 'glass', style: 'fluted' } },
     gframe: 'oak',
     handle: 'bar',
-    hfin: 'brass',
+    hfin: 'oak',
     sides: 'none',
     edge: 'round'
   },
   {
     name: 'Terracotta sideboard',
-    say: 'Grooved terracotta, black knobs, panels at both ends',
+    say: 'Grooved terracotta, walnut knobs, panels at both ends',
     sys: 'besta',
     cabs: [
       ['frame', 120, 64, 'drawers'],
@@ -166,7 +168,7 @@ const DEMOS = [
     all: { mat: 'painted', col: 'terracotta', style: 'grooves' },
     by: {},
     handle: 'knob',
-    hfin: 'black',
+    hfin: 'walnut',
     sides: 'both',
     edge: 'round'
   }

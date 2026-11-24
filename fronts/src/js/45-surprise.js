@@ -2,7 +2,7 @@
    "Surprise me": not a dice roll but a recipe, like Fitted's. Each recipe is a small rule set a designer would use —
    one bold colour, wood with one colour, two colours that go together, a glass accent, birch, walnut — and gives
    every front its look by what it is: a tall door, a drawer, a wall cabinet, the top row. Handles follow the colours:
-   brass on dark and saturated colours, black on light colours and birch, the same colour for a quiet look.
+   wooden knobs, handles or finger holes: oak on deep colours and dark wood, walnut on light colours and pale wood.
 */
 function prng(seed) {
   let a = seed >>> 0;
@@ -69,8 +69,7 @@ const RECIPES = [
           top: { mat: wood, style: 'flat' }
         },
         handle: pick(r, ['knob', 'bar']),
-        hfin: 'mixed',
-        say: `${COLOURS[g].name} with ${wood === 'oak' ? 'dark oak' : 'walnut'}, mixed metals`
+        say: `${COLOURS[g].name} with ${wood === 'oak' ? 'dark oak' : 'walnut'}`
       };
     }
   },
@@ -86,7 +85,6 @@ const RECIPES = [
           drawer: { mat: pick(r, ['walnut', 'oak']), oil: 'chocolate' }
         },
         handle: 'bar',
-        hfin: pick(r, ['brass', 'mixed']),
         say: 'Dark oak below, pale oak above'
       };
     }
@@ -104,8 +102,7 @@ const RECIPES = [
       return {
         all: { mat: 'painted', col: a, style: pick(r, ['grooves', 'flat']) },
         by: { drawer: { col: b, style: 'flat' } },
-        handle: pick(r, ['knob', 'tab', 'bar']),
-        hfin: DARK[a] ? 'brass' : 'nickel',
+        handle: pick(r, ['knob', 'bar', 'hole']),
         say: `${COLOURS[a].name} and ${COLOURS[b].name.toLowerCase()}`
       };
     }
@@ -117,7 +114,6 @@ const RECIPES = [
       return {
         all: { mat: 'painted', col: c, style: pick(r, ['fluted', 'fluted', 'grooves']) },
         by: { drawer: { style: 'flat' } },
-        hfin: DARK[c] ? 'brass' : 'black',
         say: COLOURS[c].name
       };
     }
@@ -139,7 +135,6 @@ const RECIPES = [
           wall: { mat: 'painted', col: c, style: 'flat' },
           top: { mat: 'painted', col: c, style: 'flat' }
         },
-        hfin: wood === 'walnut' ? 'brass' : 'black',
         say: `${MATS[wood].name.replace(' veneer', '')} & ${COLOURS[c].name.toLowerCase()}`
       };
     }
@@ -151,7 +146,6 @@ const RECIPES = [
       return {
         all: { mat: 'painted', col: a, style: 'fluted' },
         by: { wall: { col: b, style: 'flat' }, top: { col: b, style: 'flat' }, drawer: { col: a, style: 'flat' } },
-        hfin: DARK[a] ? 'brass' : 'black',
         say: `${COLOURS[a].name} & ${COLOURS[b].name.toLowerCase()}`
       };
     }
@@ -166,7 +160,6 @@ const RECIPES = [
         all: look,
         by: { wall: { mat: 'glass' }, top: { mat: 'glass' }, tall: { mat: 'glass', every: 2 } },
         gframe: base === 'oak' ? 'oak' : pick(r, ['black', 'alu']),
-        hfin: base === 'walnut' || DARK[c] ? 'brass' : 'black',
         say: `${base === 'painted' ? COLOURS[c].name : MATS[base].name.replace(' veneer', '')} & fluted glass`
       };
     }
@@ -179,8 +172,7 @@ const RECIPES = [
       return {
         all: { mat: ply, style: 'flat', oil: pick(r, ['pure', 'white5', 'smoke5']) },
         by: { drawer: { mat: 'painted', col: c, style: 'flat' } },
-        handle: pick(r, ['push', 'tab', 'grip']),
-        hfin: 'black',
+        handle: pick(r, ['hole', 'knob']),
         say: `${ply === 'pine' ? 'Pine' : 'Birch'} & ${COLOURS[c].name.toLowerCase()}`
       };
     }
@@ -193,7 +185,6 @@ const RECIPES = [
         all: { mat: 'oak', style: 'flat', oil: 'charcoal' },
         by: { drawer: { mat: 'painted', col: c, style: 'grooves' } },
         handle: 'bar',
-        hfin: 'brass',
         say: `Charcoal-oiled oak & ${COLOURS[c].name.toLowerCase()} grooves`
       };
     }
@@ -205,7 +196,6 @@ const RECIPES = [
         all: { mat: 'walnut', style: 'flat' },
         by: {},
         handle: 'bar',
-        hfin: 'brass',
         say: 'Walnut'
       };
     }
@@ -250,6 +240,15 @@ function applyPlan(plan, r) {
       S.fx[f.id] = lk;
   });
   if (plan.gframe) S.gframe = plan.gframe;
-  S.handle = plan.handle || (r ? pick(r, ['knob', 'bar', 'knob', 'push']) : 'knob');
-  S.hfin = S.handle === 'tab' ? 'black' : plan.hfin || 'brass';
+  // wooden knobs, wooden handles or finger holes: walnut on light fronts and oak, oak on deep colours and walnut
+  S.handle = HANDLES[plan.handle] ? plan.handle : r ? pick(r, ['knob', 'bar', 'knob', 'hole']) : 'knob';
+  const base =
+    plan.all.mat === 'painted'
+      ? DARK[plan.all.col]
+        ? 'dark'
+        : 'light'
+      : plan.all.mat === 'walnut' || plan.all.oil === 'chocolate' || plan.all.oil === 'charcoal'
+        ? 'dark'
+        : 'light';
+  S.hfin = HFIN[plan.hfin] ? plan.hfin : base === 'dark' ? 'oak' : 'walnut';
 }

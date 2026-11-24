@@ -17,12 +17,12 @@ function freshState(sys) {
     oil: 'pure',
     edge: 'round',
     sides: 'none',
-    plinth: 'ikea', // the plinth under a kitchen: IKEA's own, one in the look of the fronts, or furniture feet
+    plinth: 'ikea', // the plinth under a kitchen: IKEA's own, or one in the look of the fronts
     fillers: 0, // filler strips in the look of the fronts
     planCheck: true,
     gframe: 'black',
     handle: 'knob',
-    hfin: 'brass',
+    hfin: 'oak',
     step: 'home',
     view: '2d',
     flip: {},
@@ -81,7 +81,9 @@ if (!S.flute.gpitch) S.flute.gpitch = 50;
 if (!OILS[S.oil]) S.oil = 'pure';
 if (!EDGES[S.edge]) S.edge = 'round';
 if (!SIDES[S.sides]) S.sides = 'none';
-if (!['ikea', 'match', 'feet'].includes(S.plinth)) S.plinth = 'ikea';
+if (!['ikea', 'match'].includes(S.plinth)) S.plinth = 'ikea';
+if (!HANDLES[S.handle]) S.handle = 'knob';
+if (!HFIN[S.hfin]) S.hfin = 'oak';
 if (!(S.fillers >= 0 && S.fillers <= 6)) S.fillers = 0;
 if (S.planCheck === undefined) S.planCheck = true;
 function save() {
@@ -388,11 +390,6 @@ function extrasOf(L) {
         n: 1,
         p: Math.round(m * EXTRAS.plinthPerM)
       });
-  }
-  if (S.sys === 'metod' && S.plinth === 'feet') {
-    const n = L.cabs.filter(p => p.c.kind !== 'wall').length,
-      fin = S.hfin === 'mixed' || !HFIN[S.hfin] || S.hfin === 'match' ? 'aged brass' : HFIN[S.hfin].name.toLowerCase();
-    if (n) out.push({ kind: 'feet', name: 'Furniture feet', note: `4 per cabinet, ${fin}`, n, p: EXTRAS.feet });
   }
   if (S.fillers)
     out.push({

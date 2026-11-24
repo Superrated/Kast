@@ -2442,6 +2442,43 @@ button.brand {
   }
 }
 
+/* the three handles */
+.hcards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.hcard {
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.hcard .hico svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 2px;
+  outline: 1px solid transparent;
+  outline-offset: 3px;
+}
+.hcard.on .hico svg {
+  outline-color: var(--ink);
+}
+.hcard b {
+  font-size: 14px;
+  font-weight: 560;
+  margin-top: 8px;
+}
+.hcard small {
+  font-size: 12px;
+  color: var(--ink2);
+  line-height: 1.35;
+}
+
 </style>
 </head>
 <body>
@@ -2696,27 +2733,21 @@ const RAL = {};
 });
 
 /* handles: price per front (handle or latch), and how they are drawn */
+/* handles: three quiet wooden choices. 'push' is used internally for "no handle" (the style close-ups) */
 const HANDLES = {
-  push: { name: 'Push to open', blurb: 'No handle — press the front', price: 9 },
-  knob: { name: 'Knob', blurb: 'Round, 30 mm', price: 14 },
-  bar: { name: 'Bar', blurb: '160 mm, slim', price: 22 },
-  grip: { name: 'Cut-out grip', blurb: 'A half moon routed in the edge', price: 12 },
-  tab: { name: 'Leather tab', blurb: 'A soft pull on the edge', price: 16 }
+  knob: { name: 'Wooden knob', blurb: 'A turned mushroom knob, 38 mm', price: 16 },
+  bar: { name: 'Wooden handle', blurb: 'A slim rounded rail, 160 mm', price: 24 },
+  hole: { name: 'Finger hole', blurb: 'A 30 mm hole through the front, edges softened', price: 8 }
 };
+/* the wood of knobs and handles */
 const HFIN = {
-  brass: { name: 'Aged brass', hex: '#A8843F' },
-  nickel: { name: 'Polished nickel', hex: '#CDCFD0' },
-  mixed: { name: 'Mixed metals', hex: null, blurb: 'aged brass on doors, nickel on drawers' },
-  black: { name: 'Black', hex: '#1E1E1E' },
-  steel: { name: 'Brushed steel', hex: '#A7AAAD' },
   oak: { name: 'Oak', hex: '#C9A26E' },
-  match: { name: 'Same as the front', hex: null }
+  walnut: { name: 'Walnut', hex: '#5C3A26' }
 };
 
 /* extras around the fronts */
 const EXTRAS = {
   plinthPerM: 55, // a plinth (kick plate) in the look of the fronts, per metre of run
-  feet: 48, // furniture feet for one kitchen cabinet (four), instead of a plinth
   filler: 35, // a filler strip in the look of the fronts, up to 10 cm wide, any height
   sampleBox: 25, // every colour and material as a 10 × 15 cm chip; the €25 comes off the order
   planCheckFrom: 0 // checking your IKEA list and every size before we cut: free
@@ -2753,12 +2784,12 @@ function freshState(sys) {
     oil: 'pure',
     edge: 'round',
     sides: 'none',
-    plinth: 'ikea', // the plinth under a kitchen: IKEA's own, one in the look of the fronts, or furniture feet
+    plinth: 'ikea', // the plinth under a kitchen: IKEA's own, or one in the look of the fronts
     fillers: 0, // filler strips in the look of the fronts
     planCheck: true,
     gframe: 'black',
     handle: 'knob',
-    hfin: 'brass',
+    hfin: 'oak',
     step: 'home',
     view: '2d',
     flip: {},
@@ -2817,7 +2848,9 @@ if (!S.flute.gpitch) S.flute.gpitch = 50;
 if (!OILS[S.oil]) S.oil = 'pure';
 if (!EDGES[S.edge]) S.edge = 'round';
 if (!SIDES[S.sides]) S.sides = 'none';
-if (!['ikea', 'match', 'feet'].includes(S.plinth)) S.plinth = 'ikea';
+if (!['ikea', 'match'].includes(S.plinth)) S.plinth = 'ikea';
+if (!HANDLES[S.handle]) S.handle = 'knob';
+if (!HFIN[S.hfin]) S.hfin = 'oak';
 if (!(S.fillers >= 0 && S.fillers <= 6)) S.fillers = 0;
 if (S.planCheck === undefined) S.planCheck = true;
 function save() {
@@ -3125,11 +3158,6 @@ function extrasOf(L) {
         p: Math.round(m * EXTRAS.plinthPerM)
       });
   }
-  if (S.sys === 'metod' && S.plinth === 'feet') {
-    const n = L.cabs.filter(p => p.c.kind !== 'wall').length,
-      fin = S.hfin === 'mixed' || !HFIN[S.hfin] || S.hfin === 'match' ? 'aged brass' : HFIN[S.hfin].name.toLowerCase();
-    if (n) out.push({ kind: 'feet', name: 'Furniture feet', note: `4 per cabinet, ${fin}`, n, p: EXTRAS.feet });
-  }
   if (S.fillers)
     out.push({
       kind: 'filler',
@@ -3345,7 +3373,7 @@ function frontSVG(f, Y, sfx) {
       ox = f.hinge === 'L' ? x + w : x;
     o += `<path d="M${ox} ${y} L${hx} ${y + h / 2} L${ox} ${y + h}" fill="none" stroke="${dark}" stroke-opacity=".3" stroke-width="2" stroke-dasharray="14 10"/>`;
   }
-  o += handleSVG(f, Y, lk);
+  o += handleSVG(f, Y);
   if (sel)
     o += `<rect x="${x + 4}" y="${y + 4}" width="${w - 8}" height="${h - 8}" fill="none" stroke="var(--accent)" stroke-width="10"/>`;
   return o + '</g>';
@@ -3360,37 +3388,24 @@ function handlePos(f) {
   else y = f.ckind === 'wall' ? f.y + 90 : f.y + f.h - 90;
   return { x, y, vert: true };
 }
-function handleHex(lk, f) {
-  if (S.hfin === 'match') return shade(faceHex(lk), -0.2);
-  if (S.hfin === 'mixed') return f && f.kind === 'drawer' ? HFIN.nickel.hex : HFIN.brass.hex;
-  return HFIN[S.hfin].hex;
+function handleHex() {
+  return (HFIN[S.hfin] || HFIN.oak).hex;
 }
-function handleSVG(f, Y, lk) {
+function handleSVG(f, Y) {
   const hd = S.handle;
-  if (hd === 'push') return '';
-  const col = handleHex(lk, f),
+  if (!HANDLES[hd]) return '';
+  const col = handleHex(),
     P = handlePos(f),
     cx = P.x,
     cy = Y(P.y);
   if (hd === 'knob')
-    return `<circle cx="${cx}" cy="${cy}" r="16" fill="${col}" stroke="#000" stroke-opacity=".25" stroke-width="2"/><circle cx="${cx - 4}" cy="${cy - 4}" r="5" fill="#fff" fill-opacity=".35"/>`;
+    return `<circle cx="${cx}" cy="${cy}" r="19" fill="${col}"/><circle cx="${cx}" cy="${cy}" r="19" fill="none" stroke="#000" stroke-opacity=".22" stroke-width="2"/><circle cx="${cx - 3}" cy="${cy - 4}" r="11" fill="#fff" fill-opacity=".14"/>`;
   if (hd === 'bar')
     return P.vert
-      ? `<rect x="${cx - 6}" y="${cy - 80}" width="12" height="160" rx="6" fill="${col}" stroke="#000" stroke-opacity=".25" stroke-width="2"/>`
-      : `<rect x="${cx - 80}" y="${cy - 6}" width="160" height="12" rx="6" fill="${col}" stroke="#000" stroke-opacity=".25" stroke-width="2"/>`;
-  const yT = Y(f.y + f.h);
-  if (hd === 'grip') {
-    if (f.kind === 'drawer')
-      return `<path d="M${cx - 45} ${yT} A45 30 0 0 0 ${cx + 45} ${yT} Z" fill="#000" fill-opacity=".55"/>`;
-    const ex = f.hinge === 'L' ? f.x + f.w : f.x,
-      s = f.hinge === 'L' ? 0 : 1;
-    return `<path d="M${ex} ${cy - 55} A30 55 0 0 ${s} ${ex} ${cy + 55} Z" fill="#000" fill-opacity=".55"/>`;
-  }
-  if (hd === 'tab') {
-    if (f.kind === 'drawer') return `<rect x="${cx - 22}" y="${yT - 18}" width="44" height="40" rx="6" fill="${col}"/>`;
-    const ex = f.hinge === 'L' ? f.x + f.w - 10 : f.x - 20;
-    return `<rect x="${ex}" y="${cy - 22}" width="30" height="44" rx="6" fill="${col}"/>`;
-  }
+      ? `<rect x="${cx - 7}" y="${cy - 80}" width="14" height="160" rx="7" fill="${col}" stroke="#000" stroke-opacity=".22" stroke-width="2"/>`
+      : `<rect x="${cx - 80}" y="${cy - 7}" width="160" height="14" rx="7" fill="${col}" stroke="#000" stroke-opacity=".22" stroke-width="2"/>`;
+  if (hd === 'hole')
+    return `<circle cx="${cx}" cy="${cy}" r="15" fill="#17130f"/><circle cx="${cx}" cy="${cy}" r="15" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>`;
   return '';
 }
 function drawPic() {
@@ -3410,16 +3425,7 @@ function drawPic() {
         s += `<line x1="${p.x + 18}" x2="${p.x + p.w - 18}" y1="${Y(p.y + (k * p.h) / n)}" y2="${Y(p.y + (k * p.h) / n)}" stroke="#c9cac5" stroke-width="10"/>`;
     }
   });
-  if (L.plinth && S.sys === 'metod' && S.plinth === 'feet')
-    L.cabs
-      .filter(p => p.c.kind !== 'wall')
-      .forEach(p =>
-        [p.x + 45, p.x + p.w - 45].forEach(
-          x =>
-            (s += `<path d="M${x - 17} ${Y(L.plinth)} L${x + 17} ${Y(L.plinth)} L${x + 11} ${Y(0)} L${x - 11} ${Y(0)} Z" fill="${HFIN.brass.hex}"/>`)
-        )
-      );
-  else if (L.plinth && S.sys === 'metod') {
+  if (L.plinth && S.sys === 'metod') {
     const bw = Math.max(0, ...L.cabs.filter(p => p.c.kind !== 'wall').map(p => p.x + p.w));
     s += `<rect x="0" y="${Y(L.plinth)}" width="${bw}" height="${L.plinth - 10}" fill="${shade(faceHex(lookOf(null)), -0.3)}"/>`;
   }
@@ -3611,7 +3617,10 @@ function loadRoom() {
         f[o + 2] = d[i + 2] * e;
         f[o + 3] = 1;
       }
-    const et = new T.DataTexture(f, c.width, c.height, T.RGBAFormat, T.FloatType);
+    // half floats: every phone can filter them (full floats often can't, and the room went black)
+    const hf = new Uint16Array(f.length);
+    for (let i = 0; i < f.length; i++) hf[i] = T.DataUtils.toHalfFloat(Math.min(f[i], 65000));
+    const et = new T.DataTexture(hf, c.width, c.height, T.RGBAFormat, T.HalfFloatType);
     et.mapping = T.EquirectangularReflectionMapping;
     et.magFilter = et.minFilter = T.LinearFilter;
     et.needsUpdate = true;
@@ -4169,43 +4178,22 @@ function build3D(noDraw) {
     for (let k = 1; k < n; k++)
       box(p.w - 2 * t, t, d - 30, white, p.x + p.w / 2, p.y + (k * p.h) / n, z0 + (d - 30) / 2, false);
   });
-  if (S.sys === 'metod' && S.plinth === 'feet') {
-    // furniture feet: a kitchen that stands like furniture, four turned feet under every floor cabinet
-    const fm = new T.MeshStandardMaterial({
-      color: S.hfin === 'mixed' || S.hfin === 'match' ? HFIN.brass.hex : HFIN[S.hfin].hex,
-      roughness: S.hfin === 'oak' ? 0.55 : 0.3,
-      metalness: S.hfin === 'oak' || S.hfin === 'black' ? 0.1 : 0.85
-    });
-    L.cabs
-      .filter(p => p.c.kind !== 'wall')
-      .forEach(p =>
-        [p.x + 45, p.x + p.w - 45].forEach(x =>
-          [-Dmax + 70, -Dmax + dOf(p.c) - 70].forEach(z => {
-            const g = new T.Mesh(new T.CylinderGeometry(17, 11, L.plinth, 20), fm);
-            g.position.set(x, L.plinth / 2, z);
-            g.castShadow = true;
-            root.add(g);
-          })
-        )
-      );
-  }
   if (S.sys === 'metod') {
     const bases = L.cabs.filter(p => p.c.kind !== 'wall');
     if (bases.length) {
       const a = Math.min(...bases.map(p => p.x)),
         b = Math.max(...bases.map(p => p.x + p.w));
-      if (S.plinth !== 'feet')
-        box(
-          b - a,
-          L.plinth - 10,
-          18,
-          S.plinth === 'match'
-            ? matFor(Object.assign({}, sideLook(), { style: 'flat' }), { w: b - a, h: L.plinth })
-            : new T.MeshStandardMaterial({ color: '#2a2a28', roughness: 0.6 }),
-          (a + b) / 2,
-          (L.plinth - 10) / 2,
-          -40
-        );
+      box(
+        b - a,
+        L.plinth - 10,
+        18,
+        S.plinth === 'match'
+          ? matFor(Object.assign({}, sideLook(), { style: 'flat' }), { w: b - a, h: L.plinth })
+          : new T.MeshStandardMaterial({ color: '#2a2a28', roughness: 0.6 }),
+        (a + b) / 2,
+        (L.plinth - 10) / 2,
+        -40
+      );
       const tops = L.cabs.filter(p => p.c.kind === 'base');
       if (tops.length) {
         const a2 = Math.min(...tops.map(p => p.x)),
@@ -4403,47 +4391,64 @@ function plant3D(T, root, px, pz) {
   }
 }
 function handle3D(f, lk, root, cache, FT) {
-  if (S.handle === 'push') return;
+  if (!HANDLES[S.handle]) return;
   const T = V3.T,
     P = handlePos(f),
-    hex = handleHex(lk, f),
-    mk =
-      cache[hex] ||
-      (cache[hex] = new T.MeshStandardMaterial({
-        color: hex,
-        roughness: S.hfin === 'oak' || S.hfin === 'match' ? 0.55 : 0.3,
-        metalness: S.hfin === 'brass' || S.hfin === 'steel' || S.hfin === 'nickel' || S.hfin === 'mixed' ? 0.85 : 0.1
-      })),
-    z = FT + 1;
-  const add = (geo, x, y, zz, rx, rz) => {
-    const ms = new T.Mesh(geo, mk);
-    ms.position.set(x, y, zz);
-    if (rx) ms.rotation.x = rx;
-    if (rz) ms.rotation.z = rz;
-    ms.castShadow = true;
-    root.add(ms);
-  };
+    z = FT + 1,
+    wood =
+      cache.wood ||
+      (cache.wood = (() => {
+        const t = woodTex(S.hfin === 'walnut' ? 'walnut' : 'oak').clone();
+        t.needsUpdate = true;
+        t.repeat.set(0.12, 0.05);
+        return new T.MeshPhysicalMaterial({ map: t, roughness: 0.45, clearcoat: 0.25, clearcoatRoughness: 0.5 });
+      })()),
+    add = (geo, mat, x, y, zz, rx, rz) => {
+      const ms = new T.Mesh(geo, mat);
+      ms.position.set(x, y, zz);
+      if (rx) ms.rotation.x = rx;
+      if (rz) ms.rotation.z = rz;
+      ms.castShadow = true;
+      root.add(ms);
+    };
   if (S.handle === 'knob') {
-    add(new T.CylinderGeometry(6, 6, 18, 16), P.x, P.y, z + 9, Math.PI / 2);
-    add(new T.SphereGeometry(16, 24, 16), P.x, P.y, z + 26);
+    // a turned mushroom knob: a slim neck and a soft, slightly domed cap
+    const prof = [
+      [0, 0],
+      [8, 0],
+      [8, 9],
+      [10, 11],
+      [16.5, 14],
+      [19, 17.5],
+      [18.5, 21],
+      [15, 24],
+      [8, 25.5],
+      [0, 26]
+    ].map(([r, y]) => new T.Vector2(r, y));
+    add(new T.LatheGeometry(prof, 32), wood, P.x, P.y, z, Math.PI / 2);
   } else if (S.handle === 'bar') {
-    add(new T.CylinderGeometry(6, 6, 160, 16), P.x, P.y, z + 28, 0, P.vert ? 0 : Math.PI / 2);
-    [-64, 64].forEach(d =>
-      add(new T.CylinderGeometry(4, 4, 28, 12), P.vert ? P.x : P.x + d, P.vert ? P.y + d : P.y, z + 14, Math.PI / 2)
+    // a slim rounded rail on two short posts
+    add(new T.CapsuleGeometry(7, 146, 6, 16), wood, P.x, P.y, z + 26, 0, P.vert ? 0 : Math.PI / 2);
+    [-60, 60].forEach(d =>
+      add(
+        new T.CylinderGeometry(5, 6, 22, 16),
+        wood,
+        P.vert ? P.x : P.x + d,
+        P.vert ? P.y + d : P.y,
+        z + 11,
+        Math.PI / 2
+      )
     );
-  } else if (S.handle === 'tab') {
-    const x = f.kind === 'drawer' ? P.x : f.hinge === 'L' ? f.x + f.w + 4 : f.x - 4,
-      y = f.kind === 'drawer' ? f.y + f.h + 4 : P.y;
-    add(new T.BoxGeometry(f.kind === 'drawer' ? 44 : 22, f.kind === 'drawer' ? 22 : 44, 4), x, y, z + 2);
-  } else if (S.handle === 'grip') {
-    const dark = new T.MeshStandardMaterial({ color: '#1b1b1b', roughness: 0.9 }),
-      g = new T.Mesh(new T.BoxGeometry(f.kind === 'drawer' ? 90 : 14, f.kind === 'drawer' ? 14 : 110, 3), dark);
-    g.position.set(
-      f.kind === 'drawer' ? P.x : f.hinge === 'L' ? f.x + f.w - 7 : f.x + 7,
-      f.kind === 'drawer' ? f.y + f.h - 7 : P.y,
-      z + 0.5
+  } else if (S.handle === 'hole') {
+    // a finger hole: the dark of the cabinet behind, with a softened lip
+    const dark = cache.dark || (cache.dark = new T.MeshBasicMaterial({ color: '#100d0a' }));
+    add(new T.CircleGeometry(15, 32), dark, P.x, P.y, z + 0.3);
+    const lip = new T.Mesh(
+      new T.TorusGeometry(15.5, 1.6, 8, 32),
+      new T.MeshStandardMaterial({ color: shade(faceHex(lk), -0.35), roughness: 0.7 })
     );
-    root.add(g);
+    lip.position.set(P.x, P.y, z);
+    root.add(lip);
   }
 }
 
@@ -4772,6 +4777,12 @@ function render() {
     order: orderHTML
   }[S.step](L, P);
   document.getElementById('app').dataset.step = S.step;
+}
+/* "oak knobs", "walnut handles", "finger holes" */
+function handleWords() {
+  return S.handle === 'hole'
+    ? 'finger holes'
+    : `${HFIN[S.hfin].name.toLowerCase()} ${S.handle === 'bar' ? 'handles' : 'knobs'}`;
 }
 /* the paint chip in the price bar: the main look as a sample, with its name and code */
 function chipHTML() {
@@ -5168,15 +5179,14 @@ function frontsHTML(L) {
     S.sys === 'metod'
       ? `<div class="row"><label>Plinth</label>${seg('plinth', S.plinth, [
           ['ikea', 'IKEA’s own'],
-          ['match', 'Same look'],
-          ['feet', 'Feet']
+          ['match', 'Same look']
         ])}</div>`
       : ''
   }<div class="row"><label>Fillers</label>${seg(
     'fillers',
     S.fillers,
     [0, 1, 2, 3, 4].map(n => [n, n ? String(n) : 'None'])
-  )}</div><p class="hint">${S.sys === 'metod' ? `A plinth in the look of your fronts (${eur(EXTRAS.plinthPerM)} a metre), or furniture feet so the kitchen stands like a piece of furniture (${eur(EXTRAS.feet)} a cabinet). ` : ''}Filler strips close the gap to a wall or ceiling, ${eur(EXTRAS.filler)} each, cut to fit.</p>`;
+  )}</div><p class="hint">${S.sys === 'metod' ? `A plinth in the look of your fronts, ${eur(EXTRAS.plinthPerM)} a metre. ` : ''}Filler strips close the gap to a wall or ceiling, ${eur(EXTRAS.filler)} each, cut to fit.</p>`;
   h += `<h3>Edges</h3>${seg(
     'edge',
     S.edge,
@@ -5214,27 +5224,38 @@ function frontsHTML(L) {
 }
 
 /* ---------- 3 Handles ---------- */
+/* a small picture of each handle on a corner of your front */
+function handleIcon(k) {
+  const face = faceHex(lookOf(null)),
+    w = (HFIN[S.hfin] || HFIN.oak).hex,
+    edge = 'stroke="#000" stroke-opacity=".2" stroke-width="1.5"';
+  const inner =
+    k === 'knob'
+      ? `<circle cx="60" cy="40" r="12" fill="${w}" ${edge}/><circle cx="57" cy="37" r="6" fill="#fff" fill-opacity=".16"/>`
+      : k === 'bar'
+        ? `<rect x="54" y="12" width="10" height="56" rx="5" fill="${w}" ${edge}/>`
+        : `<circle cx="60" cy="40" r="10" fill="#17130f"/><circle cx="60" cy="40" r="10" fill="none" stroke="#fff" stroke-opacity=".2" stroke-width="2"/>`;
+  return `<svg viewBox="0 0 120 80" aria-hidden="true"><rect width="120" height="80" fill="${face}"/><rect x="88" width="2" height="80" fill="#000" fill-opacity=".18"/>${inner}</svg>`;
+}
 function handlesHTML(L) {
   const hs = Object.entries(HANDLES)
     .map(
       ([k, h]) =>
-        `<button type="button" class="mat ${k === S.handle ? 'on' : ''}" data-act="handle" data-a="${k}"><b>${h.name}</b><small>${h.blurb} · ${eur(h.price)} a front</small></button>`
+        `<button type="button" class="hcard ${k === S.handle ? 'on' : ''}" data-act="handle" data-a="${k}"><span class="hico">${handleIcon(k)}</span><b>${h.name}</b><small>${h.blurb} · ${eur(h.price)} a front</small></button>`
     )
     .join('');
   const fins =
-    S.handle === 'knob' || S.handle === 'bar' || S.handle === 'tab'
-      ? `<h3>Finish</h3>${seg(
+    S.handle === 'knob' || S.handle === 'bar'
+      ? `<h3>Wood</h3>${seg(
           'hfin',
           S.hfin,
-          Object.entries(HFIN)
-            .filter(([k]) => S.handle !== 'tab' || k !== 'steel')
-            .map(([k, f]) => [k, f.name])
-        )}`
-      : '';
+          Object.entries(HFIN).map(([k, f]) => [k, f.name])
+        )}<p class="hint">${S.hfin === 'walnut' ? 'Walnut: dark and warm, lovely on light and pastel fronts.' : 'Oak: light and honest, lovely on deep colours and dark wood.'} Oiled, like the wooden fronts.</p>`
+      : '<p class="hint">A clean 30 mm hole with softened edges — nothing to catch a sleeve on. Behind it you see the cabinet.</p>';
   const f = S.sel && L.fronts.find(x => x.id === S.sel);
   const doors = L.fronts.filter(x => x.hinge).length;
-  return `<h2>Handles</h2><p class="lede">The same handle on every front. Doors get it on the side that opens, drawers in the middle.</p>
-    <div class="mats">${hs}</div>${fins}
+  return `<h2>Handles</h2><p class="lede">Three quiet choices, the same on every front. Doors get it on the side that opens, drawers in the middle.</p>
+    <div class="hcards">${hs}</div>${fins}
     ${doors ? `<h3>Hinge sides</h3>${f && f.hinge ? `<div class="selcard"><b>This door</b> hinges on the ${f.hinge === 'L' ? 'left' : 'right'}. <button type="button" class="btn sm" data-act="flip">Swap to the ${f.hinge === 'L' ? 'right' : 'left'}</button></div>` : '<p class="hint">Tap a door in the picture to swap the side it hinges on — the handle moves with it.</p>'}${Object.keys(S.flip).length ? `<button type="button" class="linkb" data-act="unflip">Put all doors back</button>` : ''}` : ''}`;
 }
 
@@ -5253,7 +5274,7 @@ function orderHTML(L, P) {
       return `${head}<tr><td>${r.n}×</td><td>${r.kind === 'door' ? 'Door' + (r.hinge ? ` <small>hinge ${r.hinge === 'L' ? 'left' : 'right'}</small>` : '') : r.kind === 'side' ? 'Side panel <small>19 mm</small>' : 'Drawer front'}</td><td class="num">${f1(r.w)} × ${f1(r.h)}<small>${r.kind === 'side' ? 'depth × height' : 'IKEA ' + r.nom}</small></td><td class="num">${eur(r.p * r.n)}</td></tr>`;
     })
     .join('');
-  return `<h2>Your order</h2><p class="lede">${countWords(P)}, ${esc(EDGES[S.edge].name.toLowerCase())} edges, with ${esc(HANDLES[S.handle].name.toLowerCase())}${S.handle === 'push' ? ' latches' : S.handle === 'grip' ? 's' : 's in ' + esc(HFIN[S.hfin].name.toLowerCase())}. Made to measure and drilled for your IKEA hinges; ready ${leadOf(L)} after you order${L.fronts.some(f => MATS[lookOf(f).mat].paint) ? ' (painted fronts take 1–2 weeks longer: they go to our spray shop)' : ''}.</p>
+  return `<h2>Your order</h2><p class="lede">${countWords(P)}, ${esc(EDGES[S.edge].name.toLowerCase())} edges, with ${handleWords()}. Made to measure and drilled for your IKEA hinges; ready ${leadOf(L)} after you order${L.fronts.some(f => MATS[lookOf(f).mat].paint) ? ' (painted fronts take 1–2 weeks longer: they go to our spray shop)' : ''}.</p>
     ${
       P.n
         ? `<table class="ord"><thead><tr><th></th><th>Front</th><th class="num">Size, mm</th><th class="num">Price</th></tr></thead><tbody>${rows}${
@@ -5298,7 +5319,7 @@ function orderText() {
     P = priceAll(L);
   return [
     `BRUIS Fronts — order request (${SYS[S.sys].name})`,
-    `Edges: ${EDGES[S.edge].name.toLowerCase()} · Handles: ${HANDLES[S.handle].name}${S.handle === 'knob' || S.handle === 'bar' || S.handle === 'tab' ? ', ' + HFIN[S.hfin].name : ''}${L.fronts.some(f => lookOf(f).style === 'fluted') ? ` · flutes ${S.flute.pitch} mm, ${S.flute.dir === 'v' ? 'vertical' : 'horizontal'}` : ''}${L.fronts.some(f => lookOf(f).style === 'grooves') ? ` · grooves every ${S.flute.gpitch} mm, ${S.flute.dir === 'v' ? 'vertical' : 'horizontal'}` : ''}${L.fronts.some(f => MATS[lookOf(f).mat].glass) ? ` · glass frame ${GFRAME[S.gframe].name.toLowerCase()}` : ''}`,
+    `Edges: ${EDGES[S.edge].name.toLowerCase()} · Handles: ${handleWords()}${L.fronts.some(f => lookOf(f).style === 'fluted') ? ` · flutes ${S.flute.pitch} mm, ${S.flute.dir === 'v' ? 'vertical' : 'horizontal'}` : ''}${L.fronts.some(f => lookOf(f).style === 'grooves') ? ` · grooves every ${S.flute.gpitch} mm, ${S.flute.dir === 'v' ? 'vertical' : 'horizontal'}` : ''}${L.fronts.some(f => MATS[lookOf(f).mat].glass) ? ` · glass frame ${GFRAME[S.gframe].name.toLowerCase()}` : ''}`,
     '',
     ...grouped(L).map(
       r =>
@@ -5358,7 +5379,7 @@ function printQuote() {
   q.innerHTML = `<header><b>BRUIS</b><span>Quote ${no} · ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span></header>
     ${pic ? `<img src="${pic}" alt="">` : ''}
     <h1>${SYS[S.sys].name} ${SYS[S.sys].what.toLowerCase()}: ${countWords(P)}</h1>
-    <p>Edges ${EDGES[S.edge].name.toLowerCase()} · handles ${esc(HANDLES[S.handle].name.toLowerCase())}${S.handle === 'knob' || S.handle === 'bar' || S.handle === 'tab' ? ', ' + esc(HFIN[S.hfin].name.toLowerCase()) : ''} · ready ${esc(leadOf(L))} after ordering</p>
+    <p>Edges ${EDGES[S.edge].name.toLowerCase()} · ${handleWords()} · ready ${esc(leadOf(L))} after ordering</p>
     <table><tbody>${rows}</tbody><tfoot><tr><td></td><td colspan="2">Delivery</td><td class="num">${P.del ? eur(P.del) : 'free'}</td></tr><tr class="tot"><td></td><td colspan="2">Total incl. VAT</td><td class="num">${eur(P.total)}</td></tr></tfoot></table>
     <p>${S.planCheck ? 'Includes our free plan check: we go through your IKEA list and every size with you before anything is cut.' : ''} Hinges and drawer fittings are IKEA's own and not included.</p>
     <p class="link">Open this design again: ${esc(shareLink())}</p>
@@ -5695,7 +5716,6 @@ document.addEventListener('click', e => {
       break;
     case 'handle':
       S.handle = a;
-      if (a === 'tab' && S.hfin === 'steel') S.hfin = 'black';
       break;
     case 'hfin':
       S.hfin = a;
@@ -5797,11 +5817,11 @@ function homeHTML() {
     </div></div>
     <section class="hsec hsteps"><h2>How it works</h2><ol>
       <li><b>Paste your IKEA list</b><span>From the IKEA planner, your cart or your order. We read the cabinets and their sizes in seconds — no drawings, no waiting for a quote.</span></li>
-      <li><b>Choose your fronts</b><span>Effen, Riet or Voeg; seventeen colours, oak, walnut or plywood; edges, side panels and handles. You see it in the room as you go.</span></li>
+      <li><b>Choose your fronts</b><span>Effen, Riet or Voeg; seventeen colours, oak, walnut or plywood; edges, side panels, and wooden knobs, handles or finger holes. You see it in the room as you go.</span></li>
       <li><b>We check, make and deliver</b><span>We go through every size with you before anything is cut, make your fronts to measure and deliver them drilled for your IKEA hinges.</span></li></ol></section>
     <section class="hsec"><div class="hhead"><h2>Start from a design</h2><p>Open one, then change anything. Prices are for the whole design, delivered.</p></div><div class="hdemos">${demos}</div></section>
     <section class="hsec h27"><div class="h27t"><h2>The 2027 edit</h2>
-      <p>Next year belongs to green — soft sage and celery, olive and deep forest — with warm taupes and clay browns beside it. Kitchens get darker woods, two woods together, mixed metals and feet, so they stand like furniture. We added all of it to the range.</p>
+      <p>Next year belongs to green — soft sage and celery, olive and deep forest — with warm taupes and clay browns beside it. Kitchens get darker woods and two woods together, finished with simple wooden knobs and handles. We added all of it to the range.</p>
       <button type="button" class="btn" data-act="trend">Try a 2027 look</button></div>
       <div class="h27c">${Object.entries(COLOURS)
         .filter(([, c]) => c.trend)
@@ -6117,7 +6137,7 @@ function layoutFronts(cabs) {
    "Surprise me": not a dice roll but a recipe, like Fitted's. Each recipe is a small rule set a designer would use —
    one bold colour, wood with one colour, two colours that go together, a glass accent, birch, walnut — and gives
    every front its look by what it is: a tall door, a drawer, a wall cabinet, the top row. Handles follow the colours:
-   brass on dark and saturated colours, black on light colours and birch, the same colour for a quiet look.
+   wooden knobs, handles or finger holes: oak on deep colours and dark wood, walnut on light colours and pale wood.
 */
 function prng(seed) {
   let a = seed >>> 0;
@@ -6184,8 +6204,7 @@ const RECIPES = [
           top: { mat: wood, style: 'flat' }
         },
         handle: pick(r, ['knob', 'bar']),
-        hfin: 'mixed',
-        say: `${COLOURS[g].name} with ${wood === 'oak' ? 'dark oak' : 'walnut'}, mixed metals`
+        say: `${COLOURS[g].name} with ${wood === 'oak' ? 'dark oak' : 'walnut'}`
       };
     }
   },
@@ -6201,7 +6220,6 @@ const RECIPES = [
           drawer: { mat: pick(r, ['walnut', 'oak']), oil: 'chocolate' }
         },
         handle: 'bar',
-        hfin: pick(r, ['brass', 'mixed']),
         say: 'Dark oak below, pale oak above'
       };
     }
@@ -6219,8 +6237,7 @@ const RECIPES = [
       return {
         all: { mat: 'painted', col: a, style: pick(r, ['grooves', 'flat']) },
         by: { drawer: { col: b, style: 'flat' } },
-        handle: pick(r, ['knob', 'tab', 'bar']),
-        hfin: DARK[a] ? 'brass' : 'nickel',
+        handle: pick(r, ['knob', 'bar', 'hole']),
         say: `${COLOURS[a].name} and ${COLOURS[b].name.toLowerCase()}`
       };
     }
@@ -6232,7 +6249,6 @@ const RECIPES = [
       return {
         all: { mat: 'painted', col: c, style: pick(r, ['fluted', 'fluted', 'grooves']) },
         by: { drawer: { style: 'flat' } },
-        hfin: DARK[c] ? 'brass' : 'black',
         say: COLOURS[c].name
       };
     }
@@ -6254,7 +6270,6 @@ const RECIPES = [
           wall: { mat: 'painted', col: c, style: 'flat' },
           top: { mat: 'painted', col: c, style: 'flat' }
         },
-        hfin: wood === 'walnut' ? 'brass' : 'black',
         say: `${MATS[wood].name.replace(' veneer', '')} & ${COLOURS[c].name.toLowerCase()}`
       };
     }
@@ -6266,7 +6281,6 @@ const RECIPES = [
       return {
         all: { mat: 'painted', col: a, style: 'fluted' },
         by: { wall: { col: b, style: 'flat' }, top: { col: b, style: 'flat' }, drawer: { col: a, style: 'flat' } },
-        hfin: DARK[a] ? 'brass' : 'black',
         say: `${COLOURS[a].name} & ${COLOURS[b].name.toLowerCase()}`
       };
     }
@@ -6281,7 +6295,6 @@ const RECIPES = [
         all: look,
         by: { wall: { mat: 'glass' }, top: { mat: 'glass' }, tall: { mat: 'glass', every: 2 } },
         gframe: base === 'oak' ? 'oak' : pick(r, ['black', 'alu']),
-        hfin: base === 'walnut' || DARK[c] ? 'brass' : 'black',
         say: `${base === 'painted' ? COLOURS[c].name : MATS[base].name.replace(' veneer', '')} & fluted glass`
       };
     }
@@ -6294,8 +6307,7 @@ const RECIPES = [
       return {
         all: { mat: ply, style: 'flat', oil: pick(r, ['pure', 'white5', 'smoke5']) },
         by: { drawer: { mat: 'painted', col: c, style: 'flat' } },
-        handle: pick(r, ['push', 'tab', 'grip']),
-        hfin: 'black',
+        handle: pick(r, ['hole', 'knob']),
         say: `${ply === 'pine' ? 'Pine' : 'Birch'} & ${COLOURS[c].name.toLowerCase()}`
       };
     }
@@ -6308,7 +6320,6 @@ const RECIPES = [
         all: { mat: 'oak', style: 'flat', oil: 'charcoal' },
         by: { drawer: { mat: 'painted', col: c, style: 'grooves' } },
         handle: 'bar',
-        hfin: 'brass',
         say: `Charcoal-oiled oak & ${COLOURS[c].name.toLowerCase()} grooves`
       };
     }
@@ -6320,7 +6331,6 @@ const RECIPES = [
         all: { mat: 'walnut', style: 'flat' },
         by: {},
         handle: 'bar',
-        hfin: 'brass',
         say: 'Walnut'
       };
     }
@@ -6365,8 +6375,17 @@ function applyPlan(plan, r) {
       S.fx[f.id] = lk;
   });
   if (plan.gframe) S.gframe = plan.gframe;
-  S.handle = plan.handle || (r ? pick(r, ['knob', 'bar', 'knob', 'push']) : 'knob');
-  S.hfin = S.handle === 'tab' ? 'black' : plan.hfin || 'brass';
+  // wooden knobs, wooden handles or finger holes: walnut on light fronts and oak, oak on deep colours and walnut
+  S.handle = HANDLES[plan.handle] ? plan.handle : r ? pick(r, ['knob', 'bar', 'knob', 'hole']) : 'knob';
+  const base =
+    plan.all.mat === 'painted'
+      ? DARK[plan.all.col]
+        ? 'dark'
+        : 'light'
+      : plan.all.mat === 'walnut' || plan.all.oil === 'chocolate' || plan.all.oil === 'charcoal'
+        ? 'dark'
+        : 'light';
+  S.hfin = HFIN[plan.hfin] ? plan.hfin : base === 'dark' ? 'oak' : 'walnut';
 }
 
 /* ==== 47-demos.js ====
@@ -6379,7 +6398,7 @@ const DEMOS = [
   {
     name: 'Celery & walnut',
     trend: true,
-    say: 'Fluted celery green, walnut wall cabinets, mixed metals, on feet',
+    say: 'Fluted celery green, walnut wall cabinets, oak handles',
     sys: 'metod',
     cabs: [
       ['high', 60, 200, 'split'],
@@ -6392,15 +6411,15 @@ const DEMOS = [
     all: { mat: 'painted', col: 'celery', style: 'fluted' },
     by: { wall: { mat: 'walnut', style: 'flat' }, drawer: { style: 'flat' } },
     handle: 'bar',
-    hfin: 'mixed',
+    hfin: 'oak',
     sides: 'both',
     edge: 'round',
-    plinth: 'feet'
+    plinth: 'match'
   },
   {
     name: 'Olive wardrobe',
     trend: true,
-    say: 'Fluted olive green, polished nickel bars, panels on both sides',
+    say: 'Fluted olive green, oak handles, panels on both sides',
     sys: 'pax',
     cabs: [
       ['frame', 100, 236, 'doors'],
@@ -6410,14 +6429,14 @@ const DEMOS = [
     all: { mat: 'painted', col: 'olive', style: 'fluted' },
     by: {},
     handle: 'bar',
-    hfin: 'nickel',
+    hfin: 'oak',
     sides: 'both',
     edge: 'round'
   },
   {
     name: 'Two woods',
     trend: true,
-    say: 'Chocolate-oiled oak below, pale oak above, brass bars, on feet',
+    say: 'Chocolate-oiled oak below, pale oak above, finger holes',
     sys: 'metod',
     cabs: [
       ['base', 80, 80, 'doors2'],
@@ -6430,15 +6449,15 @@ const DEMOS = [
     ],
     all: { mat: 'oak', style: 'flat', oil: 'chocolate' },
     by: { wall: { oil: 'pure' } },
-    handle: 'bar',
-    hfin: 'brass',
+    handle: 'hole',
+    hfin: 'oak',
     sides: 'both',
     edge: 'round',
-    plinth: 'feet'
+    plinth: 'match'
   },
   {
     name: 'Sage kitchen',
-    say: 'Fluted sage green with calm flat drawers and brass knobs',
+    say: 'Fluted sage green with calm flat drawers and walnut knobs',
     sys: 'metod',
     cabs: [
       ['high', 60, 200, 'split'],
@@ -6453,13 +6472,13 @@ const DEMOS = [
     all: { mat: 'painted', col: 'sage', style: 'fluted' },
     by: { drawer: { style: 'flat' } },
     handle: 'knob',
-    hfin: 'brass',
+    hfin: 'walnut',
     sides: 'both',
     edge: 'round'
   },
   {
     name: 'Charcoal oak kitchen',
-    say: 'Oak oiled in Charcoal, mustard grooved drawers, brass bars',
+    say: 'Oak oiled in Charcoal, mustard grooved drawers, oak handles',
     sys: 'metod',
     cabs: [
       ['base', 80, 80, 'doors2'],
@@ -6475,13 +6494,13 @@ const DEMOS = [
     all: { mat: 'oak', style: 'flat', oil: 'charcoal' },
     by: { drawer: { mat: 'painted', col: 'mustard', style: 'grooves' } },
     handle: 'bar',
-    hfin: 'brass',
+    hfin: 'oak',
     sides: 'both',
     edge: 'round'
   },
   {
     name: 'Midnight wardrobe',
-    say: 'Deep blue flutes, push to open, panels on both sides',
+    say: 'Deep blue flutes, finger holes, panels on both sides',
     sys: 'pax',
     cabs: [
       ['frame', 100, 236, 'doors'],
@@ -6490,13 +6509,14 @@ const DEMOS = [
     ],
     all: { mat: 'painted', col: 'midnight', style: 'fluted' },
     by: {},
-    handle: 'push',
+    handle: 'hole',
+    hfin: 'oak',
     sides: 'both',
     edge: 'round'
   },
   {
     name: 'Birch under the eaves',
-    say: 'Low PAX in birch ply, White 5% oil, cut-out grips, chamfered edges',
+    say: 'Low PAX in birch ply, White 5% oil, finger holes, chamfered edges',
     sys: 'pax',
     cabs: [
       ['frame', 100, 201, 'doors'],
@@ -6505,13 +6525,14 @@ const DEMOS = [
     ],
     all: { mat: 'birch', style: 'flat', oil: 'white5' },
     by: {},
-    handle: 'grip',
+    handle: 'hole',
+    hfin: 'oak',
     sides: 'right',
     edge: 'chamfer'
   },
   {
     name: 'Walnut media wall',
-    say: 'Walnut with fluted glass up top in oak frames',
+    say: 'Walnut with fluted glass up top in oak frames, oak handles',
     sys: 'besta',
     cabs: [
       ['frame', 60, 192, 'door'],
@@ -6522,13 +6543,13 @@ const DEMOS = [
     by: { top: { mat: 'glass', style: 'fluted' } },
     gframe: 'oak',
     handle: 'bar',
-    hfin: 'brass',
+    hfin: 'oak',
     sides: 'none',
     edge: 'round'
   },
   {
     name: 'Terracotta sideboard',
-    say: 'Grooved terracotta, black knobs, panels at both ends',
+    say: 'Grooved terracotta, walnut knobs, panels at both ends',
     sys: 'besta',
     cabs: [
       ['frame', 120, 64, 'drawers'],
@@ -6537,7 +6558,7 @@ const DEMOS = [
     all: { mat: 'painted', col: 'terracotta', style: 'grooves' },
     by: {},
     handle: 'knob',
-    hfin: 'black',
+    hfin: 'walnut',
     sides: 'both',
     edge: 'round'
   }

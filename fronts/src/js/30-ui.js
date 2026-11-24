@@ -62,6 +62,12 @@ function render() {
   }[S.step](L, P);
   document.getElementById('app').dataset.step = S.step;
 }
+/* "oak knobs", "walnut handles", "finger holes" */
+function handleWords() {
+  return S.handle === 'hole'
+    ? 'finger holes'
+    : `${HFIN[S.hfin].name.toLowerCase()} ${S.handle === 'bar' ? 'handles' : 'knobs'}`;
+}
 /* the paint chip in the price bar: the main look as a sample, with its name and code */
 function chipHTML() {
   const lk = lookOf(null),
@@ -457,15 +463,14 @@ function frontsHTML(L) {
     S.sys === 'metod'
       ? `<div class="row"><label>Plinth</label>${seg('plinth', S.plinth, [
           ['ikea', 'IKEA’s own'],
-          ['match', 'Same look'],
-          ['feet', 'Feet']
+          ['match', 'Same look']
         ])}</div>`
       : ''
   }<div class="row"><label>Fillers</label>${seg(
     'fillers',
     S.fillers,
     [0, 1, 2, 3, 4].map(n => [n, n ? String(n) : 'None'])
-  )}</div><p class="hint">${S.sys === 'metod' ? `A plinth in the look of your fronts (${eur(EXTRAS.plinthPerM)} a metre), or furniture feet so the kitchen stands like a piece of furniture (${eur(EXTRAS.feet)} a cabinet). ` : ''}Filler strips close the gap to a wall or ceiling, ${eur(EXTRAS.filler)} each, cut to fit.</p>`;
+  )}</div><p class="hint">${S.sys === 'metod' ? `A plinth in the look of your fronts, ${eur(EXTRAS.plinthPerM)} a metre. ` : ''}Filler strips close the gap to a wall or ceiling, ${eur(EXTRAS.filler)} each, cut to fit.</p>`;
   h += `<h3>Edges</h3>${seg(
     'edge',
     S.edge,
@@ -503,27 +508,38 @@ function frontsHTML(L) {
 }
 
 /* ---------- 3 Handles ---------- */
+/* a small picture of each handle on a corner of your front */
+function handleIcon(k) {
+  const face = faceHex(lookOf(null)),
+    w = (HFIN[S.hfin] || HFIN.oak).hex,
+    edge = 'stroke="#000" stroke-opacity=".2" stroke-width="1.5"';
+  const inner =
+    k === 'knob'
+      ? `<circle cx="60" cy="40" r="12" fill="${w}" ${edge}/><circle cx="57" cy="37" r="6" fill="#fff" fill-opacity=".16"/>`
+      : k === 'bar'
+        ? `<rect x="54" y="12" width="10" height="56" rx="5" fill="${w}" ${edge}/>`
+        : `<circle cx="60" cy="40" r="10" fill="#17130f"/><circle cx="60" cy="40" r="10" fill="none" stroke="#fff" stroke-opacity=".2" stroke-width="2"/>`;
+  return `<svg viewBox="0 0 120 80" aria-hidden="true"><rect width="120" height="80" fill="${face}"/><rect x="88" width="2" height="80" fill="#000" fill-opacity=".18"/>${inner}</svg>`;
+}
 function handlesHTML(L) {
   const hs = Object.entries(HANDLES)
     .map(
       ([k, h]) =>
-        `<button type="button" class="mat ${k === S.handle ? 'on' : ''}" data-act="handle" data-a="${k}"><b>${h.name}</b><small>${h.blurb} · ${eur(h.price)} a front</small></button>`
+        `<button type="button" class="hcard ${k === S.handle ? 'on' : ''}" data-act="handle" data-a="${k}"><span class="hico">${handleIcon(k)}</span><b>${h.name}</b><small>${h.blurb} · ${eur(h.price)} a front</small></button>`
     )
     .join('');
   const fins =
-    S.handle === 'knob' || S.handle === 'bar' || S.handle === 'tab'
-      ? `<h3>Finish</h3>${seg(
+    S.handle === 'knob' || S.handle === 'bar'
+      ? `<h3>Wood</h3>${seg(
           'hfin',
           S.hfin,
-          Object.entries(HFIN)
-            .filter(([k]) => S.handle !== 'tab' || k !== 'steel')
-            .map(([k, f]) => [k, f.name])
-        )}`
-      : '';
+          Object.entries(HFIN).map(([k, f]) => [k, f.name])
+        )}<p class="hint">${S.hfin === 'walnut' ? 'Walnut: dark and warm, lovely on light and pastel fronts.' : 'Oak: light and honest, lovely on deep colours and dark wood.'} Oiled, like the wooden fronts.</p>`
+      : '<p class="hint">A clean 30 mm hole with softened edges — nothing to catch a sleeve on. Behind it you see the cabinet.</p>';
   const f = S.sel && L.fronts.find(x => x.id === S.sel);
   const doors = L.fronts.filter(x => x.hinge).length;
-  return `<h2>Handles</h2><p class="lede">The same handle on every front. Doors get it on the side that opens, drawers in the middle.</p>
-    <div class="mats">${hs}</div>${fins}
+  return `<h2>Handles</h2><p class="lede">Three quiet choices, the same on every front. Doors get it on the side that opens, drawers in the middle.</p>
+    <div class="hcards">${hs}</div>${fins}
     ${doors ? `<h3>Hinge sides</h3>${f && f.hinge ? `<div class="selcard"><b>This door</b> hinges on the ${f.hinge === 'L' ? 'left' : 'right'}. <button type="button" class="btn sm" data-act="flip">Swap to the ${f.hinge === 'L' ? 'right' : 'left'}</button></div>` : '<p class="hint">Tap a door in the picture to swap the side it hinges on — the handle moves with it.</p>'}${Object.keys(S.flip).length ? `<button type="button" class="linkb" data-act="unflip">Put all doors back</button>` : ''}` : ''}`;
 }
 
@@ -542,7 +558,7 @@ function orderHTML(L, P) {
       return `${head}<tr><td>${r.n}×</td><td>${r.kind === 'door' ? 'Door' + (r.hinge ? ` <small>hinge ${r.hinge === 'L' ? 'left' : 'right'}</small>` : '') : r.kind === 'side' ? 'Side panel <small>19 mm</small>' : 'Drawer front'}</td><td class="num">${f1(r.w)} × ${f1(r.h)}<small>${r.kind === 'side' ? 'depth × height' : 'IKEA ' + r.nom}</small></td><td class="num">${eur(r.p * r.n)}</td></tr>`;
     })
     .join('');
-  return `<h2>Your order</h2><p class="lede">${countWords(P)}, ${esc(EDGES[S.edge].name.toLowerCase())} edges, with ${esc(HANDLES[S.handle].name.toLowerCase())}${S.handle === 'push' ? ' latches' : S.handle === 'grip' ? 's' : 's in ' + esc(HFIN[S.hfin].name.toLowerCase())}. Made to measure and drilled for your IKEA hinges; ready ${leadOf(L)} after you order${L.fronts.some(f => MATS[lookOf(f).mat].paint) ? ' (painted fronts take 1–2 weeks longer: they go to our spray shop)' : ''}.</p>
+  return `<h2>Your order</h2><p class="lede">${countWords(P)}, ${esc(EDGES[S.edge].name.toLowerCase())} edges, with ${handleWords()}. Made to measure and drilled for your IKEA hinges; ready ${leadOf(L)} after you order${L.fronts.some(f => MATS[lookOf(f).mat].paint) ? ' (painted fronts take 1–2 weeks longer: they go to our spray shop)' : ''}.</p>
     ${
       P.n
         ? `<table class="ord"><thead><tr><th></th><th>Front</th><th class="num">Size, mm</th><th class="num">Price</th></tr></thead><tbody>${rows}${
@@ -587,7 +603,7 @@ function orderText() {
     P = priceAll(L);
   return [
     `BRUIS Fronts — order request (${SYS[S.sys].name})`,
-    `Edges: ${EDGES[S.edge].name.toLowerCase()} · Handles: ${HANDLES[S.handle].name}${S.handle === 'knob' || S.handle === 'bar' || S.handle === 'tab' ? ', ' + HFIN[S.hfin].name : ''}${L.fronts.some(f => lookOf(f).style === 'fluted') ? ` · flutes ${S.flute.pitch} mm, ${S.flute.dir === 'v' ? 'vertical' : 'horizontal'}` : ''}${L.fronts.some(f => lookOf(f).style === 'grooves') ? ` · grooves every ${S.flute.gpitch} mm, ${S.flute.dir === 'v' ? 'vertical' : 'horizontal'}` : ''}${L.fronts.some(f => MATS[lookOf(f).mat].glass) ? ` · glass frame ${GFRAME[S.gframe].name.toLowerCase()}` : ''}`,
+    `Edges: ${EDGES[S.edge].name.toLowerCase()} · Handles: ${handleWords()}${L.fronts.some(f => lookOf(f).style === 'fluted') ? ` · flutes ${S.flute.pitch} mm, ${S.flute.dir === 'v' ? 'vertical' : 'horizontal'}` : ''}${L.fronts.some(f => lookOf(f).style === 'grooves') ? ` · grooves every ${S.flute.gpitch} mm, ${S.flute.dir === 'v' ? 'vertical' : 'horizontal'}` : ''}${L.fronts.some(f => MATS[lookOf(f).mat].glass) ? ` · glass frame ${GFRAME[S.gframe].name.toLowerCase()}` : ''}`,
     '',
     ...grouped(L).map(
       r =>
@@ -647,7 +663,7 @@ function printQuote() {
   q.innerHTML = `<header><b>BRUIS</b><span>Quote ${no} · ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span></header>
     ${pic ? `<img src="${pic}" alt="">` : ''}
     <h1>${SYS[S.sys].name} ${SYS[S.sys].what.toLowerCase()}: ${countWords(P)}</h1>
-    <p>Edges ${EDGES[S.edge].name.toLowerCase()} · handles ${esc(HANDLES[S.handle].name.toLowerCase())}${S.handle === 'knob' || S.handle === 'bar' || S.handle === 'tab' ? ', ' + esc(HFIN[S.hfin].name.toLowerCase()) : ''} · ready ${esc(leadOf(L))} after ordering</p>
+    <p>Edges ${EDGES[S.edge].name.toLowerCase()} · ${handleWords()} · ready ${esc(leadOf(L))} after ordering</p>
     <table><tbody>${rows}</tbody><tfoot><tr><td></td><td colspan="2">Delivery</td><td class="num">${P.del ? eur(P.del) : 'free'}</td></tr><tr class="tot"><td></td><td colspan="2">Total incl. VAT</td><td class="num">${eur(P.total)}</td></tr></tfoot></table>
     <p>${S.planCheck ? 'Includes our free plan check: we go through your IKEA list and every size with you before anything is cut.' : ''} Hinges and drawer fittings are IKEA's own and not included.</p>
     <p class="link">Open this design again: ${esc(shareLink())}</p>
@@ -984,7 +1000,6 @@ document.addEventListener('click', e => {
       break;
     case 'handle':
       S.handle = a;
-      if (a === 'tab' && S.hfin === 'steel') S.hfin = 'black';
       break;
     case 'hfin':
       S.hfin = a;

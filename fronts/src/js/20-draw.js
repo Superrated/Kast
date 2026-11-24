@@ -96,7 +96,7 @@ function frontSVG(f, Y, sfx) {
       ox = f.hinge === 'L' ? x + w : x;
     o += `<path d="M${ox} ${y} L${hx} ${y + h / 2} L${ox} ${y + h}" fill="none" stroke="${dark}" stroke-opacity=".3" stroke-width="2" stroke-dasharray="14 10"/>`;
   }
-  o += handleSVG(f, Y, lk);
+  o += handleSVG(f, Y);
   if (sel)
     o += `<rect x="${x + 4}" y="${y + 4}" width="${w - 8}" height="${h - 8}" fill="none" stroke="var(--accent)" stroke-width="10"/>`;
   return o + '</g>';
@@ -111,37 +111,24 @@ function handlePos(f) {
   else y = f.ckind === 'wall' ? f.y + 90 : f.y + f.h - 90;
   return { x, y, vert: true };
 }
-function handleHex(lk, f) {
-  if (S.hfin === 'match') return shade(faceHex(lk), -0.2);
-  if (S.hfin === 'mixed') return f && f.kind === 'drawer' ? HFIN.nickel.hex : HFIN.brass.hex;
-  return HFIN[S.hfin].hex;
+function handleHex() {
+  return (HFIN[S.hfin] || HFIN.oak).hex;
 }
-function handleSVG(f, Y, lk) {
+function handleSVG(f, Y) {
   const hd = S.handle;
-  if (hd === 'push') return '';
-  const col = handleHex(lk, f),
+  if (!HANDLES[hd]) return '';
+  const col = handleHex(),
     P = handlePos(f),
     cx = P.x,
     cy = Y(P.y);
   if (hd === 'knob')
-    return `<circle cx="${cx}" cy="${cy}" r="16" fill="${col}" stroke="#000" stroke-opacity=".25" stroke-width="2"/><circle cx="${cx - 4}" cy="${cy - 4}" r="5" fill="#fff" fill-opacity=".35"/>`;
+    return `<circle cx="${cx}" cy="${cy}" r="19" fill="${col}"/><circle cx="${cx}" cy="${cy}" r="19" fill="none" stroke="#000" stroke-opacity=".22" stroke-width="2"/><circle cx="${cx - 3}" cy="${cy - 4}" r="11" fill="#fff" fill-opacity=".14"/>`;
   if (hd === 'bar')
     return P.vert
-      ? `<rect x="${cx - 6}" y="${cy - 80}" width="12" height="160" rx="6" fill="${col}" stroke="#000" stroke-opacity=".25" stroke-width="2"/>`
-      : `<rect x="${cx - 80}" y="${cy - 6}" width="160" height="12" rx="6" fill="${col}" stroke="#000" stroke-opacity=".25" stroke-width="2"/>`;
-  const yT = Y(f.y + f.h);
-  if (hd === 'grip') {
-    if (f.kind === 'drawer')
-      return `<path d="M${cx - 45} ${yT} A45 30 0 0 0 ${cx + 45} ${yT} Z" fill="#000" fill-opacity=".55"/>`;
-    const ex = f.hinge === 'L' ? f.x + f.w : f.x,
-      s = f.hinge === 'L' ? 0 : 1;
-    return `<path d="M${ex} ${cy - 55} A30 55 0 0 ${s} ${ex} ${cy + 55} Z" fill="#000" fill-opacity=".55"/>`;
-  }
-  if (hd === 'tab') {
-    if (f.kind === 'drawer') return `<rect x="${cx - 22}" y="${yT - 18}" width="44" height="40" rx="6" fill="${col}"/>`;
-    const ex = f.hinge === 'L' ? f.x + f.w - 10 : f.x - 20;
-    return `<rect x="${ex}" y="${cy - 22}" width="30" height="44" rx="6" fill="${col}"/>`;
-  }
+      ? `<rect x="${cx - 7}" y="${cy - 80}" width="14" height="160" rx="7" fill="${col}" stroke="#000" stroke-opacity=".22" stroke-width="2"/>`
+      : `<rect x="${cx - 80}" y="${cy - 7}" width="160" height="14" rx="7" fill="${col}" stroke="#000" stroke-opacity=".22" stroke-width="2"/>`;
+  if (hd === 'hole')
+    return `<circle cx="${cx}" cy="${cy}" r="15" fill="#17130f"/><circle cx="${cx}" cy="${cy}" r="15" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>`;
   return '';
 }
 function drawPic() {
@@ -161,16 +148,7 @@ function drawPic() {
         s += `<line x1="${p.x + 18}" x2="${p.x + p.w - 18}" y1="${Y(p.y + (k * p.h) / n)}" y2="${Y(p.y + (k * p.h) / n)}" stroke="#c9cac5" stroke-width="10"/>`;
     }
   });
-  if (L.plinth && S.sys === 'metod' && S.plinth === 'feet')
-    L.cabs
-      .filter(p => p.c.kind !== 'wall')
-      .forEach(p =>
-        [p.x + 45, p.x + p.w - 45].forEach(
-          x =>
-            (s += `<path d="M${x - 17} ${Y(L.plinth)} L${x + 17} ${Y(L.plinth)} L${x + 11} ${Y(0)} L${x - 11} ${Y(0)} Z" fill="${HFIN.brass.hex}"/>`)
-        )
-      );
-  else if (L.plinth && S.sys === 'metod') {
+  if (L.plinth && S.sys === 'metod') {
     const bw = Math.max(0, ...L.cabs.filter(p => p.c.kind !== 'wall').map(p => p.x + p.w));
     s += `<rect x="0" y="${Y(L.plinth)}" width="${bw}" height="${L.plinth - 10}" fill="${shade(faceHex(lookOf(null)), -0.3)}"/>`;
   }

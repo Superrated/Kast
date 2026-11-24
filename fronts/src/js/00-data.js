@@ -229,27 +229,21 @@ const RAL = {};
 });
 
 /* handles: price per front (handle or latch), and how they are drawn */
+/* handles: three quiet wooden choices. 'push' is used internally for "no handle" (the style close-ups) */
 const HANDLES = {
-  push: { name: 'Push to open', blurb: 'No handle — press the front', price: 9 },
-  knob: { name: 'Knob', blurb: 'Round, 30 mm', price: 14 },
-  bar: { name: 'Bar', blurb: '160 mm, slim', price: 22 },
-  grip: { name: 'Cut-out grip', blurb: 'A half moon routed in the edge', price: 12 },
-  tab: { name: 'Leather tab', blurb: 'A soft pull on the edge', price: 16 }
+  knob: { name: 'Wooden knob', blurb: 'A turned mushroom knob, 38 mm', price: 16 },
+  bar: { name: 'Wooden handle', blurb: 'A slim rounded rail, 160 mm', price: 24 },
+  hole: { name: 'Finger hole', blurb: 'A 30 mm hole through the front, edges softened', price: 8 }
 };
+/* the wood of knobs and handles */
 const HFIN = {
-  brass: { name: 'Aged brass', hex: '#A8843F' },
-  nickel: { name: 'Polished nickel', hex: '#CDCFD0' },
-  mixed: { name: 'Mixed metals', hex: null, blurb: 'aged brass on doors, nickel on drawers' },
-  black: { name: 'Black', hex: '#1E1E1E' },
-  steel: { name: 'Brushed steel', hex: '#A7AAAD' },
   oak: { name: 'Oak', hex: '#C9A26E' },
-  match: { name: 'Same as the front', hex: null }
+  walnut: { name: 'Walnut', hex: '#5C3A26' }
 };
 
 /* extras around the fronts */
 const EXTRAS = {
   plinthPerM: 55, // a plinth (kick plate) in the look of the fronts, per metre of run
-  feet: 48, // furniture feet for one kitchen cabinet (four), instead of a plinth
   filler: 35, // a filler strip in the look of the fronts, up to 10 cm wide, any height
   sampleBox: 25, // every colour and material as a 10 × 15 cm chip; the €25 comes off the order
   planCheckFrom: 0 // checking your IKEA list and every size before we cut: free

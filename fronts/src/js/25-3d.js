@@ -87,7 +87,10 @@ function loadRoom() {
         f[o + 2] = d[i + 2] * e;
         f[o + 3] = 1;
       }
-    const et = new T.DataTexture(f, c.width, c.height, T.RGBAFormat, T.FloatType);
+    // half floats: every phone can filter them (full floats often can't, and the room went black)
+    const hf = new Uint16Array(f.length);
+    for (let i = 0; i < f.length; i++) hf[i] = T.DataUtils.toHalfFloat(Math.min(f[i], 65000));
+    const et = new T.DataTexture(hf, c.width, c.height, T.RGBAFormat, T.HalfFloatType);
     et.mapping = T.EquirectangularReflectionMapping;
     et.magFilter = et.minFilter = T.LinearFilter;
     et.needsUpdate = true;
@@ -645,43 +648,22 @@ function build3D(noDraw) {
     for (let k = 1; k < n; k++)
       box(p.w - 2 * t, t, d - 30, white, p.x + p.w / 2, p.y + (k * p.h) / n, z0 + (d - 30) / 2, false);
   });
-  if (S.sys === 'metod' && S.plinth === 'feet') {
-    // furniture feet: a kitchen that stands like furniture, four turned feet under every floor cabinet
-    const fm = new T.MeshStandardMaterial({
-      color: S.hfin === 'mixed' || S.hfin === 'match' ? HFIN.brass.hex : HFIN[S.hfin].hex,
-      roughness: S.hfin === 'oak' ? 0.55 : 0.3,
-      metalness: S.hfin === 'oak' || S.hfin === 'black' ? 0.1 : 0.85
-    });
-    L.cabs
-      .filter(p => p.c.kind !== 'wall')
-      .forEach(p =>
-        [p.x + 45, p.x + p.w - 45].forEach(x =>
-          [-Dmax + 70, -Dmax + dOf(p.c) - 70].forEach(z => {
-            const g = new T.Mesh(new T.CylinderGeometry(17, 11, L.plinth, 20), fm);
-            g.position.set(x, L.plinth / 2, z);
-            g.castShadow = true;
-            root.add(g);
-          })
-        )
-      );
-  }
   if (S.sys === 'metod') {
     const bases = L.cabs.filter(p => p.c.kind !== 'wall');
     if (bases.length) {
       const a = Math.min(...bases.map(p => p.x)),
         b = Math.max(...bases.map(p => p.x + p.w));
-      if (S.plinth !== 'feet')
-        box(
-          b - a,
-          L.plinth - 10,
-          18,
-          S.plinth === 'match'
-            ? matFor(Object.assign({}, sideLook(), { style: 'flat' }), { w: b - a, h: L.plinth })
-            : new T.MeshStandardMaterial({ color: '#2a2a28', roughness: 0.6 }),
-          (a + b) / 2,
-          (L.plinth - 10) / 2,
-          -40
-        );
+      box(
+        b - a,
+        L.plinth - 10,
+        18,
+        S.plinth === 'match'
+          ? matFor(Object.assign({}, sideLook(), { style: 'flat' }), { w: b - a, h: L.plinth })
+          : new T.MeshStandardMaterial({ color: '#2a2a28', roughness: 0.6 }),
+        (a + b) / 2,
+        (L.plinth - 10) / 2,
+        -40
+      );
       const tops = L.cabs.filter(p => p.c.kind === 'base');
       if (tops.length) {
         const a2 = Math.min(...tops.map(p => p.x)),
@@ -879,47 +861,64 @@ function plant3D(T, root, px, pz) {
   }
 }
 function handle3D(f, lk, root, cache, FT) {
-  if (S.handle === 'push') return;
+  if (!HANDLES[S.handle]) return;
   const T = V3.T,
     P = handlePos(f),
-    hex = handleHex(lk, f),
-    mk =
-      cache[hex] ||
-      (cache[hex] = new T.MeshStandardMaterial({
-        color: hex,
-        roughness: S.hfin === 'oak' || S.hfin === 'match' ? 0.55 : 0.3,
-        metalness: S.hfin === 'brass' || S.hfin === 'steel' || S.hfin === 'nickel' || S.hfin === 'mixed' ? 0.85 : 0.1
-      })),
-    z = FT + 1;
-  const add = (geo, x, y, zz, rx, rz) => {
-    const ms = new T.Mesh(geo, mk);
-    ms.position.set(x, y, zz);
-    if (rx) ms.rotation.x = rx;
-    if (rz) ms.rotation.z = rz;
-    ms.castShadow = true;
-    root.add(ms);
-  };
+    z = FT + 1,
+    wood =
+      cache.wood ||
+      (cache.wood = (() => {
+        const t = woodTex(S.hfin === 'walnut' ? 'walnut' : 'oak').clone();
+        t.needsUpdate = true;
+        t.repeat.set(0.12, 0.05);
+        return new T.MeshPhysicalMaterial({ map: t, roughness: 0.45, clearcoat: 0.25, clearcoatRoughness: 0.5 });
+      })()),
+    add = (geo, mat, x, y, zz, rx, rz) => {
+      const ms = new T.Mesh(geo, mat);
+      ms.position.set(x, y, zz);
+      if (rx) ms.rotation.x = rx;
+      if (rz) ms.rotation.z = rz;
+      ms.castShadow = true;
+      root.add(ms);
+    };
   if (S.handle === 'knob') {
-    add(new T.CylinderGeometry(6, 6, 18, 16), P.x, P.y, z + 9, Math.PI / 2);
-    add(new T.SphereGeometry(16, 24, 16), P.x, P.y, z + 26);
+    // a turned mushroom knob: a slim neck and a soft, slightly domed cap
+    const prof = [
+      [0, 0],
+      [8, 0],
+      [8, 9],
+      [10, 11],
+      [16.5, 14],
+      [19, 17.5],
+      [18.5, 21],
+      [15, 24],
+      [8, 25.5],
+      [0, 26]
+    ].map(([r, y]) => new T.Vector2(r, y));
+    add(new T.LatheGeometry(prof, 32), wood, P.x, P.y, z, Math.PI / 2);
   } else if (S.handle === 'bar') {
-    add(new T.CylinderGeometry(6, 6, 160, 16), P.x, P.y, z + 28, 0, P.vert ? 0 : Math.PI / 2);
-    [-64, 64].forEach(d =>
-      add(new T.CylinderGeometry(4, 4, 28, 12), P.vert ? P.x : P.x + d, P.vert ? P.y + d : P.y, z + 14, Math.PI / 2)
+    // a slim rounded rail on two short posts
+    add(new T.CapsuleGeometry(7, 146, 6, 16), wood, P.x, P.y, z + 26, 0, P.vert ? 0 : Math.PI / 2);
+    [-60, 60].forEach(d =>
+      add(
+        new T.CylinderGeometry(5, 6, 22, 16),
+        wood,
+        P.vert ? P.x : P.x + d,
+        P.vert ? P.y + d : P.y,
+        z + 11,
+        Math.PI / 2
+      )
     );
-  } else if (S.handle === 'tab') {
-    const x = f.kind === 'drawer' ? P.x : f.hinge === 'L' ? f.x + f.w + 4 : f.x - 4,
-      y = f.kind === 'drawer' ? f.y + f.h + 4 : P.y;
-    add(new T.BoxGeometry(f.kind === 'drawer' ? 44 : 22, f.kind === 'drawer' ? 22 : 44, 4), x, y, z + 2);
-  } else if (S.handle === 'grip') {
-    const dark = new T.MeshStandardMaterial({ color: '#1b1b1b', roughness: 0.9 }),
-      g = new T.Mesh(new T.BoxGeometry(f.kind === 'drawer' ? 90 : 14, f.kind === 'drawer' ? 14 : 110, 3), dark);
-    g.position.set(
-      f.kind === 'drawer' ? P.x : f.hinge === 'L' ? f.x + f.w - 7 : f.x + 7,
-      f.kind === 'drawer' ? f.y + f.h - 7 : P.y,
-      z + 0.5
+  } else if (S.handle === 'hole') {
+    // a finger hole: the dark of the cabinet behind, with a softened lip
+    const dark = cache.dark || (cache.dark = new T.MeshBasicMaterial({ color: '#100d0a' }));
+    add(new T.CircleGeometry(15, 32), dark, P.x, P.y, z + 0.3);
+    const lip = new T.Mesh(
+      new T.TorusGeometry(15.5, 1.6, 8, 32),
+      new T.MeshStandardMaterial({ color: shade(faceHex(lk), -0.35), roughness: 0.7 })
     );
-    root.add(g);
+    lip.position.set(P.x, P.y, z);
+    root.add(lip);
   }
 }
 
