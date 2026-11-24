@@ -75,26 +75,6 @@ const RECIPES = [
     }
   },
   {
-    name: '2027: Kader',
-    trend: true,
-    make(r) {
-      const [a, b] = pick(r, [
-        ['chalk', 'olive'],
-        ['taupe', 'oxblood'],
-        ['chalk', 'dusty'],
-        ['celery', 'clay'],
-        ['blush', 'oxblood']
-      ]);
-      return {
-        all: { mat: 'painted', col: a, col2: b, style: 'band' },
-        by: { tall: { col: b, style: 'flat' } },
-        handle: pick(r, ['knob', 'bar']),
-        hfin: pick(r, ['nickel', 'brass', 'mixed']),
-        say: `${COLOURS[a].name} with ${COLOURS[b].name.toLowerCase()} borders`
-      };
-    }
-  },
-  {
     name: '2027: two woods',
     trend: true,
     make(r) {
@@ -255,7 +235,6 @@ function applyPlan(plan, r) {
   S.style = plan.all.style || 'flat';
   S.mat = plan.all.mat;
   if (plan.all.col) S.col = plan.all.col;
-  if (plan.all.col2) S.col2 = plan.all.col2;
   S.oil = plan.all.oil || 'pure';
   S.fx = {};
   const count = {};
@@ -267,13 +246,7 @@ function applyPlan(plan, r) {
     if (o.every && count[role] % o.every) return; // e.g. every other tall door in glass
     const lk = Object.assign({}, plan.all, o);
     delete lk.every;
-    if (
-      lk.mat !== S.mat ||
-      lk.style !== S.style ||
-      (lk.col && lk.col !== S.col) ||
-      (lk.oil && lk.oil !== S.oil) ||
-      (lk.col2 && lk.col2 !== S.col2)
-    )
+    if (lk.mat !== S.mat || lk.style !== S.style || (lk.col && lk.col !== S.col) || (lk.oil && lk.oil !== S.oil))
       S.fx[f.id] = lk;
   });
   if (plan.gframe) S.gframe = plan.gframe;

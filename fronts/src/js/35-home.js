@@ -22,11 +22,11 @@ function homeHTML() {
     </div></div>
     <section class="hsec hsteps"><h2>How it works</h2><ol>
       <li><b>Paste your IKEA list</b><span>From the IKEA planner, your cart or your order. We read the cabinets and their sizes in seconds — no drawings, no waiting for a quote.</span></li>
-      <li><b>Choose your fronts</b><span>Effen, Riet or Voeg; twelve colours, oak, walnut or plywood; edges, side panels and handles. You see it in the room as you go.</span></li>
+      <li><b>Choose your fronts</b><span>Effen, Riet or Voeg; seventeen colours, oak, walnut or plywood; edges, side panels and handles. You see it in the room as you go.</span></li>
       <li><b>We check, make and deliver</b><span>We go through every size with you before anything is cut, make your fronts to measure and deliver them drilled for your IKEA hinges.</span></li></ol></section>
     <section class="hsec"><div class="hhead"><h2>Start from a design</h2><p>Open one, then change anything. Prices are for the whole design, delivered.</p></div><div class="hdemos">${demos}</div></section>
     <section class="hsec h27"><div class="h27t"><h2>The 2027 edit</h2>
-      <p>Next year belongs to green — soft sage and celery, olive and deep forest — with warm taupes and clay browns beside it. Kitchens get darker woods, two woods together, painted borders, mixed metals and feet, so they stand like furniture. We added all of it to the range.</p>
+      <p>Next year belongs to green — soft sage and celery, olive and deep forest — with warm taupes and clay browns beside it. Kitchens get darker woods, two woods together, mixed metals and feet, so they stand like furniture. We added all of it to the range.</p>
       <button type="button" class="btn" data-act="trend">Try a 2027 look</button></div>
       <div class="h27c">${Object.entries(COLOURS)
         .filter(([, c]) => c.trend)

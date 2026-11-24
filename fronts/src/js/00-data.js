@@ -105,15 +105,7 @@ function woodCol(mat, oil) {
 const STYLES = {
   flat: { name: 'Effen', en: 'flat', blurb: 'Flat and calm, the classic', f: 1 },
   fluted: { name: 'Riet', en: 'fluted', blurb: 'Rounded flutes like reeds, routed into MDF', f: 1.3, mdf: true },
-  grooves: { name: 'Voeg', en: 'grooves', blurb: 'Fine V-grooves in MDF, calm and graphic', f: 1.3, mdf: true },
-  // 2027: a painted border in a second colour, a few centimetres in from the edge
-  band: {
-    name: 'Kader',
-    en: 'painted border',
-    blurb: 'A painted border in a second colour — new for 2027',
-    f: 1.25,
-    paintOnly: true
-  }
+  grooves: { name: 'Voeg', en: 'grooves', blurb: 'Fine V-grooves in MDF, calm and graphic', f: 1.3, mdf: true }
 };
 const FLUTE = {
   pitch: [

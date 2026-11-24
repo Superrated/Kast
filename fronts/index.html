@@ -2572,15 +2572,7 @@ function woodCol(mat, oil) {
 const STYLES = {
   flat: { name: 'Effen', en: 'flat', blurb: 'Flat and calm, the classic', f: 1 },
   fluted: { name: 'Riet', en: 'fluted', blurb: 'Rounded flutes like reeds, routed into MDF', f: 1.3, mdf: true },
-  grooves: { name: 'Voeg', en: 'grooves', blurb: 'Fine V-grooves in MDF, calm and graphic', f: 1.3, mdf: true },
-  // 2027: a painted border in a second colour, a few centimetres in from the edge
-  band: {
-    name: 'Kader',
-    en: 'painted border',
-    blurb: 'A painted border in a second colour — new for 2027',
-    f: 1.25,
-    paintOnly: true
-  }
+  grooves: { name: 'Voeg', en: 'grooves', blurb: 'Fine V-grooves in MDF, calm and graphic', f: 1.3, mdf: true }
 };
 const FLUTE = {
   pitch: [
@@ -2762,7 +2754,6 @@ function freshState(sys) {
     edge: 'round',
     sides: 'none',
     plinth: 'ikea', // the plinth under a kitchen: IKEA's own, one in the look of the fronts, or furniture feet
-    col2: 'olive', // the border colour of Kader fronts
     fillers: 0, // filler strips in the look of the fronts
     planCheck: true,
     gframe: 'black',
@@ -2827,7 +2818,6 @@ if (!OILS[S.oil]) S.oil = 'pure';
 if (!EDGES[S.edge]) S.edge = 'round';
 if (!SIDES[S.sides]) S.sides = 'none';
 if (!['ikea', 'match', 'feet'].includes(S.plinth)) S.plinth = 'ikea';
-if (!COLOURS[S.col2]) S.col2 = 'olive';
 if (!(S.fillers >= 0 && S.fillers <= 6)) S.fillers = 0;
 if (S.planCheck === undefined) S.planCheck = true;
 function save() {
@@ -3075,8 +3065,7 @@ function matOk(style, mat) {
   const m = MATS[mat];
   if (!m || !STYLES[style]) return false;
   if (m.only) return m.only === style;
-  /* flutes and grooves are routed into MDF only (painted or raw); wood and ply stay flat; a border is painted */
-  if (STYLES[style].paintOnly) return !!m.paint;
+  /* flutes and grooves are routed into MDF only (painted or raw); wood and ply stay flat */
   return !STYLES[style].mdf || !!m.mdf;
 }
 function lookOf(f) {
@@ -3086,13 +3075,11 @@ function lookOf(f) {
       mat: o.mat || S.mat,
       col: o.col || S.col,
       oil: o.oil || S.oil,
-      col2: o.col2 || S.col2,
       own: !!S.fx[f && f.id]
     };
   if (!MATS[lk.mat]) lk.mat = 'painted';
   if (!COLOURS[lk.col]) lk.col = 'chalk';
   if (!OILS[lk.oil]) lk.oil = 'pure';
-  if (!COLOURS[lk.col2]) lk.col2 = 'olive';
   if (!STYLES[lk.style]) lk.style = 'flat';
   if (MATS[lk.mat].only) lk.style = MATS[lk.mat].only;
   else if (!matOk(lk.style, lk.mat)) lk.style = 'flat';
@@ -3100,11 +3087,11 @@ function lookOf(f) {
 }
 function lookName(lk) {
   const m = MATS[lk.mat];
-  return `${STYLES[lk.style].name} (${STYLES[lk.style].en}) ${m.paint ? COLOURS[lk.col].name.toLowerCase() : m.name.toLowerCase()}${m.oil ? ', oil ' + OILS[lk.oil].name : ''}${lk.style === 'band' ? ` with a ${COLOURS[lk.col2].name.toLowerCase()} border` : ''}`;
+  return `${STYLES[lk.style].name} (${STYLES[lk.style].en}) ${m.paint ? COLOURS[lk.col].name.toLowerCase() : m.name.toLowerCase()}${m.oil ? ', oil ' + OILS[lk.oil].name : ''}`;
 }
 function lookKey(lk) {
   const m = MATS[lk.mat];
-  return `${lk.style}|${lk.mat}|${m.paint ? lk.col : m.oil ? lk.oil : ''}${lk.style === 'band' ? '|' + lk.col2 : ''}`;
+  return `${lk.style}|${lk.mat}|${m.paint ? lk.col : m.oil ? lk.oil : ''}`;
 }
 
 /* ---------- price ---------- */
@@ -3213,7 +3200,6 @@ const SHARE_KEYS = [
   'style',
   'mat',
   'col',
-  'col2',
   'oil',
   'handle',
   'hfin',
@@ -3349,10 +3335,6 @@ function frontSVG(f, Y, sfx) {
       o += `<rect x="${x + 4}" y="${y + 4}" width="${w - 8}" height="${h - 8}" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2"/>`;
     if (lk.style === 'fluted') o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#flute${x_})"/>`;
     if (lk.style === 'grooves') o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#groove${x_})"/>`;
-    if (lk.style === 'band') {
-      const i = Math.min(40, w * 0.09, h * 0.09);
-      o += `<rect x="${x + i}" y="${y + i}" width="${w - 2 * i}" height="${h - 2 * i}" fill="none" stroke="${colHex(lk.col2)}" stroke-width="${Math.max(10, i * 0.42)}"/>`;
-    }
     // plywood shows its layers on the edge
     if (m.ply)
       o += `<rect x="${x + 1}" y="${y + 1}" width="${w - 2}" height="${h - 2}" fill="none" stroke="${shade(woodCol(lk.mat, lk.oil).wood, -0.3)}" stroke-opacity=".6" stroke-width="3" stroke-dasharray="6 3"/>`;
@@ -3871,7 +3853,6 @@ function thumbKey(key, st) {
       st.hfin || S.hfin,
       st.sides || 'none',
       st.edge || S.edge,
-      st.col2 || S.col2,
       st.plinth || 'ikea'
     ].join('|')
   );
@@ -4129,8 +4110,7 @@ function sceneKey() {
     S.flute,
     S.sides,
     S.edge,
-    S.plinth,
-    S.col2
+    S.plinth
   ]);
 }
 function build3D(noDraw) {
@@ -4307,17 +4287,6 @@ function build3D(noDraw) {
       root.add(fl);
       V3.meshes.push(fl);
     } else hit = rbox(f.w, f.h, FT, matFor(lk, f), cx, cy, cz);
-    if (lk.style === 'band') {
-      // Kader: a painted border, a hair proud of the face so it reads as paint
-      const i = Math.min(40, f.w * 0.09, f.h * 0.09),
-        bw = Math.max(10, i * 0.42),
-        bm = new T.MeshStandardMaterial({ color: colHex(lk.col2), roughness: 0.55 }),
-        z = cz + FT / 2 + 0.4;
-      box(f.w - 2 * i + bw, bw, 0.6, bm, cx, f.y + f.h - i, z, false);
-      box(f.w - 2 * i + bw, bw, 0.6, bm, cx, f.y + i, z, false);
-      box(bw, f.h - 2 * i - bw, 0.6, bm, f.x + i, cy, z, false);
-      box(bw, f.h - 2 * i - bw, 0.6, bm, f.x + f.w - i, cy, z, false);
-    }
     hit.userData.fid = f.id;
     V3.meshes.push(hit);
     handle3D(f, lk, root, hcache, FT);
@@ -5131,7 +5100,6 @@ function lookEdHTML(target, lk) {
             style: k,
             mat: m,
             col: lk.col,
-            col2: lk.col2,
             oil: lk.oil,
             handle: 'push',
             zoom: true
@@ -5154,17 +5122,7 @@ function lookEdHTML(target, lk) {
         )
         .join(
           ''
-        )}</div><p class="hint">${esc(COLOURS[lk.col].name)} is RAL ${COLOURS[lk.col].ral} ${esc((RAL[COLOURS[lk.col].ral] || {}).name || '')}, so any paint shop can match it later.${COLOURS[lk.col].trend ? ' One of the 2027 colours.' : ''}</p>${
-        lk.style === 'band'
-          ? `<h3>Border colour</h3><div class="sws">${Object.entries(COLOURS)
-              .filter(([k]) => k !== lk.col)
-              .map(
-                ([k, c]) =>
-                  `<button type="button" class="swb ${k === lk.col2 ? 'on' : ''}${c.trend ? ' tr' : ''}" data-act="lk" data-a="${t}|col2|${k}" title="${esc(c.name)} · RAL ${c.ral}" style="background:${colHex(k)}"><span>${esc(c.name)}</span></button>`
-              )
-              .join('')}</div>`
-          : ''
-      }`
+        )}</div><p class="hint">${esc(COLOURS[lk.col].name)} is RAL ${COLOURS[lk.col].ral} ${esc((RAL[COLOURS[lk.col].ral] || {}).name || '')}, so any paint shop can match it later.${COLOURS[lk.col].trend ? ' One of the 2027 colours.' : ''}</p>`
     : MATS[lk.mat].oil
       ? `<h3>Oil colour</h3><div class="sws">${Object.entries(OILS)
           .map(
@@ -5175,7 +5133,7 @@ function lookEdHTML(target, lk) {
             ''
           )}</div><p class="hint">Rubio Monocoat Oil Plus 2C, ${esc(OILS[lk.oil].name)}: ${esc(OILS[lk.oil].blurb.toLowerCase())}. One coat, food-safe once cured, and you can touch up a scratch with a drop of oil.</p>`
       : '';
-  return `<h3>Style</h3><div class="stcs two">${styles}</div><h3>Material</h3><p class="hint">Riet and Voeg are routed into MDF and Kader is painted, so wood and plywood come Effen (flat).</p><div class="mats">${mats}</div>${cols}`;
+  return `<h3>Style</h3><div class="stcs two">${styles}</div><h3>Material</h3><p class="hint">Riet and Voeg are routed into MDF, so wood and plywood come Effen (flat).</p><div class="mats">${mats}</div>${cols}`;
 }
 function frontsHTML(L) {
   let h = `<h2>Your fronts</h2><p class="lede">19 mm thick, made to the exact IKEA sizes and drilled for the IKEA hinges you already have. Choose one look for all of them, then tap any front in the picture to give it its own.</p>
@@ -5194,7 +5152,7 @@ function frontsHTML(L) {
       ${lk.own ? lookEdHTML(f.id, lk) : ''}
       <div class="adds">${lk.own && sib > 1 ? `<button type="button" class="btn sm" data-act="copycab">Same for the whole cabinet</button>` : ''}${f.hinge ? `<button type="button" class="btn sm" data-act="flip">Hinge ${f.hinge === 'L' ? 'left' : 'right'} → swap</button>` : ''}</div></div>`;
   }
-  const all = { style: S.style, mat: S.mat, col: S.col, oil: S.oil, col2: S.col2 };
+  const all = { style: S.style, mat: S.mat, col: S.col, oil: S.oil };
   h += `<h3 class="big">${f ? 'All the other fronts' : 'All fronts'}</h3>${lookEdHTML('all', all)}`;
   const sl = sideLook();
   h += `<h3>Side panels</h3>${seg(
@@ -5438,15 +5396,15 @@ function setLook(target, field, val) {
   if (target === 'all') {
     S[field] = val;
     if (field === 'mat' && !matOk(S.style, val)) S.style = MATS[val].only || 'flat';
-    if (field === 'style' && !matOk(val, S.mat)) S.mat = matOk(val, mdfFor(S.mat)) ? mdfFor(S.mat) : 'painted';
+    if (field === 'style' && !matOk(val, S.mat)) S.mat = mdfFor(S.mat);
     S.recipe = null;
     return;
   }
   const cur = lookOf({ id: target }),
-    nx = { style: cur.style, mat: cur.mat, col: cur.col, oil: cur.oil, col2: cur.col2 };
+    nx = { style: cur.style, mat: cur.mat, col: cur.col, oil: cur.oil };
   nx[field] = val;
   if (field === 'mat' && !matOk(nx.style, val)) nx.style = MATS[val].only || 'flat';
-  if (field === 'style' && !matOk(val, nx.mat)) nx.mat = matOk(val, mdfFor(nx.mat)) ? mdfFor(nx.mat) : 'painted';
+  if (field === 'style' && !matOk(val, nx.mat)) nx.mat = mdfFor(nx.mat);
   S.fx[target] = nx;
 }
 
@@ -5659,7 +5617,7 @@ document.addEventListener('click', e => {
     case 'own':
       if (S.sel) {
         if (a === 'same') delete S.fx[S.sel];
-        else S.fx[S.sel] = { style: S.style, mat: S.mat, col: S.col, oil: S.oil, col2: S.col2 };
+        else S.fx[S.sel] = { style: S.style, mat: S.mat, col: S.col, oil: S.oil };
       }
       break;
     case 'copycab': {
@@ -5839,11 +5797,11 @@ function homeHTML() {
     </div></div>
     <section class="hsec hsteps"><h2>How it works</h2><ol>
       <li><b>Paste your IKEA list</b><span>From the IKEA planner, your cart or your order. We read the cabinets and their sizes in seconds — no drawings, no waiting for a quote.</span></li>
-      <li><b>Choose your fronts</b><span>Effen, Riet or Voeg; twelve colours, oak, walnut or plywood; edges, side panels and handles. You see it in the room as you go.</span></li>
+      <li><b>Choose your fronts</b><span>Effen, Riet or Voeg; seventeen colours, oak, walnut or plywood; edges, side panels and handles. You see it in the room as you go.</span></li>
       <li><b>We check, make and deliver</b><span>We go through every size with you before anything is cut, make your fronts to measure and deliver them drilled for your IKEA hinges.</span></li></ol></section>
     <section class="hsec"><div class="hhead"><h2>Start from a design</h2><p>Open one, then change anything. Prices are for the whole design, delivered.</p></div><div class="hdemos">${demos}</div></section>
     <section class="hsec h27"><div class="h27t"><h2>The 2027 edit</h2>
-      <p>Next year belongs to green — soft sage and celery, olive and deep forest — with warm taupes and clay browns beside it. Kitchens get darker woods, two woods together, painted borders, mixed metals and feet, so they stand like furniture. We added all of it to the range.</p>
+      <p>Next year belongs to green — soft sage and celery, olive and deep forest — with warm taupes and clay browns beside it. Kitchens get darker woods, two woods together, mixed metals and feet, so they stand like furniture. We added all of it to the range.</p>
       <button type="button" class="btn" data-act="trend">Try a 2027 look</button></div>
       <div class="h27c">${Object.entries(COLOURS)
         .filter(([, c]) => c.trend)
@@ -6232,26 +6190,6 @@ const RECIPES = [
     }
   },
   {
-    name: '2027: Kader',
-    trend: true,
-    make(r) {
-      const [a, b] = pick(r, [
-        ['chalk', 'olive'],
-        ['taupe', 'oxblood'],
-        ['chalk', 'dusty'],
-        ['celery', 'clay'],
-        ['blush', 'oxblood']
-      ]);
-      return {
-        all: { mat: 'painted', col: a, col2: b, style: 'band' },
-        by: { tall: { col: b, style: 'flat' } },
-        handle: pick(r, ['knob', 'bar']),
-        hfin: pick(r, ['nickel', 'brass', 'mixed']),
-        say: `${COLOURS[a].name} with ${COLOURS[b].name.toLowerCase()} borders`
-      };
-    }
-  },
-  {
     name: '2027: two woods',
     trend: true,
     make(r) {
@@ -6412,7 +6350,6 @@ function applyPlan(plan, r) {
   S.style = plan.all.style || 'flat';
   S.mat = plan.all.mat;
   if (plan.all.col) S.col = plan.all.col;
-  if (plan.all.col2) S.col2 = plan.all.col2;
   S.oil = plan.all.oil || 'pure';
   S.fx = {};
   const count = {};
@@ -6424,13 +6361,7 @@ function applyPlan(plan, r) {
     if (o.every && count[role] % o.every) return; // e.g. every other tall door in glass
     const lk = Object.assign({}, plan.all, o);
     delete lk.every;
-    if (
-      lk.mat !== S.mat ||
-      lk.style !== S.style ||
-      (lk.col && lk.col !== S.col) ||
-      (lk.oil && lk.oil !== S.oil) ||
-      (lk.col2 && lk.col2 !== S.col2)
-    )
+    if (lk.mat !== S.mat || lk.style !== S.style || (lk.col && lk.col !== S.col) || (lk.oil && lk.oil !== S.oil))
       S.fx[f.id] = lk;
   });
   if (plan.gframe) S.gframe = plan.gframe;
@@ -6467,18 +6398,18 @@ const DEMOS = [
     plinth: 'feet'
   },
   {
-    name: 'Kader wardrobe',
+    name: 'Olive wardrobe',
     trend: true,
-    say: 'Chalk white with dusty blue painted borders, nickel knobs',
+    say: 'Fluted olive green, polished nickel bars, panels on both sides',
     sys: 'pax',
     cabs: [
       ['frame', 100, 236, 'doors'],
       ['frame', 50, 236, 'doors'],
       ['frame', 100, 236, 'doors']
     ],
-    all: { mat: 'painted', col: 'chalk', col2: 'dusty', style: 'band' },
+    all: { mat: 'painted', col: 'olive', style: 'fluted' },
     by: {},
-    handle: 'knob',
+    handle: 'bar',
     hfin: 'nickel',
     sides: 'both',
     edge: 'round'
@@ -6635,7 +6566,6 @@ function demoState(i) {
     handle: S.handle,
     hfin: S.hfin,
     gframe: S.gframe,
-    col2: S.col2,
     sides: d.sides || 'none',
     edge: d.edge || 'round',
     plinth: d.plinth || 'ikea',

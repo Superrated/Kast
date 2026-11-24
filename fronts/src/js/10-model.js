@@ -18,7 +18,6 @@ function freshState(sys) {
     edge: 'round',
     sides: 'none',
     plinth: 'ikea', // the plinth under a kitchen: IKEA's own, one in the look of the fronts, or furniture feet
-    col2: 'olive', // the border colour of Kader fronts
     fillers: 0, // filler strips in the look of the fronts
     planCheck: true,
     gframe: 'black',
@@ -83,7 +82,6 @@ if (!OILS[S.oil]) S.oil = 'pure';
 if (!EDGES[S.edge]) S.edge = 'round';
 if (!SIDES[S.sides]) S.sides = 'none';
 if (!['ikea', 'match', 'feet'].includes(S.plinth)) S.plinth = 'ikea';
-if (!COLOURS[S.col2]) S.col2 = 'olive';
 if (!(S.fillers >= 0 && S.fillers <= 6)) S.fillers = 0;
 if (S.planCheck === undefined) S.planCheck = true;
 function save() {
@@ -331,8 +329,7 @@ function matOk(style, mat) {
   const m = MATS[mat];
   if (!m || !STYLES[style]) return false;
   if (m.only) return m.only === style;
-  /* flutes and grooves are routed into MDF only (painted or raw); wood and ply stay flat; a border is painted */
-  if (STYLES[style].paintOnly) return !!m.paint;
+  /* flutes and grooves are routed into MDF only (painted or raw); wood and ply stay flat */
   return !STYLES[style].mdf || !!m.mdf;
 }
 function lookOf(f) {
@@ -342,13 +339,11 @@ function lookOf(f) {
       mat: o.mat || S.mat,
       col: o.col || S.col,
       oil: o.oil || S.oil,
-      col2: o.col2 || S.col2,
       own: !!S.fx[f && f.id]
     };
   if (!MATS[lk.mat]) lk.mat = 'painted';
   if (!COLOURS[lk.col]) lk.col = 'chalk';
   if (!OILS[lk.oil]) lk.oil = 'pure';
-  if (!COLOURS[lk.col2]) lk.col2 = 'olive';
   if (!STYLES[lk.style]) lk.style = 'flat';
   if (MATS[lk.mat].only) lk.style = MATS[lk.mat].only;
   else if (!matOk(lk.style, lk.mat)) lk.style = 'flat';
@@ -356,11 +351,11 @@ function lookOf(f) {
 }
 function lookName(lk) {
   const m = MATS[lk.mat];
-  return `${STYLES[lk.style].name} (${STYLES[lk.style].en}) ${m.paint ? COLOURS[lk.col].name.toLowerCase() : m.name.toLowerCase()}${m.oil ? ', oil ' + OILS[lk.oil].name : ''}${lk.style === 'band' ? ` with a ${COLOURS[lk.col2].name.toLowerCase()} border` : ''}`;
+  return `${STYLES[lk.style].name} (${STYLES[lk.style].en}) ${m.paint ? COLOURS[lk.col].name.toLowerCase() : m.name.toLowerCase()}${m.oil ? ', oil ' + OILS[lk.oil].name : ''}`;
 }
 function lookKey(lk) {
   const m = MATS[lk.mat];
-  return `${lk.style}|${lk.mat}|${m.paint ? lk.col : m.oil ? lk.oil : ''}${lk.style === 'band' ? '|' + lk.col2 : ''}`;
+  return `${lk.style}|${lk.mat}|${m.paint ? lk.col : m.oil ? lk.oil : ''}`;
 }
 
 /* ---------- price ---------- */
@@ -469,7 +464,6 @@ const SHARE_KEYS = [
   'style',
   'mat',
   'col',
-  'col2',
   'oil',
   'handle',
   'hfin',

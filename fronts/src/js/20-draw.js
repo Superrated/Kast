@@ -86,10 +86,6 @@ function frontSVG(f, Y, sfx) {
       o += `<rect x="${x + 4}" y="${y + 4}" width="${w - 8}" height="${h - 8}" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2"/>`;
     if (lk.style === 'fluted') o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#flute${x_})"/>`;
     if (lk.style === 'grooves') o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#groove${x_})"/>`;
-    if (lk.style === 'band') {
-      const i = Math.min(40, w * 0.09, h * 0.09);
-      o += `<rect x="${x + i}" y="${y + i}" width="${w - 2 * i}" height="${h - 2 * i}" fill="none" stroke="${colHex(lk.col2)}" stroke-width="${Math.max(10, i * 0.42)}"/>`;
-    }
     // plywood shows its layers on the edge
     if (m.ply)
       o += `<rect x="${x + 1}" y="${y + 1}" width="${w - 2}" height="${h - 2}" fill="none" stroke="${shade(woodCol(lk.mat, lk.oil).wood, -0.3)}" stroke-opacity=".6" stroke-width="3" stroke-dasharray="6 3"/>`;

@@ -27,18 +27,18 @@ const DEMOS = [
     plinth: 'feet'
   },
   {
-    name: 'Kader wardrobe',
+    name: 'Olive wardrobe',
     trend: true,
-    say: 'Chalk white with dusty blue painted borders, nickel knobs',
+    say: 'Fluted olive green, polished nickel bars, panels on both sides',
     sys: 'pax',
     cabs: [
       ['frame', 100, 236, 'doors'],
       ['frame', 50, 236, 'doors'],
       ['frame', 100, 236, 'doors']
     ],
-    all: { mat: 'painted', col: 'chalk', col2: 'dusty', style: 'band' },
+    all: { mat: 'painted', col: 'olive', style: 'fluted' },
     by: {},
-    handle: 'knob',
+    handle: 'bar',
     hfin: 'nickel',
     sides: 'both',
     edge: 'round'
@@ -195,7 +195,6 @@ function demoState(i) {
     handle: S.handle,
     hfin: S.hfin,
     gframe: S.gframe,
-    col2: S.col2,
     sides: d.sides || 'none',
     edge: d.edge || 'round',
     plinth: d.plinth || 'ikea',

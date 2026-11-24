@@ -329,7 +329,6 @@ function thumbKey(key, st) {
       st.hfin || S.hfin,
       st.sides || 'none',
       st.edge || S.edge,
-      st.col2 || S.col2,
       st.plinth || 'ikea'
     ].join('|')
   );
@@ -587,8 +586,7 @@ function sceneKey() {
     S.flute,
     S.sides,
     S.edge,
-    S.plinth,
-    S.col2
+    S.plinth
   ]);
 }
 function build3D(noDraw) {
@@ -765,17 +763,6 @@ function build3D(noDraw) {
       root.add(fl);
       V3.meshes.push(fl);
     } else hit = rbox(f.w, f.h, FT, matFor(lk, f), cx, cy, cz);
-    if (lk.style === 'band') {
-      // Kader: a painted border, a hair proud of the face so it reads as paint
-      const i = Math.min(40, f.w * 0.09, f.h * 0.09),
-        bw = Math.max(10, i * 0.42),
-        bm = new T.MeshStandardMaterial({ color: colHex(lk.col2), roughness: 0.55 }),
-        z = cz + FT / 2 + 0.4;
-      box(f.w - 2 * i + bw, bw, 0.6, bm, cx, f.y + f.h - i, z, false);
-      box(f.w - 2 * i + bw, bw, 0.6, bm, cx, f.y + i, z, false);
-      box(bw, f.h - 2 * i - bw, 0.6, bm, f.x + i, cy, z, false);
-      box(bw, f.h - 2 * i - bw, 0.6, bm, f.x + f.w - i, cy, z, false);
-    }
     hit.userData.fid = f.id;
     V3.meshes.push(hit);
     handle3D(f, lk, root, hcache, FT);

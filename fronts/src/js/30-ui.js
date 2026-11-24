@@ -389,7 +389,6 @@ function lookEdHTML(target, lk) {
             style: k,
             mat: m,
             col: lk.col,
-            col2: lk.col2,
             oil: lk.oil,
             handle: 'push',
             zoom: true
@@ -412,17 +411,7 @@ function lookEdHTML(target, lk) {
         )
         .join(
           ''
-        )}</div><p class="hint">${esc(COLOURS[lk.col].name)} is RAL ${COLOURS[lk.col].ral} ${esc((RAL[COLOURS[lk.col].ral] || {}).name || '')}, so any paint shop can match it later.${COLOURS[lk.col].trend ? ' One of the 2027 colours.' : ''}</p>${
-        lk.style === 'band'
-          ? `<h3>Border colour</h3><div class="sws">${Object.entries(COLOURS)
-              .filter(([k]) => k !== lk.col)
-              .map(
-                ([k, c]) =>
-                  `<button type="button" class="swb ${k === lk.col2 ? 'on' : ''}${c.trend ? ' tr' : ''}" data-act="lk" data-a="${t}|col2|${k}" title="${esc(c.name)} · RAL ${c.ral}" style="background:${colHex(k)}"><span>${esc(c.name)}</span></button>`
-              )
-              .join('')}</div>`
-          : ''
-      }`
+        )}</div><p class="hint">${esc(COLOURS[lk.col].name)} is RAL ${COLOURS[lk.col].ral} ${esc((RAL[COLOURS[lk.col].ral] || {}).name || '')}, so any paint shop can match it later.${COLOURS[lk.col].trend ? ' One of the 2027 colours.' : ''}</p>`
     : MATS[lk.mat].oil
       ? `<h3>Oil colour</h3><div class="sws">${Object.entries(OILS)
           .map(
@@ -433,7 +422,7 @@ function lookEdHTML(target, lk) {
             ''
           )}</div><p class="hint">Rubio Monocoat Oil Plus 2C, ${esc(OILS[lk.oil].name)}: ${esc(OILS[lk.oil].blurb.toLowerCase())}. One coat, food-safe once cured, and you can touch up a scratch with a drop of oil.</p>`
       : '';
-  return `<h3>Style</h3><div class="stcs two">${styles}</div><h3>Material</h3><p class="hint">Riet and Voeg are routed into MDF and Kader is painted, so wood and plywood come Effen (flat).</p><div class="mats">${mats}</div>${cols}`;
+  return `<h3>Style</h3><div class="stcs two">${styles}</div><h3>Material</h3><p class="hint">Riet and Voeg are routed into MDF, so wood and plywood come Effen (flat).</p><div class="mats">${mats}</div>${cols}`;
 }
 function frontsHTML(L) {
   let h = `<h2>Your fronts</h2><p class="lede">19 mm thick, made to the exact IKEA sizes and drilled for the IKEA hinges you already have. Choose one look for all of them, then tap any front in the picture to give it its own.</p>
@@ -452,7 +441,7 @@ function frontsHTML(L) {
       ${lk.own ? lookEdHTML(f.id, lk) : ''}
       <div class="adds">${lk.own && sib > 1 ? `<button type="button" class="btn sm" data-act="copycab">Same for the whole cabinet</button>` : ''}${f.hinge ? `<button type="button" class="btn sm" data-act="flip">Hinge ${f.hinge === 'L' ? 'left' : 'right'} → swap</button>` : ''}</div></div>`;
   }
-  const all = { style: S.style, mat: S.mat, col: S.col, oil: S.oil, col2: S.col2 };
+  const all = { style: S.style, mat: S.mat, col: S.col, oil: S.oil };
   h += `<h3 class="big">${f ? 'All the other fronts' : 'All fronts'}</h3>${lookEdHTML('all', all)}`;
   const sl = sideLook();
   h += `<h3>Side panels</h3>${seg(
@@ -696,15 +685,15 @@ function setLook(target, field, val) {
   if (target === 'all') {
     S[field] = val;
     if (field === 'mat' && !matOk(S.style, val)) S.style = MATS[val].only || 'flat';
-    if (field === 'style' && !matOk(val, S.mat)) S.mat = matOk(val, mdfFor(S.mat)) ? mdfFor(S.mat) : 'painted';
+    if (field === 'style' && !matOk(val, S.mat)) S.mat = mdfFor(S.mat);
     S.recipe = null;
     return;
   }
   const cur = lookOf({ id: target }),
-    nx = { style: cur.style, mat: cur.mat, col: cur.col, oil: cur.oil, col2: cur.col2 };
+    nx = { style: cur.style, mat: cur.mat, col: cur.col, oil: cur.oil };
   nx[field] = val;
   if (field === 'mat' && !matOk(nx.style, val)) nx.style = MATS[val].only || 'flat';
-  if (field === 'style' && !matOk(val, nx.mat)) nx.mat = matOk(val, mdfFor(nx.mat)) ? mdfFor(nx.mat) : 'painted';
+  if (field === 'style' && !matOk(val, nx.mat)) nx.mat = mdfFor(nx.mat);
   S.fx[target] = nx;
 }
 
@@ -917,7 +906,7 @@ document.addEventListener('click', e => {
     case 'own':
       if (S.sel) {
         if (a === 'same') delete S.fx[S.sel];
-        else S.fx[S.sel] = { style: S.style, mat: S.mat, col: S.col, oil: S.oil, col2: S.col2 };
+        else S.fx[S.sel] = { style: S.style, mat: S.mat, col: S.col, oil: S.oil };
       }
       break;
     case 'copycab': {
