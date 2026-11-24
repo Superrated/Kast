@@ -47,7 +47,7 @@ function render() {
   else drawPic();
   // the caption under the picture: what it shows, a hint, and Surprise me
   document.getElementById('stagebar').innerHTML =
-    `<p class="cap"><b>${SYS[S.sys].name} ${SYS[S.sys].what.toLowerCase()}</b>, ${countWords(P).replace(' + ', ' and ')}${S.recipe ? `. ${esc(S.recipeSay || S.recipe)}` : S.demo ? `. ${esc(S.demo)}` : ''}<span>${L.fronts.length ? (S.view === 'close' ? 'A close-up of one front. Pick another in the room view' : 'Tap a front to give it its own look') : ''}</span></p>${
+    `<p class="cap"><b>${SYS[S.sys].name} ${SYS[S.sys].what.toLowerCase()}</b>, ${countWords(P).replace(' + ', ' and ')}${S.recipe ? `. ${esc(S.recipeSay || S.recipe)}` : S.demo ? `. ${esc(S.demo)}` : ''}<span>${L.fronts.length ? (S.view === 'close' ? (innerWidth <= 860 ? 'A close-up. Swipe for the next front' : 'A close-up. Use the arrows for the next front') : 'Tap a front to give it its own look') : ''}</span></p>${
       v3 && L.fronts.length
         ? `<div class="vseg" role="group" aria-label="View">${[
             ['room', 'Room'],
@@ -57,11 +57,15 @@ function render() {
               ([k, n]) =>
                 `<button type="button" data-act="view" data-a="${k}" aria-pressed="${S.view === k}" class="${S.view === k ? 'on' : ''}">${n}</button>`
             )
-            .join('')}</div>`
+            .join('')}</div>${
+            S.view === 'close'
+              ? `<span class="cnav"><button type="button" data-act="closeStep" data-a="-1" aria-label="Previous front">‹</button><button type="button" data-act="closeStep" data-a="1" aria-label="Next front">›</button></span>`
+              : ''
+          }`
         : ''
     }<button type="button" class="lnk surp" data-act="surprise">Surprise me</button>`;
   document.getElementById('pbar').innerHTML =
-    `${chipHTML()}<div class="ptot"><span>${countWords(P)} · incl. VAT${P.del ? ' + delivery' : ''}</span><b>${eur(P.total)}</b></div>${
+    `<div class="pstep"><button type="button" class="pnav" data-act="prev" aria-label="Previous step" ${i > 0 ? '' : 'disabled'}>‹</button><span><small>${i + 1} of ${STEPS.length}</small>${STEPS[i][1]}</span><button type="button" class="pnav" data-act="next" aria-label="Next step" ${i < STEPS.length - 1 ? '' : 'disabled'}>›</button></div>${chipHTML()}<div class="ptot"><span>${countWords(P)} · incl. VAT${P.del ? ' + delivery' : ''}</span><b>${eur(P.total)}</b></div>${
       S.step === 'order'
         ? ''
         : `<button type="button" class="btn ghost" data-act="next">${i < STEPS.length - 2 ? 'Next: ' + STEPS[i + 1][1] : 'See the order'}</button>`
@@ -556,6 +560,22 @@ function handlesHTML(L) {
 }
 
 /* ---------- 4 Order ---------- */
+/* a close-up render of one look (a 60 × 80 door with your handle), for the order list */
+function lookPic(lk) {
+  const st = {
+    sys: 'metod',
+    cabs: [CLOSE_CAB],
+    style: lk.style,
+    mat: lk.mat,
+    col: lk.col,
+    oil: lk.oil,
+    handle: S.handle,
+    hfin: S.hfin,
+    edge: S.edge,
+    zoom: true
+  };
+  return thumbHTML('ol' + lookKey(lk), st, lookThumb(lk.style, lk.mat, lk.col, 'ol' + lookKey(lk), lk.oil), 240, 200);
+}
 function orderHTML(L, P) {
   const g = grouped(L);
   let last = '';
@@ -564,7 +584,7 @@ function orderHTML(L, P) {
       const key = lookKey(r.look),
         head =
           key !== last
-            ? `<tr class="lkh"><td colspan="4"><i class="sw${MATS[r.look.mat].glass ? ' gl' : ''}" style="background:${faceHex(r.look)}"></i>${esc(lookName(r.look))}</td></tr>`
+            ? `<tr class="lkh"><td colspan="4"><span class="lkpic">${lookPic(r.look)}</span><span class="lkname">${esc(lookName(r.look))}<small>${r.look.style === 'flat' ? '' : STYLES[r.look.style].blurb + ' · '}${esc(handleWords())}</small></span></td></tr>`
             : '';
       last = key;
       return `${head}<tr><td>${r.n}×</td><td>${r.kind === 'door' ? 'Door' + (r.hinge ? ` <small>hinge ${r.hinge === 'L' ? 'left' : 'right'}</small>` : '') : r.kind === 'side' ? 'Side panel <small>19 mm</small>' : 'Drawer front'}</td><td class="num">${f1(r.w)} × ${f1(r.h)}<small>${r.kind === 'side' ? 'depth × height' : 'IKEA ' + r.nom}</small></td><td class="num">${eur(r.p * r.n)}</td></tr>`;
@@ -736,6 +756,48 @@ function autoView(next) {
     S.viewAuto = false;
   }
 }
+/* the close-up moves along the run, front by front: the base row left to right (top to bottom in each
+   column), then the wall cabinets */
+function closeStep(d) {
+  const fr = layout()
+    .fronts.slice()
+    .sort((a, b) => (a.ckind === 'wall') - (b.ckind === 'wall') || a.x - b.x || b.y - a.y);
+  if (!fr.length) return;
+  const cur = S.sel || V3.closeFront || S.closeId,
+    i = Math.max(
+      0,
+      fr.findIndex(f => f.id === cur)
+    ),
+    nx = fr[(i + d + fr.length) % fr.length].id;
+  if (S.sel) S.sel = nx;
+  S.closeId = nx;
+  render();
+}
+/* swipe the close-up on a phone */
+(() => {
+  let x0 = null,
+    y0 = 0;
+  document.addEventListener(
+    'touchstart',
+    e => {
+      x0 = S.view === 'close' && e.target.closest('#pic3d') ? e.touches[0].clientX : null;
+      y0 = e.touches[0].clientY;
+    },
+    { passive: true }
+  );
+  document.addEventListener(
+    'touchend',
+    e => {
+      if (x0 === null) return;
+      const t = e.changedTouches[0],
+        dx = t.clientX - x0,
+        dy = t.clientY - y0;
+      x0 = null;
+      if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.5) closeStep(dx < 0 ? 1 : -1);
+    },
+    { passive: true }
+  );
+})();
 /* ---------- taps ---------- */
 document.addEventListener('click', e => {
   const fr = e.target.closest('#pic .front');
@@ -762,6 +824,16 @@ document.addEventListener('click', e => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       break;
     }
+    case 'prev': {
+      const i = STEPS.findIndex(s => s[0] === S.step);
+      autoView(STEPS[Math.max(0, i - 1)][0]);
+      S.step = STEPS[Math.max(0, i - 1)][0];
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      break;
+    }
+    case 'closeStep':
+      closeStep(+a);
+      return;
     case 'view':
       S.view = a === 'close' ? 'close' : 'room';
       S.viewAuto = false;

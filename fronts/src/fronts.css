@@ -2481,3 +2481,123 @@ button.brand {
     flex-basis: 100%;
   }
 }
+
+/* close-up: step along the fronts */
+.cnav {
+  display: inline-flex;
+  gap: 4px;
+  flex: none;
+}
+.cnav button {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--raised);
+  font: inherit;
+  font-size: 17px;
+  line-height: 1;
+  color: var(--ink);
+  cursor: pointer;
+}
+.cnav button:hover {
+  border-color: var(--ink);
+}
+
+/* the order list: a close-up of each look */
+.ord .lkh td {
+  padding-top: 16px;
+}
+.ord .lkh td > span {
+  vertical-align: middle;
+}
+.lkpic {
+  display: inline-block;
+  width: 64px;
+  margin-right: 12px;
+}
+.lkpic img,
+.lkpic svg {
+  display: block;
+  width: 64px;
+  height: 53px;
+  object-fit: cover;
+  border-radius: 2px;
+}
+.lkname {
+  display: inline-block;
+  max-width: calc(100% - 80px);
+}
+.lkname small {
+  display: block;
+  font-weight: 400;
+  color: var(--ink3);
+  font-size: 12px;
+}
+
+/* the step control in the price bar: phone only */
+.pstep {
+  display: none;
+}
+@media (max-width: 860px) {
+  .bsteps {
+    display: none !important;
+  }
+  .app {
+    padding-bottom: 80px;
+  }
+  .pbar {
+    bottom: env(safe-area-inset-bottom, 0px);
+    padding: 8px 12px;
+    gap: 10px;
+  }
+  .pbar .pchip {
+    display: none;
+  }
+  .pstep {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex: none;
+  }
+  .pstep span {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 560;
+    min-width: 62px;
+    line-height: 1.15;
+  }
+  .pstep small {
+    font-size: 10.5px;
+    font-weight: 400;
+    color: var(--ink3);
+  }
+  .pnav {
+    width: 34px;
+    height: 40px;
+    border: 0;
+    background: none;
+    font-size: 22px;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .pnav:disabled {
+    color: var(--line);
+  }
+  .ptot {
+    flex: 1;
+    min-width: 0;
+  }
+  .legal {
+    padding-bottom: 90px;
+  }
+}
+@media (max-width: 860px) {
+  .ptot span {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

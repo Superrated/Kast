@@ -270,7 +270,11 @@ function cropDetail(L, aspect) {
       end = h.x < 450 || h.x > L.W - 450;
     return (f.kind === 'drawer' ? 400 : 0) + Math.abs(h.y - 850) + (f.ckind === 'wall' ? 300 : 0) + (end ? 900 : 0);
   };
-  const f = L.fronts.find(x => x.id === S.sel) || L.fronts.slice().sort((a, b) => score(a) - score(b))[0];
+  const f =
+    L.fronts.find(x => x.id === S.sel) ||
+    L.fronts.find(x => x.id === S.closeId) ||
+    L.fronts.slice().sort((a, b) => score(a) - score(b))[0];
+  V3.closeFront = f.id;
   const h = handlePos(f),
     z = 640,
     wx = -L.W / 2 + h.x,
