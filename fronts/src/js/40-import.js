@@ -214,6 +214,9 @@ function impLayout(sys, kind, w, h, up) {
 
 /* what the reader found, as a short preview with a button per system */
 function impPreviewHTML(text) {
+  const shared = String(text || '').match(/#d=([A-Za-z0-9_-]{20,})/);
+  if (shared && readCode(shared[1]))
+    return `<div class="igrp"><div class="igh"><b>A shared BRUIS design</b></div><button type="button" class="btn pri sm" data-act="openShared">Open this design</button></div>`;
   if (!String(text || '').trim())
     return `<p class="hint">Nothing pasted yet. <button type="button" class="lnk" data-act="impEx">Try an example list</button></p>`;
   const r = parsePlanner(text),

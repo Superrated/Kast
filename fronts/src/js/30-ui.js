@@ -373,13 +373,29 @@ function quickWords(q) {
 }
 
 /* ---------- 2 Fronts ---------- */
+/* the cabinet in the style close-ups: one 60 × 80 door */
+const CLOSE_CAB = { id: 'close', sys: 'metod', kind: 'base', w: 60, h: 80, layout: 'door' };
 /* the look editor: for all fronts (target "all") or for one front (its id) */
 function lookEdHTML(target, lk) {
   const t = target;
   const styles = Object.entries(STYLES)
     .map(([k, s]) => {
       const ok = matOk(k, lk.mat) || !MATS[lk.mat].only;
-      return `<button type="button" class="stc ${k === lk.style ? 'on' : ''}" data-act="lk" data-a="${t}|style|${k}" ${ok ? '' : 'disabled'}>${lookThumb(k, lk.mat === 'glass' && k === 'flat' ? 'painted' : lk.mat, lk.col, t + k, lk.oil)}<b>${s.name}</b><small>${s.blurb}</small></button>`;
+      return `<button type="button" class="stc ${k === lk.style ? 'on' : ''}" data-act="lk" data-a="${t}|style|${k}" ${ok ? '' : 'disabled'}>${(() => {
+        const m = lk.mat === 'glass' && k === 'flat' ? 'painted' : matOk(k, lk.mat) ? lk.mat : 'painted',
+          st = {
+            sys: 'metod',
+            cabs: [CLOSE_CAB],
+            style: k,
+            mat: m,
+            col: lk.col,
+            col2: lk.col2,
+            oil: lk.oil,
+            handle: 'push',
+            zoom: true
+          };
+        return thumbHTML('sw' + k, st, lookThumb(k, m, lk.col, t + k, lk.oil), 320, 300);
+      })()}<b>${s.name}</b><small>${s.blurb}</small></button>`;
     })
     .join('');
   const mats = Object.entries(MATS)
@@ -392,11 +408,21 @@ function lookEdHTML(target, lk) {
     ? `<h3>Colour</h3><div class="sws">${Object.entries(COLOURS)
         .map(
           ([k, c]) =>
-            `<button type="button" class="swb ${k === lk.col ? 'on' : ''}" data-act="lk" data-a="${t}|col|${k}" title="${esc(c.name)} · RAL ${c.ral}" style="background:${colHex(k)}"><span>${esc(c.name)}</span></button>`
+            `<button type="button" class="swb ${k === lk.col ? 'on' : ''}${c.trend ? ' tr' : ''}" data-act="lk" data-a="${t}|col|${k}" title="${esc(c.name)} · RAL ${c.ral}${c.trend ? ' · 2027' : ''}" style="background:${colHex(k)}"><span>${esc(c.name)}</span></button>`
         )
         .join(
           ''
-        )}</div><p class="hint">${esc(COLOURS[lk.col].name)} is RAL ${COLOURS[lk.col].ral} ${esc((RAL[COLOURS[lk.col].ral] || {}).name || '')}, so any paint shop can match it later.</p>`
+        )}</div><p class="hint">${esc(COLOURS[lk.col].name)} is RAL ${COLOURS[lk.col].ral} ${esc((RAL[COLOURS[lk.col].ral] || {}).name || '')}, so any paint shop can match it later.${COLOURS[lk.col].trend ? ' One of the 2027 colours.' : ''}</p>${
+        lk.style === 'band'
+          ? `<h3>Border colour</h3><div class="sws">${Object.entries(COLOURS)
+              .filter(([k]) => k !== lk.col)
+              .map(
+                ([k, c]) =>
+                  `<button type="button" class="swb ${k === lk.col2 ? 'on' : ''}${c.trend ? ' tr' : ''}" data-act="lk" data-a="${t}|col2|${k}" title="${esc(c.name)} · RAL ${c.ral}" style="background:${colHex(k)}"><span>${esc(c.name)}</span></button>`
+              )
+              .join('')}</div>`
+          : ''
+      }`
     : MATS[lk.mat].oil
       ? `<h3>Oil colour</h3><div class="sws">${Object.entries(OILS)
           .map(
@@ -407,7 +433,7 @@ function lookEdHTML(target, lk) {
             ''
           )}</div><p class="hint">Rubio Monocoat Oil Plus 2C, ${esc(OILS[lk.oil].name)}: ${esc(OILS[lk.oil].blurb.toLowerCase())}. One coat, food-safe once cured, and you can touch up a scratch with a drop of oil.</p>`
       : '';
-  return `<h3>Style</h3><div class="stcs two">${styles}</div><h3>Material</h3><p class="hint">Fluted and grooved fronts are routed into MDF, so wood and plywood come flat.</p><div class="mats">${mats}</div>${cols}`;
+  return `<h3>Style</h3><div class="stcs two">${styles}</div><h3>Material</h3><p class="hint">Riet and Voeg are routed into MDF and Kader is painted, so wood and plywood come Effen (flat).</p><div class="mats">${mats}</div>${cols}`;
 }
 function frontsHTML(L) {
   let h = `<h2>Your fronts</h2><p class="lede">19 mm thick, made to the exact IKEA sizes and drilled for the IKEA hinges you already have. Choose one look for all of them, then tap any front in the picture to give it its own.</p>
@@ -426,7 +452,7 @@ function frontsHTML(L) {
       ${lk.own ? lookEdHTML(f.id, lk) : ''}
       <div class="adds">${lk.own && sib > 1 ? `<button type="button" class="btn sm" data-act="copycab">Same for the whole cabinet</button>` : ''}${f.hinge ? `<button type="button" class="btn sm" data-act="flip">Hinge ${f.hinge === 'L' ? 'left' : 'right'} → swap</button>` : ''}</div></div>`;
   }
-  const all = { style: S.style, mat: S.mat, col: S.col, oil: S.oil };
+  const all = { style: S.style, mat: S.mat, col: S.col, oil: S.oil, col2: S.col2 };
   h += `<h3 class="big">${f ? 'All the other fronts' : 'All fronts'}</h3>${lookEdHTML('all', all)}`;
   const sl = sideLook();
   h += `<h3>Side panels</h3>${seg(
@@ -442,14 +468,15 @@ function frontsHTML(L) {
     S.sys === 'metod'
       ? `<div class="row"><label>Plinth</label>${seg('plinth', S.plinth, [
           ['ikea', 'IKEA’s own'],
-          ['match', 'Same look']
+          ['match', 'Same look'],
+          ['feet', 'Feet']
         ])}</div>`
       : ''
   }<div class="row"><label>Fillers</label>${seg(
     'fillers',
     S.fillers,
     [0, 1, 2, 3, 4].map(n => [n, n ? String(n) : 'None'])
-  )}</div><p class="hint">${S.sys === 'metod' ? `A plinth in the look of your fronts, ${eur(EXTRAS.plinthPerM)} a metre. ` : ''}Filler strips close the gap to a wall or ceiling, ${eur(EXTRAS.filler)} each, cut to fit.</p>`;
+  )}</div><p class="hint">${S.sys === 'metod' ? `A plinth in the look of your fronts (${eur(EXTRAS.plinthPerM)} a metre), or furniture feet so the kitchen stands like a piece of furniture (${eur(EXTRAS.feet)} a cabinet). ` : ''}Filler strips close the gap to a wall or ceiling, ${eur(EXTRAS.filler)} each, cut to fit.</p>`;
   h += `<h3>Edges</h3>${seg(
     'edge',
     S.edge,
@@ -543,6 +570,7 @@ function orderHTML(L, P) {
     <tfoot><tr><td></td><td colspan="2">Subtotal</td><td class="num">${eur(P.sub)}</td></tr><tr><td></td><td colspan="2">Delivery${P.del ? ` <small>free from ${eur(PRICE.deliveryFree)}</small>` : ' — free'}</td><td class="num">${P.del ? eur(P.del) : '€ 0'}</td></tr><tr class="tot"><td></td><td colspan="2">Total incl. VAT</td><td class="num">${eur(P.total)}</td></tr></tfoot></table>
     <label class="chk"><input type="checkbox" data-act="planCheck"${S.planCheck ? ' checked' : ''}><span><b>Free plan check</b> We go through your IKEA list and every size with you before anything is cut.</span></label>
     <button type="button" class="btn pri big" data-act="orderNow">Order these fronts</button>
+    <div class="adds qa"><button type="button" class="btn sm" data-act="print">Print or save the quote</button><button type="button" class="btn sm" data-act="share">Share this design</button></div>
     <div class="sbox"><div><b>Not sure yet? Order the sample box</b><span>Every colour and material as a 10 × 15 cm chip, ${eur(EXTRAS.sampleBox)}, taken off your order later.</span></div><button type="button" class="btn" data-act="samples">Order samples</button></div>`
         : '<p class="hint">Add a cabinet with fronts first.</p>'
     }
@@ -602,6 +630,42 @@ function sendOrder() {
   save();
 }
 
+/* ---------- the quote: a clean page with the picture and every line, for printing or saving as PDF ---------- */
+function printQuote() {
+  const L = layout(),
+    P = priceAll(L),
+    no = 'BF-' + designCode().slice(-6).toUpperCase(),
+    pic = V3.ready && V3.r ? V3.r.domElement.toDataURL('image/jpeg', 0.9) : '',
+    rows =
+      grouped(L)
+        .map(
+          r =>
+            `<tr><td>${r.n}×</td><td>${r.kind === 'door' ? 'Door' : r.kind === 'side' ? 'Side panel' : 'Drawer front'}${r.hinge ? `, hinge ${r.hinge === 'L' ? 'left' : 'right'}` : ''}<small>${esc(lookName(r.look))}</small></td><td class="num">${f1(r.w)} × ${f1(r.h)} mm</td><td class="num">${eur(r.p * r.n)}</td></tr>`
+        )
+        .join('') +
+      P.ex
+        .map(
+          x =>
+            `<tr><td>${x.n}×</td><td>${esc(x.name)}<small>${esc(x.note)}</small></td><td></td><td class="num">${eur(x.p * x.n)}</td></tr>`
+        )
+        .join('');
+  let q = document.getElementById('printq');
+  if (!q) {
+    q = document.createElement('div');
+    q.id = 'printq';
+    document.body.appendChild(q);
+  }
+  q.innerHTML = `<header><b>BRUIS</b><span>Quote ${no} · ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span></header>
+    ${pic ? `<img src="${pic}" alt="">` : ''}
+    <h1>${SYS[S.sys].name} ${SYS[S.sys].what.toLowerCase()}: ${countWords(P)}</h1>
+    <p>Edges ${EDGES[S.edge].name.toLowerCase()} · handles ${esc(HANDLES[S.handle].name.toLowerCase())}${S.handle === 'knob' || S.handle === 'bar' || S.handle === 'tab' ? ', ' + esc(HFIN[S.hfin].name.toLowerCase()) : ''} · ready ${esc(leadOf(L))} after ordering</p>
+    <table><tbody>${rows}</tbody><tfoot><tr><td></td><td colspan="2">Delivery</td><td class="num">${P.del ? eur(P.del) : 'free'}</td></tr><tr class="tot"><td></td><td colspan="2">Total incl. VAT</td><td class="num">${eur(P.total)}</td></tr></tfoot></table>
+    <p>${S.planCheck ? 'Includes our free plan check: we go through your IKEA list and every size with you before anything is cut.' : ''} Hinges and drawer fittings are IKEA's own and not included.</p>
+    <p class="link">Open this design again: ${esc(shareLink())}</p>
+    <footer>BRUIS — fronts for IKEA PAX, METOD and BESTÅ. Prototype: prices are examples.</footer>`;
+  window.print();
+}
+
 /* ---------- the sample box (prototype: nothing is sent) ---------- */
 function openSamples() {
   document.getElementById('mbox').innerHTML =
@@ -632,15 +696,15 @@ function setLook(target, field, val) {
   if (target === 'all') {
     S[field] = val;
     if (field === 'mat' && !matOk(S.style, val)) S.style = MATS[val].only || 'flat';
-    if (field === 'style' && !matOk(val, S.mat)) S.mat = mdfFor(S.mat);
+    if (field === 'style' && !matOk(val, S.mat)) S.mat = matOk(val, mdfFor(S.mat)) ? mdfFor(S.mat) : 'painted';
     S.recipe = null;
     return;
   }
   const cur = lookOf({ id: target }),
-    nx = { style: cur.style, mat: cur.mat, col: cur.col, oil: cur.oil };
+    nx = { style: cur.style, mat: cur.mat, col: cur.col, oil: cur.oil, col2: cur.col2 };
   nx[field] = val;
   if (field === 'mat' && !matOk(nx.style, val)) nx.style = MATS[val].only || 'flat';
-  if (field === 'style' && !matOk(val, nx.mat)) nx.mat = mdfFor(nx.mat);
+  if (field === 'style' && !matOk(val, nx.mat)) nx.mat = matOk(val, mdfFor(nx.mat)) ? mdfFor(nx.mat) : 'painted';
   S.fx[target] = nx;
 }
 
@@ -670,6 +734,41 @@ document.addEventListener('click', e => {
     }
     case 'view':
       S.view = a;
+      break;
+    case 'openShared': {
+      const m = String(S.impText || '').match(/#d=([A-Za-z0-9_-]+)/),
+        o = m && readCode(m[1]);
+      if (o) {
+        S.undo = JSON.stringify({ sys: S.sys, cabs: S.cabs, fx: S.fx, flip: S.flip });
+        Object.assign(S, o, { step: 'fronts', sel: null, recipe: null, demo: null, impText: '' });
+      }
+      break;
+    }
+    case 'share': {
+      const url = shareLink();
+      const done = ok => {
+        b.textContent = ok ? 'Link copied' : 'Copy failed';
+        if (!ok) prompt('Copy this link to share your design:', url);
+        setTimeout(() => (b.textContent = 'Share this design'), 2200);
+      };
+      try {
+        navigator.clipboard.writeText(url).then(
+          () => done(true),
+          () => done(false)
+        );
+      } catch (er) {
+        done(false);
+      }
+      return;
+    }
+    case 'print':
+      printQuote();
+      return;
+    case 'trend':
+      if (S.step === 'home') loadDemo(0);
+      surprise(undefined, true);
+      S.step = 'fronts';
+      window.scrollTo({ top: 0 });
       break;
     case 'surprise':
       surprise();
@@ -818,7 +917,7 @@ document.addEventListener('click', e => {
     case 'own':
       if (S.sel) {
         if (a === 'same') delete S.fx[S.sel];
-        else S.fx[S.sel] = { style: S.style, mat: S.mat, col: S.col, oil: S.oil };
+        else S.fx[S.sel] = { style: S.style, mat: S.mat, col: S.col, oil: S.oil, col2: S.col2 };
       }
       break;
     case 'copycab': {

@@ -86,6 +86,10 @@ function frontSVG(f, Y, sfx) {
       o += `<rect x="${x + 4}" y="${y + 4}" width="${w - 8}" height="${h - 8}" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2"/>`;
     if (lk.style === 'fluted') o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#flute${x_})"/>`;
     if (lk.style === 'grooves') o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#groove${x_})"/>`;
+    if (lk.style === 'band') {
+      const i = Math.min(40, w * 0.09, h * 0.09);
+      o += `<rect x="${x + i}" y="${y + i}" width="${w - 2 * i}" height="${h - 2 * i}" fill="none" stroke="${colHex(lk.col2)}" stroke-width="${Math.max(10, i * 0.42)}"/>`;
+    }
     // plywood shows its layers on the edge
     if (m.ply)
       o += `<rect x="${x + 1}" y="${y + 1}" width="${w - 2}" height="${h - 2}" fill="none" stroke="${shade(woodCol(lk.mat, lk.oil).wood, -0.3)}" stroke-opacity=".6" stroke-width="3" stroke-dasharray="6 3"/>`;
@@ -111,13 +115,15 @@ function handlePos(f) {
   else y = f.ckind === 'wall' ? f.y + 90 : f.y + f.h - 90;
   return { x, y, vert: true };
 }
-function handleHex(lk) {
-  return S.hfin === 'match' ? shade(faceHex(lk), -0.2) : HFIN[S.hfin].hex;
+function handleHex(lk, f) {
+  if (S.hfin === 'match') return shade(faceHex(lk), -0.2);
+  if (S.hfin === 'mixed') return f && f.kind === 'drawer' ? HFIN.nickel.hex : HFIN.brass.hex;
+  return HFIN[S.hfin].hex;
 }
 function handleSVG(f, Y, lk) {
   const hd = S.handle;
   if (hd === 'push') return '';
-  const col = handleHex(lk),
+  const col = handleHex(lk, f),
     P = handlePos(f),
     cx = P.x,
     cy = Y(P.y);
@@ -159,7 +165,16 @@ function drawPic() {
         s += `<line x1="${p.x + 18}" x2="${p.x + p.w - 18}" y1="${Y(p.y + (k * p.h) / n)}" y2="${Y(p.y + (k * p.h) / n)}" stroke="#c9cac5" stroke-width="10"/>`;
     }
   });
-  if (L.plinth && S.sys === 'metod') {
+  if (L.plinth && S.sys === 'metod' && S.plinth === 'feet')
+    L.cabs
+      .filter(p => p.c.kind !== 'wall')
+      .forEach(p =>
+        [p.x + 45, p.x + p.w - 45].forEach(
+          x =>
+            (s += `<path d="M${x - 17} ${Y(L.plinth)} L${x + 17} ${Y(L.plinth)} L${x + 11} ${Y(0)} L${x - 11} ${Y(0)} Z" fill="${HFIN.brass.hex}"/>`)
+        )
+      );
+  else if (L.plinth && S.sys === 'metod') {
     const bw = Math.max(0, ...L.cabs.filter(p => p.c.kind !== 'wall').map(p => p.x + p.w));
     s += `<rect x="0" y="${Y(L.plinth)}" width="${bw}" height="${L.plinth - 10}" fill="${shade(faceHex(lookOf(null)), -0.3)}"/>`;
   }

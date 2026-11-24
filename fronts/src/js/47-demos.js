@@ -4,6 +4,67 @@
    A cabinet here: [kind, width, height, front layout]. Looks by role work like the Surprise recipes
    (drawer, wall, tall, top, low, door). */
 const DEMOS = [
+  // ---- the 2027 edit ----
+  {
+    name: 'Celery & walnut',
+    trend: true,
+    say: 'Fluted celery green, walnut wall cabinets, mixed metals, on feet',
+    sys: 'metod',
+    cabs: [
+      ['high', 60, 200, 'split'],
+      ['base', 60, 80, 'drawers3'],
+      ['base', 80, 80, 'doors2'],
+      ['base', 60, 80, 'drawer_door'],
+      ['wall', 80, 80, 'doors2'],
+      ['wall', 60, 80, 'door']
+    ],
+    all: { mat: 'painted', col: 'celery', style: 'fluted' },
+    by: { wall: { mat: 'walnut', style: 'flat' }, drawer: { style: 'flat' } },
+    handle: 'bar',
+    hfin: 'mixed',
+    sides: 'both',
+    edge: 'round',
+    plinth: 'feet'
+  },
+  {
+    name: 'Kader wardrobe',
+    trend: true,
+    say: 'Chalk white with dusty blue painted borders, nickel knobs',
+    sys: 'pax',
+    cabs: [
+      ['frame', 100, 236, 'doors'],
+      ['frame', 50, 236, 'doors'],
+      ['frame', 100, 236, 'doors']
+    ],
+    all: { mat: 'painted', col: 'chalk', col2: 'dusty', style: 'band' },
+    by: {},
+    handle: 'knob',
+    hfin: 'nickel',
+    sides: 'both',
+    edge: 'round'
+  },
+  {
+    name: 'Two woods',
+    trend: true,
+    say: 'Chocolate-oiled oak below, pale oak above, brass bars, on feet',
+    sys: 'metod',
+    cabs: [
+      ['base', 80, 80, 'doors2'],
+      ['base', 60, 80, 'drawers3'],
+      ['base', 60, 80, 'door'],
+      ['base', 60, 80, 'drawers2'],
+      ['wall', 80, 80, 'doors2'],
+      ['wall', 60, 80, 'door'],
+      ['wall', 60, 80, 'door']
+    ],
+    all: { mat: 'oak', style: 'flat', oil: 'chocolate' },
+    by: { wall: { oil: 'pure' } },
+    handle: 'bar',
+    hfin: 'brass',
+    sides: 'both',
+    edge: 'round',
+    plinth: 'feet'
+  },
   {
     name: 'Sage kitchen',
     say: 'Fluted sage green with calm flat drawers and brass knobs',
@@ -134,8 +195,11 @@ function demoState(i) {
     handle: S.handle,
     hfin: S.hfin,
     gframe: S.gframe,
+    col2: S.col2,
     sides: d.sides || 'none',
-    edge: d.edge || 'round'
+    edge: d.edge || 'round',
+    plinth: d.plinth || 'ikea',
+    fillers: 0
   };
   S = keep;
   return (DEMO_ST[i] = st);
@@ -155,6 +219,6 @@ function loadDemo(i) {
 function demosHTML() {
   return `<div class="tiles">${DEMOS.map(
     (d, i) =>
-      `<button type="button" class="tile ${S.demo === d.name ? 'on' : ''}" data-act="demo" data-a="${i}"><span class="tpic">${thumbHTML('demo' + i, demoState(i), designThumb('demo' + i, demoState(i)))}</span><b>${esc(d.name)}</b><small>${SYS[d.sys].name}, ${esc(d.say.charAt(0).toLowerCase() + d.say.slice(1))}</small></button>`
+      `<button type="button" class="tile ${S.demo === d.name ? 'on' : ''}" data-act="demo" data-a="${i}"><span class="tpic">${thumbHTML('demo' + i, demoState(i), designThumb('demo' + i, demoState(i)))}</span><b>${esc(d.name)}${d.trend ? ' <em class="tag27">2027</em>' : ''}</b><small>${SYS[d.sys].name}, ${esc(d.say.charAt(0).toLowerCase() + d.say.slice(1))}</small></button>`
   ).join('')}</div>`;
 }

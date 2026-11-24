@@ -17,7 +17,8 @@ function freshState(sys) {
     oil: 'pure',
     edge: 'round',
     sides: 'none',
-    plinth: 'ikea', // the plinth under a kitchen: IKEA's own, or one in the look of the fronts
+    plinth: 'ikea', // the plinth under a kitchen: IKEA's own, one in the look of the fronts, or furniture feet
+    col2: 'olive', // the border colour of Kader fronts
     fillers: 0, // filler strips in the look of the fronts
     planCheck: true,
     gframe: 'black',
@@ -81,7 +82,8 @@ if (!S.flute.gpitch) S.flute.gpitch = 50;
 if (!OILS[S.oil]) S.oil = 'pure';
 if (!EDGES[S.edge]) S.edge = 'round';
 if (!SIDES[S.sides]) S.sides = 'none';
-if (!['ikea', 'match'].includes(S.plinth)) S.plinth = 'ikea';
+if (!['ikea', 'match', 'feet'].includes(S.plinth)) S.plinth = 'ikea';
+if (!COLOURS[S.col2]) S.col2 = 'olive';
 if (!(S.fillers >= 0 && S.fillers <= 6)) S.fillers = 0;
 if (S.planCheck === undefined) S.planCheck = true;
 function save() {
@@ -329,7 +331,8 @@ function matOk(style, mat) {
   const m = MATS[mat];
   if (!m || !STYLES[style]) return false;
   if (m.only) return m.only === style;
-  /* flutes and grooves are routed into MDF only (painted or raw); wood and ply stay flat */
+  /* flutes and grooves are routed into MDF only (painted or raw); wood and ply stay flat; a border is painted */
+  if (STYLES[style].paintOnly) return !!m.paint;
   return !STYLES[style].mdf || !!m.mdf;
 }
 function lookOf(f) {
@@ -339,11 +342,13 @@ function lookOf(f) {
       mat: o.mat || S.mat,
       col: o.col || S.col,
       oil: o.oil || S.oil,
+      col2: o.col2 || S.col2,
       own: !!S.fx[f && f.id]
     };
   if (!MATS[lk.mat]) lk.mat = 'painted';
   if (!COLOURS[lk.col]) lk.col = 'chalk';
   if (!OILS[lk.oil]) lk.oil = 'pure';
+  if (!COLOURS[lk.col2]) lk.col2 = 'olive';
   if (!STYLES[lk.style]) lk.style = 'flat';
   if (MATS[lk.mat].only) lk.style = MATS[lk.mat].only;
   else if (!matOk(lk.style, lk.mat)) lk.style = 'flat';
@@ -351,11 +356,11 @@ function lookOf(f) {
 }
 function lookName(lk) {
   const m = MATS[lk.mat];
-  return `${STYLES[lk.style].name} (${STYLES[lk.style].en}) ${m.paint ? COLOURS[lk.col].name.toLowerCase() : m.name.toLowerCase()}${m.oil ? ', oil ' + OILS[lk.oil].name : ''}`;
+  return `${STYLES[lk.style].name} (${STYLES[lk.style].en}) ${m.paint ? COLOURS[lk.col].name.toLowerCase() : m.name.toLowerCase()}${m.oil ? ', oil ' + OILS[lk.oil].name : ''}${lk.style === 'band' ? ` with a ${COLOURS[lk.col2].name.toLowerCase()} border` : ''}`;
 }
 function lookKey(lk) {
   const m = MATS[lk.mat];
-  return `${lk.style}|${lk.mat}|${m.paint ? lk.col : m.oil ? lk.oil : ''}`;
+  return `${lk.style}|${lk.mat}|${m.paint ? lk.col : m.oil ? lk.oil : ''}${lk.style === 'band' ? '|' + lk.col2 : ''}`;
 }
 
 /* ---------- price ---------- */
@@ -388,6 +393,11 @@ function extrasOf(L) {
         n: 1,
         p: Math.round(m * EXTRAS.plinthPerM)
       });
+  }
+  if (S.sys === 'metod' && S.plinth === 'feet') {
+    const n = L.cabs.filter(p => p.c.kind !== 'wall').length,
+      fin = S.hfin === 'mixed' || !HFIN[S.hfin] || S.hfin === 'match' ? 'aged brass' : HFIN[S.hfin].name.toLowerCase();
+    if (n) out.push({ kind: 'feet', name: 'Furniture feet', note: `4 per cabinet, ${fin}`, n, p: EXTRAS.feet });
   }
   if (S.fillers)
     out.push({
@@ -449,3 +459,60 @@ function priceOfDesign(st) {
     S = keep;
   }
 }
+
+/* ---------- a design in a link: #d=<code> (the parts that make the design, as base64url JSON) ---------- */
+const SHARE_KEYS = [
+  'sys',
+  'cabs',
+  'fx',
+  'flip',
+  'style',
+  'mat',
+  'col',
+  'col2',
+  'oil',
+  'handle',
+  'hfin',
+  'gframe',
+  'flute',
+  'sides',
+  'edge',
+  'plinth',
+  'fillers'
+];
+function designCode() {
+  const o = {};
+  SHARE_KEYS.forEach(k => (o[k] = S[k]));
+  o.cabs = S.cabs.map(c => [c.kind, c.w, c.h, c.layout, c.id]);
+  const bytes = new TextEncoder().encode(JSON.stringify(o));
+  let bin = '';
+  bytes.forEach(b => (bin += String.fromCharCode(b)));
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+function readCode(code) {
+  try {
+    const bin = atob(code.replace(/-/g, '+').replace(/_/g, '/')),
+      o = JSON.parse(new TextDecoder().decode(Uint8Array.from(bin, ch => ch.charCodeAt(0))));
+    if (!SYS[o.sys] || !Array.isArray(o.cabs)) return null;
+    o.cabs = o.cabs.map(([kind, w, h, lay, id]) => Object.assign(cab(o.sys, kind, w, h, lay), id ? { id } : {}));
+    return o;
+  } catch (e) {
+    return null;
+  }
+}
+function shareLink() {
+  return location.href.split('#')[0] + '#d=' + designCode();
+}
+// a shared design opens straight in the Fronts step
+(() => {
+  const m = location.hash.match(/#d=([A-Za-z0-9_-]+)/),
+    o = m && readCode(m[1]);
+  if (o) {
+    Object.assign(S, o, { step: 'fronts', sel: null, recipe: null, demo: null });
+    try {
+      history.replaceState(null, '', location.href.split('#')[0]);
+    } catch (e) {
+      /* fine */
+    }
+  }
+})();

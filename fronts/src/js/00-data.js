@@ -70,7 +70,8 @@ const OILS = {
   pure: { name: 'Pure', blurb: 'Clear, the wood as it is', hex: '#000000', mix: 0 },
   white5: { name: 'White 5%', blurb: 'A light Nordic wash', hex: '#F4EFE7', mix: 0.38 },
   smoke5: { name: 'Smoke 5%', blurb: 'Soft grey, like weathered wood', hex: '#C9C1B6', mix: 0.42 },
-  charcoal: { name: 'Charcoal', blurb: 'Near black, the grain still shows', hex: '#34302D', mix: 0.74 }
+  charcoal: { name: 'Charcoal', blurb: 'Near black, the grain still shows', hex: '#34302D', mix: 0.74 },
+  chocolate: { name: 'Chocolate', blurb: 'Deep warm brown — the darker woods of 2027', hex: '#3E2A1E', mix: 0.58 }
 };
 /* side panels: none, or on the left / right / both ends of the run */
 const SIDES = { none: 'None', left: 'Left', right: 'Right', both: 'Both ends' };
@@ -104,7 +105,15 @@ function woodCol(mat, oil) {
 const STYLES = {
   flat: { name: 'Effen', en: 'flat', blurb: 'Flat and calm, the classic', f: 1 },
   fluted: { name: 'Riet', en: 'fluted', blurb: 'Rounded flutes like reeds, routed into MDF', f: 1.3, mdf: true },
-  grooves: { name: 'Voeg', en: 'grooves', blurb: 'Fine V-grooves in MDF, calm and graphic', f: 1.3, mdf: true }
+  grooves: { name: 'Voeg', en: 'grooves', blurb: 'Fine V-grooves in MDF, calm and graphic', f: 1.3, mdf: true },
+  // 2027: a painted border in a second colour, a few centimetres in from the edge
+  band: {
+    name: 'Kader',
+    en: 'painted border',
+    blurb: 'A painted border in a second colour — new for 2027',
+    f: 1.25,
+    paintOnly: true
+  }
 };
 const FLUTE = {
   pitch: [
@@ -211,7 +220,13 @@ const COLOURS = {
   plum: { name: 'Plum', ral: '4007' },
   blush: { name: 'Blush', ral: '3015' },
   chalk: { name: 'Chalk white', ral: '9010' },
-  black: { name: 'Soft black', ral: '9005' }
+  black: { name: 'Soft black', ral: '9005' },
+  // the 2027 edit: green in every shade, and the warm earthy colours that go with it
+  celery: { name: 'Celery', ral: '6019', trend: true },
+  olive: { name: 'Olive', ral: '6013', trend: true },
+  taupe: { name: 'Taupe', ral: '1019', trend: true },
+  clay: { name: 'Clay', ral: '8025', trend: true },
+  dusty: { name: 'Dusty blue', ral: '5014', trend: true }
 };
 
 /* RAL colours: the full list comes from Fitted at build time (names and colours for the curated list) */
@@ -230,7 +245,9 @@ const HANDLES = {
   tab: { name: 'Leather tab', blurb: 'A soft pull on the edge', price: 16 }
 };
 const HFIN = {
-  brass: { name: 'Brass', hex: '#B8954A' },
+  brass: { name: 'Aged brass', hex: '#A8843F' },
+  nickel: { name: 'Polished nickel', hex: '#CDCFD0' },
+  mixed: { name: 'Mixed metals', hex: null, blurb: 'aged brass on doors, nickel on drawers' },
   black: { name: 'Black', hex: '#1E1E1E' },
   steel: { name: 'Brushed steel', hex: '#A7AAAD' },
   oak: { name: 'Oak', hex: '#C9A26E' },
@@ -240,6 +257,7 @@ const HFIN = {
 /* extras around the fronts */
 const EXTRAS = {
   plinthPerM: 55, // a plinth (kick plate) in the look of the fronts, per metre of run
+  feet: 48, // furniture feet for one kitchen cabinet (four), instead of a plinth
   filler: 35, // a filler strip in the look of the fronts, up to 10 cm wide, any height
   sampleBox: 25, // every colour and material as a 10 × 15 cm chip; the €25 comes off the order
   planCheckFrom: 0 // checking your IKEA list and every size before we cut: free

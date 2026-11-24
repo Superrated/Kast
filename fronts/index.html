@@ -2232,6 +2232,216 @@ button.brand {
   white-space: nowrap;
 }
 
+/* the 2027 edit */
+.tag27 {
+  font-style: normal;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  padding: 0 4px;
+  margin-left: 4px;
+  vertical-align: 2px;
+  color: var(--ink2);
+}
+.swb.tr::after {
+  content: '2027';
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  font-size: 8.5px;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 2px;
+  padding: 0 3px;
+}
+.h27 {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 40px;
+  align-items: start;
+}
+.h27t {
+  border-top: 1px solid var(--ink);
+  padding-top: 18px;
+}
+.h27t h2 {
+  margin-bottom: 12px;
+}
+.h27t p {
+  color: var(--ink2);
+  font-size: 15px;
+  line-height: 1.55;
+  max-width: 52ch;
+}
+.h27c {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px 10px;
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+}
+.h27c span {
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.h27c i {
+  display: block;
+  aspect-ratio: 4 / 3;
+  border-radius: 1px;
+  margin-bottom: 6px;
+}
+.h27c small {
+  color: var(--ink3);
+  font-size: 11.5px;
+}
+@media (max-width: 860px) {
+  .h27 {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .h27c {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* style cards with their close-up render */
+.stc img,
+.stc .tdraw {
+  display: block;
+  width: 100%;
+  aspect-ratio: 32 / 30;
+  height: auto;
+  object-fit: cover;
+  border-radius: 2px;
+  outline: 1px solid transparent;
+  outline-offset: 3px;
+}
+.stc .tdraw svg {
+  height: 100%;
+}
+.stc.on img {
+  outline-color: var(--ink);
+}
+.stcs.two {
+  grid-template-columns: repeat(2, 1fr);
+}
+.adds.qa {
+  margin-top: 10px;
+}
+/* FAQ */
+.hfaq details {
+  border-top: 1px solid var(--line);
+  padding: 14px 0;
+}
+.hfaq details:last-child {
+  border-bottom: 1px solid var(--line);
+}
+.hfaq summary {
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+.hfaq summary::-webkit-details-marker {
+  display: none;
+}
+.hfaq summary::after {
+  content: '+';
+  color: var(--ink3);
+  font-weight: 400;
+}
+.hfaq details[open] summary::after {
+  content: '–';
+}
+.hfaq p {
+  color: var(--ink2);
+  font-size: 14.5px;
+  line-height: 1.55;
+  max-width: 70ch;
+  margin: 10px 0 2px;
+}
+/* the quote, only when printing */
+#printq {
+  display: none;
+}
+@media print {
+  body > *:not(#printq) {
+    display: none !important;
+  }
+  #printq {
+    display: block;
+    font-family: var(--f-b);
+    color: #111;
+    font-size: 11pt;
+  }
+  #printq header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid #111;
+    padding-bottom: 8pt;
+    margin-bottom: 12pt;
+  }
+  #printq header b {
+    font-size: 20pt;
+    font-weight: 800;
+    font-variation-settings: 'wdth' 75;
+  }
+  #printq img {
+    width: 100%;
+    max-height: 90mm;
+    object-fit: cover;
+    margin-bottom: 10pt;
+  }
+  #printq h1 {
+    font-size: 16pt;
+    font-weight: 450;
+    margin: 0 0 4pt;
+  }
+  #printq table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10pt 0;
+  }
+  #printq td {
+    border-bottom: 0.5pt solid #bbb;
+    padding: 4pt 2pt;
+    vertical-align: top;
+  }
+  #printq td small {
+    display: block;
+    color: #555;
+    font-size: 9pt;
+  }
+  #printq .num {
+    text-align: right;
+    white-space: nowrap;
+  }
+  #printq .tot td {
+    border-top: 1pt solid #111;
+    font-weight: 600;
+  }
+  #printq .link {
+    font-size: 8pt;
+    color: #555;
+    word-break: break-all;
+  }
+  #printq footer {
+    margin-top: 14pt;
+    font-size: 8.5pt;
+    color: #555;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -2327,7 +2537,8 @@ const OILS = {
   pure: { name: 'Pure', blurb: 'Clear, the wood as it is', hex: '#000000', mix: 0 },
   white5: { name: 'White 5%', blurb: 'A light Nordic wash', hex: '#F4EFE7', mix: 0.38 },
   smoke5: { name: 'Smoke 5%', blurb: 'Soft grey, like weathered wood', hex: '#C9C1B6', mix: 0.42 },
-  charcoal: { name: 'Charcoal', blurb: 'Near black, the grain still shows', hex: '#34302D', mix: 0.74 }
+  charcoal: { name: 'Charcoal', blurb: 'Near black, the grain still shows', hex: '#34302D', mix: 0.74 },
+  chocolate: { name: 'Chocolate', blurb: 'Deep warm brown — the darker woods of 2027', hex: '#3E2A1E', mix: 0.58 }
 };
 /* side panels: none, or on the left / right / both ends of the run */
 const SIDES = { none: 'None', left: 'Left', right: 'Right', both: 'Both ends' };
@@ -2361,7 +2572,15 @@ function woodCol(mat, oil) {
 const STYLES = {
   flat: { name: 'Effen', en: 'flat', blurb: 'Flat and calm, the classic', f: 1 },
   fluted: { name: 'Riet', en: 'fluted', blurb: 'Rounded flutes like reeds, routed into MDF', f: 1.3, mdf: true },
-  grooves: { name: 'Voeg', en: 'grooves', blurb: 'Fine V-grooves in MDF, calm and graphic', f: 1.3, mdf: true }
+  grooves: { name: 'Voeg', en: 'grooves', blurb: 'Fine V-grooves in MDF, calm and graphic', f: 1.3, mdf: true },
+  // 2027: a painted border in a second colour, a few centimetres in from the edge
+  band: {
+    name: 'Kader',
+    en: 'painted border',
+    blurb: 'A painted border in a second colour — new for 2027',
+    f: 1.25,
+    paintOnly: true
+  }
 };
 const FLUTE = {
   pitch: [
@@ -2468,7 +2687,13 @@ const COLOURS = {
   plum: { name: 'Plum', ral: '4007' },
   blush: { name: 'Blush', ral: '3015' },
   chalk: { name: 'Chalk white', ral: '9010' },
-  black: { name: 'Soft black', ral: '9005' }
+  black: { name: 'Soft black', ral: '9005' },
+  // the 2027 edit: green in every shade, and the warm earthy colours that go with it
+  celery: { name: 'Celery', ral: '6019', trend: true },
+  olive: { name: 'Olive', ral: '6013', trend: true },
+  taupe: { name: 'Taupe', ral: '1019', trend: true },
+  clay: { name: 'Clay', ral: '8025', trend: true },
+  dusty: { name: 'Dusty blue', ral: '5014', trend: true }
 };
 
 /* RAL colours: the full list comes from Fitted at build time (names and colours for the curated list) */
@@ -2487,7 +2712,9 @@ const HANDLES = {
   tab: { name: 'Leather tab', blurb: 'A soft pull on the edge', price: 16 }
 };
 const HFIN = {
-  brass: { name: 'Brass', hex: '#B8954A' },
+  brass: { name: 'Aged brass', hex: '#A8843F' },
+  nickel: { name: 'Polished nickel', hex: '#CDCFD0' },
+  mixed: { name: 'Mixed metals', hex: null, blurb: 'aged brass on doors, nickel on drawers' },
   black: { name: 'Black', hex: '#1E1E1E' },
   steel: { name: 'Brushed steel', hex: '#A7AAAD' },
   oak: { name: 'Oak', hex: '#C9A26E' },
@@ -2497,6 +2724,7 @@ const HFIN = {
 /* extras around the fronts */
 const EXTRAS = {
   plinthPerM: 55, // a plinth (kick plate) in the look of the fronts, per metre of run
+  feet: 48, // furniture feet for one kitchen cabinet (four), instead of a plinth
   filler: 35, // a filler strip in the look of the fronts, up to 10 cm wide, any height
   sampleBox: 25, // every colour and material as a 10 × 15 cm chip; the €25 comes off the order
   planCheckFrom: 0 // checking your IKEA list and every size before we cut: free
@@ -2533,7 +2761,8 @@ function freshState(sys) {
     oil: 'pure',
     edge: 'round',
     sides: 'none',
-    plinth: 'ikea', // the plinth under a kitchen: IKEA's own, or one in the look of the fronts
+    plinth: 'ikea', // the plinth under a kitchen: IKEA's own, one in the look of the fronts, or furniture feet
+    col2: 'olive', // the border colour of Kader fronts
     fillers: 0, // filler strips in the look of the fronts
     planCheck: true,
     gframe: 'black',
@@ -2597,7 +2826,8 @@ if (!S.flute.gpitch) S.flute.gpitch = 50;
 if (!OILS[S.oil]) S.oil = 'pure';
 if (!EDGES[S.edge]) S.edge = 'round';
 if (!SIDES[S.sides]) S.sides = 'none';
-if (!['ikea', 'match'].includes(S.plinth)) S.plinth = 'ikea';
+if (!['ikea', 'match', 'feet'].includes(S.plinth)) S.plinth = 'ikea';
+if (!COLOURS[S.col2]) S.col2 = 'olive';
 if (!(S.fillers >= 0 && S.fillers <= 6)) S.fillers = 0;
 if (S.planCheck === undefined) S.planCheck = true;
 function save() {
@@ -2845,7 +3075,8 @@ function matOk(style, mat) {
   const m = MATS[mat];
   if (!m || !STYLES[style]) return false;
   if (m.only) return m.only === style;
-  /* flutes and grooves are routed into MDF only (painted or raw); wood and ply stay flat */
+  /* flutes and grooves are routed into MDF only (painted or raw); wood and ply stay flat; a border is painted */
+  if (STYLES[style].paintOnly) return !!m.paint;
   return !STYLES[style].mdf || !!m.mdf;
 }
 function lookOf(f) {
@@ -2855,11 +3086,13 @@ function lookOf(f) {
       mat: o.mat || S.mat,
       col: o.col || S.col,
       oil: o.oil || S.oil,
+      col2: o.col2 || S.col2,
       own: !!S.fx[f && f.id]
     };
   if (!MATS[lk.mat]) lk.mat = 'painted';
   if (!COLOURS[lk.col]) lk.col = 'chalk';
   if (!OILS[lk.oil]) lk.oil = 'pure';
+  if (!COLOURS[lk.col2]) lk.col2 = 'olive';
   if (!STYLES[lk.style]) lk.style = 'flat';
   if (MATS[lk.mat].only) lk.style = MATS[lk.mat].only;
   else if (!matOk(lk.style, lk.mat)) lk.style = 'flat';
@@ -2867,11 +3100,11 @@ function lookOf(f) {
 }
 function lookName(lk) {
   const m = MATS[lk.mat];
-  return `${STYLES[lk.style].name} (${STYLES[lk.style].en}) ${m.paint ? COLOURS[lk.col].name.toLowerCase() : m.name.toLowerCase()}${m.oil ? ', oil ' + OILS[lk.oil].name : ''}`;
+  return `${STYLES[lk.style].name} (${STYLES[lk.style].en}) ${m.paint ? COLOURS[lk.col].name.toLowerCase() : m.name.toLowerCase()}${m.oil ? ', oil ' + OILS[lk.oil].name : ''}${lk.style === 'band' ? ` with a ${COLOURS[lk.col2].name.toLowerCase()} border` : ''}`;
 }
 function lookKey(lk) {
   const m = MATS[lk.mat];
-  return `${lk.style}|${lk.mat}|${m.paint ? lk.col : m.oil ? lk.oil : ''}`;
+  return `${lk.style}|${lk.mat}|${m.paint ? lk.col : m.oil ? lk.oil : ''}${lk.style === 'band' ? '|' + lk.col2 : ''}`;
 }
 
 /* ---------- price ---------- */
@@ -2904,6 +3137,11 @@ function extrasOf(L) {
         n: 1,
         p: Math.round(m * EXTRAS.plinthPerM)
       });
+  }
+  if (S.sys === 'metod' && S.plinth === 'feet') {
+    const n = L.cabs.filter(p => p.c.kind !== 'wall').length,
+      fin = S.hfin === 'mixed' || !HFIN[S.hfin] || S.hfin === 'match' ? 'aged brass' : HFIN[S.hfin].name.toLowerCase();
+    if (n) out.push({ kind: 'feet', name: 'Furniture feet', note: `4 per cabinet, ${fin}`, n, p: EXTRAS.feet });
   }
   if (S.fillers)
     out.push({
@@ -2965,6 +3203,63 @@ function priceOfDesign(st) {
     S = keep;
   }
 }
+
+/* ---------- a design in a link: #d=<code> (the parts that make the design, as base64url JSON) ---------- */
+const SHARE_KEYS = [
+  'sys',
+  'cabs',
+  'fx',
+  'flip',
+  'style',
+  'mat',
+  'col',
+  'col2',
+  'oil',
+  'handle',
+  'hfin',
+  'gframe',
+  'flute',
+  'sides',
+  'edge',
+  'plinth',
+  'fillers'
+];
+function designCode() {
+  const o = {};
+  SHARE_KEYS.forEach(k => (o[k] = S[k]));
+  o.cabs = S.cabs.map(c => [c.kind, c.w, c.h, c.layout, c.id]);
+  const bytes = new TextEncoder().encode(JSON.stringify(o));
+  let bin = '';
+  bytes.forEach(b => (bin += String.fromCharCode(b)));
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+function readCode(code) {
+  try {
+    const bin = atob(code.replace(/-/g, '+').replace(/_/g, '/')),
+      o = JSON.parse(new TextDecoder().decode(Uint8Array.from(bin, ch => ch.charCodeAt(0))));
+    if (!SYS[o.sys] || !Array.isArray(o.cabs)) return null;
+    o.cabs = o.cabs.map(([kind, w, h, lay, id]) => Object.assign(cab(o.sys, kind, w, h, lay), id ? { id } : {}));
+    return o;
+  } catch (e) {
+    return null;
+  }
+}
+function shareLink() {
+  return location.href.split('#')[0] + '#d=' + designCode();
+}
+// a shared design opens straight in the Fronts step
+(() => {
+  const m = location.hash.match(/#d=([A-Za-z0-9_-]+)/),
+    o = m && readCode(m[1]);
+  if (o) {
+    Object.assign(S, o, { step: 'fronts', sel: null, recipe: null, demo: null });
+    try {
+      history.replaceState(null, '', location.href.split('#')[0]);
+    } catch (e) {
+      /* fine */
+    }
+  }
+})();
 
 /* ==== 20-draw.js ====
    The flat picture: the cabinets seen from the front with the new fronts, each in its own look (style,
@@ -3054,6 +3349,10 @@ function frontSVG(f, Y, sfx) {
       o += `<rect x="${x + 4}" y="${y + 4}" width="${w - 8}" height="${h - 8}" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2"/>`;
     if (lk.style === 'fluted') o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#flute${x_})"/>`;
     if (lk.style === 'grooves') o += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#groove${x_})"/>`;
+    if (lk.style === 'band') {
+      const i = Math.min(40, w * 0.09, h * 0.09);
+      o += `<rect x="${x + i}" y="${y + i}" width="${w - 2 * i}" height="${h - 2 * i}" fill="none" stroke="${colHex(lk.col2)}" stroke-width="${Math.max(10, i * 0.42)}"/>`;
+    }
     // plywood shows its layers on the edge
     if (m.ply)
       o += `<rect x="${x + 1}" y="${y + 1}" width="${w - 2}" height="${h - 2}" fill="none" stroke="${shade(woodCol(lk.mat, lk.oil).wood, -0.3)}" stroke-opacity=".6" stroke-width="3" stroke-dasharray="6 3"/>`;
@@ -3079,13 +3378,15 @@ function handlePos(f) {
   else y = f.ckind === 'wall' ? f.y + 90 : f.y + f.h - 90;
   return { x, y, vert: true };
 }
-function handleHex(lk) {
-  return S.hfin === 'match' ? shade(faceHex(lk), -0.2) : HFIN[S.hfin].hex;
+function handleHex(lk, f) {
+  if (S.hfin === 'match') return shade(faceHex(lk), -0.2);
+  if (S.hfin === 'mixed') return f && f.kind === 'drawer' ? HFIN.nickel.hex : HFIN.brass.hex;
+  return HFIN[S.hfin].hex;
 }
 function handleSVG(f, Y, lk) {
   const hd = S.handle;
   if (hd === 'push') return '';
-  const col = handleHex(lk),
+  const col = handleHex(lk, f),
     P = handlePos(f),
     cx = P.x,
     cy = Y(P.y);
@@ -3127,7 +3428,16 @@ function drawPic() {
         s += `<line x1="${p.x + 18}" x2="${p.x + p.w - 18}" y1="${Y(p.y + (k * p.h) / n)}" y2="${Y(p.y + (k * p.h) / n)}" stroke="#c9cac5" stroke-width="10"/>`;
     }
   });
-  if (L.plinth && S.sys === 'metod') {
+  if (L.plinth && S.sys === 'metod' && S.plinth === 'feet')
+    L.cabs
+      .filter(p => p.c.kind !== 'wall')
+      .forEach(p =>
+        [p.x + 45, p.x + p.w - 45].forEach(
+          x =>
+            (s += `<path d="M${x - 17} ${Y(L.plinth)} L${x + 17} ${Y(L.plinth)} L${x + 11} ${Y(0)} L${x - 11} ${Y(0)} Z" fill="${HFIN.brass.hex}"/>`)
+        )
+      );
+  else if (L.plinth && S.sys === 'metod') {
     const bw = Math.max(0, ...L.cabs.filter(p => p.c.kind !== 'wall').map(p => p.x + p.w));
     s += `<rect x="0" y="${Y(L.plinth)}" width="${bw}" height="${L.plinth - 10}" fill="${shade(faceHex(lookOf(null)), -0.3)}"/>`;
   }
@@ -3446,6 +3756,7 @@ function roomWindowWall(T, parent, mat, castOnly) {
 
 /* the camera is fixed; the picture is cropped around the cabinets to fill the stage */
 function cropFor(L, aspect) {
+  if (S.zoom) return cropClose(L, aspect);
   const T = V3.T,
     cam = V3.cam,
     side = S.sides === 'none' ? 0 : 20,
@@ -3479,6 +3790,31 @@ function cropFor(L, aspect) {
   cx = Math.max(w / 2, Math.min(ROOM.W - w / 2, cx));
   cy = Math.max(h / 2, Math.min(ROOM.H - h / 2, cy));
   return [cx - w / 2, cy - h / 2, w, h];
+}
+/* a close-up: just the cabinet front, for the style cards */
+function cropClose(L, aspect) {
+  const T = V3.T,
+    cam = V3.cam;
+  cam.clearViewOffset();
+  cam.updateMatrixWorld();
+  const P = (x, y, z) => {
+      const v = new T.Vector3(x, y, z).project(cam);
+      return [((v.x + 1) / 2) * ROOM.W, ((1 - v.y) / 2) * ROOM.H];
+    },
+    z = 640,
+    ys = L.fronts.map(f => f.y),
+    y0 = Math.min(...ys) - 40,
+    y1 = Math.max(...L.fronts.map(f => f.y + f.h)) + 40,
+    pts = [P(-L.W / 2 - 40, y1, z), P(L.W / 2 + 40, y1, z), P(-L.W / 2 - 40, y0, z), P(L.W / 2 + 40, y0, z)];
+  const l = Math.min(...pts.map(p => p[0])),
+    r = Math.max(...pts.map(p => p[0])),
+    t = Math.min(...pts.map(p => p[1])),
+    b = Math.max(...pts.map(p => p[1]));
+  let w = r - l,
+    h = b - t;
+  if (w / h > aspect) h = w / aspect;
+  else w = h * aspect;
+  return [(l + r) / 2 - w / 2, (t + b) / 2 - h / 2, w, h];
 }
 function draw3D(tw, th) {
   if (!V3.ready || !V3.L) return;
@@ -3534,7 +3870,9 @@ function thumbKey(key, st) {
       st.handle || S.handle,
       st.hfin || S.hfin,
       st.sides || 'none',
-      st.edge || S.edge
+      st.edge || S.edge,
+      st.col2 || S.col2,
+      st.plinth || 'ikea'
     ].join('|')
   );
 }
@@ -3558,7 +3896,12 @@ function queueThumbs() {
     const keep = S;
     let url = '';
     try {
-      S = Object.assign({}, keep, { fx: {}, sel: null, flip: {}, sides: 'none' }, job.st);
+      S = Object.assign(
+        {},
+        keep,
+        { fx: {}, sel: null, flip: {}, sides: 'none', plinth: 'ikea', fillers: 0, zoom: false },
+        job.st
+      );
       V3.key = null;
       build3D(true);
       draw3D(job.w || THUMB_W, job.h || THUMB_H);
@@ -3786,7 +4129,8 @@ function sceneKey() {
     S.flute,
     S.sides,
     S.edge,
-    S.plinth
+    S.plinth,
+    S.col2
   ]);
 }
 function build3D(noDraw) {
@@ -3845,22 +4189,43 @@ function build3D(noDraw) {
     for (let k = 1; k < n; k++)
       box(p.w - 2 * t, t, d - 30, white, p.x + p.w / 2, p.y + (k * p.h) / n, z0 + (d - 30) / 2, false);
   });
+  if (S.sys === 'metod' && S.plinth === 'feet') {
+    // furniture feet: a kitchen that stands like furniture, four turned feet under every floor cabinet
+    const fm = new T.MeshStandardMaterial({
+      color: S.hfin === 'mixed' || S.hfin === 'match' ? HFIN.brass.hex : HFIN[S.hfin].hex,
+      roughness: S.hfin === 'oak' ? 0.55 : 0.3,
+      metalness: S.hfin === 'oak' || S.hfin === 'black' ? 0.1 : 0.85
+    });
+    L.cabs
+      .filter(p => p.c.kind !== 'wall')
+      .forEach(p =>
+        [p.x + 45, p.x + p.w - 45].forEach(x =>
+          [-Dmax + 70, -Dmax + dOf(p.c) - 70].forEach(z => {
+            const g = new T.Mesh(new T.CylinderGeometry(17, 11, L.plinth, 20), fm);
+            g.position.set(x, L.plinth / 2, z);
+            g.castShadow = true;
+            root.add(g);
+          })
+        )
+      );
+  }
   if (S.sys === 'metod') {
     const bases = L.cabs.filter(p => p.c.kind !== 'wall');
     if (bases.length) {
       const a = Math.min(...bases.map(p => p.x)),
         b = Math.max(...bases.map(p => p.x + p.w));
-      box(
-        b - a,
-        L.plinth - 10,
-        18,
-        S.plinth === 'match'
-          ? matFor(Object.assign({}, sideLook(), { style: 'flat' }), { w: b - a, h: L.plinth })
-          : new T.MeshStandardMaterial({ color: '#2a2a28', roughness: 0.6 }),
-        (a + b) / 2,
-        (L.plinth - 10) / 2,
-        -40
-      );
+      if (S.plinth !== 'feet')
+        box(
+          b - a,
+          L.plinth - 10,
+          18,
+          S.plinth === 'match'
+            ? matFor(Object.assign({}, sideLook(), { style: 'flat' }), { w: b - a, h: L.plinth })
+            : new T.MeshStandardMaterial({ color: '#2a2a28', roughness: 0.6 }),
+          (a + b) / 2,
+          (L.plinth - 10) / 2,
+          -40
+        );
       const tops = L.cabs.filter(p => p.c.kind === 'base');
       if (tops.length) {
         const a2 = Math.min(...tops.map(p => p.x)),
@@ -3942,6 +4307,17 @@ function build3D(noDraw) {
       root.add(fl);
       V3.meshes.push(fl);
     } else hit = rbox(f.w, f.h, FT, matFor(lk, f), cx, cy, cz);
+    if (lk.style === 'band') {
+      // Kader: a painted border, a hair proud of the face so it reads as paint
+      const i = Math.min(40, f.w * 0.09, f.h * 0.09),
+        bw = Math.max(10, i * 0.42),
+        bm = new T.MeshStandardMaterial({ color: colHex(lk.col2), roughness: 0.55 }),
+        z = cz + FT / 2 + 0.4;
+      box(f.w - 2 * i + bw, bw, 0.6, bm, cx, f.y + f.h - i, z, false);
+      box(f.w - 2 * i + bw, bw, 0.6, bm, cx, f.y + i, z, false);
+      box(bw, f.h - 2 * i - bw, 0.6, bm, f.x + i, cy, z, false);
+      box(bw, f.h - 2 * i - bw, 0.6, bm, f.x + f.w - i, cy, z, false);
+    }
     hit.userData.fid = f.id;
     V3.meshes.push(hit);
     handle3D(f, lk, root, hcache, FT);
@@ -3949,7 +4325,7 @@ function build3D(noDraw) {
     const zf = zfOf[f.cab] || 0;
     if (zf) for (let i = n0; i < root.children.length; i++) root.children[i].position.z += zf;
   });
-  plant3D(T, root, W + 520, -Dmax + 380);
+  if (!S.zoom) plant3D(T, root, W + 520, -Dmax + 380);
   contact3D(T, root, L, Dmax, dOf);
   // the whole run stands centred against the back wall
   root.position.set(-W / 2, 0, Dmax);
@@ -4061,13 +4437,13 @@ function handle3D(f, lk, root, cache, FT) {
   if (S.handle === 'push') return;
   const T = V3.T,
     P = handlePos(f),
-    hex = handleHex(lk),
+    hex = handleHex(lk, f),
     mk =
       cache[hex] ||
       (cache[hex] = new T.MeshStandardMaterial({
         color: hex,
         roughness: S.hfin === 'oak' || S.hfin === 'match' ? 0.55 : 0.3,
-        metalness: S.hfin === 'brass' || S.hfin === 'steel' ? 0.85 : 0.1
+        metalness: S.hfin === 'brass' || S.hfin === 'steel' || S.hfin === 'nickel' || S.hfin === 'mixed' ? 0.85 : 0.1
       })),
     z = FT + 1;
   const add = (geo, x, y, zz, rx, rz) => {
@@ -4739,13 +5115,29 @@ function quickWords(q) {
 }
 
 /* ---------- 2 Fronts ---------- */
+/* the cabinet in the style close-ups: one 60 × 80 door */
+const CLOSE_CAB = { id: 'close', sys: 'metod', kind: 'base', w: 60, h: 80, layout: 'door' };
 /* the look editor: for all fronts (target "all") or for one front (its id) */
 function lookEdHTML(target, lk) {
   const t = target;
   const styles = Object.entries(STYLES)
     .map(([k, s]) => {
       const ok = matOk(k, lk.mat) || !MATS[lk.mat].only;
-      return `<button type="button" class="stc ${k === lk.style ? 'on' : ''}" data-act="lk" data-a="${t}|style|${k}" ${ok ? '' : 'disabled'}>${lookThumb(k, lk.mat === 'glass' && k === 'flat' ? 'painted' : lk.mat, lk.col, t + k, lk.oil)}<b>${s.name}</b><small>${s.blurb}</small></button>`;
+      return `<button type="button" class="stc ${k === lk.style ? 'on' : ''}" data-act="lk" data-a="${t}|style|${k}" ${ok ? '' : 'disabled'}>${(() => {
+        const m = lk.mat === 'glass' && k === 'flat' ? 'painted' : matOk(k, lk.mat) ? lk.mat : 'painted',
+          st = {
+            sys: 'metod',
+            cabs: [CLOSE_CAB],
+            style: k,
+            mat: m,
+            col: lk.col,
+            col2: lk.col2,
+            oil: lk.oil,
+            handle: 'push',
+            zoom: true
+          };
+        return thumbHTML('sw' + k, st, lookThumb(k, m, lk.col, t + k, lk.oil), 320, 300);
+      })()}<b>${s.name}</b><small>${s.blurb}</small></button>`;
     })
     .join('');
   const mats = Object.entries(MATS)
@@ -4758,11 +5150,21 @@ function lookEdHTML(target, lk) {
     ? `<h3>Colour</h3><div class="sws">${Object.entries(COLOURS)
         .map(
           ([k, c]) =>
-            `<button type="button" class="swb ${k === lk.col ? 'on' : ''}" data-act="lk" data-a="${t}|col|${k}" title="${esc(c.name)} · RAL ${c.ral}" style="background:${colHex(k)}"><span>${esc(c.name)}</span></button>`
+            `<button type="button" class="swb ${k === lk.col ? 'on' : ''}${c.trend ? ' tr' : ''}" data-act="lk" data-a="${t}|col|${k}" title="${esc(c.name)} · RAL ${c.ral}${c.trend ? ' · 2027' : ''}" style="background:${colHex(k)}"><span>${esc(c.name)}</span></button>`
         )
         .join(
           ''
-        )}</div><p class="hint">${esc(COLOURS[lk.col].name)} is RAL ${COLOURS[lk.col].ral} ${esc((RAL[COLOURS[lk.col].ral] || {}).name || '')}, so any paint shop can match it later.</p>`
+        )}</div><p class="hint">${esc(COLOURS[lk.col].name)} is RAL ${COLOURS[lk.col].ral} ${esc((RAL[COLOURS[lk.col].ral] || {}).name || '')}, so any paint shop can match it later.${COLOURS[lk.col].trend ? ' One of the 2027 colours.' : ''}</p>${
+        lk.style === 'band'
+          ? `<h3>Border colour</h3><div class="sws">${Object.entries(COLOURS)
+              .filter(([k]) => k !== lk.col)
+              .map(
+                ([k, c]) =>
+                  `<button type="button" class="swb ${k === lk.col2 ? 'on' : ''}${c.trend ? ' tr' : ''}" data-act="lk" data-a="${t}|col2|${k}" title="${esc(c.name)} · RAL ${c.ral}" style="background:${colHex(k)}"><span>${esc(c.name)}</span></button>`
+              )
+              .join('')}</div>`
+          : ''
+      }`
     : MATS[lk.mat].oil
       ? `<h3>Oil colour</h3><div class="sws">${Object.entries(OILS)
           .map(
@@ -4773,7 +5175,7 @@ function lookEdHTML(target, lk) {
             ''
           )}</div><p class="hint">Rubio Monocoat Oil Plus 2C, ${esc(OILS[lk.oil].name)}: ${esc(OILS[lk.oil].blurb.toLowerCase())}. One coat, food-safe once cured, and you can touch up a scratch with a drop of oil.</p>`
       : '';
-  return `<h3>Style</h3><div class="stcs two">${styles}</div><h3>Material</h3><p class="hint">Fluted and grooved fronts are routed into MDF, so wood and plywood come flat.</p><div class="mats">${mats}</div>${cols}`;
+  return `<h3>Style</h3><div class="stcs two">${styles}</div><h3>Material</h3><p class="hint">Riet and Voeg are routed into MDF and Kader is painted, so wood and plywood come Effen (flat).</p><div class="mats">${mats}</div>${cols}`;
 }
 function frontsHTML(L) {
   let h = `<h2>Your fronts</h2><p class="lede">19 mm thick, made to the exact IKEA sizes and drilled for the IKEA hinges you already have. Choose one look for all of them, then tap any front in the picture to give it its own.</p>
@@ -4792,7 +5194,7 @@ function frontsHTML(L) {
       ${lk.own ? lookEdHTML(f.id, lk) : ''}
       <div class="adds">${lk.own && sib > 1 ? `<button type="button" class="btn sm" data-act="copycab">Same for the whole cabinet</button>` : ''}${f.hinge ? `<button type="button" class="btn sm" data-act="flip">Hinge ${f.hinge === 'L' ? 'left' : 'right'} → swap</button>` : ''}</div></div>`;
   }
-  const all = { style: S.style, mat: S.mat, col: S.col, oil: S.oil };
+  const all = { style: S.style, mat: S.mat, col: S.col, oil: S.oil, col2: S.col2 };
   h += `<h3 class="big">${f ? 'All the other fronts' : 'All fronts'}</h3>${lookEdHTML('all', all)}`;
   const sl = sideLook();
   h += `<h3>Side panels</h3>${seg(
@@ -4808,14 +5210,15 @@ function frontsHTML(L) {
     S.sys === 'metod'
       ? `<div class="row"><label>Plinth</label>${seg('plinth', S.plinth, [
           ['ikea', 'IKEA’s own'],
-          ['match', 'Same look']
+          ['match', 'Same look'],
+          ['feet', 'Feet']
         ])}</div>`
       : ''
   }<div class="row"><label>Fillers</label>${seg(
     'fillers',
     S.fillers,
     [0, 1, 2, 3, 4].map(n => [n, n ? String(n) : 'None'])
-  )}</div><p class="hint">${S.sys === 'metod' ? `A plinth in the look of your fronts, ${eur(EXTRAS.plinthPerM)} a metre. ` : ''}Filler strips close the gap to a wall or ceiling, ${eur(EXTRAS.filler)} each, cut to fit.</p>`;
+  )}</div><p class="hint">${S.sys === 'metod' ? `A plinth in the look of your fronts (${eur(EXTRAS.plinthPerM)} a metre), or furniture feet so the kitchen stands like a piece of furniture (${eur(EXTRAS.feet)} a cabinet). ` : ''}Filler strips close the gap to a wall or ceiling, ${eur(EXTRAS.filler)} each, cut to fit.</p>`;
   h += `<h3>Edges</h3>${seg(
     'edge',
     S.edge,
@@ -4909,6 +5312,7 @@ function orderHTML(L, P) {
     <tfoot><tr><td></td><td colspan="2">Subtotal</td><td class="num">${eur(P.sub)}</td></tr><tr><td></td><td colspan="2">Delivery${P.del ? ` <small>free from ${eur(PRICE.deliveryFree)}</small>` : ' — free'}</td><td class="num">${P.del ? eur(P.del) : '€ 0'}</td></tr><tr class="tot"><td></td><td colspan="2">Total incl. VAT</td><td class="num">${eur(P.total)}</td></tr></tfoot></table>
     <label class="chk"><input type="checkbox" data-act="planCheck"${S.planCheck ? ' checked' : ''}><span><b>Free plan check</b> We go through your IKEA list and every size with you before anything is cut.</span></label>
     <button type="button" class="btn pri big" data-act="orderNow">Order these fronts</button>
+    <div class="adds qa"><button type="button" class="btn sm" data-act="print">Print or save the quote</button><button type="button" class="btn sm" data-act="share">Share this design</button></div>
     <div class="sbox"><div><b>Not sure yet? Order the sample box</b><span>Every colour and material as a 10 × 15 cm chip, ${eur(EXTRAS.sampleBox)}, taken off your order later.</span></div><button type="button" class="btn" data-act="samples">Order samples</button></div>`
         : '<p class="hint">Add a cabinet with fronts first.</p>'
     }
@@ -4968,6 +5372,42 @@ function sendOrder() {
   save();
 }
 
+/* ---------- the quote: a clean page with the picture and every line, for printing or saving as PDF ---------- */
+function printQuote() {
+  const L = layout(),
+    P = priceAll(L),
+    no = 'BF-' + designCode().slice(-6).toUpperCase(),
+    pic = V3.ready && V3.r ? V3.r.domElement.toDataURL('image/jpeg', 0.9) : '',
+    rows =
+      grouped(L)
+        .map(
+          r =>
+            `<tr><td>${r.n}×</td><td>${r.kind === 'door' ? 'Door' : r.kind === 'side' ? 'Side panel' : 'Drawer front'}${r.hinge ? `, hinge ${r.hinge === 'L' ? 'left' : 'right'}` : ''}<small>${esc(lookName(r.look))}</small></td><td class="num">${f1(r.w)} × ${f1(r.h)} mm</td><td class="num">${eur(r.p * r.n)}</td></tr>`
+        )
+        .join('') +
+      P.ex
+        .map(
+          x =>
+            `<tr><td>${x.n}×</td><td>${esc(x.name)}<small>${esc(x.note)}</small></td><td></td><td class="num">${eur(x.p * x.n)}</td></tr>`
+        )
+        .join('');
+  let q = document.getElementById('printq');
+  if (!q) {
+    q = document.createElement('div');
+    q.id = 'printq';
+    document.body.appendChild(q);
+  }
+  q.innerHTML = `<header><b>BRUIS</b><span>Quote ${no} · ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span></header>
+    ${pic ? `<img src="${pic}" alt="">` : ''}
+    <h1>${SYS[S.sys].name} ${SYS[S.sys].what.toLowerCase()}: ${countWords(P)}</h1>
+    <p>Edges ${EDGES[S.edge].name.toLowerCase()} · handles ${esc(HANDLES[S.handle].name.toLowerCase())}${S.handle === 'knob' || S.handle === 'bar' || S.handle === 'tab' ? ', ' + esc(HFIN[S.hfin].name.toLowerCase()) : ''} · ready ${esc(leadOf(L))} after ordering</p>
+    <table><tbody>${rows}</tbody><tfoot><tr><td></td><td colspan="2">Delivery</td><td class="num">${P.del ? eur(P.del) : 'free'}</td></tr><tr class="tot"><td></td><td colspan="2">Total incl. VAT</td><td class="num">${eur(P.total)}</td></tr></tfoot></table>
+    <p>${S.planCheck ? 'Includes our free plan check: we go through your IKEA list and every size with you before anything is cut.' : ''} Hinges and drawer fittings are IKEA's own and not included.</p>
+    <p class="link">Open this design again: ${esc(shareLink())}</p>
+    <footer>BRUIS — fronts for IKEA PAX, METOD and BESTÅ. Prototype: prices are examples.</footer>`;
+  window.print();
+}
+
 /* ---------- the sample box (prototype: nothing is sent) ---------- */
 function openSamples() {
   document.getElementById('mbox').innerHTML =
@@ -4998,15 +5438,15 @@ function setLook(target, field, val) {
   if (target === 'all') {
     S[field] = val;
     if (field === 'mat' && !matOk(S.style, val)) S.style = MATS[val].only || 'flat';
-    if (field === 'style' && !matOk(val, S.mat)) S.mat = mdfFor(S.mat);
+    if (field === 'style' && !matOk(val, S.mat)) S.mat = matOk(val, mdfFor(S.mat)) ? mdfFor(S.mat) : 'painted';
     S.recipe = null;
     return;
   }
   const cur = lookOf({ id: target }),
-    nx = { style: cur.style, mat: cur.mat, col: cur.col, oil: cur.oil };
+    nx = { style: cur.style, mat: cur.mat, col: cur.col, oil: cur.oil, col2: cur.col2 };
   nx[field] = val;
   if (field === 'mat' && !matOk(nx.style, val)) nx.style = MATS[val].only || 'flat';
-  if (field === 'style' && !matOk(val, nx.mat)) nx.mat = mdfFor(nx.mat);
+  if (field === 'style' && !matOk(val, nx.mat)) nx.mat = matOk(val, mdfFor(nx.mat)) ? mdfFor(nx.mat) : 'painted';
   S.fx[target] = nx;
 }
 
@@ -5036,6 +5476,41 @@ document.addEventListener('click', e => {
     }
     case 'view':
       S.view = a;
+      break;
+    case 'openShared': {
+      const m = String(S.impText || '').match(/#d=([A-Za-z0-9_-]+)/),
+        o = m && readCode(m[1]);
+      if (o) {
+        S.undo = JSON.stringify({ sys: S.sys, cabs: S.cabs, fx: S.fx, flip: S.flip });
+        Object.assign(S, o, { step: 'fronts', sel: null, recipe: null, demo: null, impText: '' });
+      }
+      break;
+    }
+    case 'share': {
+      const url = shareLink();
+      const done = ok => {
+        b.textContent = ok ? 'Link copied' : 'Copy failed';
+        if (!ok) prompt('Copy this link to share your design:', url);
+        setTimeout(() => (b.textContent = 'Share this design'), 2200);
+      };
+      try {
+        navigator.clipboard.writeText(url).then(
+          () => done(true),
+          () => done(false)
+        );
+      } catch (er) {
+        done(false);
+      }
+      return;
+    }
+    case 'print':
+      printQuote();
+      return;
+    case 'trend':
+      if (S.step === 'home') loadDemo(0);
+      surprise(undefined, true);
+      S.step = 'fronts';
+      window.scrollTo({ top: 0 });
       break;
     case 'surprise':
       surprise();
@@ -5184,7 +5659,7 @@ document.addEventListener('click', e => {
     case 'own':
       if (S.sel) {
         if (a === 'same') delete S.fx[S.sel];
-        else S.fx[S.sel] = { style: S.style, mat: S.mat, col: S.col, oil: S.oil };
+        else S.fx[S.sel] = { style: S.style, mat: S.mat, col: S.col, oil: S.oil, col2: S.col2 };
       }
       break;
     case 'copycab': {
@@ -5352,7 +5827,7 @@ function homeHTML() {
         : thumbHTML('hero', d0, designThumb('demo0', d0), 1800, 860),
     demos = DEMOS.map((d, i) => {
       const st = demoState(i);
-      return `<button type="button" class="hdemo" data-act="demoGo" data-a="${i}"><span class="tpic">${thumbHTML('demo' + i, st, designThumb('demo' + i, st))}</span><span class="hdl"><b>${esc(d.name)}</b><em>${eur(priceOfDesign(st))}</em></span><small>${SYS[d.sys].name}, ${esc(d.say.charAt(0).toLowerCase() + d.say.slice(1))}</small></button>`;
+      return `<button type="button" class="hdemo" data-act="demoGo" data-a="${i}"><span class="tpic">${thumbHTML('demo' + i, st, designThumb('demo' + i, st))}</span><span class="hdl"><b>${esc(d.name)}${d.trend ? ' <em class="tag27">2027</em>' : ''}</b><em>${eur(priceOfDesign(st))}</em></span><small>${SYS[d.sys].name}, ${esc(d.say.charAt(0).toLowerCase() + d.say.slice(1))}</small></button>`;
     }).join(''),
     chips = Object.keys(COLOURS)
       .map(k => `<i style="background:${colHex(k)}" title="${esc(COLOURS[k].name)}"></i>`)
@@ -5367,6 +5842,20 @@ function homeHTML() {
       <li><b>Choose your fronts</b><span>Effen, Riet or Voeg; twelve colours, oak, walnut or plywood; edges, side panels and handles. You see it in the room as you go.</span></li>
       <li><b>We check, make and deliver</b><span>We go through every size with you before anything is cut, make your fronts to measure and deliver them drilled for your IKEA hinges.</span></li></ol></section>
     <section class="hsec"><div class="hhead"><h2>Start from a design</h2><p>Open one, then change anything. Prices are for the whole design, delivered.</p></div><div class="hdemos">${demos}</div></section>
+    <section class="hsec h27"><div class="h27t"><h2>The 2027 edit</h2>
+      <p>Next year belongs to green — soft sage and celery, olive and deep forest — with warm taupes and clay browns beside it. Kitchens get darker woods, two woods together, painted borders, mixed metals and feet, so they stand like furniture. We added all of it to the range.</p>
+      <button type="button" class="btn" data-act="trend">Try a 2027 look</button></div>
+      <div class="h27c">${Object.entries(COLOURS)
+        .filter(([, c]) => c.trend)
+        .concat([
+          ['sage', COLOURS.sage],
+          ['racing', COLOURS.racing],
+          ['oxblood', COLOURS.oxblood]
+        ])
+        .map(
+          ([k, c]) => `<span><i style="background:${colHex(k)}"></i>${esc(c.name)}<small>RAL ${c.ral}</small></span>`
+        )
+        .join('')}</div></section>
     <section class="hsec hsplit">
       <div class="hcard"><div class="hchips">${chips}</div><h3>The sample box</h3><p>Every colour and material as a 10 × 15 cm chip, with the real edge and a piece of each profile. ${eur(EXTRAS.sampleBox)}, taken off your order later.</p><button type="button" class="btn" data-act="samples">Order samples</button></div>
       <div class="hcard"><h3>Free plan check</h3><p>Not sure your IKEA list is right? Before anything is cut, we go through every cabinet and size with you — and tell you if a filler strip or side panel would make it look built in.</p><button type="button" class="btn" data-act="goPaste">Paste your list</button></div>
@@ -5375,6 +5864,34 @@ function homeHTML() {
       <li><b>Made to measure in Belgium</b><span>Cut, routed and finished in our own workshop; painted by a local spray shop.</span></li>
       <li><b>Fits your IKEA hinges</b><span>Drilled for the IKEA hinges and drawers you already have. Keep your frames, change the look.</span></li>
       <li><b>Clear prices</b><span>The price you see is the price you pay, with free delivery from ${eur(PRICE.deliveryFree)}.</span></li></ul></section>
+    <section class="hsec hfaq"><h2>Questions</h2>${[
+      [
+        'Do I need to buy IKEA’s doors too?',
+        'No. At IKEA you buy the frames or cabinets, the hinges, the drawers and the legs — everything except the fronts. Our fronts are drilled for those IKEA hinges and drawers.'
+      ],
+      [
+        'Which IKEA cabinets do you make fronts for?',
+        'PAX wardrobes, METOD kitchens and BESTÅ storage. Side panels, plinths and filler strips come in the same look.'
+      ],
+      [
+        'How long does it take?',
+        'Most fronts are made in about three to four weeks; painted fronts take one to two weeks longer, because they go to our spray shop.'
+      ],
+      [
+        'What if a size is wrong?',
+        'That is what the free plan check is for: we go through your IKEA list and every size with you before anything is cut.'
+      ],
+      [
+        'Can I paint the budget fronts myself?',
+        'Yes. Raw MDF and untreated birch ply come sanded and ready for your own paint, oil or wax — prime MDF first, front and back.'
+      ],
+      [
+        'Can I see the colours first?',
+        `Yes — the sample box has every colour and material as a 10 × 15 cm chip, ${eur(EXTRAS.sampleBox)}, taken off your order later.`
+      ]
+    ]
+      .map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`)
+      .join('')}</section>
     <footer class="hfoot"><b>BRUIS</b><span>Fronts for IKEA PAX, METOD and BESTÅ. A prototype: nothing can be ordered yet.</span></footer>`;
 }
 
@@ -5594,6 +6111,9 @@ function impLayout(sys, kind, w, h, up) {
 
 /* what the reader found, as a short preview with a button per system */
 function impPreviewHTML(text) {
+  const shared = String(text || '').match(/#d=([A-Za-z0-9_-]{20,})/);
+  if (shared && readCode(shared[1]))
+    return `<div class="igrp"><div class="igh"><b>A shared BRUIS design</b></div><button type="button" class="btn pri sm" data-act="openShared">Open this design</button></div>`;
   if (!String(text || '').trim())
     return `<p class="hint">Nothing pasted yet. <button type="button" class="lnk" data-act="impEx">Try an example list</button></p>`;
   const r = parsePlanner(text),
@@ -5653,7 +6173,19 @@ function prng(seed) {
 }
 const pick = (r, a) => a[Math.floor(r() * a.length)];
 const BOLD = ['cobalt', 'midnight', 'racing', 'mustard', 'terracotta', 'tomato', 'oxblood', 'plum'];
-const DARK = { cobalt: 1, midnight: 1, racing: 1, oxblood: 1, plum: 1, black: 1, terracotta: 1, tomato: 1 };
+const DARK = {
+  cobalt: 1,
+  midnight: 1,
+  racing: 1,
+  oxblood: 1,
+  plum: 1,
+  black: 1,
+  terracotta: 1,
+  tomato: 1,
+  olive: 1,
+  clay: 1,
+  dusty: 1
+};
 // colours that sit well together (first the main one, then the partner)
 const PAIRS = [
   ['cobalt', 'chalk'],
@@ -5664,7 +6196,12 @@ const PAIRS = [
   ['plum', 'sage'],
   ['tomato', 'chalk'],
   ['racing', 'mustard'],
-  ['black', 'terracotta']
+  ['black', 'terracotta'],
+  // 2027 pairings: dusty blue with maroon, ochre with maroon, celery with clay, olive with taupe
+  ['dusty', 'oxblood'],
+  ['mustard', 'oxblood'],
+  ['celery', 'clay'],
+  ['olive', 'taupe']
 ];
 /* what a front is, for the rules */
 function roleOf(f) {
@@ -5675,6 +6212,81 @@ function roleOf(f) {
   return 'door';
 }
 const RECIPES = [
+  // ---- the 2027 edit ----
+  {
+    name: '2027: green and wood',
+    trend: true,
+    make(r) {
+      const g = pick(r, ['celery', 'sage', 'olive', 'racing']),
+        wood = pick(r, ['walnut', 'oak']);
+      return {
+        all: { mat: 'painted', col: g, style: pick(r, ['flat', 'fluted']) },
+        by: {
+          wall: { mat: wood, style: 'flat', oil: wood === 'oak' ? 'chocolate' : 'pure' },
+          top: { mat: wood, style: 'flat' }
+        },
+        handle: pick(r, ['knob', 'bar']),
+        hfin: 'mixed',
+        say: `${COLOURS[g].name} with ${wood === 'oak' ? 'dark oak' : 'walnut'}, mixed metals`
+      };
+    }
+  },
+  {
+    name: '2027: Kader',
+    trend: true,
+    make(r) {
+      const [a, b] = pick(r, [
+        ['chalk', 'olive'],
+        ['taupe', 'oxblood'],
+        ['chalk', 'dusty'],
+        ['celery', 'clay'],
+        ['blush', 'oxblood']
+      ]);
+      return {
+        all: { mat: 'painted', col: a, col2: b, style: 'band' },
+        by: { tall: { col: b, style: 'flat' } },
+        handle: pick(r, ['knob', 'bar']),
+        hfin: pick(r, ['nickel', 'brass', 'mixed']),
+        say: `${COLOURS[a].name} with ${COLOURS[b].name.toLowerCase()} borders`
+      };
+    }
+  },
+  {
+    name: '2027: two woods',
+    trend: true,
+    make(r) {
+      return {
+        all: { mat: 'oak', style: 'flat', oil: 'chocolate' },
+        by: {
+          wall: { mat: 'oak', oil: 'pure' },
+          top: { mat: 'oak', oil: 'pure' },
+          drawer: { mat: pick(r, ['walnut', 'oak']), oil: 'chocolate' }
+        },
+        handle: 'bar',
+        hfin: pick(r, ['brass', 'mixed']),
+        say: 'Dark oak below, pale oak above'
+      };
+    }
+  },
+  {
+    name: '2027: warm earth',
+    trend: true,
+    make(r) {
+      const [a, b] = pick(r, [
+        ['taupe', 'clay'],
+        ['clay', 'mustard'],
+        ['dusty', 'oxblood'],
+        ['mustard', 'oxblood']
+      ]);
+      return {
+        all: { mat: 'painted', col: a, style: pick(r, ['grooves', 'flat']) },
+        by: { drawer: { col: b, style: 'flat' } },
+        handle: pick(r, ['knob', 'tab', 'bar']),
+        hfin: DARK[a] ? 'brass' : 'nickel',
+        say: `${COLOURS[a].name} and ${COLOURS[b].name.toLowerCase()}`
+      };
+    }
+  },
   {
     name: 'One bold colour',
     make(r) {
@@ -5776,12 +6388,14 @@ const RECIPES = [
     }
   }
 ];
-function surprise(seed) {
+function surprise(seed, trendOnly) {
   const r = prng(seed || Date.now() & 0xffffffff),
     L = layout();
   // glass needs something to show off: skip glass recipes when nothing suits it
   const okR = RECIPES.filter(
-    x => x.name !== 'Glass accent' || L.fronts.some(f => ['wall', 'top', 'tall'].includes(roleOf(f)))
+    x =>
+      (!trendOnly || x.trend) &&
+      (x.name !== 'Glass accent' || L.fronts.some(f => ['wall', 'top', 'tall'].includes(roleOf(f))))
   );
   let rec = pick(r, okR);
   if (okR.length > 1 && rec.name === S.recipe)
@@ -5798,6 +6412,7 @@ function applyPlan(plan, r) {
   S.style = plan.all.style || 'flat';
   S.mat = plan.all.mat;
   if (plan.all.col) S.col = plan.all.col;
+  if (plan.all.col2) S.col2 = plan.all.col2;
   S.oil = plan.all.oil || 'pure';
   S.fx = {};
   const count = {};
@@ -5809,7 +6424,13 @@ function applyPlan(plan, r) {
     if (o.every && count[role] % o.every) return; // e.g. every other tall door in glass
     const lk = Object.assign({}, plan.all, o);
     delete lk.every;
-    if (lk.mat !== S.mat || lk.style !== S.style || (lk.col && lk.col !== S.col) || (lk.oil && lk.oil !== S.oil))
+    if (
+      lk.mat !== S.mat ||
+      lk.style !== S.style ||
+      (lk.col && lk.col !== S.col) ||
+      (lk.oil && lk.oil !== S.oil) ||
+      (lk.col2 && lk.col2 !== S.col2)
+    )
       S.fx[f.id] = lk;
   });
   if (plan.gframe) S.gframe = plan.gframe;
@@ -5823,6 +6444,67 @@ function applyPlan(plan, r) {
    A cabinet here: [kind, width, height, front layout]. Looks by role work like the Surprise recipes
    (drawer, wall, tall, top, low, door). */
 const DEMOS = [
+  // ---- the 2027 edit ----
+  {
+    name: 'Celery & walnut',
+    trend: true,
+    say: 'Fluted celery green, walnut wall cabinets, mixed metals, on feet',
+    sys: 'metod',
+    cabs: [
+      ['high', 60, 200, 'split'],
+      ['base', 60, 80, 'drawers3'],
+      ['base', 80, 80, 'doors2'],
+      ['base', 60, 80, 'drawer_door'],
+      ['wall', 80, 80, 'doors2'],
+      ['wall', 60, 80, 'door']
+    ],
+    all: { mat: 'painted', col: 'celery', style: 'fluted' },
+    by: { wall: { mat: 'walnut', style: 'flat' }, drawer: { style: 'flat' } },
+    handle: 'bar',
+    hfin: 'mixed',
+    sides: 'both',
+    edge: 'round',
+    plinth: 'feet'
+  },
+  {
+    name: 'Kader wardrobe',
+    trend: true,
+    say: 'Chalk white with dusty blue painted borders, nickel knobs',
+    sys: 'pax',
+    cabs: [
+      ['frame', 100, 236, 'doors'],
+      ['frame', 50, 236, 'doors'],
+      ['frame', 100, 236, 'doors']
+    ],
+    all: { mat: 'painted', col: 'chalk', col2: 'dusty', style: 'band' },
+    by: {},
+    handle: 'knob',
+    hfin: 'nickel',
+    sides: 'both',
+    edge: 'round'
+  },
+  {
+    name: 'Two woods',
+    trend: true,
+    say: 'Chocolate-oiled oak below, pale oak above, brass bars, on feet',
+    sys: 'metod',
+    cabs: [
+      ['base', 80, 80, 'doors2'],
+      ['base', 60, 80, 'drawers3'],
+      ['base', 60, 80, 'door'],
+      ['base', 60, 80, 'drawers2'],
+      ['wall', 80, 80, 'doors2'],
+      ['wall', 60, 80, 'door'],
+      ['wall', 60, 80, 'door']
+    ],
+    all: { mat: 'oak', style: 'flat', oil: 'chocolate' },
+    by: { wall: { oil: 'pure' } },
+    handle: 'bar',
+    hfin: 'brass',
+    sides: 'both',
+    edge: 'round',
+    plinth: 'feet'
+  },
   {
     name: 'Sage kitchen',
     say: 'Fluted sage green with calm flat drawers and brass knobs',
@@ -5953,8 +6635,11 @@ function demoState(i) {
     handle: S.handle,
     hfin: S.hfin,
     gframe: S.gframe,
+    col2: S.col2,
     sides: d.sides || 'none',
-    edge: d.edge || 'round'
+    edge: d.edge || 'round',
+    plinth: d.plinth || 'ikea',
+    fillers: 0
   };
   S = keep;
   return (DEMO_ST[i] = st);
@@ -5974,7 +6659,7 @@ function loadDemo(i) {
 function demosHTML() {
   return `<div class="tiles">${DEMOS.map(
     (d, i) =>
-      `<button type="button" class="tile ${S.demo === d.name ? 'on' : ''}" data-act="demo" data-a="${i}"><span class="tpic">${thumbHTML('demo' + i, demoState(i), designThumb('demo' + i, demoState(i)))}</span><b>${esc(d.name)}</b><small>${SYS[d.sys].name}, ${esc(d.say.charAt(0).toLowerCase() + d.say.slice(1))}</small></button>`
+      `<button type="button" class="tile ${S.demo === d.name ? 'on' : ''}" data-act="demo" data-a="${i}"><span class="tpic">${thumbHTML('demo' + i, demoState(i), designThumb('demo' + i, demoState(i)))}</span><b>${esc(d.name)}${d.trend ? ' <em class="tag27">2027</em>' : ''}</b><small>${SYS[d.sys].name}, ${esc(d.say.charAt(0).toLowerCase() + d.say.slice(1))}</small></button>`
   ).join('')}</div>`;
 }
 

@@ -2157,3 +2157,213 @@ button.brand {
 .hdl em {
   white-space: nowrap;
 }
+
+/* the 2027 edit */
+.tag27 {
+  font-style: normal;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  padding: 0 4px;
+  margin-left: 4px;
+  vertical-align: 2px;
+  color: var(--ink2);
+}
+.swb.tr::after {
+  content: '2027';
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  font-size: 8.5px;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 2px;
+  padding: 0 3px;
+}
+.h27 {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 40px;
+  align-items: start;
+}
+.h27t {
+  border-top: 1px solid var(--ink);
+  padding-top: 18px;
+}
+.h27t h2 {
+  margin-bottom: 12px;
+}
+.h27t p {
+  color: var(--ink2);
+  font-size: 15px;
+  line-height: 1.55;
+  max-width: 52ch;
+}
+.h27c {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px 10px;
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+}
+.h27c span {
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.h27c i {
+  display: block;
+  aspect-ratio: 4 / 3;
+  border-radius: 1px;
+  margin-bottom: 6px;
+}
+.h27c small {
+  color: var(--ink3);
+  font-size: 11.5px;
+}
+@media (max-width: 860px) {
+  .h27 {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .h27c {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* style cards with their close-up render */
+.stc img,
+.stc .tdraw {
+  display: block;
+  width: 100%;
+  aspect-ratio: 32 / 30;
+  height: auto;
+  object-fit: cover;
+  border-radius: 2px;
+  outline: 1px solid transparent;
+  outline-offset: 3px;
+}
+.stc .tdraw svg {
+  height: 100%;
+}
+.stc.on img {
+  outline-color: var(--ink);
+}
+.stcs.two {
+  grid-template-columns: repeat(2, 1fr);
+}
+.adds.qa {
+  margin-top: 10px;
+}
+/* FAQ */
+.hfaq details {
+  border-top: 1px solid var(--line);
+  padding: 14px 0;
+}
+.hfaq details:last-child {
+  border-bottom: 1px solid var(--line);
+}
+.hfaq summary {
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+.hfaq summary::-webkit-details-marker {
+  display: none;
+}
+.hfaq summary::after {
+  content: '+';
+  color: var(--ink3);
+  font-weight: 400;
+}
+.hfaq details[open] summary::after {
+  content: '–';
+}
+.hfaq p {
+  color: var(--ink2);
+  font-size: 14.5px;
+  line-height: 1.55;
+  max-width: 70ch;
+  margin: 10px 0 2px;
+}
+/* the quote, only when printing */
+#printq {
+  display: none;
+}
+@media print {
+  body > *:not(#printq) {
+    display: none !important;
+  }
+  #printq {
+    display: block;
+    font-family: var(--f-b);
+    color: #111;
+    font-size: 11pt;
+  }
+  #printq header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid #111;
+    padding-bottom: 8pt;
+    margin-bottom: 12pt;
+  }
+  #printq header b {
+    font-size: 20pt;
+    font-weight: 800;
+    font-variation-settings: 'wdth' 75;
+  }
+  #printq img {
+    width: 100%;
+    max-height: 90mm;
+    object-fit: cover;
+    margin-bottom: 10pt;
+  }
+  #printq h1 {
+    font-size: 16pt;
+    font-weight: 450;
+    margin: 0 0 4pt;
+  }
+  #printq table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10pt 0;
+  }
+  #printq td {
+    border-bottom: 0.5pt solid #bbb;
+    padding: 4pt 2pt;
+    vertical-align: top;
+  }
+  #printq td small {
+    display: block;
+    color: #555;
+    font-size: 9pt;
+  }
+  #printq .num {
+    text-align: right;
+    white-space: nowrap;
+  }
+  #printq .tot td {
+    border-top: 1pt solid #111;
+    font-weight: 600;
+  }
+  #printq .link {
+    font-size: 8pt;
+    color: #555;
+    word-break: break-all;
+  }
+  #printq footer {
+    margin-top: 14pt;
+    font-size: 8.5pt;
+    color: #555;
+  }
+}

@@ -214,6 +214,7 @@ function roomWindowWall(T, parent, mat, castOnly) {
 
 /* the camera is fixed; the picture is cropped around the cabinets to fill the stage */
 function cropFor(L, aspect) {
+  if (S.zoom) return cropClose(L, aspect);
   const T = V3.T,
     cam = V3.cam,
     side = S.sides === 'none' ? 0 : 20,
@@ -247,6 +248,31 @@ function cropFor(L, aspect) {
   cx = Math.max(w / 2, Math.min(ROOM.W - w / 2, cx));
   cy = Math.max(h / 2, Math.min(ROOM.H - h / 2, cy));
   return [cx - w / 2, cy - h / 2, w, h];
+}
+/* a close-up: just the cabinet front, for the style cards */
+function cropClose(L, aspect) {
+  const T = V3.T,
+    cam = V3.cam;
+  cam.clearViewOffset();
+  cam.updateMatrixWorld();
+  const P = (x, y, z) => {
+      const v = new T.Vector3(x, y, z).project(cam);
+      return [((v.x + 1) / 2) * ROOM.W, ((1 - v.y) / 2) * ROOM.H];
+    },
+    z = 640,
+    ys = L.fronts.map(f => f.y),
+    y0 = Math.min(...ys) - 40,
+    y1 = Math.max(...L.fronts.map(f => f.y + f.h)) + 40,
+    pts = [P(-L.W / 2 - 40, y1, z), P(L.W / 2 + 40, y1, z), P(-L.W / 2 - 40, y0, z), P(L.W / 2 + 40, y0, z)];
+  const l = Math.min(...pts.map(p => p[0])),
+    r = Math.max(...pts.map(p => p[0])),
+    t = Math.min(...pts.map(p => p[1])),
+    b = Math.max(...pts.map(p => p[1]));
+  let w = r - l,
+    h = b - t;
+  if (w / h > aspect) h = w / aspect;
+  else w = h * aspect;
+  return [(l + r) / 2 - w / 2, (t + b) / 2 - h / 2, w, h];
 }
 function draw3D(tw, th) {
   if (!V3.ready || !V3.L) return;
@@ -302,7 +328,9 @@ function thumbKey(key, st) {
       st.handle || S.handle,
       st.hfin || S.hfin,
       st.sides || 'none',
-      st.edge || S.edge
+      st.edge || S.edge,
+      st.col2 || S.col2,
+      st.plinth || 'ikea'
     ].join('|')
   );
 }
@@ -326,7 +354,12 @@ function queueThumbs() {
     const keep = S;
     let url = '';
     try {
-      S = Object.assign({}, keep, { fx: {}, sel: null, flip: {}, sides: 'none' }, job.st);
+      S = Object.assign(
+        {},
+        keep,
+        { fx: {}, sel: null, flip: {}, sides: 'none', plinth: 'ikea', fillers: 0, zoom: false },
+        job.st
+      );
       V3.key = null;
       build3D(true);
       draw3D(job.w || THUMB_W, job.h || THUMB_H);
@@ -554,7 +587,8 @@ function sceneKey() {
     S.flute,
     S.sides,
     S.edge,
-    S.plinth
+    S.plinth,
+    S.col2
   ]);
 }
 function build3D(noDraw) {
@@ -613,22 +647,43 @@ function build3D(noDraw) {
     for (let k = 1; k < n; k++)
       box(p.w - 2 * t, t, d - 30, white, p.x + p.w / 2, p.y + (k * p.h) / n, z0 + (d - 30) / 2, false);
   });
+  if (S.sys === 'metod' && S.plinth === 'feet') {
+    // furniture feet: a kitchen that stands like furniture, four turned feet under every floor cabinet
+    const fm = new T.MeshStandardMaterial({
+      color: S.hfin === 'mixed' || S.hfin === 'match' ? HFIN.brass.hex : HFIN[S.hfin].hex,
+      roughness: S.hfin === 'oak' ? 0.55 : 0.3,
+      metalness: S.hfin === 'oak' || S.hfin === 'black' ? 0.1 : 0.85
+    });
+    L.cabs
+      .filter(p => p.c.kind !== 'wall')
+      .forEach(p =>
+        [p.x + 45, p.x + p.w - 45].forEach(x =>
+          [-Dmax + 70, -Dmax + dOf(p.c) - 70].forEach(z => {
+            const g = new T.Mesh(new T.CylinderGeometry(17, 11, L.plinth, 20), fm);
+            g.position.set(x, L.plinth / 2, z);
+            g.castShadow = true;
+            root.add(g);
+          })
+        )
+      );
+  }
   if (S.sys === 'metod') {
     const bases = L.cabs.filter(p => p.c.kind !== 'wall');
     if (bases.length) {
       const a = Math.min(...bases.map(p => p.x)),
         b = Math.max(...bases.map(p => p.x + p.w));
-      box(
-        b - a,
-        L.plinth - 10,
-        18,
-        S.plinth === 'match'
-          ? matFor(Object.assign({}, sideLook(), { style: 'flat' }), { w: b - a, h: L.plinth })
-          : new T.MeshStandardMaterial({ color: '#2a2a28', roughness: 0.6 }),
-        (a + b) / 2,
-        (L.plinth - 10) / 2,
-        -40
-      );
+      if (S.plinth !== 'feet')
+        box(
+          b - a,
+          L.plinth - 10,
+          18,
+          S.plinth === 'match'
+            ? matFor(Object.assign({}, sideLook(), { style: 'flat' }), { w: b - a, h: L.plinth })
+            : new T.MeshStandardMaterial({ color: '#2a2a28', roughness: 0.6 }),
+          (a + b) / 2,
+          (L.plinth - 10) / 2,
+          -40
+        );
       const tops = L.cabs.filter(p => p.c.kind === 'base');
       if (tops.length) {
         const a2 = Math.min(...tops.map(p => p.x)),
@@ -710,6 +765,17 @@ function build3D(noDraw) {
       root.add(fl);
       V3.meshes.push(fl);
     } else hit = rbox(f.w, f.h, FT, matFor(lk, f), cx, cy, cz);
+    if (lk.style === 'band') {
+      // Kader: a painted border, a hair proud of the face so it reads as paint
+      const i = Math.min(40, f.w * 0.09, f.h * 0.09),
+        bw = Math.max(10, i * 0.42),
+        bm = new T.MeshStandardMaterial({ color: colHex(lk.col2), roughness: 0.55 }),
+        z = cz + FT / 2 + 0.4;
+      box(f.w - 2 * i + bw, bw, 0.6, bm, cx, f.y + f.h - i, z, false);
+      box(f.w - 2 * i + bw, bw, 0.6, bm, cx, f.y + i, z, false);
+      box(bw, f.h - 2 * i - bw, 0.6, bm, f.x + i, cy, z, false);
+      box(bw, f.h - 2 * i - bw, 0.6, bm, f.x + f.w - i, cy, z, false);
+    }
     hit.userData.fid = f.id;
     V3.meshes.push(hit);
     handle3D(f, lk, root, hcache, FT);
@@ -717,7 +783,7 @@ function build3D(noDraw) {
     const zf = zfOf[f.cab] || 0;
     if (zf) for (let i = n0; i < root.children.length; i++) root.children[i].position.z += zf;
   });
-  plant3D(T, root, W + 520, -Dmax + 380);
+  if (!S.zoom) plant3D(T, root, W + 520, -Dmax + 380);
   contact3D(T, root, L, Dmax, dOf);
   // the whole run stands centred against the back wall
   root.position.set(-W / 2, 0, Dmax);
@@ -829,13 +895,13 @@ function handle3D(f, lk, root, cache, FT) {
   if (S.handle === 'push') return;
   const T = V3.T,
     P = handlePos(f),
-    hex = handleHex(lk),
+    hex = handleHex(lk, f),
     mk =
       cache[hex] ||
       (cache[hex] = new T.MeshStandardMaterial({
         color: hex,
         roughness: S.hfin === 'oak' || S.hfin === 'match' ? 0.55 : 0.3,
-        metalness: S.hfin === 'brass' || S.hfin === 'steel' ? 0.85 : 0.1
+        metalness: S.hfin === 'brass' || S.hfin === 'steel' || S.hfin === 'nickel' || S.hfin === 'mixed' ? 0.85 : 0.1
       })),
     z = FT + 1;
   const add = (geo, x, y, zz, rx, rz) => {
