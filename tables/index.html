@@ -219,6 +219,7 @@ footer { border-top: 1px solid var(--line); padding: 28px 0 60px; color: var(--i
     <details><summary>Will I see the old table in it?</summary><p>A little. The boards are bright and new on the surface, but you may find a filled dowel hole, a slightly darker board or a knot. No two tables look the same.</p></details>
     <details><summary>Will the top warp?</summary><p>Old oak has dried for decades, so it moves less than new oak. We still fit steel strips under every top.</p></details>
     <details><summary>How do I look after it?</summary><p>Wipe it with a damp cloth. Once or twice a year, a little Rubio maintenance oil. Scratches can be sanded and oiled locally.</p></details>
+    <details><summary>Why no metal legs?</summary><p>Because the whole table can come from old oak: the legs of the old table often become the new legs or trestles. Oak legs can also be sanded and oiled again, like the top.</p></details>
     <details><summary>Where do you deliver?</summary><p>All of Belgium, for € 95, carried in and set up. You can also collect it from the workshop for free.</p></details>
     <details><summary>Can I come and see the wood first?</summary><p>Yes, by appointment. We send you photos of the boards before we glue the top.</p></details>
   </div></section>
@@ -238,8 +239,7 @@ const SHAPES = {
 };
 const LEGS = {
   block: { name: 'Block', blurb: 'Four square oak legs, from the old table where they are good', extra: 0 },
-  trestle: { name: 'Trestle', blurb: 'Two oak trestles with a low rail', extra: 190 },
-  steel: { name: 'Steel', blurb: 'Two slim black steel frames', extra: 290 }
+  trestle: { name: 'Trestle', blurb: 'Two oak trestles with a low rail, made from the old legs and rails', extra: 190 }
 };
 const OILS = {
   pure: { name: 'Pure', wood: '#CDA470', grain: '#A8804F' },
@@ -253,7 +253,7 @@ const PRICE = { base: 590, perM2: 700, own: 350, delivery: 95 };
 let S = { L: 220, W: 95, D: 130, shape: 'pill', legs: 'block', oil: 'pure', own: false, seed: 7 };
 try { Object.assign(S, JSON.parse(localStorage.getItem('bruis-tables') || '{}')); } catch (e) {}
 if (!SHAPES[S.shape]) S.shape = 'pill';
-if (!LEGS[S.legs]) S.legs = 'block';
+if (!LEGS[S.legs]) S.legs = 'block'; // steel frames were dropped: oak only
 if (!OILS[S.oil]) S.oil = 'pure';
 if (![85, 95, 105].includes(S.W)) S.W = 95;
 
@@ -304,7 +304,7 @@ function boardsSVG(st, x, y, l, w, id, R) {
   return { svg: `<clipPath id="${id}">${outline(st.shape, x, y, l, w)}</clipPath><g clip-path="url(#${id})">${g}</g>`, n };
 }
 function legsSide(st, x0, l, top, floor) {
-  const ink = st.legs === 'steel' ? '#1d1d1d' : OILS[st.oil].wood, edge = 'stroke="#000" stroke-opacity=".25" stroke-width="2"';
+  const ink = OILS[st.oil].wood, edge = 'stroke="#000" stroke-opacity=".25" stroke-width="2"';
   const ins = st.shape === 'circle' ? l * 0.22 : st.shape === 'pill' ? Math.min(380, l * 0.18) : 140;
   const xs = [x0 + ins, x0 + l - ins];
   let s = '';
@@ -313,15 +313,14 @@ function legsSide(st, x0, l, top, floor) {
     xs.forEach((x, i) => { const c = i ? x - 45 : x + 45; s += `<rect x="${c - 30}" y="${top}" width="60" height="${floor - top - 50}" fill="${ink}" ${edge}/><rect x="${c - 70}" y="${floor - 50}" width="140" height="50" rx="6" fill="${ink}" ${edge}/>`; });
     s += `<rect x="${xs[0] + 45}" y="${floor - 260}" width="${xs[1] - xs[0] - 90}" height="44" fill="${ink}" ${edge}/>`;
   }
-  if (st.legs === 'steel') xs.forEach((x, i) => { const c = i ? x - 20 : x + 20; s += `<rect x="${c - 20}" y="${top}" width="40" height="${floor - top}" fill="${ink}"/><rect x="${c - 22}" y="${floor - 8}" width="44" height="8" fill="${ink}"/>`; });
   return s;
 }
 function legsPlan(st, x0, y0, l, w) {
-  const col = st.legs === 'steel' ? '#1d1d1d' : '#000';
+  const col = '#000';
   const ins = st.shape === 'circle' ? l * 0.22 : st.shape === 'pill' ? Math.min(380, l * 0.18) : 140;
   let s = '';
   if (st.legs === 'block') [[x0 + ins, y0 + 110], [x0 + l - ins - 70, y0 + 110], [x0 + ins, y0 + w - 180], [x0 + l - ins - 70, y0 + w - 180]].forEach(([x, y]) => (s += `<rect x="${x}" y="${y}" width="70" height="70" fill="none" stroke="${col}" stroke-opacity=".45" stroke-width="3" stroke-dasharray="10 8"/>`));
-  else [x0 + ins + (st.legs === 'steel' ? 20 : 45), x0 + l - ins - (st.legs === 'steel' ? 20 : 45)].forEach(x => (s += `<line x1="${x}" x2="${x}" y1="${y0 + 90}" y2="${y0 + w - 90}" stroke="${col}" stroke-opacity=".45" stroke-width="${st.legs === 'steel' ? 6 : 10}" stroke-dasharray="14 10"/>`));
+  else [x0 + ins + 45, x0 + l - ins - 45].forEach(x => (s += `<line x1="${x}" x2="${x}" y1="${y0 + 90}" y2="${y0 + w - 90}" stroke="${col}" stroke-opacity=".45" stroke-width="10" stroke-dasharray="14 10"/>`));
   return s;
 }
 function dim(x1, x2, y, label, vert) {
@@ -383,7 +382,7 @@ function render() {
   document.getElementById('ctl').innerHTML = `
     <div class="ctl"><h3>Shape</h3><div class="cards" style="grid-template-columns:repeat(4,1fr)">${Object.keys(SHAPES).map(shapeCard).join('')}</div></div>
     ${size}
-    <div class="ctl"><h3>Legs</h3><div class="cards">${Object.keys(LEGS).map(legCard).join('')}</div><p class="hint">${esc(LEGS[S.legs].blurb)}.</p></div>
+    <div class="ctl"><h3>Legs</h3><div class="cards" style="grid-template-columns:repeat(2,1fr)">${Object.keys(LEGS).map(legCard).join('')}</div><p class="hint">${esc(LEGS[S.legs].blurb)}.</p></div>
     <div class="ctl"><h3>Oil</h3><div class="oils">${Object.entries(OILS).map(([k, o]) => `<button type="button" class="oil ${S.oil === k ? 'on' : ''}" data-act="oil" data-a="${k}"><i style="background:${o.wood}"></i>${o.name}</button>`).join('')}</div><p class="hint">Rubio Monocoat hardwax oil, two coats.</p></div>
     <div class="ctl"><label class="own"><input type="checkbox" data-act="own" ${S.own ? 'checked' : ''}><span>Make it from my own old oak table<small>We collect it, check it's solid oak and take € ${PRICE.own} off.</small></span></label></div>
     <div class="price"><small>Your table, incl. VAT · delivery € ${PRICE.delivery} or collect free</small><div class="tot" id="tot">${eur(p)}</div><small>Ready in about 6 weeks</small>
@@ -398,7 +397,7 @@ function heroArt() {
 function passports() {
   const P = [
     { st: { shape: 'pill', L: 240, W: 105, legs: 'block', oil: 'pure', seed: 11, own: false }, name: 'Pill, 240 × 105', from: 'Farmhouse table, about 1960', boards: 'Six boards, one with three dowel holes', where: 'Near Lier' },
-    { st: { shape: 'circle', D: 130, legs: 'steel', oil: 'smoke5', seed: 4, own: false }, name: 'Round, Ø 130', from: 'Extending table with two leaves', boards: 'The leaves became the middle', where: 'Ghent' },
+    { st: { shape: 'circle', D: 130, legs: 'block', oil: 'smoke5', seed: 4, own: false }, name: 'Round, Ø 130', from: 'Extending table with two leaves', boards: 'The leaves became the middle', where: 'Ghent' },
     { st: { shape: 'rect', L: 200, W: 95, legs: 'trestle', oil: 'chocolate', seed: 21, own: true }, name: 'Rectangle, 200 × 95', from: "The customer's own kitchen table", boards: 'Five boards, the old legs became the trestles', where: 'Mechelen' }
   ];
   document.getElementById('pass').innerHTML = P.map(
