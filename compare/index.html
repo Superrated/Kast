@@ -278,7 +278,7 @@ footer p { margin: 0 0 6px; max-width: 52em; }
 </div>
 
 <footer><div class="wrap">
-  <p>Built from the four financial plans. "As planned" uses their year one; "Realistic" halves year-one sales, adds slower first pieces, 10% failures and an accountant. Years two and three are my assumptions, listed under the three-year view.</p>
+  <p>Built from the five financial plans. "As planned" uses their year one. "Realistic" uses sales volumes checked against comparable companies (<a href="https://claude.ai/artifact/12Lj4QgKXyPhPsmdEkGcki" target="_blank" rel="noopener">BRUIS — what comparable companies show</a>), slower first pieces, 10% failures and an accountant.</p>
   <p>Home: as a sole trader you can't rent to yourself, so BRUIS carries the business share of your home costs (loan interest, insurance, property tax by floor area; energy by the workshop meter) and pays the workshop upgrades; with a BV you could charge it real rent. Van: a light van is up to 100% deductible when used only for the business; private use lowers that.</p>
   <p>Tax: social contributions for a side business and income tax at the top rate on top of a job. All figures are estimates to check with your accountant.</p>
 </div></footer>
@@ -339,7 +339,7 @@ const IDEAS = [
   { id: 'workshops', name: 'Workshops', what: 'Woodworking for kids, families, adults', unit: 'sessions',
     turnUnit: 421.3, left: 295.1, vatK: 0.79, hUnit: 5.46, adminMo: 6, fixedMo: 180, extraFix: 0, extraH: 0,
     startup: 1136, tools: 1710, toolSave: 0, wYears: 3, small: 450,
-    units: { plan: [54, 70, 80], real: [27, 48, 64] }, toolYear: { plan: 1, real: 1 }, flex: 0.2,
+    units: { plan: [54, 70, 80], real: [27, 40, 50] }, toolYear: { plan: 1, real: 1 }, flex: 0.2,
     grow: 'Year 2: a full year of sessions plus school holidays. Year 3: about 64 sessions, more adult days and team days.',
     worst: 'Too few bookings, the city says no to groups at home, or a child gets hurt.',
     extra: 'An injury is insured, but it could end the children’s workshops.',
@@ -347,7 +347,7 @@ const IDEAS = [
   { id: 'objects', name: 'Objects', what: 'Concrete, oak and 3D-printed decor', unit: 'pieces',
     turnUnit: 48.03, left: 35.51, vatK: 0.807, hUnit: 0.48, adminMo: 10, fixedMo: 110, extraFix: 320, extraH: 40,
     startup: 1062, tools: 160, toolSave: 0, wYears: 3, small: 450, shopShare: [0, 0.35, 0.35],
-    units: { plan: [330, 700, 1000], real: [165, 400, 650] }, toolYear: { plan: 1, real: 1 }, flex: 1,
+    units: { plan: [330, 700, 1000], real: [100, 250, 450] }, toolYear: { plan: 1, real: 1 }, flex: 1,
     grow: 'Years 2 and 3: about a third sold through shops at a wholesale price (60% of the shop price), so more pieces but less per piece.',
     worst: 'Pieces don’t sell and you sit on stock, or a lamp or candle holder leads to a complaint.',
     extra: 'Unsold stock is cheap: about €3–20 of material a piece.',
@@ -355,7 +355,7 @@ const IDEAS = [
   { id: 'speakers', name: 'Speakers', what: 'Active hi-fi speakers, old oak front', unit: 'pairs',
     turnUnit: 1580, left: 834, vatK: 0.821, hUnit: 16, adminMo: 8, fixedMo: 180, extraFix: 0, extraH: 0, devH: 120,
     startup: 4082, tools: 480, toolSave: 0, wYears: 5, small: 600,
-    units: { plan: [8, 18, 25], real: [4, 9, 15] }, toolYear: { plan: 1, real: 1 }, flex: 0.8,
+    units: { plan: [8, 18, 25], real: [3, 6, 10] }, toolYear: { plan: 1, real: 1 }, flex: 0.8,
     grow: 'Year 1: four months of design, prototypes and an EMC test, first pairs from May. Years 2 and 3: word of mouth and listening sessions, a pair every three to four weeks.',
     worst: 'Nobody buys at €1,495 from an unknown brand, or the EMC test fails and the design needs changes.',
     extra: 'A failed test means another round of prototypes and testing, about €1,000–2,000 more.',
@@ -433,7 +433,7 @@ function vanHours(i) {
 function scen() {
   document.querySelectorAll('.tog button').forEach(b => b.setAttribute('aria-pressed', b.dataset.s === S));
   document.getElementById('swhat').textContent = S === 'real'
-    ? 'Half the year-one sales of the plans, slower first pieces, 10% failures, an accountant, tools bought when the orders are there.'
+    ? 'Sales checked against comparable companies, slower first pieces, 10% failures, an accountant, tools bought when the orders are there.'
     : 'Year one exactly as in the four financial plans; years two and three grow to the plans’ goals.';
 }
 document.querySelectorAll('.tog button').forEach(b => b.addEventListener('click', () => { S = b.dataset.s; all(); }));
