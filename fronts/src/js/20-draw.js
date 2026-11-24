@@ -203,3 +203,61 @@ function lookThumb(style, mat, col, key, oil) {
   Object.assign(S, was);
   return svg;
 }
+
+/* a small picture of a whole design (a preset or a demo): cabinets, side panels and fronts in its own look.
+   st holds the parts of the state that differ (sys, cabs, fx, look …); pictures are kept once made. */
+const THUMBS = new Map();
+function designThumb(key, st) {
+  const look = [
+    st.style || S.style,
+    st.mat || S.mat,
+    st.col || S.col,
+    st.oil || S.oil,
+    st.handle || S.handle,
+    st.hfin || S.hfin,
+    st.sides || S.sides,
+    st.gframe || S.gframe
+  ];
+  const k = key + '|' + look.join('|');
+  if (THUMBS.has(k)) return THUMBS.get(k);
+  const keep = S;
+  let svg = '';
+  S = Object.assign({}, keep, { fx: {}, sel: null, flip: {} }, st);
+  try {
+    const L = layout(),
+      sfx = '_t' + THUMBS.size,
+      top = L.H + 30,
+      Y = y => top - y,
+      x0 = -70,
+      w = L.W + 140;
+    svg = `<svg viewBox="${x0} 0 ${w} ${top + 40}" preserveAspectRatio="xMidYMax meet" aria-hidden="true">${defsSVG(sfx)}`;
+    svg += `<rect x="${x0}" y="${Y(0)}" width="${w}" height="40" fill="var(--floor)"/>`;
+    L.cabs.forEach(
+      p =>
+        (svg += `<rect x="${p.x}" y="${Y(p.y + p.h)}" width="${p.w}" height="${p.h}" fill="#f4f4f1" stroke="#c9cac5" stroke-width="6"/>`)
+    );
+    if (S.sys === 'metod' && L.plinth) {
+      const bw = Math.max(0, ...L.cabs.filter(p => p.c.kind !== 'wall').map(p => p.x + p.w));
+      if (bw)
+        svg += `<rect x="0" y="${Y(L.plinth)}" width="${bw}" height="${L.plinth - 10}" fill="${shade(faceHex(lookOf(null)), -0.3)}"/>`;
+    }
+    L.sides.forEach(sd => {
+      const lk = sideLook(),
+        fill = MATS[lk.mat].wood ? woodCol(lk.mat, lk.oil).wood : faceHex(lk);
+      svg += `<rect x="${sd.x - 12}" y="${Y(sd.y + sd.h)}" width="${SIDE_T + 24}" height="${sd.h}" fill="${fill}"/>`;
+    });
+    L.fronts.forEach(
+      f =>
+        (svg += frontSVG(f, Y, sfx)
+          .replace(/ data-f="[^"]*"/, '')
+          .replace('class="front', 'class="tf'))
+    );
+    svg += '</svg>';
+  } catch (e) {
+    svg = '';
+  } finally {
+    S = keep;
+  }
+  THUMBS.set(k, svg);
+  return svg;
+}

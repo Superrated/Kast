@@ -46,10 +46,10 @@ function render() {
       : 'Tap a front to change just that one'
     : '';
   document.getElementById('pbar').innerHTML =
-    `<div class="ptot"><span>${countWords(P)} · incl. VAT${P.del ? ' + delivery' : ''}</span><b>${eur(P.total)}</b></div>${
+    `${chipHTML()}<div class="ptot"><span>${countWords(P)} · incl. VAT${P.del ? ' + delivery' : ''}</span><b>${eur(P.total)}</b></div>${
       S.step === 'order'
         ? ''
-        : `<button type="button" class="btn ghost" data-act="next">${i < STEPS.length - 2 ? 'Next: ' + STEPS[i + 1][1] : 'See the order'} →</button>`
+        : `<button type="button" class="btn ghost" data-act="next">${i < STEPS.length - 2 ? 'Next: ' + STEPS[i + 1][1] : 'See the order'}</button>`
     }<button type="button" class="btn pri" data-act="orderNow" ${P.n ? '' : 'disabled'}>Order</button>`;
   document.getElementById('panel').innerHTML = {
     cabs: cabsHTML,
@@ -58,6 +58,19 @@ function render() {
     order: orderHTML
   }[S.step](L, P);
   document.getElementById('app').dataset.step = S.step;
+}
+/* the paint chip in the price bar: the main look as a sample, with its name and code */
+function chipHTML() {
+  const lk = lookOf(null),
+    m = MATS[lk.mat],
+    hex = m.glass ? '#cfdcd8' : faceHex(lk),
+    name = m.paint ? COLOURS[lk.col].name : m.name,
+    sub = m.paint
+      ? `RAL ${COLOURS[lk.col].ral}, ${STYLES[lk.style].name.toLowerCase()}`
+      : m.oil
+        ? `${STYLES[lk.style].name}, ${OILS[lk.oil].name} oil`
+        : STYLES[lk.style].name;
+  return `<div class="pchip" title="${esc(lookName(lk))}"><i style="background:${hex}"></i><span><b>${esc(name)}</b><small>${esc(sub)}</small></span></div>`;
 }
 function selectFront(id) {
   S.sel = id && S.sel !== id ? id : null;
@@ -78,35 +91,107 @@ const QUICK = {
         [100, 236],
         [100, 236],
         [100, 236]
-      ]
+      ],
+      'Six doors, the classic wall of wardrobes'
     ],
     [
-      'Wide · narrow · wide',
+      'Open in the middle',
+      [
+        [100, 236],
+        [50, 236, 'open'],
+        [100, 236]
+      ],
+      'Open shelves between two wide frames'
+    ],
+    [
+      'Wide, narrow, wide',
       [
         [100, 236],
         [50, 236],
         [100, 236]
-      ]
+      ],
+      'Five doors with a slim one in the middle'
     ],
     [
       'Two 75s',
       [
         [75, 236],
         [75, 236]
-      ]
+      ],
+      'A wide and a narrow door per frame'
     ],
     [
       'Under a low ceiling',
       [
         [100, 201],
+        [75, 201],
         [100, 201]
-      ]
+      ],
+      'The 201 cm frames, for attics and eaves'
     ]
   ],
   metod: [
-    ['Small kitchen', { base: [60, 60, 60], wall: [60, 60, 60] }],
-    ['With a tall cabinet', { high: [60], base: [40, 60, 80], wall: [40, 60, 80] }],
-    ['Long run', { base: [60, 40, 60, 80, 60], wall: [60, 40, 60, 80, 60] }]
+    [
+      'Small kitchen',
+      {
+        base: [
+          [60, 'drawers3'],
+          [60, 'door'],
+          [60, 'drawer_door']
+        ],
+        wall: [60, 60, 60]
+      },
+      'Drawers, a sink and a cooker under three wall cabinets'
+    ],
+    [
+      'With a fridge',
+      {
+        high: [[60, 'split']],
+        base: [
+          [40, 'drawers4'],
+          [60, 'door'],
+          [80, 'doors2']
+        ],
+        wall: [40, 60, [80, 'doors2']]
+      },
+      'A tall fridge cabinet at the end of the run'
+    ],
+    [
+      'Long run',
+      {
+        base: [
+          [60, 'drawers3'],
+          [40, 'door'],
+          [60, 'drawer_door'],
+          [80, 'doors2'],
+          [60, 'drawers2']
+        ],
+        wall: [60, 40, 60, [80, 'doors2'], 60]
+      },
+      'Five base and five wall cabinets, plenty of drawers'
+    ],
+    [
+      'Pantry wall',
+      {
+        high: [
+          [60, 'split'],
+          [40, 'door'],
+          [60, 'split']
+        ]
+      },
+      'Three tall cabinets, floor to ceiling'
+    ],
+    [
+      'All drawers',
+      {
+        base: [
+          [80, 'drawers3'],
+          [60, 'drawers4'],
+          [80, 'drawers3']
+        ]
+      },
+      'A run of drawers, for an island or a long wall'
+    ]
   ],
   besta: [
     [
@@ -115,14 +200,25 @@ const QUICK = {
         [60, 38, 'drawers'],
         [60, 38, 'drawers'],
         [60, 38, 'drawers']
-      ]
+      ],
+      'Three low drawers, 180 cm wide'
     ],
     [
       'Low sideboard',
       [
-        [120, 64],
+        [120, 64, 'drawers'],
         [120, 64]
-      ]
+      ],
+      'Drawers next to two doors'
+    ],
+    [
+      'Media wall',
+      [
+        [60, 192],
+        [120, 38, 'drawers'],
+        [60, 192]
+      ],
+      'Two tall frames around a TV bench'
     ],
     [
       'Tall wall',
@@ -130,17 +226,33 @@ const QUICK = {
         [60, 192],
         [60, 192],
         [60, 192]
-      ]
+      ],
+      'Nine doors, floor to shoulder'
+    ],
+    [
+      'Hallway',
+      [
+        [120, 38, 'drawers'],
+        [60, 38, 'drawers']
+      ],
+      'Shallow drawers for keys and shoes'
     ]
   ]
 };
-function quickMake(q) {
-  if (Array.isArray(q)) return q.map(([w, h, lay]) => cab(S.sys, 'frame', w, h, lay));
+function quickMake(q, sys) {
+  sys = sys || S.sys;
+  const mk = (kind, w, h, lay) => {
+    const c = cab(sys, kind, w, h, lay);
+    fixLayout(c);
+    return c;
+  };
+  if (Array.isArray(q)) return q.map(([w, h, lay]) => mk('frame', w, h, lay));
   const out = [];
   ['high', 'base', 'wall'].forEach(k =>
-    (q[k] || []).forEach(w =>
-      out.push(cab('metod', k, w, SYS.metod.kinds[k].heights[k === 'high' ? 1 : k === 'wall' ? 2 : 0]))
-    )
+    (q[k] || []).forEach(e => {
+      const [w, lay] = Array.isArray(e) ? e : [e];
+      out.push(mk(k, w, SYS.metod.kinds[k].heights[k === 'high' ? 1 : k === 'wall' ? 2 : 0], lay));
+    })
   );
   return out;
 }
@@ -177,7 +289,7 @@ function cabsHTML() {
   const quick = QUICK[S.sys]
     .map(
       (q, n) =>
-        `<button type="button" class="qk" data-act="quick" data-a="${n}"><b>${q[0]}</b><small>${quickWords(q[1])}</small></button>`
+        `<button type="button" class="tile" data-act="quick" data-a="${n}"><span class="tpic">${designThumb('q' + S.sys + n, { cabs: quickMake(q[1]), fx: {}, sides: 'none' })}</span><b>${q[0]}</b><small>${esc(q[2] || quickWords(q[1]))}</small></button>`
     )
     .join('');
   const typeRow =
@@ -241,9 +353,9 @@ function cabsHTML() {
     </div>
     <div class="or"><span>no list? start here</span></div>
     <h3>Open a demo</h3>${demosHTML()}
-    <h3>Or start from your own</h3>
+    <h3>Or start from your own cabinets</h3>
     <div class="syss">${sysBtns}</div>
-    <h3>A common layout</h3><div class="qks">${quick}</div>
+    <h3>A common layout</h3><div class="tiles">${quick}</div>
     <h3>Or type your widths</h3>${typeRow}<div class="adds"><button type="button" class="btn" data-act="typed">Make these cabinets</button></div>
     <h3 id="yourCabs">Your cabinets, left to right · ${S.cabs.length}</h3>
     <div class="cabs">${S.cabs.map(card).join('') || '<p class="hint">No cabinets yet.</p>'}</div>
@@ -618,7 +730,7 @@ document.addEventListener('click', e => {
       S.fx = {};
       S.flip = {};
       S.sel = null;
-      S.impMsg = `✓ ${got.length} ${SYS[a].name} cabinet${got.length === 1 ? '' : 's'} set up from your list — check them below. <button type="button" class="lnk" data-act="undo">Undo</button> · <button type="button" class="lnk" data-act="step" data-a="fronts">Choose your fronts →</button>`;
+      S.impMsg = `✓ ${got.length} ${SYS[a].name} cabinet${got.length === 1 ? '' : 's'} set up from your list — check them below. <button type="button" class="lnk" data-act="undo">Undo</button> · <button type="button" class="lnk" data-act="step" data-a="fronts">Choose your fronts</button>`;
       break;
     }
     case 'undo':
@@ -764,7 +876,7 @@ function impPasteHelp() {
   const el = document.getElementById('impPrev');
   if (el)
     el.innerHTML =
-      '<p class="hint warn">Your browser didn’t let us read the clipboard — tap in the box and paste (long-press → Paste, or Ctrl/⌘ + V).</p>';
+      '<p class="hint warn">Your browser didn’t let us read the clipboard — tap in the box and paste (long-press and Paste, or Ctrl/⌘ + V).</p>';
 }
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') document.getElementById('modal').hidden = true;

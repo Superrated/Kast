@@ -238,7 +238,7 @@ function impPreviewHTML(text) {
         })
         .join('');
       return `<div class="igrp"><div class="igh"><b>${SYS[sys].name}</b> ${bySys[sys].length} cabinet${bySys[sys].length === 1 ? '' : 's'}</div><div class="ichips">${chips}</div>
-        <button type="button" class="btn ${sys === order[0] ? 'pri' : ''} sm" data-act="impUse" data-a="${sys}">Use ${order.length > 1 ? 'these ' + bySys[sys].length + ' ' + SYS[sys].name : 'these ' + bySys[sys].length} cabinet${bySys[sys].length === 1 ? '' : 's'} →</button></div>`;
+        <button type="button" class="btn ${sys === order[0] ? 'pri' : ''} sm" data-act="impUse" data-a="${sys}">Use ${order.length > 1 ? 'these ' + bySys[sys].length + ' ' + SYS[sys].name : 'these ' + bySys[sys].length} cabinet${bySys[sys].length === 1 ? '' : 's'}</button></div>`;
     })
     .join('');
   const ours = order.length

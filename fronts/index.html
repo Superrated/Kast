@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>BRUIS Fronts — custom fronts for IKEA PAX, METOD and BESTÅ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&display=swap">
 <style>
 :root {
   --bg: #f3f3f0;
@@ -75,6 +75,45 @@
    BRUIS Fronts. Colours and fonts come from Fitted (its :root tokens are put in front of this file by build.py).
    Computer: picture left, panel right, price bar at the bottom.
    Phone: picture on top, panel below, steps and price bar at the bottom. */
+/* BRUIS look: a maker's sample board. Cool plaster instead of cream, graphite ink, one cobalt for actions,
+   raw-MDF tan for small structure; one family (Bricolage Grotesque), condensed and heavy for headings. */
+:root {
+  --bg: #eceeea;
+  --surface: #f7f8f5;
+  --raised: #ffffff;
+  --ink: #1f2428;
+  --ink2: #5b6369;
+  --ink3: #7a8187;
+  --line: #d9dcd6;
+  --accent: #2438c8;
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(36, 56, 200, 0.09);
+  --mdf: #bfa888;
+  --wall: #e2e5df;
+  --stage: #e2e5df;
+  --floor: #cfc9be;
+  --f-d: 'Bricolage Grotesque', system-ui, -apple-system, sans-serif;
+  --f-b: 'Bricolage Grotesque', system-ui, -apple-system, sans-serif;
+  --f-m: 'Bricolage Grotesque', ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #15181a;
+    --surface: #1b1f22;
+    --raised: #23282c;
+    --ink: #eceeea;
+    --ink2: #a3aaaf;
+    --ink3: #8c9398;
+    --line: #30363a;
+    --accent: #8d9bff;
+    --accent-ink: #0d1030;
+    --accent-soft: rgba(141, 155, 255, 0.14);
+    --mdf: #8f7d62;
+    --wall: #1d2124;
+    --stage: #1d2124;
+    --floor: #2b2f32;
+  }
+}
 * {
   box-sizing: border-box;
 }
@@ -1039,12 +1078,355 @@ details.cab[open] > summary {
   flex: 3;
 }
 
+/* ==== the BRUIS look (applies over the rules above) ==== */
+body {
+  font-size: 15px;
+  font-variation-settings: 'opsz' 14;
+}
+h2 {
+  font-family: var(--f-d);
+  font-weight: 750;
+  font-stretch: 78%;
+  font-variation-settings:
+    'wdth' 78,
+    'opsz' 48;
+  font-size: 32px;
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  margin: 2px 0 8px;
+}
+h3,
+h3.big {
+  font-size: 15.5px;
+  font-weight: 650;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--ink);
+  margin: 26px 0 10px;
+}
+.lede {
+  font-size: 15px;
+  max-width: 62ch;
+}
+
+/* header: the wordmark and the four steps as one numbered track */
+header.top {
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  padding: 12px 20px;
+}
+.brand {
+  font-family: var(--f-b);
+  font-size: 15px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.brand b {
+  font-weight: 800;
+  font-size: 26px;
+  letter-spacing: 0.02em;
+  font-variation-settings:
+    'wdth' 75,
+    'opsz' 96;
+  margin: 0;
+}
+.brand small {
+  display: inline;
+  font-size: 13px;
+  margin: 0;
+}
+.steps {
+  background: none;
+  border: 0;
+  padding: 0;
+  gap: 0;
+}
+.steps button {
+  border-radius: 0;
+  padding: 6px 4px 6px 14px;
+  position: relative;
+  color: var(--ink3);
+  font-weight: 600;
+}
+.steps button + button::before {
+  content: '';
+  width: 26px;
+  border-top: 1.5px solid var(--line);
+  margin-right: 10px;
+}
+.steps button.on {
+  background: none;
+  color: var(--ink);
+}
+.steps button.on i {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+.steps button.done {
+  color: var(--ink2);
+}
+.steps button.done i,
+.bsteps button.done i {
+  background: var(--mdf);
+  border-color: var(--mdf);
+  color: #fff;
+}
+.steps button i,
+.bsteps button i {
+  width: 22px;
+  height: 22px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* the stage: a wall and a floor */
+.stage {
+  background: var(--stage);
+}
+.chip {
+  border-radius: 8px;
+}
+.panel {
+  background: var(--surface);
+}
+
+/* buttons: squarer, one cobalt for the main action */
+.btn {
+  border-radius: 10px;
+  font-weight: 650;
+}
+.btn.sm {
+  border-radius: 8px;
+}
+.btn.pri {
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+}
+.btn.surp {
+  border-radius: 8px;
+}
+.btn:focus-visible,
+.tile:focus-visible,
+.sys:focus-visible,
+.stc:focus-visible,
+.mat:focus-visible,
+.seg button:focus-visible,
+.swb:focus-visible {
+  outline: 2.5px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* choice cards: a firm cobalt edge when chosen, no glow */
+.sys,
+.stc,
+.mat,
+.cab {
+  border-radius: 12px;
+  border: 1px solid var(--line);
+}
+.sys.on,
+.stc.on,
+.mat.on,
+.tile.on {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+.sys b {
+  font-size: 17px;
+  font-weight: 750;
+  font-variation-settings: 'wdth' 80;
+}
+.mat .tag {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 11px;
+}
+.or {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 13px;
+}
+.seg {
+  border-radius: 9px;
+}
+.seg button {
+  border-radius: 6px;
+}
+
+/* presets and demos: each one shows its own drawing */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.tile {
+  text-align: left;
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 7px 7px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.tile:hover {
+  border-color: var(--ink3);
+}
+.tile b {
+  font-size: 15px;
+  font-weight: 700;
+  padding: 0 4px;
+  margin-top: 6px;
+}
+.tile small {
+  font-size: 12.5px;
+  line-height: 1.35;
+  padding: 0 4px;
+}
+.tpic {
+  display: block;
+  height: 104px;
+  background: var(--stage);
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 10px 8px 0;
+}
+.tpic svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* the IKEA list card */
+.impcard {
+  border: 1.5px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--mdf);
+  border-radius: 12px;
+}
+.impcard textarea {
+  font-family: ui-monospace, Menlo, monospace;
+}
+
+/* the price bar: a paint chip of your main look, then the price */
+.pbar {
+  background: var(--bg);
+  gap: 14px;
+}
+.pchip {
+  display: flex;
+  align-items: stretch;
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  min-width: 0;
+  max-width: 260px;
+}
+.pchip i {
+  width: 46px;
+  flex: none;
+}
+.pchip span {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5px 12px 6px 10px;
+  min-width: 0;
+}
+.pchip b {
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pchip small {
+  font-size: 11.5px;
+  white-space: nowrap;
+}
+.ptot b {
+  font-size: 24px;
+  font-weight: 750;
+  font-variation-settings:
+    'wdth' 80,
+    'opsz' 36;
+  font-variant-numeric: tabular-nums;
+}
+.ord .num,
+.pic .dim {
+  font-variant-numeric: tabular-nums;
+}
+.pic .dim {
+  font-weight: 600;
+}
+@media (max-width: 860px) {
+  .pchip {
+    max-width: 44%;
+  }
+  .pchip i {
+    width: 30px;
+  }
+  .ptot b {
+    font-size: 20px;
+  }
+  .brand b {
+    font-size: 22px;
+  }
+  h2 {
+    font-size: 28px;
+  }
+}
+@media (max-width: 400px) {
+  .pchip small {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+  }
+}
+@media (max-width: 860px) {
+  .brand small {
+    display: none;
+  }
+  .bsteps {
+    background: var(--bg);
+  }
+  .bsteps button.on {
+    background: none;
+    color: var(--ink);
+  }
+  .bsteps button.on i {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+  }
+  .bsteps button {
+    color: var(--ink3);
+    font-weight: 600;
+  }
+}
+@media (max-width: 480px) {
+  .pchip span {
+    display: none;
+  }
+  .pchip i {
+    width: 38px;
+    height: 38px;
+  }
+  .ptot span {
+    white-space: nowrap;
+  }
+}
+
 </style>
 </head>
 <body>
 <div class="app" id="app">
   <header class="top">
-    <div class="brand"><b>BRUIS</b> Fronts<small>custom fronts for your IKEA cabinets · prototype</small></div>
+    <div class="brand"><b>BRUIS</b><span>Fronts</span><small>for IKEA PAX, METOD and BESTÅ (prototype)</small></div>
     <nav class="steps" id="steps" aria-label="Steps"></nav>
   </header>
   <main class="main">
@@ -1907,6 +2289,64 @@ function lookThumb(style, mat, col, key, oil) {
   return svg;
 }
 
+/* a small picture of a whole design (a preset or a demo): cabinets, side panels and fronts in its own look.
+   st holds the parts of the state that differ (sys, cabs, fx, look …); pictures are kept once made. */
+const THUMBS = new Map();
+function designThumb(key, st) {
+  const look = [
+    st.style || S.style,
+    st.mat || S.mat,
+    st.col || S.col,
+    st.oil || S.oil,
+    st.handle || S.handle,
+    st.hfin || S.hfin,
+    st.sides || S.sides,
+    st.gframe || S.gframe
+  ];
+  const k = key + '|' + look.join('|');
+  if (THUMBS.has(k)) return THUMBS.get(k);
+  const keep = S;
+  let svg = '';
+  S = Object.assign({}, keep, { fx: {}, sel: null, flip: {} }, st);
+  try {
+    const L = layout(),
+      sfx = '_t' + THUMBS.size,
+      top = L.H + 30,
+      Y = y => top - y,
+      x0 = -70,
+      w = L.W + 140;
+    svg = `<svg viewBox="${x0} 0 ${w} ${top + 40}" preserveAspectRatio="xMidYMax meet" aria-hidden="true">${defsSVG(sfx)}`;
+    svg += `<rect x="${x0}" y="${Y(0)}" width="${w}" height="40" fill="var(--floor)"/>`;
+    L.cabs.forEach(
+      p =>
+        (svg += `<rect x="${p.x}" y="${Y(p.y + p.h)}" width="${p.w}" height="${p.h}" fill="#f4f4f1" stroke="#c9cac5" stroke-width="6"/>`)
+    );
+    if (S.sys === 'metod' && L.plinth) {
+      const bw = Math.max(0, ...L.cabs.filter(p => p.c.kind !== 'wall').map(p => p.x + p.w));
+      if (bw)
+        svg += `<rect x="0" y="${Y(L.plinth)}" width="${bw}" height="${L.plinth - 10}" fill="${shade(faceHex(lookOf(null)), -0.3)}"/>`;
+    }
+    L.sides.forEach(sd => {
+      const lk = sideLook(),
+        fill = MATS[lk.mat].wood ? woodCol(lk.mat, lk.oil).wood : faceHex(lk);
+      svg += `<rect x="${sd.x - 12}" y="${Y(sd.y + sd.h)}" width="${SIDE_T + 24}" height="${sd.h}" fill="${fill}"/>`;
+    });
+    L.fronts.forEach(
+      f =>
+        (svg += frontSVG(f, Y, sfx)
+          .replace(/ data-f="[^"]*"/, '')
+          .replace('class="front', 'class="tf'))
+    );
+    svg += '</svg>';
+  } catch (e) {
+    svg = '';
+  } finally {
+    S = keep;
+  }
+  THUMBS.set(k, svg);
+  return svg;
+}
+
 /* ==== 25-3d.js ====
    The 3D view: the white IKEA boxes with the new fronts on them, in their real materials — matt paint, oak and
    walnut grain, birch ply, raw MDF, flutes as a light-catching relief, fluted glass in its frame — and the handles.
@@ -2467,10 +2907,10 @@ function render() {
       : 'Tap a front to change just that one'
     : '';
   document.getElementById('pbar').innerHTML =
-    `<div class="ptot"><span>${countWords(P)} · incl. VAT${P.del ? ' + delivery' : ''}</span><b>${eur(P.total)}</b></div>${
+    `${chipHTML()}<div class="ptot"><span>${countWords(P)} · incl. VAT${P.del ? ' + delivery' : ''}</span><b>${eur(P.total)}</b></div>${
       S.step === 'order'
         ? ''
-        : `<button type="button" class="btn ghost" data-act="next">${i < STEPS.length - 2 ? 'Next: ' + STEPS[i + 1][1] : 'See the order'} →</button>`
+        : `<button type="button" class="btn ghost" data-act="next">${i < STEPS.length - 2 ? 'Next: ' + STEPS[i + 1][1] : 'See the order'}</button>`
     }<button type="button" class="btn pri" data-act="orderNow" ${P.n ? '' : 'disabled'}>Order</button>`;
   document.getElementById('panel').innerHTML = {
     cabs: cabsHTML,
@@ -2479,6 +2919,19 @@ function render() {
     order: orderHTML
   }[S.step](L, P);
   document.getElementById('app').dataset.step = S.step;
+}
+/* the paint chip in the price bar: the main look as a sample, with its name and code */
+function chipHTML() {
+  const lk = lookOf(null),
+    m = MATS[lk.mat],
+    hex = m.glass ? '#cfdcd8' : faceHex(lk),
+    name = m.paint ? COLOURS[lk.col].name : m.name,
+    sub = m.paint
+      ? `RAL ${COLOURS[lk.col].ral}, ${STYLES[lk.style].name.toLowerCase()}`
+      : m.oil
+        ? `${STYLES[lk.style].name}, ${OILS[lk.oil].name} oil`
+        : STYLES[lk.style].name;
+  return `<div class="pchip" title="${esc(lookName(lk))}"><i style="background:${hex}"></i><span><b>${esc(name)}</b><small>${esc(sub)}</small></span></div>`;
 }
 function selectFront(id) {
   S.sel = id && S.sel !== id ? id : null;
@@ -2499,35 +2952,107 @@ const QUICK = {
         [100, 236],
         [100, 236],
         [100, 236]
-      ]
+      ],
+      'Six doors, the classic wall of wardrobes'
     ],
     [
-      'Wide · narrow · wide',
+      'Open in the middle',
+      [
+        [100, 236],
+        [50, 236, 'open'],
+        [100, 236]
+      ],
+      'Open shelves between two wide frames'
+    ],
+    [
+      'Wide, narrow, wide',
       [
         [100, 236],
         [50, 236],
         [100, 236]
-      ]
+      ],
+      'Five doors with a slim one in the middle'
     ],
     [
       'Two 75s',
       [
         [75, 236],
         [75, 236]
-      ]
+      ],
+      'A wide and a narrow door per frame'
     ],
     [
       'Under a low ceiling',
       [
         [100, 201],
+        [75, 201],
         [100, 201]
-      ]
+      ],
+      'The 201 cm frames, for attics and eaves'
     ]
   ],
   metod: [
-    ['Small kitchen', { base: [60, 60, 60], wall: [60, 60, 60] }],
-    ['With a tall cabinet', { high: [60], base: [40, 60, 80], wall: [40, 60, 80] }],
-    ['Long run', { base: [60, 40, 60, 80, 60], wall: [60, 40, 60, 80, 60] }]
+    [
+      'Small kitchen',
+      {
+        base: [
+          [60, 'drawers3'],
+          [60, 'door'],
+          [60, 'drawer_door']
+        ],
+        wall: [60, 60, 60]
+      },
+      'Drawers, a sink and a cooker under three wall cabinets'
+    ],
+    [
+      'With a fridge',
+      {
+        high: [[60, 'split']],
+        base: [
+          [40, 'drawers4'],
+          [60, 'door'],
+          [80, 'doors2']
+        ],
+        wall: [40, 60, [80, 'doors2']]
+      },
+      'A tall fridge cabinet at the end of the run'
+    ],
+    [
+      'Long run',
+      {
+        base: [
+          [60, 'drawers3'],
+          [40, 'door'],
+          [60, 'drawer_door'],
+          [80, 'doors2'],
+          [60, 'drawers2']
+        ],
+        wall: [60, 40, 60, [80, 'doors2'], 60]
+      },
+      'Five base and five wall cabinets, plenty of drawers'
+    ],
+    [
+      'Pantry wall',
+      {
+        high: [
+          [60, 'split'],
+          [40, 'door'],
+          [60, 'split']
+        ]
+      },
+      'Three tall cabinets, floor to ceiling'
+    ],
+    [
+      'All drawers',
+      {
+        base: [
+          [80, 'drawers3'],
+          [60, 'drawers4'],
+          [80, 'drawers3']
+        ]
+      },
+      'A run of drawers, for an island or a long wall'
+    ]
   ],
   besta: [
     [
@@ -2536,14 +3061,25 @@ const QUICK = {
         [60, 38, 'drawers'],
         [60, 38, 'drawers'],
         [60, 38, 'drawers']
-      ]
+      ],
+      'Three low drawers, 180 cm wide'
     ],
     [
       'Low sideboard',
       [
-        [120, 64],
+        [120, 64, 'drawers'],
         [120, 64]
-      ]
+      ],
+      'Drawers next to two doors'
+    ],
+    [
+      'Media wall',
+      [
+        [60, 192],
+        [120, 38, 'drawers'],
+        [60, 192]
+      ],
+      'Two tall frames around a TV bench'
     ],
     [
       'Tall wall',
@@ -2551,17 +3087,33 @@ const QUICK = {
         [60, 192],
         [60, 192],
         [60, 192]
-      ]
+      ],
+      'Nine doors, floor to shoulder'
+    ],
+    [
+      'Hallway',
+      [
+        [120, 38, 'drawers'],
+        [60, 38, 'drawers']
+      ],
+      'Shallow drawers for keys and shoes'
     ]
   ]
 };
-function quickMake(q) {
-  if (Array.isArray(q)) return q.map(([w, h, lay]) => cab(S.sys, 'frame', w, h, lay));
+function quickMake(q, sys) {
+  sys = sys || S.sys;
+  const mk = (kind, w, h, lay) => {
+    const c = cab(sys, kind, w, h, lay);
+    fixLayout(c);
+    return c;
+  };
+  if (Array.isArray(q)) return q.map(([w, h, lay]) => mk('frame', w, h, lay));
   const out = [];
   ['high', 'base', 'wall'].forEach(k =>
-    (q[k] || []).forEach(w =>
-      out.push(cab('metod', k, w, SYS.metod.kinds[k].heights[k === 'high' ? 1 : k === 'wall' ? 2 : 0]))
-    )
+    (q[k] || []).forEach(e => {
+      const [w, lay] = Array.isArray(e) ? e : [e];
+      out.push(mk(k, w, SYS.metod.kinds[k].heights[k === 'high' ? 1 : k === 'wall' ? 2 : 0], lay));
+    })
   );
   return out;
 }
@@ -2598,7 +3150,7 @@ function cabsHTML() {
   const quick = QUICK[S.sys]
     .map(
       (q, n) =>
-        `<button type="button" class="qk" data-act="quick" data-a="${n}"><b>${q[0]}</b><small>${quickWords(q[1])}</small></button>`
+        `<button type="button" class="tile" data-act="quick" data-a="${n}"><span class="tpic">${designThumb('q' + S.sys + n, { cabs: quickMake(q[1]), fx: {}, sides: 'none' })}</span><b>${q[0]}</b><small>${esc(q[2] || quickWords(q[1]))}</small></button>`
     )
     .join('');
   const typeRow =
@@ -2662,9 +3214,9 @@ function cabsHTML() {
     </div>
     <div class="or"><span>no list? start here</span></div>
     <h3>Open a demo</h3>${demosHTML()}
-    <h3>Or start from your own</h3>
+    <h3>Or start from your own cabinets</h3>
     <div class="syss">${sysBtns}</div>
-    <h3>A common layout</h3><div class="qks">${quick}</div>
+    <h3>A common layout</h3><div class="tiles">${quick}</div>
     <h3>Or type your widths</h3>${typeRow}<div class="adds"><button type="button" class="btn" data-act="typed">Make these cabinets</button></div>
     <h3 id="yourCabs">Your cabinets, left to right · ${S.cabs.length}</h3>
     <div class="cabs">${S.cabs.map(card).join('') || '<p class="hint">No cabinets yet.</p>'}</div>
@@ -3039,7 +3591,7 @@ document.addEventListener('click', e => {
       S.fx = {};
       S.flip = {};
       S.sel = null;
-      S.impMsg = `✓ ${got.length} ${SYS[a].name} cabinet${got.length === 1 ? '' : 's'} set up from your list — check them below. <button type="button" class="lnk" data-act="undo">Undo</button> · <button type="button" class="lnk" data-act="step" data-a="fronts">Choose your fronts →</button>`;
+      S.impMsg = `✓ ${got.length} ${SYS[a].name} cabinet${got.length === 1 ? '' : 's'} set up from your list — check them below. <button type="button" class="lnk" data-act="undo">Undo</button> · <button type="button" class="lnk" data-act="step" data-a="fronts">Choose your fronts</button>`;
       break;
     }
     case 'undo':
@@ -3185,7 +3737,7 @@ function impPasteHelp() {
   const el = document.getElementById('impPrev');
   if (el)
     el.innerHTML =
-      '<p class="hint warn">Your browser didn’t let us read the clipboard — tap in the box and paste (long-press → Paste, or Ctrl/⌘ + V).</p>';
+      '<p class="hint warn">Your browser didn’t let us read the clipboard — tap in the box and paste (long-press and Paste, or Ctrl/⌘ + V).</p>';
 }
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') document.getElementById('modal').hidden = true;
@@ -3435,7 +3987,7 @@ function impPreviewHTML(text) {
         })
         .join('');
       return `<div class="igrp"><div class="igh"><b>${SYS[sys].name}</b> ${bySys[sys].length} cabinet${bySys[sys].length === 1 ? '' : 's'}</div><div class="ichips">${chips}</div>
-        <button type="button" class="btn ${sys === order[0] ? 'pri' : ''} sm" data-act="impUse" data-a="${sys}">Use ${order.length > 1 ? 'these ' + bySys[sys].length + ' ' + SYS[sys].name : 'these ' + bySys[sys].length} cabinet${bySys[sys].length === 1 ? '' : 's'} →</button></div>`;
+        <button type="button" class="btn ${sys === order[0] ? 'pri' : ''} sm" data-act="impUse" data-a="${sys}">Use ${order.length > 1 ? 'these ' + bySys[sys].length + ' ' + SYS[sys].name : 'these ' + bySys[sys].length} cabinet${bySys[sys].length === 1 ? '' : 's'}</button></div>`;
     })
     .join('');
   const ours = order.length
@@ -3746,37 +4298,53 @@ const DEMOS = [
     edge: 'round'
   }
 ];
-function loadDemo(i) {
-  const d = DEMOS[i];
-  if (!d) return;
-  S.undo = JSON.stringify({ sys: S.sys, cabs: S.cabs, fx: S.fx, flip: S.flip });
-  S.sys = d.sys;
+/* the state a demo sets, worked out once (its cabinets, looks per front, sides, edge, handles) */
+const DEMO_ST = [];
+function demoState(i) {
+  if (DEMO_ST[i]) return DEMO_ST[i];
+  const d = DEMOS[i],
+    keep = S;
+  S = Object.assign({}, keep, { sys: d.sys, flip: {}, fx: {}, sel: null });
   S.cabs = d.cabs.map(([kind, w, h, lay]) => {
     const c = cab(d.sys, kind, w, h, lay);
     fixLayout(c);
     return c;
   });
-  S.flip = {};
   applyPlan(d);
-  S.sides = d.sides || 'none';
-  S.edge = d.edge || 'round';
+  const st = {
+    sys: S.sys,
+    cabs: S.cabs,
+    fx: S.fx,
+    style: S.style,
+    mat: S.mat,
+    col: S.col,
+    oil: S.oil,
+    handle: S.handle,
+    hfin: S.hfin,
+    gframe: S.gframe,
+    sides: d.sides || 'none',
+    edge: d.edge || 'round'
+  };
+  S = keep;
+  return (DEMO_ST[i] = st);
+}
+function loadDemo(i) {
+  const d = DEMOS[i];
+  if (!d) return;
+  S.undo = JSON.stringify({ sys: S.sys, cabs: S.cabs, fx: S.fx, flip: S.flip });
+  Object.assign(S, JSON.parse(JSON.stringify(demoState(i))));
+  S.flip = {};
   S.recipe = null;
   S.demo = d.name;
   S.sel = null;
   S.impMsg = '';
 }
-/* the demo cards: name, a strip of its colours, one line */
+/* the demo cards: a picture of the design, its name and one line */
 function demosHTML() {
-  return `<div class="demos">${DEMOS.map((d, i) => {
-    const looks = [d.all, ...Object.values(d.by)].map(o => Object.assign({}, d.all, o));
-    const strip = looks
-      .map(
-        lk =>
-          `<i style="background:${MATS[lk.mat].glass ? '#cfdcd8' : faceHex(Object.assign({ col: 'chalk', oil: 'pure' }, lk))}"></i>`
-      )
-      .join('');
-    return `<button type="button" class="demo ${S.demo === d.name ? 'on' : ''}" data-act="demo" data-a="${i}"><span class="dstrip">${strip}</span><b>${esc(d.name)}</b><small>${SYS[d.sys].name} · ${esc(d.say)}</small></button>`;
-  }).join('')}</div>`;
+  return `<div class="tiles">${DEMOS.map(
+    (d, i) =>
+      `<button type="button" class="tile ${S.demo === d.name ? 'on' : ''}" data-act="demo" data-a="${i}"><span class="tpic">${designThumb('demo' + i, demoState(i))}</span><b>${esc(d.name)}</b><small>${SYS[d.sys].name}, ${esc(d.say.charAt(0).toLowerCase() + d.say.slice(1))}</small></button>`
+  ).join('')}</div>`;
 }
 
 /* ==== 99-start.js ==== draw the first screen once every file is loaded */

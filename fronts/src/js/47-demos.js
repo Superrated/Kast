@@ -110,35 +110,51 @@ const DEMOS = [
     edge: 'round'
   }
 ];
-function loadDemo(i) {
-  const d = DEMOS[i];
-  if (!d) return;
-  S.undo = JSON.stringify({ sys: S.sys, cabs: S.cabs, fx: S.fx, flip: S.flip });
-  S.sys = d.sys;
+/* the state a demo sets, worked out once (its cabinets, looks per front, sides, edge, handles) */
+const DEMO_ST = [];
+function demoState(i) {
+  if (DEMO_ST[i]) return DEMO_ST[i];
+  const d = DEMOS[i],
+    keep = S;
+  S = Object.assign({}, keep, { sys: d.sys, flip: {}, fx: {}, sel: null });
   S.cabs = d.cabs.map(([kind, w, h, lay]) => {
     const c = cab(d.sys, kind, w, h, lay);
     fixLayout(c);
     return c;
   });
-  S.flip = {};
   applyPlan(d);
-  S.sides = d.sides || 'none';
-  S.edge = d.edge || 'round';
+  const st = {
+    sys: S.sys,
+    cabs: S.cabs,
+    fx: S.fx,
+    style: S.style,
+    mat: S.mat,
+    col: S.col,
+    oil: S.oil,
+    handle: S.handle,
+    hfin: S.hfin,
+    gframe: S.gframe,
+    sides: d.sides || 'none',
+    edge: d.edge || 'round'
+  };
+  S = keep;
+  return (DEMO_ST[i] = st);
+}
+function loadDemo(i) {
+  const d = DEMOS[i];
+  if (!d) return;
+  S.undo = JSON.stringify({ sys: S.sys, cabs: S.cabs, fx: S.fx, flip: S.flip });
+  Object.assign(S, JSON.parse(JSON.stringify(demoState(i))));
+  S.flip = {};
   S.recipe = null;
   S.demo = d.name;
   S.sel = null;
   S.impMsg = '';
 }
-/* the demo cards: name, a strip of its colours, one line */
+/* the demo cards: a picture of the design, its name and one line */
 function demosHTML() {
-  return `<div class="demos">${DEMOS.map((d, i) => {
-    const looks = [d.all, ...Object.values(d.by)].map(o => Object.assign({}, d.all, o));
-    const strip = looks
-      .map(
-        lk =>
-          `<i style="background:${MATS[lk.mat].glass ? '#cfdcd8' : faceHex(Object.assign({ col: 'chalk', oil: 'pure' }, lk))}"></i>`
-      )
-      .join('');
-    return `<button type="button" class="demo ${S.demo === d.name ? 'on' : ''}" data-act="demo" data-a="${i}"><span class="dstrip">${strip}</span><b>${esc(d.name)}</b><small>${SYS[d.sys].name} · ${esc(d.say)}</small></button>`;
-  }).join('')}</div>`;
+  return `<div class="tiles">${DEMOS.map(
+    (d, i) =>
+      `<button type="button" class="tile ${S.demo === d.name ? 'on' : ''}" data-act="demo" data-a="${i}"><span class="tpic">${designThumb('demo' + i, demoState(i))}</span><b>${esc(d.name)}</b><small>${SYS[d.sys].name}, ${esc(d.say.charAt(0).toLowerCase() + d.say.slice(1))}</small></button>`
+  ).join('')}</div>`;
 }

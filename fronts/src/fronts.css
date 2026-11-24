@@ -2,6 +2,45 @@
    BRUIS Fronts. Colours and fonts come from Fitted (its :root tokens are put in front of this file by build.py).
    Computer: picture left, panel right, price bar at the bottom.
    Phone: picture on top, panel below, steps and price bar at the bottom. */
+/* BRUIS look: a maker's sample board. Cool plaster instead of cream, graphite ink, one cobalt for actions,
+   raw-MDF tan for small structure; one family (Bricolage Grotesque), condensed and heavy for headings. */
+:root {
+  --bg: #eceeea;
+  --surface: #f7f8f5;
+  --raised: #ffffff;
+  --ink: #1f2428;
+  --ink2: #5b6369;
+  --ink3: #7a8187;
+  --line: #d9dcd6;
+  --accent: #2438c8;
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(36, 56, 200, 0.09);
+  --mdf: #bfa888;
+  --wall: #e2e5df;
+  --stage: #e2e5df;
+  --floor: #cfc9be;
+  --f-d: 'Bricolage Grotesque', system-ui, -apple-system, sans-serif;
+  --f-b: 'Bricolage Grotesque', system-ui, -apple-system, sans-serif;
+  --f-m: 'Bricolage Grotesque', ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #15181a;
+    --surface: #1b1f22;
+    --raised: #23282c;
+    --ink: #eceeea;
+    --ink2: #a3aaaf;
+    --ink3: #8c9398;
+    --line: #30363a;
+    --accent: #8d9bff;
+    --accent-ink: #0d1030;
+    --accent-soft: rgba(141, 155, 255, 0.14);
+    --mdf: #8f7d62;
+    --wall: #1d2124;
+    --stage: #1d2124;
+    --floor: #2b2f32;
+  }
+}
 * {
   box-sizing: border-box;
 }
@@ -964,4 +1003,347 @@ details.cab[open] > summary {
 }
 .dstrip i:first-child {
   flex: 3;
+}
+
+/* ==== the BRUIS look (applies over the rules above) ==== */
+body {
+  font-size: 15px;
+  font-variation-settings: 'opsz' 14;
+}
+h2 {
+  font-family: var(--f-d);
+  font-weight: 750;
+  font-stretch: 78%;
+  font-variation-settings:
+    'wdth' 78,
+    'opsz' 48;
+  font-size: 32px;
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  margin: 2px 0 8px;
+}
+h3,
+h3.big {
+  font-size: 15.5px;
+  font-weight: 650;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--ink);
+  margin: 26px 0 10px;
+}
+.lede {
+  font-size: 15px;
+  max-width: 62ch;
+}
+
+/* header: the wordmark and the four steps as one numbered track */
+header.top {
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  padding: 12px 20px;
+}
+.brand {
+  font-family: var(--f-b);
+  font-size: 15px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.brand b {
+  font-weight: 800;
+  font-size: 26px;
+  letter-spacing: 0.02em;
+  font-variation-settings:
+    'wdth' 75,
+    'opsz' 96;
+  margin: 0;
+}
+.brand small {
+  display: inline;
+  font-size: 13px;
+  margin: 0;
+}
+.steps {
+  background: none;
+  border: 0;
+  padding: 0;
+  gap: 0;
+}
+.steps button {
+  border-radius: 0;
+  padding: 6px 4px 6px 14px;
+  position: relative;
+  color: var(--ink3);
+  font-weight: 600;
+}
+.steps button + button::before {
+  content: '';
+  width: 26px;
+  border-top: 1.5px solid var(--line);
+  margin-right: 10px;
+}
+.steps button.on {
+  background: none;
+  color: var(--ink);
+}
+.steps button.on i {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+.steps button.done {
+  color: var(--ink2);
+}
+.steps button.done i,
+.bsteps button.done i {
+  background: var(--mdf);
+  border-color: var(--mdf);
+  color: #fff;
+}
+.steps button i,
+.bsteps button i {
+  width: 22px;
+  height: 22px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* the stage: a wall and a floor */
+.stage {
+  background: var(--stage);
+}
+.chip {
+  border-radius: 8px;
+}
+.panel {
+  background: var(--surface);
+}
+
+/* buttons: squarer, one cobalt for the main action */
+.btn {
+  border-radius: 10px;
+  font-weight: 650;
+}
+.btn.sm {
+  border-radius: 8px;
+}
+.btn.pri {
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+}
+.btn.surp {
+  border-radius: 8px;
+}
+.btn:focus-visible,
+.tile:focus-visible,
+.sys:focus-visible,
+.stc:focus-visible,
+.mat:focus-visible,
+.seg button:focus-visible,
+.swb:focus-visible {
+  outline: 2.5px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* choice cards: a firm cobalt edge when chosen, no glow */
+.sys,
+.stc,
+.mat,
+.cab {
+  border-radius: 12px;
+  border: 1px solid var(--line);
+}
+.sys.on,
+.stc.on,
+.mat.on,
+.tile.on {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+.sys b {
+  font-size: 17px;
+  font-weight: 750;
+  font-variation-settings: 'wdth' 80;
+}
+.mat .tag {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 11px;
+}
+.or {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 13px;
+}
+.seg {
+  border-radius: 9px;
+}
+.seg button {
+  border-radius: 6px;
+}
+
+/* presets and demos: each one shows its own drawing */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.tile {
+  text-align: left;
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 7px 7px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.tile:hover {
+  border-color: var(--ink3);
+}
+.tile b {
+  font-size: 15px;
+  font-weight: 700;
+  padding: 0 4px;
+  margin-top: 6px;
+}
+.tile small {
+  font-size: 12.5px;
+  line-height: 1.35;
+  padding: 0 4px;
+}
+.tpic {
+  display: block;
+  height: 104px;
+  background: var(--stage);
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 10px 8px 0;
+}
+.tpic svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* the IKEA list card */
+.impcard {
+  border: 1.5px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--mdf);
+  border-radius: 12px;
+}
+.impcard textarea {
+  font-family: ui-monospace, Menlo, monospace;
+}
+
+/* the price bar: a paint chip of your main look, then the price */
+.pbar {
+  background: var(--bg);
+  gap: 14px;
+}
+.pchip {
+  display: flex;
+  align-items: stretch;
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  min-width: 0;
+  max-width: 260px;
+}
+.pchip i {
+  width: 46px;
+  flex: none;
+}
+.pchip span {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5px 12px 6px 10px;
+  min-width: 0;
+}
+.pchip b {
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pchip small {
+  font-size: 11.5px;
+  white-space: nowrap;
+}
+.ptot b {
+  font-size: 24px;
+  font-weight: 750;
+  font-variation-settings:
+    'wdth' 80,
+    'opsz' 36;
+  font-variant-numeric: tabular-nums;
+}
+.ord .num,
+.pic .dim {
+  font-variant-numeric: tabular-nums;
+}
+.pic .dim {
+  font-weight: 600;
+}
+@media (max-width: 860px) {
+  .pchip {
+    max-width: 44%;
+  }
+  .pchip i {
+    width: 30px;
+  }
+  .ptot b {
+    font-size: 20px;
+  }
+  .brand b {
+    font-size: 22px;
+  }
+  h2 {
+    font-size: 28px;
+  }
+}
+@media (max-width: 400px) {
+  .pchip small {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+  }
+}
+@media (max-width: 860px) {
+  .brand small {
+    display: none;
+  }
+  .bsteps {
+    background: var(--bg);
+  }
+  .bsteps button.on {
+    background: none;
+    color: var(--ink);
+  }
+  .bsteps button.on i {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+  }
+  .bsteps button {
+    color: var(--ink3);
+    font-weight: 600;
+  }
+}
+@media (max-width: 480px) {
+  .pchip span {
+    display: none;
+  }
+  .pchip i {
+    width: 38px;
+    height: 38px;
+  }
+  .ptot span {
+    white-space: nowrap;
+  }
 }
