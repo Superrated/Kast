@@ -92,6 +92,18 @@ table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 640p
 th, td { text-align: right; padding: 9px 10px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
 th:first-child, td:first-child { text-align: left; color: var(--ink2); padding-left: 0; }
 thead th { font-weight: 600; color: var(--ink); }
+.advice { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 40px; align-items: start; }
+.steps { list-style: none; counter-reset: st; margin: 0; padding: 0; }
+.steps > li { counter-increment: st; display: grid; grid-template-columns: 34px 1fr; gap: 6px 12px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.steps > li::before { content: counter(st); font-size: 22px; line-height: 1.1; font-variant-numeric: tabular-nums; color: var(--ink3); }
+.steps b { display: block; font-size: 17px; margin-bottom: 4px; }
+.steps p { margin: 0; color: var(--ink2); max-width: 40em; }
+.steps .dot { margin-right: 6px; }
+.side h3 { font-size: 15px; margin: 0 0 8px; }
+.side ul { margin: 0 0 24px; padding-left: 18px; color: var(--ink2); }
+.side li { margin: 0 0 6px; }
+.side .verdict { margin: 0 0 24px; }
+@media (max-width: 820px) { .advice { grid-template-columns: 1fr; gap: 8px; } }
 footer { border-top: 1px solid var(--line); padding: 24px 0 48px; color: var(--ink3); font-size: 13px; }
 footer p { margin: 0 0 6px; max-width: 52em; }
 
@@ -209,6 +221,41 @@ footer p { margin: 0 0 6px; max-width: 52em; }
     <p class="lede">Fronts, Tables, Workshops, Objects and Speakers over three years: money, time and what you lose if it goes wrong. Move the sliders to say what matters to you.</p>
     <div class="keys" id="key"></div>
   </div>
+
+  <section id="advice">
+    <h2>My advice</h2>
+    <p class="sub">Start small with what earns most for the least money and risk, then add ideas that use the same workshop and customers. These numbers assume the marketing budget that works and a van from year two.</p>
+    <div class="advice">
+      <ol class="steps">
+        <li><div><b><i class="dot" style="background:var(--tables)"></i>Start with Tables</b><p>It earns the most in year one with the fewest tools (€2,570), and one showroom table tests whether people buy at €2,000. First check that you can find 15–20 good old tables a year at about €150.</p></div></li>
+        <li><div><b><i class="dot" style="background:var(--workshops)"></i>Add Workshops on weekends</b><p>The lowest start-up costs (about €690) and few tools. Visitors see your tables, so the workshops sell tables too. Tables and Workshops together take about 10 hours a week in year one and stay under the VAT limit.</p></div></li>
+        <li><div><b><i class="dot" style="background:var(--fronts)"></i>Add Fronts in year two</b><p>The best idea by year three, but it needs €4,450 of tools and one measuring mistake costs €650–850. Use a cutting partner first and buy the CNC only when orders come in every month. With Tables, your turnover goes over €26,000, so you'll charge VAT.</p></div></li>
+        <li><div><b><i class="dot" style="background:var(--objects)"></i>Keep Objects small</b><p>Each piece leaves too little for marketing to pay off. Make them from oak offcuts and sell them at markets and to workshop visitors. Don't build it into a business of its own.</p></div></li>
+        <li><div><b><i class="dot" style="background:var(--speakers)"></i>Park Speakers</b><p>It costs the most to start (€3,600, including the EMC test) and earns the least: about €120 a month by year three. Build a pair for yourself, and come back to it only if people ask to buy one.</p></div></li>
+      </ol>
+      <div class="side">
+        <div class="verdict">Tables, Fronts and Workshops together reach about €1,950 a month of real benefit in year three, at about 23 hours a week. That is more than your 10-hour budget: going there means cutting your job hours or hiring help.</div>
+        <h3>Before you register</h3>
+        <ul>
+          <li>Read your job contract for a clause about side businesses.</li>
+          <li>Ask Kortrijk whether a workshop with machines and visitors is allowed at your address.</li>
+          <li>Get two insurance quotes for liability, products and the home policy.</li>
+          <li>Talk to an accountant once about VAT and the home deduction.</li>
+        </ul>
+        <h3>Check after six months</h3>
+        <ul>
+          <li>Fewer than 3 tables or 8 workshop sessions sold: change the price, the offer or the idea before spending more.</li>
+          <li>Marketing that costs more than €250 per table or €85 per session: stop that channel.</li>
+          <li>Spending more than 10 hours a week: drop the idea that pays least per hour.</li>
+        </ul>
+        <h3>Wait with</h3>
+        <ul>
+          <li>The van: in every idea, its €600 a month pushes your extra income below zero in year two. Take it when sales cover it for three months in a row.</li>
+          <li>The workshop upgrades: the page already buys them only when profit allows.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
 
   <section>
     <h2>Your real benefit, three years</h2>
