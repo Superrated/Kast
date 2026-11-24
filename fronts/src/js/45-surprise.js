@@ -150,13 +150,21 @@ function surprise(seed) {
   if (okR.length > 1 && rec.name === S.recipe)
     rec = okR[(okR.indexOf(rec) + 1 + Math.floor(r() * (okR.length - 1))) % okR.length];
   const plan = rec.make(r);
+  applyPlan(plan, r);
+  S.recipe = rec.name;
+  S.recipeSay = plan.say;
+  S.sel = null;
+}
+
+/* put a plan on the fronts: a look for all, and other looks by role (drawers, wall cabinets, tall doors …) */
+function applyPlan(plan, r) {
   S.style = plan.all.style || 'flat';
   S.mat = plan.all.mat;
   if (plan.all.col) S.col = plan.all.col;
   S.oil = plan.all.oil || 'pure';
   S.fx = {};
   const count = {};
-  L.fronts.forEach(f => {
+  layout().fronts.forEach(f => {
     const role = roleOf(f),
       o = plan.by[role];
     if (!o) return;
@@ -168,9 +176,6 @@ function surprise(seed) {
       S.fx[f.id] = lk;
   });
   if (plan.gframe) S.gframe = plan.gframe;
-  S.handle = plan.handle || pick(r, ['knob', 'bar', 'knob', 'push']);
+  S.handle = plan.handle || (r ? pick(r, ['knob', 'bar', 'knob', 'push']) : 'knob');
   S.hfin = S.handle === 'tab' ? 'black' : plan.hfin || 'brass';
-  S.recipe = rec.name;
-  S.recipeSay = plan.say;
-  S.sel = null;
 }

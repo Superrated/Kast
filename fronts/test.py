@@ -20,6 +20,13 @@ CHECK = """(()=>{const bad=[];
     ['PAX / FORSAND Wardrobe combination, white, 150x60x236 cm  1', 'pax:100x236:doors,pax:50x236:doors'],
     ['METOD\\tWall cabinet frame, white, 60x37x80 cm\\t302.055.53\\t2\\t€ 35', 'metod:60x80:door,metod:60x80:door']];
   IMPS.forEach(([t,want])=>{ const got=parsePlanner(t).found.map(c=>`${c.sys}:${c.w}x${c.h}:${c.layout}`).join(); if(got!==want) bad.push('IKEA list: '+JSON.stringify(t.slice(0,40))+' gave '+got) });
+  // demos: each one loads, has fronts and valid looks, and draws every step
+  DEMOS.forEach((d,i)=>{ S=freshState(d.sys); loadDemo(i); const Ld=layout();
+    if(!Ld.fronts.length) bad.push('demo without fronts: '+d.name);
+    if(S.cabs.length!==d.cabs.length) bad.push('demo cabinets changed: '+d.name);
+    S.cabs.forEach((c,k)=>{ if(c.layout!==d.cabs[k][3]) bad.push(`demo ${d.name}: cabinet ${k+1} layout ${c.layout}`) });
+    Ld.fronts.forEach(f=>{ const lk=lookOf(f); if(!matOk(lk.style,lk.mat)) bad.push('demo bad look: '+d.name) });
+    for (const st of ['cabs','fronts','handles','order']) { S.step=st; render(); } });
   // side panels: priced and in the order list
   S=freshState('metod'); S.sides='both'; let Ls=layout(); if(Ls.sides.length!==3) bad.push('kitchen sides (tall at the left end covers the wall row too): '+Ls.sides.length);
   if(!(priceAll(Ls).ns===3&&grouped(Ls).some(r=>r.kind==='side'))) bad.push('sides not priced/listed');

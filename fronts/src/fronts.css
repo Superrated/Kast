@@ -926,3 +926,42 @@ details.cab[open] > summary {
   display: block;
   font-size: 12px;
 }
+
+/* demo designs */
+.demos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.demo {
+  text-align: left;
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 9px 11px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.demo.on {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.demo small {
+  font-size: 12px;
+  line-height: 1.35;
+}
+.dstrip {
+  display: flex;
+  height: 22px;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 5px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+.dstrip i {
+  flex: 1;
+}
+.dstrip i:first-child {
+  flex: 3;
+}

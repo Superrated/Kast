@@ -1000,6 +1000,45 @@ details.cab[open] > summary {
   font-size: 12px;
 }
 
+/* demo designs */
+.demos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.demo {
+  text-align: left;
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 9px 11px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.demo.on {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.demo small {
+  font-size: 12px;
+  line-height: 1.35;
+}
+.dstrip {
+  display: flex;
+  height: 22px;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 5px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+.dstrip i {
+  flex: 1;
+}
+.dstrip i:first-child {
+  flex: 3;
+}
+
 </style>
 </head>
 <body>
@@ -2622,6 +2661,8 @@ function cabsHTML() {
       ${how}
     </div>
     <div class="or"><span>no list? start here</span></div>
+    <h3>Open a demo</h3>${demosHTML()}
+    <h3>Or start from your own</h3>
     <div class="syss">${sysBtns}</div>
     <h3>A common layout</h3><div class="qks">${quick}</div>
     <h3>Or type your widths</h3>${typeRow}<div class="adds"><button type="button" class="btn" data-act="typed">Make these cabinets</button></div>
@@ -2912,6 +2953,7 @@ document.addEventListener('click', e => {
     case 'quick':
       S.cabs = quickMake(QUICK[S.sys][+a][1]);
       S.flip = {};
+      S.demo = null;
       S.fx = {};
       break;
     case 'qh':
@@ -2982,6 +3024,10 @@ document.addEventListener('click', e => {
       S.impMsg = '';
       S.impMsg = '';
       break;
+    case 'demo':
+      loadDemo(+a);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      break;
     case 'impUse': {
       const r = parsePlanner(S.impText),
         got = r.found.filter(c => c.sys === a);
@@ -2989,6 +3035,7 @@ document.addEventListener('click', e => {
       S.undo = JSON.stringify({ sys: S.sys, cabs: S.cabs, fx: S.fx, flip: S.flip });
       S.sys = a;
       S.cabs = got;
+      S.demo = null;
       S.fx = {};
       S.flip = {};
       S.sel = null;
@@ -3557,13 +3604,21 @@ function surprise(seed) {
   if (okR.length > 1 && rec.name === S.recipe)
     rec = okR[(okR.indexOf(rec) + 1 + Math.floor(r() * (okR.length - 1))) % okR.length];
   const plan = rec.make(r);
+  applyPlan(plan, r);
+  S.recipe = rec.name;
+  S.recipeSay = plan.say;
+  S.sel = null;
+}
+
+/* put a plan on the fronts: a look for all, and other looks by role (drawers, wall cabinets, tall doors …) */
+function applyPlan(plan, r) {
   S.style = plan.all.style || 'flat';
   S.mat = plan.all.mat;
   if (plan.all.col) S.col = plan.all.col;
   S.oil = plan.all.oil || 'pure';
   S.fx = {};
   const count = {};
-  L.fronts.forEach(f => {
+  layout().fronts.forEach(f => {
     const role = roleOf(f),
       o = plan.by[role];
     if (!o) return;
@@ -3575,11 +3630,153 @@ function surprise(seed) {
       S.fx[f.id] = lk;
   });
   if (plan.gframe) S.gframe = plan.gframe;
-  S.handle = plan.handle || pick(r, ['knob', 'bar', 'knob', 'push']);
+  S.handle = plan.handle || (r ? pick(r, ['knob', 'bar', 'knob', 'push']) : 'knob');
   S.hfin = S.handle === 'tab' ? 'black' : plan.hfin || 'brass';
-  S.recipe = rec.name;
-  S.recipeSay = plan.say;
+}
+
+/* ==== 47-demos.js ====
+   Ready-made demo designs: a set of cabinets with a finished look, side panels, edge and handles.
+   Open one to see what the configurator can do, then change anything.
+   A cabinet here: [kind, width, height, front layout]. Looks by role work like the Surprise recipes
+   (drawer, wall, tall, top, low, door). */
+const DEMOS = [
+  {
+    name: 'Sage kitchen',
+    say: 'Fluted sage green with calm flat drawers and brass knobs',
+    sys: 'metod',
+    cabs: [
+      ['high', 60, 200, 'split'],
+      ['base', 60, 80, 'drawers3'],
+      ['base', 40, 80, 'door'],
+      ['base', 80, 80, 'doors2'],
+      ['base', 60, 80, 'drawer_door'],
+      ['wall', 40, 80, 'door'],
+      ['wall', 80, 80, 'doors2'],
+      ['wall', 60, 80, 'door']
+    ],
+    all: { mat: 'painted', col: 'sage', style: 'fluted' },
+    by: { drawer: { style: 'flat' } },
+    handle: 'knob',
+    hfin: 'brass',
+    sides: 'both',
+    edge: 'round'
+  },
+  {
+    name: 'Charcoal oak kitchen',
+    say: 'Oak oiled in Charcoal, mustard grooved drawers, brass bars',
+    sys: 'metod',
+    cabs: [
+      ['base', 80, 80, 'doors2'],
+      ['base', 60, 80, 'drawers3'],
+      ['base', 60, 80, 'door'],
+      ['base', 60, 80, 'drawers2'],
+      ['base', 80, 80, 'doors2'],
+      ['wall', 80, 60, 'doors2'],
+      ['wall', 60, 60, 'door'],
+      ['wall', 60, 60, 'door'],
+      ['wall', 80, 60, 'doors2']
+    ],
+    all: { mat: 'oak', style: 'flat', oil: 'charcoal' },
+    by: { drawer: { mat: 'painted', col: 'mustard', style: 'grooves' } },
+    handle: 'bar',
+    hfin: 'brass',
+    sides: 'both',
+    edge: 'round'
+  },
+  {
+    name: 'Midnight wardrobe',
+    say: 'Deep blue flutes, push to open, panels on both sides',
+    sys: 'pax',
+    cabs: [
+      ['frame', 100, 236, 'doors'],
+      ['frame', 50, 236, 'doors'],
+      ['frame', 100, 236, 'doors']
+    ],
+    all: { mat: 'painted', col: 'midnight', style: 'fluted' },
+    by: {},
+    handle: 'push',
+    sides: 'both',
+    edge: 'round'
+  },
+  {
+    name: 'Birch under the eaves',
+    say: 'Low PAX in birch ply, White 5% oil, cut-out grips, chamfered edges',
+    sys: 'pax',
+    cabs: [
+      ['frame', 100, 201, 'doors'],
+      ['frame', 75, 201, 'doors'],
+      ['frame', 100, 201, 'doors']
+    ],
+    all: { mat: 'birch', style: 'flat', oil: 'white5' },
+    by: {},
+    handle: 'grip',
+    sides: 'right',
+    edge: 'chamfer'
+  },
+  {
+    name: 'Walnut media wall',
+    say: 'Walnut with fluted glass up top in oak frames',
+    sys: 'besta',
+    cabs: [
+      ['frame', 60, 192, 'door'],
+      ['frame', 120, 38, 'drawers'],
+      ['frame', 60, 192, 'door']
+    ],
+    all: { mat: 'walnut', style: 'flat' },
+    by: { top: { mat: 'glass', style: 'fluted' } },
+    gframe: 'oak',
+    handle: 'bar',
+    hfin: 'brass',
+    sides: 'none',
+    edge: 'round'
+  },
+  {
+    name: 'Terracotta sideboard',
+    say: 'Grooved terracotta, black knobs, panels at both ends',
+    sys: 'besta',
+    cabs: [
+      ['frame', 120, 64, 'drawers'],
+      ['frame', 120, 64, 'door']
+    ],
+    all: { mat: 'painted', col: 'terracotta', style: 'grooves' },
+    by: {},
+    handle: 'knob',
+    hfin: 'black',
+    sides: 'both',
+    edge: 'round'
+  }
+];
+function loadDemo(i) {
+  const d = DEMOS[i];
+  if (!d) return;
+  S.undo = JSON.stringify({ sys: S.sys, cabs: S.cabs, fx: S.fx, flip: S.flip });
+  S.sys = d.sys;
+  S.cabs = d.cabs.map(([kind, w, h, lay]) => {
+    const c = cab(d.sys, kind, w, h, lay);
+    fixLayout(c);
+    return c;
+  });
+  S.flip = {};
+  applyPlan(d);
+  S.sides = d.sides || 'none';
+  S.edge = d.edge || 'round';
+  S.recipe = null;
+  S.demo = d.name;
   S.sel = null;
+  S.impMsg = '';
+}
+/* the demo cards: name, a strip of its colours, one line */
+function demosHTML() {
+  return `<div class="demos">${DEMOS.map((d, i) => {
+    const looks = [d.all, ...Object.values(d.by)].map(o => Object.assign({}, d.all, o));
+    const strip = looks
+      .map(
+        lk =>
+          `<i style="background:${MATS[lk.mat].glass ? '#cfdcd8' : faceHex(Object.assign({ col: 'chalk', oil: 'pure' }, lk))}"></i>`
+      )
+      .join('');
+    return `<button type="button" class="demo ${S.demo === d.name ? 'on' : ''}" data-act="demo" data-a="${i}"><span class="dstrip">${strip}</span><b>${esc(d.name)}</b><small>${SYS[d.sys].name} · ${esc(d.say)}</small></button>`;
+  }).join('')}</div>`;
 }
 
 /* ==== 99-start.js ==== draw the first screen once every file is loaded */

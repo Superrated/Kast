@@ -240,6 +240,8 @@ function cabsHTML() {
       ${how}
     </div>
     <div class="or"><span>no list? start here</span></div>
+    <h3>Open a demo</h3>${demosHTML()}
+    <h3>Or start from your own</h3>
     <div class="syss">${sysBtns}</div>
     <h3>A common layout</h3><div class="qks">${quick}</div>
     <h3>Or type your widths</h3>${typeRow}<div class="adds"><button type="button" class="btn" data-act="typed">Make these cabinets</button></div>
@@ -530,6 +532,7 @@ document.addEventListener('click', e => {
     case 'quick':
       S.cabs = quickMake(QUICK[S.sys][+a][1]);
       S.flip = {};
+      S.demo = null;
       S.fx = {};
       break;
     case 'qh':
@@ -600,6 +603,10 @@ document.addEventListener('click', e => {
       S.impMsg = '';
       S.impMsg = '';
       break;
+    case 'demo':
+      loadDemo(+a);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      break;
     case 'impUse': {
       const r = parsePlanner(S.impText),
         got = r.found.filter(c => c.sys === a);
@@ -607,6 +614,7 @@ document.addEventListener('click', e => {
       S.undo = JSON.stringify({ sys: S.sys, cabs: S.cabs, fx: S.fx, flip: S.flip });
       S.sys = a;
       S.cabs = got;
+      S.demo = null;
       S.fx = {};
       S.flip = {};
       S.sel = null;
