@@ -47,7 +47,19 @@ function render() {
   else drawPic();
   // the caption under the picture: what it shows, a hint, and Surprise me
   document.getElementById('stagebar').innerHTML =
-    `<p class="cap"><b>${SYS[S.sys].name} ${SYS[S.sys].what.toLowerCase()}</b>, ${countWords(P).replace(' + ', ' and ')}${S.recipe ? `. ${esc(S.recipeSay || S.recipe)}` : S.demo ? `. ${esc(S.demo)}` : ''}<span>${L.fronts.length ? 'Tap a front to give it its own look' : ''}</span></p><button type="button" class="lnk surp" data-act="surprise">Surprise me</button>`;
+    `<p class="cap"><b>${SYS[S.sys].name} ${SYS[S.sys].what.toLowerCase()}</b>, ${countWords(P).replace(' + ', ' and ')}${S.recipe ? `. ${esc(S.recipeSay || S.recipe)}` : S.demo ? `. ${esc(S.demo)}` : ''}<span>${L.fronts.length ? (S.view === 'close' ? 'A close-up of one front. Pick another in the room view' : 'Tap a front to give it its own look') : ''}</span></p>${
+      v3 && L.fronts.length
+        ? `<div class="vseg" role="group" aria-label="View">${[
+            ['room', 'Room'],
+            ['close', 'Close-up']
+          ]
+            .map(
+              ([k, n]) =>
+                `<button type="button" data-act="view" data-a="${k}" aria-pressed="${S.view === k}" class="${S.view === k ? 'on' : ''}">${n}</button>`
+            )
+            .join('')}</div>`
+        : ''
+    }<button type="button" class="lnk surp" data-act="surprise">Surprise me</button>`;
   document.getElementById('pbar').innerHTML =
     `${chipHTML()}<div class="ptot"><span>${countWords(P)} · incl. VAT${P.del ? ' + delivery' : ''}</span><b>${eur(P.total)}</b></div>${
       S.step === 'order'
@@ -417,7 +429,7 @@ function lookEdHTML(target, lk) {
         )
         .join(
           ''
-        )}</div><p class="hint">${esc(COLOURS[lk.col].name)} is RAL ${COLOURS[lk.col].ral} ${esc((RAL[COLOURS[lk.col].ral] || {}).name || '')}, so any paint shop can match it later.${COLOURS[lk.col].trend ? ' One of the 2027 colours.' : ''}</p>`
+        )}</div><p class="hint"><b>${esc(COLOURS[lk.col].name)}</b> is RAL ${COLOURS[lk.col].ral} ${esc((RAL[COLOURS[lk.col].ral] || {}).name || '')}, so any paint shop can match it later.${COLOURS[lk.col].trend ? ' One of the 2027 colours.' : ''}</p>`
     : MATS[lk.mat].oil
       ? `<h3>Oil colour</h3><div class="sws">${Object.entries(OILS)
           .map(
@@ -713,6 +725,17 @@ function setLook(target, field, val) {
   S.fx[target] = nx;
 }
 
+/* the Handles step opens on the close-up, where a knob is big enough to judge; leaving it goes back
+   to the room, unless the close-up was picked by hand */
+function autoView(next) {
+  if (next === 'handles' && S.view !== 'close') {
+    S.view = 'close';
+    S.viewAuto = true;
+  } else if (next !== 'handles' && S.viewAuto) {
+    S.view = 'room';
+    S.viewAuto = false;
+  }
+}
 /* ---------- taps ---------- */
 document.addEventListener('click', e => {
   const fr = e.target.closest('#pic .front');
@@ -728,17 +751,20 @@ document.addEventListener('click', e => {
     c = S.cabs.find(x => x.id === id);
   switch (b.dataset.act) {
     case 'step':
+      autoView(a);
       S.step = a;
       window.scrollTo({ top: 0, behavior: 'smooth' });
       break;
     case 'next': {
       const i = STEPS.findIndex(s => s[0] === S.step);
+      autoView(STEPS[Math.min(STEPS.length - 1, i + 1)][0]);
       S.step = STEPS[Math.min(STEPS.length - 1, i + 1)][0];
       window.scrollTo({ top: 0, behavior: 'smooth' });
       break;
     }
     case 'view':
-      S.view = a;
+      S.view = a === 'close' ? 'close' : 'room';
+      S.viewAuto = false;
       break;
     case 'openShared': {
       const m = String(S.impText || '').match(/#d=([A-Za-z0-9_-]+)/),

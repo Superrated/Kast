@@ -2479,6 +2479,83 @@ button.brand {
   line-height: 1.35;
 }
 
+/* room or close-up: a quiet two-part switch beside the caption */
+.vseg {
+  display: inline-flex;
+  flex: none;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 2px;
+  background: var(--raised);
+}
+.vseg button {
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink2);
+  padding: 4px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.vseg button.on {
+  background: var(--ink);
+  color: var(--bg);
+}
+.vseg button:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* style cards: every picture the same shape, whether the render is done or still the drawing */
+.stc img,
+.stc .tdraw svg,
+.stc > svg {
+  display: block;
+  width: 100%;
+  height: auto !important;
+  aspect-ratio: 16 / 15;
+  object-fit: cover;
+  margin-bottom: 6px;
+}
+.stc .tdraw {
+  display: block;
+}
+
+/* colour swatches: no names under each chip (they ran into each other); the chosen colour is named below */
+.swb span {
+  display: none;
+}
+.sws {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+  gap: 8px;
+  padding-bottom: 4px;
+}
+.swb {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+}
+
+@media (max-width: 600px) {
+  /* demo cards: the price under the name, not squeezed beside it */
+  .hdl {
+    flex-direction: column;
+    gap: 1px;
+  }
+  .stagebar {
+    gap: 10px;
+    padding: 10px 16px 12px;
+    flex-wrap: wrap;
+  }
+  .stagebar .cap {
+    flex-basis: 100%;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -2791,7 +2868,7 @@ function freshState(sys) {
     handle: 'knob',
     hfin: 'oak',
     step: 'home',
-    view: '2d',
+    view: 'room', // the stage: the whole room, or a close-up of one front
     flip: {},
     fx: {}, // fronts with their own look: id → { style, mat, col }
     sel: null // the front you tapped
@@ -2850,6 +2927,7 @@ if (!EDGES[S.edge]) S.edge = 'round';
 if (!SIDES[S.sides]) S.sides = 'none';
 if (!['ikea', 'match'].includes(S.plinth)) S.plinth = 'ikea';
 if (!HANDLES[S.handle]) S.handle = 'knob';
+if (S.view !== 'close') S.view = 'room';
 if (!HFIN[S.hfin]) S.hfin = 'oak';
 if (!(S.fillers >= 0 && S.fillers <= 6)) S.fillers = 0;
 if (S.planCheck === undefined) S.planCheck = true;
@@ -3748,6 +3826,7 @@ function roomWindowWall(T, parent, mat, castOnly) {
 /* the camera is fixed; the picture is cropped around the cabinets to fill the stage */
 function cropFor(L, aspect) {
   if (S.zoom) return cropClose(L, aspect);
+  if (S.view === 'close' && L.fronts.length) return cropDetail(L, aspect);
   const T = V3.T,
     cam = V3.cam,
     side = S.sides === 'none' ? 0 : 20,
@@ -3781,6 +3860,43 @@ function cropFor(L, aspect) {
   cx = Math.max(w / 2, Math.min(ROOM.W - w / 2, cx));
   cy = Math.max(h / 2, Math.min(ROOM.H - h / 2, cy));
   return [cx - w / 2, cy - h / 2, w, h];
+}
+/* the close-up on the stage: the handle of one front and the joint beside it, near enough to see the
+   grain, the flutes and the edges; the chosen front if there is one, else a door at hand height */
+function cropDetail(L, aspect) {
+  const T = V3.T,
+    cam = V3.cam;
+  cam.clearViewOffset();
+  cam.updateMatrixWorld();
+  const P = (x, y, z) => {
+    const v = new T.Vector3(x, y, z).project(cam);
+    return [((v.x + 1) / 2) * ROOM.W, ((1 - v.y) / 2) * ROOM.H];
+  };
+  // a door at about hand height, with other fronts on both sides (not the end of the run)
+  const score = f => {
+    const h = handlePos(f),
+      end = h.x < 450 || h.x > L.W - 450;
+    return (f.kind === 'drawer' ? 400 : 0) + Math.abs(h.y - 850) + (f.ckind === 'wall' ? 300 : 0) + (end ? 900 : 0);
+  };
+  const f = L.fronts.find(x => x.id === S.sel) || L.fronts.slice().sort((a, b) => score(a) - score(b))[0];
+  const h = handlePos(f),
+    z = 640,
+    wx = -L.W / 2 + h.x,
+    wy = h.y,
+    span = innerWidth > 860 ? 1150 : 760, // mm of front across the picture: closer on a phone
+    a = P(wx - span / 2, wy, z),
+    b = P(wx + span / 2, wy, z),
+    c = P(wx, wy, z);
+  let w = Math.min(b[0] - a[0], ROOM.W),
+    hh = w / aspect;
+  if (hh > ROOM.H) {
+    hh = ROOM.H;
+    w = hh * aspect;
+  }
+  const cx = Math.max(w / 2, Math.min(ROOM.W - w / 2, c[0])),
+    // the handle in the upper third: more front, less wall
+    cy = Math.max(hh / 2, Math.min(ROOM.H - hh / 2, c[1] + hh * 0.17));
+  return [cx - w / 2, cy - hh / 2, w, hh];
 }
 /* a close-up: just the cabinet front, for the style cards */
 function cropClose(L, aspect) {
@@ -3889,7 +4005,7 @@ function queueThumbs() {
       S = Object.assign(
         {},
         keep,
-        { fx: {}, sel: null, flip: {}, sides: 'none', plinth: 'ikea', fillers: 0, zoom: false },
+        { fx: {}, sel: null, flip: {}, sides: 'none', plinth: 'ikea', fillers: 0, zoom: false, view: 'room' },
         job.st
       );
       V3.key = null;
@@ -4763,7 +4879,19 @@ function render() {
   else drawPic();
   // the caption under the picture: what it shows, a hint, and Surprise me
   document.getElementById('stagebar').innerHTML =
-    `<p class="cap"><b>${SYS[S.sys].name} ${SYS[S.sys].what.toLowerCase()}</b>, ${countWords(P).replace(' + ', ' and ')}${S.recipe ? `. ${esc(S.recipeSay || S.recipe)}` : S.demo ? `. ${esc(S.demo)}` : ''}<span>${L.fronts.length ? 'Tap a front to give it its own look' : ''}</span></p><button type="button" class="lnk surp" data-act="surprise">Surprise me</button>`;
+    `<p class="cap"><b>${SYS[S.sys].name} ${SYS[S.sys].what.toLowerCase()}</b>, ${countWords(P).replace(' + ', ' and ')}${S.recipe ? `. ${esc(S.recipeSay || S.recipe)}` : S.demo ? `. ${esc(S.demo)}` : ''}<span>${L.fronts.length ? (S.view === 'close' ? 'A close-up of one front. Pick another in the room view' : 'Tap a front to give it its own look') : ''}</span></p>${
+      v3 && L.fronts.length
+        ? `<div class="vseg" role="group" aria-label="View">${[
+            ['room', 'Room'],
+            ['close', 'Close-up']
+          ]
+            .map(
+              ([k, n]) =>
+                `<button type="button" data-act="view" data-a="${k}" aria-pressed="${S.view === k}" class="${S.view === k ? 'on' : ''}">${n}</button>`
+            )
+            .join('')}</div>`
+        : ''
+    }<button type="button" class="lnk surp" data-act="surprise">Surprise me</button>`;
   document.getElementById('pbar').innerHTML =
     `${chipHTML()}<div class="ptot"><span>${countWords(P)} · incl. VAT${P.del ? ' + delivery' : ''}</span><b>${eur(P.total)}</b></div>${
       S.step === 'order'
@@ -5133,7 +5261,7 @@ function lookEdHTML(target, lk) {
         )
         .join(
           ''
-        )}</div><p class="hint">${esc(COLOURS[lk.col].name)} is RAL ${COLOURS[lk.col].ral} ${esc((RAL[COLOURS[lk.col].ral] || {}).name || '')}, so any paint shop can match it later.${COLOURS[lk.col].trend ? ' One of the 2027 colours.' : ''}</p>`
+        )}</div><p class="hint"><b>${esc(COLOURS[lk.col].name)}</b> is RAL ${COLOURS[lk.col].ral} ${esc((RAL[COLOURS[lk.col].ral] || {}).name || '')}, so any paint shop can match it later.${COLOURS[lk.col].trend ? ' One of the 2027 colours.' : ''}</p>`
     : MATS[lk.mat].oil
       ? `<h3>Oil colour</h3><div class="sws">${Object.entries(OILS)
           .map(
@@ -5429,6 +5557,17 @@ function setLook(target, field, val) {
   S.fx[target] = nx;
 }
 
+/* the Handles step opens on the close-up, where a knob is big enough to judge; leaving it goes back
+   to the room, unless the close-up was picked by hand */
+function autoView(next) {
+  if (next === 'handles' && S.view !== 'close') {
+    S.view = 'close';
+    S.viewAuto = true;
+  } else if (next !== 'handles' && S.viewAuto) {
+    S.view = 'room';
+    S.viewAuto = false;
+  }
+}
 /* ---------- taps ---------- */
 document.addEventListener('click', e => {
   const fr = e.target.closest('#pic .front');
@@ -5444,17 +5583,20 @@ document.addEventListener('click', e => {
     c = S.cabs.find(x => x.id === id);
   switch (b.dataset.act) {
     case 'step':
+      autoView(a);
       S.step = a;
       window.scrollTo({ top: 0, behavior: 'smooth' });
       break;
     case 'next': {
       const i = STEPS.findIndex(s => s[0] === S.step);
+      autoView(STEPS[Math.min(STEPS.length - 1, i + 1)][0]);
       S.step = STEPS[Math.min(STEPS.length - 1, i + 1)][0];
       window.scrollTo({ top: 0, behavior: 'smooth' });
       break;
     }
     case 'view':
-      S.view = a;
+      S.view = a === 'close' ? 'close' : 'room';
+      S.viewAuto = false;
       break;
     case 'openShared': {
       const m = String(S.impText || '').match(/#d=([A-Za-z0-9_-]+)/),

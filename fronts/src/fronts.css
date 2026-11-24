@@ -2404,3 +2404,80 @@ button.brand {
   color: var(--ink2);
   line-height: 1.35;
 }
+
+/* room or close-up: a quiet two-part switch beside the caption */
+.vseg {
+  display: inline-flex;
+  flex: none;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 2px;
+  background: var(--raised);
+}
+.vseg button {
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink2);
+  padding: 4px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.vseg button.on {
+  background: var(--ink);
+  color: var(--bg);
+}
+.vseg button:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* style cards: every picture the same shape, whether the render is done or still the drawing */
+.stc img,
+.stc .tdraw svg,
+.stc > svg {
+  display: block;
+  width: 100%;
+  height: auto !important;
+  aspect-ratio: 16 / 15;
+  object-fit: cover;
+  margin-bottom: 6px;
+}
+.stc .tdraw {
+  display: block;
+}
+
+/* colour swatches: no names under each chip (they ran into each other); the chosen colour is named below */
+.swb span {
+  display: none;
+}
+.sws {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+  gap: 8px;
+  padding-bottom: 4px;
+}
+.swb {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+}
+
+@media (max-width: 600px) {
+  /* demo cards: the price under the name, not squeezed beside it */
+  .hdl {
+    flex-direction: column;
+    gap: 1px;
+  }
+  .stagebar {
+    gap: 10px;
+    padding: 10px 16px 12px;
+    flex-wrap: wrap;
+  }
+  .stagebar .cap {
+    flex-basis: 100%;
+  }
+}

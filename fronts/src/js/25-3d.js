@@ -218,6 +218,7 @@ function roomWindowWall(T, parent, mat, castOnly) {
 /* the camera is fixed; the picture is cropped around the cabinets to fill the stage */
 function cropFor(L, aspect) {
   if (S.zoom) return cropClose(L, aspect);
+  if (S.view === 'close' && L.fronts.length) return cropDetail(L, aspect);
   const T = V3.T,
     cam = V3.cam,
     side = S.sides === 'none' ? 0 : 20,
@@ -251,6 +252,43 @@ function cropFor(L, aspect) {
   cx = Math.max(w / 2, Math.min(ROOM.W - w / 2, cx));
   cy = Math.max(h / 2, Math.min(ROOM.H - h / 2, cy));
   return [cx - w / 2, cy - h / 2, w, h];
+}
+/* the close-up on the stage: the handle of one front and the joint beside it, near enough to see the
+   grain, the flutes and the edges; the chosen front if there is one, else a door at hand height */
+function cropDetail(L, aspect) {
+  const T = V3.T,
+    cam = V3.cam;
+  cam.clearViewOffset();
+  cam.updateMatrixWorld();
+  const P = (x, y, z) => {
+    const v = new T.Vector3(x, y, z).project(cam);
+    return [((v.x + 1) / 2) * ROOM.W, ((1 - v.y) / 2) * ROOM.H];
+  };
+  // a door at about hand height, with other fronts on both sides (not the end of the run)
+  const score = f => {
+    const h = handlePos(f),
+      end = h.x < 450 || h.x > L.W - 450;
+    return (f.kind === 'drawer' ? 400 : 0) + Math.abs(h.y - 850) + (f.ckind === 'wall' ? 300 : 0) + (end ? 900 : 0);
+  };
+  const f = L.fronts.find(x => x.id === S.sel) || L.fronts.slice().sort((a, b) => score(a) - score(b))[0];
+  const h = handlePos(f),
+    z = 640,
+    wx = -L.W / 2 + h.x,
+    wy = h.y,
+    span = innerWidth > 860 ? 1150 : 760, // mm of front across the picture: closer on a phone
+    a = P(wx - span / 2, wy, z),
+    b = P(wx + span / 2, wy, z),
+    c = P(wx, wy, z);
+  let w = Math.min(b[0] - a[0], ROOM.W),
+    hh = w / aspect;
+  if (hh > ROOM.H) {
+    hh = ROOM.H;
+    w = hh * aspect;
+  }
+  const cx = Math.max(w / 2, Math.min(ROOM.W - w / 2, c[0])),
+    // the handle in the upper third: more front, less wall
+    cy = Math.max(hh / 2, Math.min(ROOM.H - hh / 2, c[1] + hh * 0.17));
+  return [cx - w / 2, cy - hh / 2, w, hh];
 }
 /* a close-up: just the cabinet front, for the style cards */
 function cropClose(L, aspect) {
@@ -359,7 +397,7 @@ function queueThumbs() {
       S = Object.assign(
         {},
         keep,
-        { fx: {}, sel: null, flip: {}, sides: 'none', plinth: 'ikea', fillers: 0, zoom: false },
+        { fx: {}, sel: null, flip: {}, sides: 'none', plinth: 'ikea', fillers: 0, zoom: false, view: 'room' },
         job.st
       );
       V3.key = null;

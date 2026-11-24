@@ -24,7 +24,7 @@ function freshState(sys) {
     handle: 'knob',
     hfin: 'oak',
     step: 'home',
-    view: '2d',
+    view: 'room', // the stage: the whole room, or a close-up of one front
     flip: {},
     fx: {}, // fronts with their own look: id → { style, mat, col }
     sel: null // the front you tapped
@@ -83,6 +83,7 @@ if (!EDGES[S.edge]) S.edge = 'round';
 if (!SIDES[S.sides]) S.sides = 'none';
 if (!['ikea', 'match'].includes(S.plinth)) S.plinth = 'ikea';
 if (!HANDLES[S.handle]) S.handle = 'knob';
+if (S.view !== 'close') S.view = 'room';
 if (!HFIN[S.hfin]) S.hfin = 'oak';
 if (!(S.fillers >= 0 && S.fillers <= 6)) S.fillers = 0;
 if (S.planCheck === undefined) S.planCheck = true;
