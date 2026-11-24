@@ -115,6 +115,7 @@ footer p { margin: 0 0 6px; max-width: 52em; }
 .scen { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); }
 .scen .wrap { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; padding-top: 10px; padding-bottom: 10px; font-size: 14px; }
 .scen .lab { color: var(--ink2); }
+.mkl { color: var(--ink2); } .mkl output { color: var(--ink); font-weight: 600; } #mk { width: 160px; accent-color: var(--ink); }
 .tog { display: inline-flex; border: 1px solid var(--ink); border-radius: 999px; overflow: hidden; }
 .tog button { border: 0; background: none; padding: 6px 14px; cursor: pointer; font-size: 14px; }
 .tog button[aria-pressed=true] { background: var(--ink); color: var(--raised); }
@@ -196,8 +197,8 @@ footer p { margin: 0 0 6px; max-width: 52em; }
 <body>
 <header><div class="wrap"><b>BRUIS</b><small>five ideas side by side</small></div></header>
 <div class="scen"><div class="wrap">
-  <span class="lab">Numbers</span>
-  <div class="tog" role="group" aria-label="Scenario"><button type="button" data-s="real">Realistic</button><button type="button" data-s="plan">As planned</button></div>
+  <label class="mkl" for="mk">Marketing <output id="mko">the budget that works</output></label>
+  <input type="range" id="mk" min="0" max="2" step="0.25" value="1" aria-describedby="swhat">
   <label class="vant"><input type="checkbox" id="vanon" checked> BRUIS pays a van from year two (€600 a month)</label>
   <span class="what" id="swhat"></span>
 </div></div>
@@ -278,7 +279,7 @@ footer p { margin: 0 0 6px; max-width: 52em; }
 </div>
 
 <footer><div class="wrap">
-  <p>Built from the five financial plans. "As planned" uses their year one. "Realistic" uses sales volumes checked against comparable companies (<a href="https://claude.ai/artifact/12Lj4QgKXyPhPsmdEkGcki" target="_blank" rel="noopener">BRUIS — what comparable companies show</a>), slower first pieces, 10% failures and an accountant.</p>
+  <p>Prices and costs come from the five financial plans. Sales come from comparable companies, not from the plans (<a href="https://claude.ai/artifact/12Lj4QgKXyPhPsmdEkGcki" target="_blank" rel="noopener">BRUIS — what comparable companies show</a>). Marketing: the first euros win a sale at the cost seen in public benchmarks; each next euro wins a bit less. "The budget that works" keeps spending while one more sale still leaves you at least half its money.</p>
   <p>Home: as a sole trader you can't rent to yourself, so BRUIS carries the business share of your home costs (loan interest, insurance, property tax by floor area; energy by the workshop meter) and pays the workshop upgrades; with a BV you could charge it real rent. Van: a light van is up to 100% deductible when used only for the business; private use lowers that.</p>
   <p>Tax: social contributions for a side business and income tax at the top rate on top of a job. All figures are estimates to check with your accountant.</p>
 </div></footer>
@@ -323,7 +324,7 @@ const IDEAS = [
   { id: 'fronts', name: 'Fronts', what: 'Custom fronts for IKEA cabinets', unit: 'orders',
     turnUnit: 2285, left: 1361, vatK: 0.822, hUnit: 15, adminMo: 8, fixedMo: 260, extraFix: 0, extraH: 0,
     startup: 1772, tools: 4450, toolSave: 120, wYears: 5, small: 1150,
-    units: { plan: [10, 24, 30], real: [5, 12, 20] }, toolYear: { plan: 1, real: 2 }, flex: 0.75,
+    org: [4, 8, 12], cap: [6, 12, 16], cac: 250, toolYear: { real: 2 }, flex: 0.75,
     grow: 'Year 2: buy the CNC and do your own cutting (saves €120 an order). Year 3: about 20 orders, one every two to three weeks.',
     worst: 'Nobody orders, or a measuring mistake means remaking a set of fronts.',
     extra: 'A remade order costs about €650–850 in board and cutting.',
@@ -331,7 +332,7 @@ const IDEAS = [
   { id: 'tables', name: 'Tables', what: 'New oak tables from old ones', unit: 'tables',
     turnUnit: 2085, left: 1455, vatK: 0.823, hUnit: 22, adminMo: 8, fixedMo: 220, extraFix: 0, extraH: 0,
     startup: 1432, tools: 2570, toolSave: 120, wYears: 5, small: 1050,
-    units: { plan: [10, 25, 30], real: [5, 10, 16] }, toolYear: { plan: 1, real: 2 }, flex: 0.6,
+    org: [4, 7, 10], cap: [5, 8, 10], cac: 250, toolYear: { real: 2 }, flex: 0.6,
     grow: 'Year 2: a second-hand planer (saves €120 a table) and a stock of old tables. Year 3: about 16 tables, with a helper for deliveries.',
     worst: 'No sales, or a top warps or cracks after delivery.',
     extra: 'Remaking a top costs another old table (about €150) and 15–20 hours.',
@@ -339,7 +340,7 @@ const IDEAS = [
   { id: 'workshops', name: 'Workshops', what: 'Woodworking for kids, families, adults', unit: 'sessions',
     turnUnit: 421.3, left: 295.1, vatK: 0.79, hUnit: 5.46, adminMo: 6, fixedMo: 180, extraFix: 0, extraH: 0,
     startup: 1136, tools: 1710, toolSave: 0, wYears: 3, small: 450,
-    units: { plan: [54, 70, 80], real: [27, 40, 50] }, toolYear: { plan: 1, real: 1 }, flex: 0.2,
+    org: [18, 28, 34], cap: [15, 25, 30], cac: 85, toolYear: { real: 1 }, flex: 0.2,
     grow: 'Year 2: a full year of sessions plus school holidays. Year 3: about 64 sessions, more adult days and team days.',
     worst: 'Too few bookings, the city says no to groups at home, or a child gets hurt.',
     extra: 'An injury is insured, but it could end the children’s workshops.',
@@ -347,7 +348,7 @@ const IDEAS = [
   { id: 'objects', name: 'Objects', what: 'Concrete, oak and 3D-printed decor', unit: 'pieces',
     turnUnit: 48.03, left: 35.51, vatK: 0.807, hUnit: 0.48, adminMo: 10, fixedMo: 110, extraFix: 320, extraH: 40,
     startup: 1062, tools: 160, toolSave: 0, wYears: 3, small: 450, shopShare: [0, 0.35, 0.35],
-    units: { plan: [330, 700, 1000], real: [100, 250, 450] }, toolYear: { plan: 1, real: 1 }, flex: 1,
+    org: [50, 120, 200], cap: [100, 200, 300], cac: 12, toolYear: { real: 1 }, flex: 1,
     grow: 'Years 2 and 3: about a third sold through shops at a wholesale price (60% of the shop price), so more pieces but less per piece.',
     worst: 'Pieces don’t sell and you sit on stock, or a lamp or candle holder leads to a complaint.',
     extra: 'Unsold stock is cheap: about €3–20 of material a piece.',
@@ -355,7 +356,7 @@ const IDEAS = [
   { id: 'speakers', name: 'Speakers', what: 'Active hi-fi speakers, old oak front', unit: 'pairs',
     turnUnit: 1580, left: 834, vatK: 0.821, hUnit: 16, adminMo: 8, fixedMo: 180, extraFix: 0, extraH: 0, devH: 120,
     startup: 4082, tools: 480, toolSave: 0, wYears: 5, small: 600,
-    units: { plan: [8, 18, 25], real: [3, 6, 10] }, toolYear: { plan: 1, real: 1 }, flex: 0.8,
+    org: [2, 3, 5], cap: [3, 6, 8], cac: 350, toolYear: { real: 1 }, flex: 0.8,
     grow: 'Year 1: four months of design, prototypes and an EMC test, first pairs from May. Years 2 and 3: word of mouth and listening sessions, a pair every three to four weeks.',
     worst: 'Nobody buys at €1,495 from an unknown brand, or the EMC test fails and the design needs changes.',
     extra: 'A failed test means another round of prototypes and testing, about €1,000–2,000 more.',
@@ -363,7 +364,17 @@ const IDEAS = [
 ];
 
 const LINKS = {fronts: { site: 'https://claude.ai/artifact/Tc6UC5ZcFp6XLm8RLnDVMx', road: 'https://claude.ai/artifact/XxtHQCPJ8nLRT35rMg5ast', plan: 'https://claude.ai/artifact/8qeEBFpPbccb2s1rvuYJTw' }, tables: { site: 'https://claude.ai/artifact/T2oqdE58pfwEdyjtS8i3K1', road: 'https://claude.ai/artifact/9N8ZcwptFzEesuWFNni7Eo', plan: 'https://claude.ai/artifact/Dr1k7qUhT6e2rRFs4wDV8T' }, workshops: { site: 'https://claude.ai/artifact/8D48bM9VkNdHRa1CaTxndv', road: 'https://claude.ai/artifact/W1zvtcXTRKGFNJur8pT6zm', plan: 'https://claude.ai/artifact/9fcFeTgGchC5VfwiJB7m6v' }, objects: { site: 'https://claude.ai/artifact/YEuEXJzCFmmT4pMdZGJPcY', road: 'https://claude.ai/artifact/3Tc3YpTKqzmNacSNdb5yt6', plan: 'https://claude.ai/artifact/BGtVRwHDMFwTrwTA1DbCFG' }, speakers: { site: 'https://claude.ai/artifact/PuTq1iLUbk59E7j9Jyyx9y', road: 'https://claude.ai/artifact/BQUV687GrnAYQMJcuoUjt7', plan: 'https://claude.ai/artifact/VMC5fg3FKyaEMdjvK64gwz' }};
-let S = 'real', VANON = true;
+let S = 'real', VANON = true, MK = 1;
+/* marketing: the first euros win a sale for "cac"; each next euro wins a bit less, up to "cap" extra sales a year.
+   The budget that works stops where one more sale costs half of the money it leaves you. */
+function mk(i, y) {
+  const own = i.toolYear.real <= y;
+  const m = (i.left + (own ? i.toolSave : 0)) * failK(y), cap = i.cap[y - 1];
+  const best = m > 2 * i.cac ? i.cac * cap * Math.log(m / (2 * i.cac)) : 0;
+  const B = MK * best;
+  return { best, B, n: Math.round(cap * (1 - Math.exp(-B / (i.cac * cap)))) };
+}
+const unitsOf = (i, y) => i.org[y - 1] + mk(i, y).n;
 const VAN = 7200, RENTC = '#c4a77a', VANC = '#8e9db1';
 const vanCost = y => VANON && y >= 2 ? VAN : 0;
 const benefit = (kept, y, uc) => { const van = vanCost(y), d = wsDed(); return { free: kept - d, rent: d + uc, van, total: kept + uc + van }; };
@@ -380,20 +391,20 @@ function tax(taxable) {
 
 /* the operating side of one idea in one year; vat = forced flag or null to decide alone */
 function ops(i, y, vat) {
-  const units = i.units[S][y - 1];
+  const units = unitsOf(i, y), mkt = mk(i, y).B;
   const share = i.shopShare ? i.shopShare[y - 1] : 0;
   const turnover = units * i.turnUnit * (1 - share * 0.4);
   const isVat = vat === null ? turnover > THR[y - 1] : vat;
-  const own = i.toolYear[S] <= y;
+  const own = i.toolYear.real <= y;
   const per = (i.left + (own ? i.toolSave : 0)) * (isVat ? i.vatK : 1) * failK(y);
   const perShop = per - i.turnUnit * 0.4 * (isVat ? 1 / 1.21 : 1);   // wholesale: 40% less money in
   const variable = units * ((1 - share) * per + share * perShop);
-  const fixed = i.fixedMo * 12 + i.extraFix;
+  const fixed = i.fixedMo * 12 + i.extraFix + mkt;
   const hours = units * i.hUnit * learnK(y) + i.adminMo * 12 + i.extraH + (y === 1 ? (i.devH || 0) : 0);
-  const tb = i.toolYear[S] === y ? i.tools : 0;
-  const ty = i.toolYear[S];
+  const tb = i.toolYear.real === y ? i.tools : 0;
+  const ty = i.toolYear.real;
   const writeoff = y >= ty && y < ty + i.wYears ? i.tools / i.wYears : 0;
-  return { units, turnover, isVat, variable, fixed, profit: variable - fixed, hours,
+  return { units, turnover, isVat, variable, fixed, mkt, profit: variable - fixed, hours,
     startup: y === 1 ? i.startup : 0, toolsBought: tb, writeoff, inv: tb * 0.1, small: i.small };
 }
 
@@ -416,7 +427,7 @@ function runCore(list, y, u) {
 }
 const run = (list, y) => schedule((yy, u) => runCore(list, yy, u))[y - 1];
 const one = (i, y) => run([i], y);
-const worstLoss = i => i.startup + 6 * i.fixedMo + (S === 'real' ? ACC / 2 : 0);
+const worstLoss = i => i.startup + 6 * i.fixedMo + ACC / 2 + mk(i, 1).B / 2;
 
 /* hours a week to pay a van (€600) and €800 a month take-home, VAT-registered, tools owned, year-3 conditions */
 function vanHours(i) {
@@ -431,12 +442,10 @@ function vanHours(i) {
 
 /* ---------- scenario switch ---------- */
 function scen() {
-  document.querySelectorAll('.tog button').forEach(b => b.setAttribute('aria-pressed', b.dataset.s === S));
-  document.getElementById('swhat').textContent = S === 'real'
-    ? 'Sales checked against comparable companies, slower first pieces, 10% failures, an accountant, tools bought when the orders are there.'
-    : 'Year one exactly as in the four financial plans; years two and three grow to the plans’ goals.';
+  document.getElementById('mko').textContent = MK === 0 ? 'none' : MK === 1 ? 'the budget that works' : `${Math.round(MK * 100)}% of the budget that works`;
+  document.getElementById('swhat').textContent = 'Sales based on comparable companies, plus what marketing adds. Slower first pieces, 10% failures, an accountant.';
 }
-document.querySelectorAll('.tog button').forEach(b => b.addEventListener('click', () => { S = b.dataset.s; all(); }));
+document.getElementById('mk').addEventListener('input', e => { MK = +e.target.value; all(); });
 
 const lk = (i, sep = ' · ') => [['site', 'Site'], ['road', 'Roadbook'], ['plan', 'Financial plan']].map(([k, t]) => `<a href="${LINKS[i.id][k]}" target="_blank" rel="noopener">${t}</a>`).join(sep);
 function key() {
@@ -465,8 +474,8 @@ function three() {
   });
   document.getElementById('leg3').innerHTML = legend();
   document.getElementById('three').innerHTML = h;
-  document.getElementById('assume').innerHTML = `<summary>What grows in years two and three</summary><ul>${IDEAS.map(i => `<li><b>${i.name}:</b> ${i.units[S].join(' → ')} ${i.unit}. ${i.grow}</li>`).join('')}
-    <li>${S === 'real' ? 'Realistic: first pieces take 30% longer in year one and 10% longer in year two; 10% of the work fails or is redone in year one, 5% in year two.' : 'As planned: no failures and no learning time.'}</li>
+  document.getElementById('assume').innerHTML = `<summary>What grows in years two and three</summary><ul>${IDEAS.map(i => `<li><b>${i.name}:</b> ${[1, 2, 3].map(y => unitsOf(i, y)).join(' → ')} ${i.unit} (${i.org.join(' → ')} without paid marketing). ${i.grow}</li>`).join('')}
+    <li>First pieces take 30% longer in year one and 10% longer in year two; 10% of the work fails or is redone in year one, 5% in year two.</li>
     <li>Over the VAT limit (€26,000 in 2027, rising €1,000 a year), prices stay the same and 21% goes to the state, so less is left per sale.</li></ul>`;
 }
 
@@ -585,7 +594,7 @@ function totals() {
 let tY = 1;
 function table() {
   yrs('tyrs', () => tY, y => { tY = y; table(); });
-  const rows = [['What', i => i.what], ['Pages', i => lk(i, '<br>')], ['Sold', i => `${i.units[S][tY - 1]} ${i.unit}`],
+  const rows = [['What', i => i.what], ['Pages', i => lk(i, '<br>')], ['Sold', i => `${unitsOf(i, tY)} ${i.unit}`], ['Of which from marketing', i => `${mk(i, tY).n} ${i.unit}`], [`Marketing budget (year ${tY})`, i => `${eur(mk(i, tY).B)}<br>${eur(mk(i, tY).B / 12)}/month`],
     ...METRICS.map(m => [m.label + (m.y ? ` (year ${tY})` : ''), i => m.fmt(m.get(i, tY))]),
     ['Kept, three years together', i => eur(tot3(i))]];
   document.getElementById('tbl').innerHTML = `<thead><tr><th></th>${IDEAS.map(i => `<th>${i.name}</th>`).join('')}</tr></thead>
@@ -609,14 +618,14 @@ function gOps(i, y, wk, vat) {
   const share = i.id === 'objects' ? (units > 1500 ? 0.5 : y > 1 ? 0.35 : 0) : 0;
   const turnover = units * i.turnUnit * (1 - share * 0.4);
   const isVat = vat === null ? turnover > THR[y - 1] : vat;
-  const own = i.toolYear[S] <= y;
+  const own = i.toolYear.real <= y;
   const per = (i.left + (own ? i.toolSave : 0)) * (isVat ? i.vatK : 1) * failK(y);
   const perShop = per - i.turnUnit * 0.4 * (isVat ? 1 / 1.21 : 1);
   const variable = units * ((1 - share) * per + share * perShop);
-  const tb = i.toolYear[S] === y ? i.tools : 0, ty = i.toolYear[S];
-  return { units, turnover, isVat, profit: variable - i.fixedMo * 12 - i.extraFix,
+  const tb = i.toolYear.real === y ? i.tools : 0, ty = i.toolYear.real;
+  return { units, turnover, isVat, profit: variable - i.fixedMo * 12 - i.extraFix - mk(i, y).B,
     startup: y === 1 ? i.startup : 0, toolsBought: tb, writeoff: y >= ty && y < ty + i.wYears ? i.tools / i.wYears : 0,
-    inv: tb * 0.1, small: i.small, hard: units > CEIL[i.id] * (S === 'plan' ? 1.5 : 1) };
+    inv: tb * 0.1, small: i.small, hard: units > CEIL[i.id] };
 }
 function gCore(list, y, u) {
   const wk = yHours(y), each = wk / list.length, solo = list.length === 1;
