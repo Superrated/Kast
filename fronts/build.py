@@ -6,7 +6,7 @@ It borrows from the Fitted app next door, so both look and colour the same:
   - the RAL colour list from ../src/js/00-core-data.js
 Run:  python3 fronts/build.py
 """
-import pathlib, re
+import base64, pathlib, re
 
 HERE = pathlib.Path(__file__).resolve().parent
 FITTED = HERE.parent / "src"
@@ -51,6 +51,13 @@ def main():
     js, n = re.subn(r"/\*@RAL@\*/\s*''", lambda m: repr(fitted_ral()), js)
     if n != 1:
         raise SystemExit("RAL marker /*@RAL@*/'' not found in fronts/src/js")
+    # the pre-rendered room (tools/prerender.js): embedded as data URLs; without them the flat drawing is used
+    for mark, name, mime in (("ROOMBG", "room-bg.jpg", "image/jpeg"), ("ROOMENV", "room-env.png", "image/png")):
+        f = SRC / "assets" / name
+        url = f"'data:{mime};base64,{base64.b64encode(f.read_bytes()).decode()}'" if f.exists() else "''"
+        js, n = re.subn(r"/\*@" + mark + r"@\*/\s*''", lambda m: url, js)
+        if n != 1:
+            raise SystemExit(f"marker /*@{mark}@*/'' not found in fronts/src/js")
     html = html.replace("/*@CSS@*/", css).replace("/*@JS@*/", js)
     (HERE / "index.html").write_text(html)
     print(f"built fronts/index.html ({len(html) // 1024} kB)")

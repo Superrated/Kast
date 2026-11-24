@@ -155,6 +155,6 @@ function loadDemo(i) {
 function demosHTML() {
   return `<div class="tiles">${DEMOS.map(
     (d, i) =>
-      `<button type="button" class="tile ${S.demo === d.name ? 'on' : ''}" data-act="demo" data-a="${i}"><span class="tpic">${designThumb('demo' + i, demoState(i))}</span><b>${esc(d.name)}</b><small>${SYS[d.sys].name}, ${esc(d.say.charAt(0).toLowerCase() + d.say.slice(1))}</small></button>`
+      `<button type="button" class="tile ${S.demo === d.name ? 'on' : ''}" data-act="demo" data-a="${i}"><span class="tpic">${thumbHTML('demo' + i, demoState(i), designThumb('demo' + i, demoState(i)))}</span><b>${esc(d.name)}</b><small>${SYS[d.sys].name}, ${esc(d.say.charAt(0).toLowerCase() + d.say.slice(1))}</small></button>`
   ).join('')}</div>`;
 }

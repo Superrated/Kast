@@ -283,7 +283,7 @@ function cabsHTML() {
   const quick = QUICK[S.sys]
     .map(
       (q, n) =>
-        `<button type="button" class="tile" data-act="quick" data-a="${n}"><span class="tpic">${designThumb('q' + S.sys + n, { cabs: quickMake(q[1]), fx: {}, sides: 'none' })}</span><b>${q[0]}</b><small>${esc(q[2] || quickWords(q[1]))}</small></button>`
+        `<button type="button" class="tile" data-act="quick" data-a="${n}"><span class="tpic">${(st => thumbHTML('q' + S.sys + n, st, designThumb('q' + S.sys + n, st)))({ sys: S.sys, cabs: quickMake(q[1]), fx: {}, sides: 'none' })}</span><b>${q[0]}</b><small>${esc(q[2] || quickWords(q[1]))}</small></button>`
     )
     .join('');
   const typeRow =

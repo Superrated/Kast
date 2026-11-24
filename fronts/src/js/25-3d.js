@@ -1,63 +1,50 @@
 /* ==== 25-3d.js ====
-   The picture: one still, ray-traced render of your cabinets with the new fronts — matt paint, oak and walnut
-   grain, birch and pine ply, raw MDF, flutes and grooves as real relief, fluted glass in its frame, the handles.
-   three.js draws a quick first frame; three-gpu-pathtracer then traces light rays (soft shadows, light bouncing
-   off the floor and between the doors) and refines the same still image over a second or two.
-   The camera does not move. Tap a front to select it: a drawn outline shows which one.
-   If 3D can't load (no internet, no WebGL), the flat drawing from 20-draw.js is shown instead.
-   three r170 and the path tracer come from jsDelivr through the import map in app.html.
+   The picture: your cabinets with the new fronts, standing in a room — instantly, on any phone.
+   The trick: the empty room (oak floor, plaster wall, ceiling, a tall window on the left, a rug) was ray-traced once
+   ahead of time (tools/prerender.js) and ships as a picture, together with the light of that room as an HDR panorama.
+   For your design only the cabinets are drawn, with quick hacks that make them sit in the photo:
+     - they are lit by the room's own light (the panorama) and by the sun through the window, which also throws
+       the window's shadow over the fronts,
+     - the sun patch on the floor and wall is added on top of the room picture, with your cabinets' shadows in it,
+     - soft contact shadows darken the floor and wall where the cabinets stand,
+     - rounded or chamfered edges, real flute ribs, a plant beside the run.
+   The camera never moves; the picture is cropped around your cabinets. Tap a front to select it.
+   Without WebGL the flat drawing from 20-draw.js is shown instead.
+   Open the page with #prerender to make the room pictures again (see tools/prerender.js).
 */
-const V3 = { ready: false, loading: false, failed: false, tex: {}, meshes: [], gen: 0, cache: new Map() };
-const PT_MAX = () => V3.max || (innerWidth <= 860 ? 140 : 320); // samples per still: enough to clear the noise
+const V3 = { ready: false, loading: false, failed: false, tex: {}, meshes: [] };
+/* the room: millimetres; the back wall is the plane z = 0, the floor y = 0, the run of cabinets is centred on x = 0 */
+const ROOM = {
+  W: 1280, // the pre-rendered picture
+  H: 800,
+  cam: [-300, 1300, 7600], // level camera, looking straight at the wall
+  fov: 36,
+  wallL: -3200, // the side wall with the window
+  win: [1000, 2600, 650, 2550], // window: z from, z to, y from, y to
+  ceil: 2750,
+  envAt: [0, 1150, 1000], // where the light panorama was taken
+  sun: [-8200, 2300, 4300], // sun direction (from): low morning sun through the window, across the run
+  exposure: 0.82
+};
+const ROOM_BG = /*@ROOMBG@*/ '';
+const ROOM_ENV = /*@ROOMENV@*/ '';
 
-/* the stage: the last finished render as a picture, the working canvas hidden under it, the selection on top */
-const STAGE3D =
-  '<img class="rimg" id="rimg" alt="Your cabinets with the new fronts, in a room"><svg class="rover" id="rover" aria-hidden="true"></svg><div class="rbar" id="rbar"><i id="rbarI"></i><span id="rmsg"></span></div>';
-function showShot(src, instant) {
-  const im = document.getElementById('rimg');
-  if (!im) return;
-  im.classList.toggle('draft', !!V3.drafting);
-  if (instant) im.src = src;
-  else {
-    const n = new Image();
-    n.onload = () => {
-      im.src = src;
-      im.classList.remove('fresh');
-      void im.offsetWidth;
-      im.classList.add('fresh');
-    };
-    n.src = src;
-  }
-}
-function grabShot(draft) {
-  try {
-    V3.drafting = draft;
-    const src = V3.r.domElement.toDataURL('image/jpeg', 0.92);
-    if (!draft) V3.shot = src;
-    if (!draft || !V3.shot) showShot(src, draft);
-    else document.getElementById('rimg').classList.add('working');
-  } catch (e) {
-    /* keep what is shown */
-  }
-}
 function open3D() {
   const el = document.getElementById('pic3d');
   if (V3.ready) return start3D(el);
   if (V3.loading) return;
   V3.loading = true;
-  el.innerHTML = '<p class="hint c3">Setting up the render…</p>';
+  const pre = location.hash === '#prerender';
   Promise.all([
     import('three'),
-    import('three-gpu-pathtracer').catch(() => null),
+    pre ? import('three-gpu-pathtracer') : null,
     import('three/examples/jsm/geometries/RoundedBoxGeometry.js').catch(() => null),
     import('three/examples/jsm/utils/BufferGeometryUtils.js').catch(() => null)
   ])
     .then(([T, PT, RB, BGU]) => {
-      V3.merge = BGU && BGU.mergeGeometries;
-      V3.T = T;
-      V3.PT = PT;
-      V3.RB = RB && RB.RoundedBoxGeometry;
-      start3D(el);
+      Object.assign(V3, { T, PT, RB: RB && RB.RoundedBoxGeometry, merge: BGU && BGU.mergeGeometries });
+      if (pre) return prerenderRoom();
+      return loadRoom().then(() => start3D(el));
     })
     .catch(() => {
       V3.failed = true;
@@ -65,31 +52,50 @@ function open3D() {
       render();
     });
 }
-/* a soft studio sky: bright from the front-left like a big window, darker below; HDR so the window lights the scene */
-function envTex(T) {
-  const w = 128,
-    h = 64,
-    d = new Float32Array(w * h * 4);
-  for (let y = 0; y < h; y++)
-    for (let x = 0; x < w; x++) {
-      const v = 1 - y / (h - 1), // 1 = up, 0 = down
-        u = x / w,
-        // the window: a soft patch up and to the front-left
-        du = Math.min(Math.abs(u - 0.36), 1 - Math.abs(u - 0.36)),
-        win = Math.exp(-((du / 0.08) ** 2) - ((v - 0.64) / 0.12) ** 2) * 4,
-        base = v > 0.5 ? 0.85 + 0.35 * (v - 0.5) : 0.42 + 0.86 * v,
-        k = (y * w + x) * 4;
-      d[k] = base * 0.98 + win;
-      d[k + 1] = base * 0.97 + win * 0.96;
-      d[k + 2] = base * 0.94 + win * 0.9;
-      d[k + 3] = 1;
-    }
-  const t = new T.DataTexture(d, w, h, T.RGBAFormat, T.FloatType);
-  t.mapping = T.EquirectangularReflectionMapping;
-  t.magFilter = t.minFilter = T.LinearFilter;
-  t.needsUpdate = true;
-  return t;
+/* the two pictures that come with the page: the room (JPEG) and its light (RGBE in a PNG) */
+function loadRoom() {
+  const T = V3.T,
+    img = src =>
+      new Promise((ok, no) => {
+        const im = new Image();
+        im.onload = () => ok(im);
+        im.onerror = no;
+        im.src = src;
+      });
+  if (!ROOM_BG || !ROOM_ENV) return Promise.reject(new Error('no room pictures'));
+  return Promise.all([img(ROOM_BG), img(ROOM_ENV)]).then(([bg, env]) => {
+    const t = new T.Texture(bg);
+    t.colorSpace = T.NoColorSpace; // drawn as it is: the picture is already finished
+    t.needsUpdate = true;
+    V3.bgTex = t;
+    // RGBE → linear HDR panorama
+    const c = document.createElement('canvas');
+    c.width = env.width;
+    c.height = env.height;
+    const g = c.getContext('2d');
+    g.drawImage(env, 0, 0);
+    const d = g.getImageData(0, 0, c.width, c.height).data,
+      f = new Float32Array(c.width * c.height * 4);
+    // rows are stored top-down; a data texture starts at the bottom
+    for (let y = 0; y < c.height; y++)
+      for (let x = 0; x < c.width; x++) {
+        const i = (y * c.width + x) * 4,
+          o = ((c.height - 1 - y) * c.width + x) * 4,
+          e = d[i + 3] ? Math.pow(2, d[i + 3] - 136) : 0;
+        f[o] = d[i] * e;
+        f[o + 1] = d[i + 1] * e;
+        f[o + 2] = d[i + 2] * e;
+        f[o + 3] = 1;
+      }
+    const et = new T.DataTexture(f, c.width, c.height, T.RGBAFormat, T.FloatType);
+    et.mapping = T.EquirectangularReflectionMapping;
+    et.magFilter = et.minFilter = T.LinearFilter;
+    et.needsUpdate = true;
+    V3.envTex = et;
+  });
 }
+
+/* ---------- the live picture ---------- */
 function start3D(el) {
   const T = V3.T;
   if (!T) return;
@@ -104,67 +110,249 @@ function start3D(el) {
     r.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
     r.outputColorSpace = T.SRGBColorSpace;
     r.toneMapping = T.NeutralToneMapping;
-    r.toneMappingExposure = 0.82;
+    r.toneMappingExposure = ROOM.exposure;
     r.shadowMap.enabled = true;
     r.shadowMap.type = T.PCFSoftShadowMap;
-    const sc = new T.Scene();
-    sc.background = new T.Color('#e6e7e2');
-    sc.environment = envTex(T);
-    const cam = new T.PerspectiveCamera(24, 1, 10, 80000);
-    // a weak sun for the quick first frame's shadows; the path tracer gets most of its light from the sky
-    const sun = new T.DirectionalLight(0xffeedb, 2.6);
+    const sc = new T.Scene(),
+      pm = new T.PMREMGenerator(r);
+    sc.environment = pm.fromEquirectangular(V3.envTex).texture;
+    sc.environmentIntensity = 1.35; // the room's light on the cabinets, a touch brighter than the walls
+    const cam = new T.PerspectiveCamera(ROOM.fov, ROOM.W / ROOM.H, 20, 60000);
+    cam.position.set(...ROOM.cam);
+    cam.lookAt(ROOM.cam[0], ROOM.cam[1], 0);
+    // the sun through the window: lights the fronts and throws the window's shadow on them
+    const sun = new T.DirectionalLight(0xfff0e0, 2.6);
     sun.castShadow = true;
     sun.shadow.mapSize.set(2048, 2048);
-    sun.shadow.bias = -0.0004;
+    sun.shadow.bias = -0.0003;
+    sun.shadow.normalBias = 2;
+    sun.shadow.radius = 4;
+    sun.position.set(...ROOM.sun);
+    sun.target.position.set(0, 0, 0);
+    Object.assign(sun.shadow.camera, { left: -7000, right: 7000, top: 7000, bottom: -7000, near: 100, far: 40000 });
+    sun.shadow.camera.updateProjectionMatrix();
     sc.add(sun, sun.target);
-    let pt = null;
-    if (V3.PT && V3.PT.WebGLPathTracer)
-      try {
-        pt = new V3.PT.WebGLPathTracer(r);
-        pt.bounces = 4;
-        pt.minSamples = 1;
-        pt.fadeDuration = 0;
-        pt.renderDelay = 0;
-        pt.filterGlossyFactor = 0.5;
-        pt.renderScale = innerWidth <= 860 ? 0.75 : 1;
-        if (innerWidth <= 860) pt.tiles.set(2, 2);
-        // a light edge-aware denoise as the traced image goes to the screen, stronger while samples are few
-        if (V3.PT.DenoiseMaterial) {
-          const dn = new V3.PT.DenoiseMaterial({
-            map: null,
-            blending: T.NoBlending,
-            transparent: true,
-            premultipliedAlpha: r.getContextAttributes().premultipliedAlpha
-          });
-          pt.renderToCanvasCallback = (target, renderer, quad) => {
-            const m = quad.material,
-              n = pt.samples;
-            dn.map = m.map;
-            dn.opacity = m.opacity;
-            dn.sigma = n < 16 ? 4 : n < 64 ? 2.5 : 1.6;
-            dn.threshold = n < 16 ? 0.08 : n < 64 ? 0.04 : 0.025;
-            quad.material = dn;
-            const ac = renderer.autoClear;
-            renderer.autoClear = false;
-            quad.render(renderer);
-            renderer.autoClear = ac;
-            quad.material = m;
-          };
-        }
-      } catch (e) {
-        pt = null;
-      }
-    Object.assign(V3, { r, sc, cam, sun, pt, ready: true, loading: false, root: null });
-    el.innerHTML = STAGE3D;
+    roomLive(T, sc);
+    // the room picture behind everything, cropped like the camera
+    const bgSc = new T.Scene(),
+      bgCam = new T.OrthographicCamera(-1, 1, 1, -1, 0, 1),
+      bgMat = new T.ShaderMaterial({
+        uniforms: { map: { value: V3.bgTex }, crop: { value: new T.Vector4(0, 0, 1, 1) } },
+        vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }',
+        fragmentShader:
+          'uniform sampler2D map; uniform vec4 crop; varying vec2 vUv; void main(){ gl_FragColor = texture2D(map, crop.xy + vUv * crop.zw); }',
+        depthTest: false,
+        depthWrite: false,
+        toneMapped: false
+      });
+    bgSc.add(new T.Mesh(new T.PlaneGeometry(2, 2), bgMat));
+    Object.assign(V3, { r, sc, cam, sun, bgSc, bgCam, bgMat, ready: true, loading: false, root: null });
+    el.innerHTML = '<svg class="rover" id="rover" aria-hidden="true"></svg>';
     el.prepend(r.domElement);
     el.addEventListener('click', tap3D);
-    new ResizeObserver(() => draw3D(true)).observe(el);
+    new ResizeObserver(() => draw3D()).observe(el);
   } else if (!el.contains(V3.r.domElement)) {
-    el.innerHTML = STAGE3D;
+    el.innerHTML = '<svg class="rover" id="rover" aria-hidden="true"></svg>';
     el.prepend(V3.r.domElement);
-    if (V3.shot) showShot(V3.shot, true);
   }
   build3D();
+}
+
+/* the parts of the room the live picture needs: the window wall (it only throws shadow), and the floor and wall
+   again, invisible except for the sun patch and the contact shadows that are blended onto the room picture */
+function roomLive(T, sc) {
+  const hide = new T.MeshBasicMaterial({ colorWrite: false, depthWrite: false });
+  roomWindowWall(T, sc, hide, true);
+  // for the sun the room is closed: a ceiling and a far front wall, so light only comes in through the window
+  const lid = new T.Mesh(new T.BoxGeometry(30000, 100, 40000), hide);
+  lid.position.set(10000, ROOM.ceil + 50, 19000);
+  lid.castShadow = true;
+  sc.add(lid);
+  // the sun patch: only the sun's light on floor and wall, added onto the picture (which has no sun)
+  const add = map =>
+    new T.MeshLambertMaterial({
+      map,
+      transparent: true,
+      blending: T.AdditiveBlending,
+      depthWrite: false
+    });
+  const ft = plankTex().clone();
+  ft.needsUpdate = true;
+  ft.repeat.set(12000 / 1440, 9000 / 2400);
+  const floor = new T.Mesh(new T.PlaneGeometry(12000, 9000), add(ft));
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.set(0, 0.5, 4500);
+  floor.receiveShadow = true;
+  floor.renderOrder = 3;
+  sc.add(floor);
+  const wall = new T.Mesh(new T.PlaneGeometry(12000, ROOM.ceil), add(null));
+  wall.position.set(0, ROOM.ceil / 2, 0.5);
+  wall.receiveShadow = true;
+  wall.renderOrder = 3;
+  sc.add(wall);
+  floor.material.color.set('#fff6ee').multiplyScalar(0.36);
+  wall.material.color.set('#f2ece4').multiplyScalar(0.36);
+}
+/* the side wall with its window opening, as solid blocks (also used for the pre-render) */
+function roomWindowWall(T, parent, mat, castOnly) {
+  const [z0, z1, y0, y1] = ROOM.win,
+    t = 140,
+    x = ROOM.wallL - t / 2,
+    zf = castOnly ? 40000 : 9000,
+    add = (zA, zB, yA, yB) => {
+      const m = new T.Mesh(new T.BoxGeometry(t, yB - yA, zB - zA), mat);
+      m.position.set(x, (yA + yB) / 2, (zA + zB) / 2);
+      m.castShadow = true;
+      m.receiveShadow = !castOnly;
+      parent.add(m);
+    };
+  add(-10, z0, 0, ROOM.ceil);
+  add(z1, zf, 0, ROOM.ceil);
+  add(z0, z1, 0, y0);
+  add(z0, z1, y1, ROOM.ceil);
+}
+
+/* the camera is fixed; the picture is cropped around the cabinets to fill the stage */
+function cropFor(L, aspect) {
+  const T = V3.T,
+    cam = V3.cam,
+    side = S.sides === 'none' ? 0 : 20,
+    x0 = -L.W / 2 - 350 - side,
+    x1 = L.W / 2 + 900 + side, // room for the plant
+    top = Math.max(L.H, 900) + 260;
+  cam.clearViewOffset();
+  cam.updateMatrixWorld();
+  const P = (x, y, z) => {
+    const v = new T.Vector3(x, y, z).project(cam);
+    return [((v.x + 1) / 2) * ROOM.W, ((1 - v.y) / 2) * ROOM.H];
+  };
+  const pts = [P(x0, top, 0), P(x1, top, 0), P(x0, 0, 1600), P(x1, 0, 1600)];
+  let l = Math.min(...pts.map(p => p[0])),
+    r = Math.max(...pts.map(p => p[0])),
+    t = Math.min(...pts.map(p => p[1])),
+    b = Math.max(...pts.map(p => p[1]));
+  let w = r - l,
+    h = b - t;
+  if (w / h > aspect) h = w / aspect;
+  else w = h * aspect;
+  w = Math.min(w, ROOM.W);
+  h = Math.min(h, ROOM.H);
+  if (w / h > aspect) w = h * aspect;
+  else h = w / aspect;
+  let cx = (l + r) / 2,
+    cy = (t + b) / 2 + h * 0.04;
+  // keep the ceiling line out of the top when there is floor to show instead
+  const ceilY = P(0, ROOM.ceil - 60, 0)[1];
+  cy = Math.max(cy, ceilY + h / 2);
+  cx = Math.max(w / 2, Math.min(ROOM.W - w / 2, cx));
+  cy = Math.max(h / 2, Math.min(ROOM.H - h / 2, cy));
+  return [cx - w / 2, cy - h / 2, w, h];
+}
+function draw3D(tw, th) {
+  if (!V3.ready || !V3.L) return;
+  const el = V3.r.domElement.parentElement;
+  if (!tw && (!el || !el.clientWidth)) return;
+  const w = tw || el.clientWidth,
+    h = th || el.clientHeight,
+    r = V3.r;
+  r.setSize(w, h, false);
+  r.domElement.style.width = w + 'px';
+  r.domElement.style.height = h + 'px';
+  const [cx, cy, cw, ch] = cropFor(V3.L, w / h);
+  V3.cam.aspect = ROOM.W / ROOM.H;
+  V3.cam.setViewOffset(ROOM.W, ROOM.H, cx, cy, cw, ch);
+  V3.cam.updateProjectionMatrix();
+  // the room picture's texture coordinates run from the bottom
+  V3.bgMat.uniforms.crop.value.set(cx / ROOM.W, 1 - (cy + ch) / ROOM.H, cw / ROOM.W, ch / ROOM.H);
+  r.autoClear = true;
+  r.render(V3.bgSc, V3.bgCam);
+  r.autoClear = false;
+  r.clearDepth();
+  r.render(V3.sc, V3.cam);
+  r.autoClear = true;
+  if (!tw) {
+    overlay3D();
+    queueThumbs();
+  }
+}
+
+/* ---------- small renders for the preset and demo cards ----------
+   Made one at a time when the browser is idle: the design is built, drawn small on the same canvas, copied,
+   and the main picture drawn again in the same moment (so nothing flickers). Kept for the visit and in the
+   browser's storage. A card shows its drawing until its render is ready. */
+const THUMB_W = 360,
+  THUMB_H = 240;
+V3.thumbs = new Map();
+V3.thumbQ = [];
+try {
+  const saved = JSON.parse(localStorage.getItem('bruis-fronts-thumbs') || '{}');
+  Object.entries(saved).forEach(([k, v]) => V3.thumbs.set(k, v));
+} catch (e) {
+  /* no storage: render them again */
+}
+function thumbKey(key, st) {
+  return (
+    key +
+    '|' +
+    [
+      st.style || S.style,
+      st.mat || S.mat,
+      st.col || S.col,
+      st.oil || S.oil,
+      st.handle || S.handle,
+      st.hfin || S.hfin,
+      st.sides || 'none',
+      st.edge || S.edge
+    ].join('|')
+  );
+}
+/* the card picture: the render if it is ready, otherwise the drawing; asks for the render */
+function thumbHTML(key, st, svg) {
+  const k = thumbKey(key, st),
+    got = V3.thumbs.get(k);
+  if (got) return `<img src="${got}" alt="" data-tk="${esc(k)}">`;
+  if (!V3.failed && !V3.thumbQ.some(q => q.k === k)) V3.thumbQ.push({ k, st });
+  return `<span class="tdraw" data-tk="${esc(k)}">${svg}</span>`;
+}
+function queueThumbs() {
+  if (V3.thumbBusy || !V3.thumbQ.length) return;
+  V3.thumbBusy = true;
+  const idle = window.requestIdleCallback || (f => setTimeout(f, 120));
+  idle(() => {
+    V3.thumbBusy = false;
+    const job = V3.thumbQ.shift();
+    if (!job || V3.thumbs.has(job.k)) return queueThumbs();
+    const keep = S;
+    let url = '';
+    try {
+      S = Object.assign({}, keep, { fx: {}, sel: null, flip: {}, sides: 'none' }, job.st);
+      V3.key = null;
+      build3D(true);
+      draw3D(THUMB_W, THUMB_H);
+      url = V3.r.domElement.toDataURL('image/jpeg', 0.82);
+    } catch (e) {
+      url = '';
+    } finally {
+      S = keep;
+      V3.key = null;
+      build3D(true);
+      draw3D();
+    }
+    if (url) {
+      V3.thumbs.set(job.k, url);
+      document.querySelectorAll('[data-tk]').forEach(el => {
+        if (el.dataset.tk === job.k) el.outerHTML = `<img src="${url}" alt="" data-tk="${esc(job.k)}">`;
+      });
+      try {
+        const o = {};
+        [...V3.thumbs.entries()].slice(-24).forEach(([k, v]) => (o[k] = v));
+        localStorage.setItem('bruis-fronts-thumbs', JSON.stringify(o));
+      } catch (e) {
+        /* storage full: they stay for this visit */
+      }
+    }
+    queueThumbs();
+  });
 }
 
 /* ---------- textures, made once ---------- */
@@ -343,9 +531,9 @@ function fluteMesh(f, mat, FT) {
   return ms;
 }
 
-/* ---------- the scene ---------- */
+/* ---------- the cabinets ---------- */
 const DEPTH = { pax: 580, metod: { base: 600, high: 600, wall: 370 }, besta: 420 };
-/* what the picture shows; the scene is only rebuilt (and traced again) when this changes */
+/* what the picture shows; the cabinets are only rebuilt when this changes */
 function sceneKey() {
   return JSON.stringify([
     S.sys,
@@ -364,19 +552,18 @@ function sceneKey() {
     S.edge
   ]);
 }
-function build3D() {
+function build3D(noDraw) {
   if (!V3.ready) return;
   const key = sceneKey();
-  if (key === V3.key && V3.L) return overlay3D();
+  if (key === V3.key && V3.L) return noDraw ? null : draw3D();
   V3.key = key;
-  if (!V3.ready) return;
   const T = V3.T,
     L = layout();
   if (V3.root) {
     V3.sc.remove(V3.root);
     V3.root.traverse(o => {
       if (o.geometry) o.geometry.dispose();
-      if (o.material && o.material.dispose) o.material.dispose();
+      if (o.material && o.material.dispose && !o.material.keep) o.material.dispose();
     });
   }
   const root = new T.Group();
@@ -401,14 +588,17 @@ function build3D() {
     return ms;
   };
   const white = new T.MeshStandardMaterial({ color: '#f2f1ec', roughness: 0.7 }),
-    inner = new T.MeshStandardMaterial({ color: '#e6e4dd', roughness: 0.8 });
-  const W = L.W;
-  room3D(T, root, L, box);
-  // the IKEA boxes: open at the front, so glass and open shelves show the inside
+    inner = new T.MeshStandardMaterial({ color: '#dedcd5', roughness: 0.8 });
+  const W = L.W,
+    Dmax = S.sys === 'metod' ? 600 : DEPTH[S.sys],
+    dOf = c => (c.sys === 'metod' ? DEPTH.metod[c.kind] || 600 : DEPTH[c.sys] || 580),
+    zfOf = {}; // where each cabinet's front plane is (wall cabinets are shallower)
+  // the IKEA boxes, backs against the wall: open at the front, so glass and open shelves show the inside
   L.cabs.forEach(p => {
-    const d = S.sys === 'metod' ? DEPTH.metod[p.c.kind] : DEPTH[S.sys],
+    const d = dOf(p.c),
       t = 16,
-      z0 = -d;
+      z0 = -Dmax;
+    zfOf[p.c.id] = d - Dmax;
     box(t, p.h, d, white, p.x + t / 2, p.y + p.h / 2, z0 + d / 2);
     box(t, p.h, d, white, p.x + p.w - t / 2, p.y + p.h / 2, z0 + d / 2);
     box(p.w, t, d, white, p.x + p.w / 2, p.y + t / 2, z0 + d / 2);
@@ -440,7 +630,7 @@ function build3D() {
           b2 - a2 + 20,
           40,
           640,
-          new T.MeshStandardMaterial({ color: '#cfc8bb', roughness: 0.45 }),
+          new T.MeshPhysicalMaterial({ color: '#d6d0c4', roughness: 0.35, clearcoat: 0.3 }),
           (a2 + b2) / 2,
           920,
           -600 + 320 + 20
@@ -454,14 +644,15 @@ function build3D() {
       [p.x + 52, p.x + p.w - 52].forEach(x => {
         const c = new T.Mesh(new T.CylinderGeometry(12, 12, L.plinth, 16), leg);
         c.position.set(x, L.plinth / 2, -60);
+        c.castShadow = true;
         root.add(c);
       });
     });
   }
-  // side panels, flush with the front of the fronts
+  // side panels, against the wall and flush with the fronts
   L.sides.forEach(sd => {
     const lk = sideLook();
-    rbox(SIDE_T, sd.h, sd.w, matFor(lk, { w: sd.w, h: sd.h }), sd.x + SIDE_T / 2, sd.y + sd.h / 2, 20 - sd.w / 2);
+    rbox(SIDE_T, sd.h, sd.w, matFor(lk, { w: sd.w, h: sd.h }), sd.x + SIDE_T / 2, sd.y + sd.h / 2, -Dmax + sd.w / 2);
   });
   // the fronts
   const FT = 19,
@@ -471,7 +662,8 @@ function build3D() {
       m = MATS[lk.mat],
       cx = f.x + f.w / 2,
       cy = f.y + f.h / 2,
-      cz = FT / 2 + 1;
+      cz = FT / 2 + 1,
+      n0 = root.children.length;
     let hit;
     if (m.glass) {
       const fr = 22,
@@ -484,19 +676,21 @@ function build3D() {
       box(f.w, fr, FT, fm, cx, f.y + fr / 2, cz);
       box(fr, f.h - 2 * fr, FT, fm, f.x + fr / 2, cy, cz);
       box(fr, f.h - 2 * fr, FT, fm, f.x + f.w - fr / 2, cy, cz);
-      const n = fluteTex(S.flute.dir).clone();
-      n.needsUpdate = true;
-      if (S.flute.dir === 'v') n.repeat.set((f.w - 2 * fr) / S.flute.pitch, 1);
-      else n.repeat.set(1, (f.h - 2 * fr) / S.flute.pitch);
+      const nm = fluteTex(S.flute.dir).clone();
+      nm.needsUpdate = true;
+      if (S.flute.dir === 'v') nm.repeat.set((f.w - 2 * fr) / S.flute.pitch, 1);
+      else nm.repeat.set(1, (f.h - 2 * fr) / S.flute.pitch);
+      // reeded glass, faked: a pale see-through pane that blurs the shelves behind it
       const gm = new T.MeshPhysicalMaterial({
-        color: '#eef4f1',
-        roughness: 0.12,
+        color: '#e4ece9',
+        roughness: 0.25,
         metalness: 0,
-        transmission: 1,
-        thickness: 6,
-        ior: 1.5,
-        normalMap: n,
-        normalScale: new T.Vector2(2, 2)
+        transparent: true,
+        opacity: 0.62,
+        normalMap: nm,
+        normalScale: new T.Vector2(2.2, 2.2),
+        clearcoat: 1,
+        clearcoatRoughness: 0.1
       });
       hit = box(f.w - 2 * fr, f.h - 2 * fr, 6, gm, cx, cy, cz, false);
     } else if (lk.style === 'fluted' && V3.merge) {
@@ -512,18 +706,117 @@ function build3D() {
     hit.userData.fid = f.id;
     V3.meshes.push(hit);
     handle3D(f, lk, root, hcache, FT);
+    // wall cabinets are shallower: their fronts (and handles) sit further back
+    const zf = zfOf[f.cab] || 0;
+    if (zf) for (let i = n0; i < root.children.length; i++) root.children[i].position.z += zf;
   });
+  plant3D(T, root, W + 520, -Dmax + 380);
+  contact3D(T, root, L, Dmax, dOf);
+  // the whole run stands centred against the back wall
+  root.position.set(-W / 2, 0, Dmax);
   V3.sc.add(root);
-  // the sun's shadow covers the whole row
-  const sh = V3.sun.shadow.camera,
-    R = Math.max(W, L.H) * 0.8 + 3200;
-  Object.assign(sh, { left: -R, right: R, top: R, bottom: -R, near: 100, far: 20000 });
-  sh.updateProjectionMatrix();
-  // late-morning sun through the window in the left wall
-  V3.sun.target.position.set(W / 2 + 400, 300, -300);
-  V3.sun.position.set(W / 2 - 7200, 4600, 2600);
   V3.L = L;
-  draw3D();
+  if (!noDraw) draw3D();
+}
+/* soft contact shadows, multiplied onto the room picture: a dark band on the floor along the foot of the run,
+   and a soft halo on the wall around every cabinet (light can't reach in there) */
+function blurTex() {
+  if (V3.tex.blur) return V3.tex.blur;
+  // a tiny dark square, scaled up smoothly: a soft-edged shadow without needing a blur filter
+  const s = document.createElement('canvas');
+  s.width = s.height = 16;
+  const sg = s.getContext('2d');
+  sg.fillStyle = '#fff';
+  sg.fillRect(0, 0, 16, 16);
+  sg.fillStyle = '#000';
+  sg.fillRect(4, 4, 8, 8);
+  const c = document.createElement('canvas');
+  c.width = c.height = 128;
+  const g = c.getContext('2d');
+  g.imageSmoothingEnabled = true;
+  g.drawImage(s, 0, 0, 128, 128);
+  const t = new V3.T.CanvasTexture(c);
+  t.colorSpace = V3.T.NoColorSpace;
+  return (V3.tex.blur = t);
+}
+function contact3D(T, root, L, Dmax, dOf) {
+  const mk = strength => {
+    const m = new T.ShaderMaterial({
+      uniforms: { map: { value: blurTex() }, k: { value: strength } },
+      vertexShader:
+        'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+      fragmentShader:
+        'uniform sampler2D map; uniform float k; varying vec2 vUv; void main(){ float s = texture2D(map, vUv).r; gl_FragColor = vec4(vec3(mix(1.0 - k, 1.0, s)), 1.0); }',
+      transparent: true,
+      depthWrite: false,
+      blending: T.CustomBlending,
+      blendSrc: T.ZeroFactor,
+      blendDst: T.SrcColorFactor,
+      toneMapped: false
+    });
+    return m;
+  };
+  // on the wall: each cabinet's outline, blown up and blurred (the 128 px texture has its dark core in the middle half)
+  L.cabs.forEach(p => {
+    const d = dOf(p.c),
+      sw = p.w / 0.53 + d * 0.9,
+      sh = p.h / 0.53 + d * 0.9,
+      q = new T.Mesh(new T.PlaneGeometry(sw, sh), mk(0.34));
+    q.position.set(p.x + p.w / 2, p.y + p.h / 2, -Dmax + 1);
+    q.renderOrder = 2;
+    root.add(q);
+  });
+  // on the floor: under and just in front of the run
+  const floorCabs = L.cabs.filter(p => p.y < 400);
+  if (floorCabs.length) {
+    const a = Math.min(...floorCabs.map(p => p.x)),
+      b = Math.max(...floorCabs.map(p => p.x + p.w)),
+      d = Math.max(...floorCabs.map(p => dOf(p.c))),
+      q = new T.Mesh(new T.PlaneGeometry((b - a) / 0.53 + 200, (d + 20) / 0.53 + 120), mk(0.38));
+    q.rotation.x = -Math.PI / 2;
+    q.position.set((a + b) / 2, 1, -Dmax + d / 2 + 20);
+    q.renderOrder = 2;
+    root.add(q);
+  }
+}
+/* a plant in a stone pot, beside the run */
+function plant3D(T, root, px, pz) {
+  const pot = new T.Mesh(
+    new T.CylinderGeometry(190, 150, 420, 40),
+    new T.MeshStandardMaterial({ color: '#d7d0c4', roughness: 0.85 })
+  );
+  pot.position.set(px, 210, pz);
+  pot.castShadow = pot.receiveShadow = true;
+  root.add(pot);
+  const soil = new T.Mesh(
+    new T.CylinderGeometry(175, 175, 10, 24),
+    new T.MeshStandardMaterial({ color: '#3b2f25', roughness: 1 })
+  );
+  soil.position.set(px, 412, pz);
+  root.add(soil);
+  const leaf = new T.MeshStandardMaterial({ color: '#4c6941', roughness: 0.55, side: T.DoubleSide }),
+    stem = new T.MeshStandardMaterial({ color: '#6b5a3e', roughness: 0.8 }),
+    r = prng(5);
+  for (let i = 0; i < 16; i++) {
+    const a = (i / 16) * Math.PI * 2 + r() * 0.5,
+      tilt = 0.3 + r() * 0.55,
+      len = 520 + r() * 460,
+      base = new T.Vector3(px, 415, pz),
+      dir = new T.Vector3(Math.sin(a) * Math.sin(tilt), Math.cos(tilt), Math.cos(a) * Math.sin(tilt)),
+      tip = base.clone().addScaledVector(dir, len);
+    const st = new T.Mesh(new T.CylinderGeometry(5, 7, len, 6), stem);
+    st.position.copy(base).addScaledVector(dir, len / 2);
+    st.quaternion.setFromUnitVectors(new T.Vector3(0, 1, 0), dir);
+    st.castShadow = true;
+    root.add(st);
+    const lf = new T.Mesh(new T.SphereGeometry(1, 20, 12), leaf);
+    lf.scale.set(70 + r() * 35, 230 + r() * 110, 9);
+    lf.position.copy(tip);
+    lf.quaternion.setFromUnitVectors(new T.Vector3(0, 1, 0), dir);
+    lf.rotateY(r() * Math.PI);
+    lf.castShadow = true;
+    root.add(lf);
+  }
 }
 function handle3D(f, lk, root, cache, FT) {
   if (S.handle === 'push') return;
@@ -570,10 +863,6 @@ function handle3D(f, lk, root, cache, FT) {
   }
 }
 
-/* ---------- camera, turning and tapping ---------- */
-/* ---------- the room around the cabinets ----------
-   Oak plank floor, a warm plaster wall with a skirting board, a side wall on the left with a tall window the
-   sun comes through, a wool rug and a plant. All in millimetres, the cabinets' back against the wall (z < 0). */
 function plankTex() {
   if (V3.tex.planks) return V3.tex.planks;
   // 8 planks of 180 mm side by side, 2400 mm long, ends staggered
@@ -622,220 +911,180 @@ function plasterTex() {
   });
   return (V3.tex.plaster = t);
 }
-function room3D(T, root, L, box) {
-  const W = L.W,
-    D = S.sys === 'metod' ? 600 : S.sys === 'besta' ? 420 : 580,
-    xl = -1500, // the side wall
-    xr = W + 4500,
-    zf = 6500,
-    wallH = 3200;
-  // floor
+
+/* ---------- the pre-render (open the page with #prerender; tools/prerender.js saves the results) ----------
+   Ray-traces the empty room with three-gpu-pathtracer: the picture from the fixed camera, and the light of the
+   room as an HDR panorama (RGBE in a PNG) for lighting the cabinets. No sun here: the sun is added live. */
+function skyTex(T) {
+  const w = 256,
+    h = 128,
+    d = new Float32Array(w * h * 4);
+  for (let y = 0; y < h; y++)
+    for (let x = 0; x < w; x++) {
+      const v = 1 - y / (h - 1),
+        base = v > 0.5 ? 1.0 + 0.5 * (v - 0.5) : 0.5 + 1.0 * v,
+        k = (y * w + x) * 4;
+      d[k] = base * 0.97;
+      d[k + 1] = base * 0.98;
+      d[k + 2] = base * 1.02;
+      d[k + 3] = 1;
+    }
+  const t = new T.DataTexture(d, w, h, T.RGBAFormat, T.FloatType);
+  t.mapping = T.EquirectangularReflectionMapping;
+  t.magFilter = t.minFilter = T.LinearFilter;
+  t.needsUpdate = true;
+  return t;
+}
+function prerenderRoom() {
+  const T = V3.T,
+    PT = V3.PT,
+    q = new URLSearchParams(location.search),
+    spp = +q.get('spp') || 256,
+    espp = +q.get('espp') || 128;
+  document.body.innerHTML = '';
+  const r = new T.WebGLRenderer({ antialias: false, preserveDrawingBuffer: true });
+  r.outputColorSpace = T.SRGBColorSpace;
+  r.toneMapping = T.NeutralToneMapping;
+  r.toneMappingExposure = ROOM.exposure;
+  r.setPixelRatio(1);
+  r.setSize(ROOM.W, ROOM.H);
+  document.body.appendChild(r.domElement);
+  const sc = new T.Scene();
+  sc.environment = sc.background = skyTex(T);
+  const plaster = (() => {
+    const t = plasterTex().clone();
+    t.needsUpdate = true;
+    t.repeat.set(14000 / 900, ROOM.ceil / 900);
+    return new T.MeshStandardMaterial({ map: t, roughness: 0.95 });
+  })();
   const ft = plankTex().clone();
   ft.needsUpdate = true;
-  ft.repeat.set((xr - xl) / 1440, (zf + D) / 2400);
-  const floor = new T.Mesh(
-    new T.PlaneGeometry(xr - xl, zf + D),
-    new T.MeshStandardMaterial({ map: ft, roughness: 0.55, color: '#ffffff' })
-  );
+  ft.repeat.set(12000 / 1440, 9000 / 2400);
+  const floor = new T.Mesh(new T.PlaneGeometry(12000, 9000), new T.MeshStandardMaterial({ map: ft, roughness: 0.55 }));
   floor.rotation.x = -Math.PI / 2;
-  floor.position.set((xl + xr) / 2, 0, (zf - D) / 2);
-  floor.receiveShadow = true;
-  root.add(floor);
-  // back wall and skirting
-  const pt = plasterTex().clone();
-  pt.needsUpdate = true;
-  pt.repeat.set((xr - xl) / 900, wallH / 900);
-  const plaster = new T.MeshStandardMaterial({ map: pt, roughness: 0.95 });
-  const back = new T.Mesh(new T.PlaneGeometry(xr - xl, wallH), plaster);
-  back.position.set((xl + xr) / 2, wallH / 2, -D - 2);
-  back.receiveShadow = true;
-  root.add(back);
-  const skirt = new T.MeshStandardMaterial({ color: '#f3f1ec', roughness: 0.6 });
-  box(xr - xl, 80, 14, skirt, (xl + xr) / 2, 40, -D + 5);
-  // side wall with a tall window (the opening lets the sun and the sky in)
-  const t = 140,
-    w0 = 700,
-    w1 = 2300, // window from z = 700 to 2300
-    y0 = 650,
-    y1 = 2550;
-  const side = (z0, z1, ya, yb) => {
-    const ms = box(t, yb - ya, z1 - z0, plaster, xl - t / 2, (ya + yb) / 2, (z0 + z1) / 2);
-    ms.receiveShadow = true;
-  };
-  side(-D - 2, w0, 0, wallH);
-  side(w1, zf, 0, wallH);
-  side(w0, w1, 0, y0);
-  side(w0, w1, y1, wallH);
-  // a slim dark steel window frame and a deep sill
-  const steel = new T.MeshStandardMaterial({ color: '#2b2d2f', roughness: 0.4, metalness: 0.5 });
-  box(30, y1 - y0, 30, steel, xl + 10, (y0 + y1) / 2, w0 + 15);
-  box(30, y1 - y0, 30, steel, xl + 10, (y0 + y1) / 2, w1 - 15);
-  box(30, 30, w1 - w0, steel, xl + 10, y1 - 15, (w0 + w1) / 2);
-  box(30, 30, w1 - w0, steel, xl + 10, (y0 + y1) / 2, (w0 + w1) / 2);
-  box(
-    t + 60,
-    30,
-    w1 - w0 + 40,
-    new T.MeshStandardMaterial({ color: '#d9d4ca', roughness: 0.7 }),
-    xl - t / 2 + 20,
-    y0 - 15,
-    (w0 + w1) / 2
+  floor.position.set(0, 0, 4500);
+  sc.add(floor);
+  const back = new T.Mesh(new T.PlaneGeometry(14000, ROOM.ceil), plaster);
+  back.position.set(0, ROOM.ceil / 2, 0);
+  sc.add(back);
+  const skirt = new T.Mesh(
+    new T.BoxGeometry(14000, 80, 14),
+    new T.MeshStandardMaterial({ color: '#f3f1ec', roughness: 0.6 })
   );
-  // the ceiling: closes the room so light comes in through the window and the open front, like an interior
+  skirt.position.set(0, 40, 7);
+  sc.add(skirt);
+  roomWindowWall(T, sc, plaster, false);
+  const [z0, z1, y0, y1] = ROOM.win,
+    xl = ROOM.wallL,
+    steel = new T.MeshStandardMaterial({ color: '#2b2d2f', roughness: 0.4, metalness: 0.5 }),
+    bx = (w, h, d, m, x, y, z) => {
+      const ms = new T.Mesh(new T.BoxGeometry(w, h, d), m);
+      ms.position.set(x, y, z);
+      sc.add(ms);
+    };
+  bx(30, y1 - y0, 30, steel, xl + 10, (y0 + y1) / 2, z0 + 15);
+  bx(30, y1 - y0, 30, steel, xl + 10, (y0 + y1) / 2, z1 - 15);
+  bx(30, 30, z1 - z0, steel, xl + 10, y1 - 15, (z0 + z1) / 2);
+  bx(30, 30, z1 - z0, steel, xl + 10, (y0 + y1) / 2, (z0 + z1) / 2);
+  bx(
+    200,
+    30,
+    z1 - z0 + 40,
+    new T.MeshStandardMaterial({ color: '#d9d4ca', roughness: 0.7 }),
+    xl - 50,
+    y0 - 15,
+    (z0 + z1) / 2
+  );
   const ceil = new T.Mesh(
-    new T.PlaneGeometry(xr - xl, zf + D),
+    new T.PlaneGeometry(14000, 9000),
     new T.MeshStandardMaterial({ color: '#f4f2ee', roughness: 0.9 })
   );
   ceil.rotation.x = Math.PI / 2;
-  ceil.position.set((xl + xr) / 2, Math.max(wallH, L.H + 350), (zf - D) / 2);
-  root.add(ceil);
-  // a wool rug in front of the cabinets
-  const rw = Math.min(W * 0.75, 3000),
-    rug = box(rw, 10, 1500, new T.MeshStandardMaterial({ color: '#cbbfa9', roughness: 1 }), W / 2, 5, 1250);
-  rug.castShadow = false;
-  // a plant in a stone pot, to the right of the run
-  const px = W + 520,
-    pz = -D + 420;
-  const pot = new T.Mesh(
-    new T.CylinderGeometry(190, 150, 420, 32),
-    new T.MeshStandardMaterial({ color: '#d7d0c4', roughness: 0.85 })
-  );
-  pot.position.set(px, 210, pz);
-  pot.castShadow = pot.receiveShadow = true;
-  root.add(pot);
-  const soil = new T.Mesh(
-    new T.CylinderGeometry(175, 175, 10, 24),
-    new T.MeshStandardMaterial({ color: '#3b2f25', roughness: 1 })
-  );
-  soil.position.set(px, 412, pz);
-  root.add(soil);
-  const leaf = new T.MeshStandardMaterial({ color: '#4f6b43', roughness: 0.6, side: T.DoubleSide }),
-    stem = new T.MeshStandardMaterial({ color: '#6b5a3e', roughness: 0.8 }),
-    r = prng(5);
-  for (let i = 0; i < 14; i++) {
-    const a = (i / 14) * Math.PI * 2 + r() * 0.5,
-      tilt = 0.35 + r() * 0.5,
-      len = 520 + r() * 420,
-      base = new T.Vector3(px, 415, pz),
-      dir = new T.Vector3(Math.sin(a) * Math.sin(tilt), Math.cos(tilt), Math.cos(a) * Math.sin(tilt)),
-      tip = base.clone().addScaledVector(dir, len);
-    const st = new T.Mesh(new T.CylinderGeometry(5, 7, len, 6), stem);
-    st.position.copy(base).addScaledVector(dir, len / 2);
-    st.quaternion.setFromUnitVectors(new T.Vector3(0, 1, 0), dir);
-    root.add(st);
-    const lf = new T.Mesh(new T.SphereGeometry(1, 16, 10), leaf);
-    lf.scale.set(70 + r() * 35, 230 + r() * 110, 9);
-    lf.position.copy(tip);
-    lf.quaternion.setFromUnitVectors(new T.Vector3(0, 1, 0), dir);
-    lf.rotateY(r() * Math.PI);
-    lf.castShadow = true;
-    root.add(lf);
-  }
-}
-
-/* the fixed camera: a little to the left and above, looking at the middle of the run, everything in frame */
-function draw3D(resized) {
-  if (!V3.ready || !V3.L) return;
-  const el = V3.r.domElement.parentElement;
-  if (!el || !el.clientWidth) return;
-  const w = el.clientWidth,
-    h = el.clientHeight,
-    L = V3.L,
-    cam = V3.cam,
-    T = V3.T;
-  V3.r.setSize(w, h, false);
-  V3.r.domElement.style.width = w + 'px';
-  V3.r.domElement.style.height = h + 'px';
-  const H = Math.max(L.H, 900),
-    tgt = new T.Vector3((L.W + 200) / 2, H / 2 + 60, 0),
-    yaw = -0.2,
-    pitch = 0; // level camera: verticals stay straight, like an architectural photo
-  cam.aspect = w / h;
-  const span = Math.max((L.W + 1700) / cam.aspect, H + 500) * 1.08,
-    dist = span / 2 / Math.tan((cam.fov * Math.PI) / 360);
-  cam.position.set(
-    tgt.x + Math.sin(yaw) * Math.cos(pitch) * dist,
-    tgt.y + Math.sin(pitch) * dist,
-    Math.cos(yaw) * Math.cos(pitch) * dist
-  );
-  cam.lookAt(tgt);
-  cam.updateProjectionMatrix();
-  overlay3D();
-  // a design already rendered at this size shows straight away
-  const ck = V3.key + '|' + w + 'x' + h;
-  if (V3.cache.has(ck)) {
-    V3.gen++;
-    V3.drafting = false;
-    V3.shot = V3.cache.get(ck);
-    showShot(V3.shot, true);
-    document.getElementById('rimg').classList.remove('working', 'draft');
-    return msg3D('');
-  }
-  if (!V3.pt) {
-    V3.r.render(V3.sc, cam);
-    grabShot(false);
-    keepShot(ck);
-    return msg3D('');
-  }
-  if (V3.ptScene !== V3.key) {
-    msg3D('Rendering');
-    // a quick first frame, shown soft until the traced one is ready
-    V3.r.render(V3.sc, cam);
-    grabShot(true);
-    try {
-      V3.pt.setScene(V3.sc, cam);
-    } catch (e) {
-      V3.pt = null;
-      V3.r.render(V3.sc, cam);
-      grabShot(false);
-      return msg3D('');
+  ceil.position.set(0, ROOM.ceil, 4500);
+  sc.add(ceil);
+  bx(3200, 10, 1700, new T.MeshStandardMaterial({ color: '#cbbfa9', roughness: 1 }), 0, 5, 1500);
+  const cam = new T.PerspectiveCamera(ROOM.fov, ROOM.W / ROOM.H, 20, 60000);
+  cam.position.set(...ROOM.cam);
+  cam.lookAt(ROOM.cam[0], ROOM.cam[1], 0);
+  cam.updateMatrixWorld();
+  const pt = new PT.WebGLPathTracer(r);
+  pt.bounces = 6;
+  pt.renderDelay = 0;
+  pt.fadeDuration = 0;
+  pt.minSamples = 1;
+  pt.tiles.set(2, 2);
+  // the last frame goes to the screen through a light edge-aware denoise
+  let clean = false;
+  const dn = new PT.DenoiseMaterial({ map: null, blending: T.NoBlending, transparent: true });
+  pt.renderToCanvasCallback = (target, renderer, quad) => {
+    const m = quad.material;
+    if (clean) {
+      dn.map = m.map;
+      dn.opacity = 1;
+      dn.sigma = 2.2;
+      dn.threshold = 0.045;
+      dn.kSigma = 1;
+      quad.material = dn;
     }
-    V3.ptScene = V3.key;
-  } else V3.pt.updateCamera();
-  trace3D(ck);
-}
-/* finished renders, kept for this visit (the last 16) */
-function keepShot(ck) {
-  if (!V3.shot) return;
-  V3.cache.set(ck, V3.shot);
-  if (V3.cache.size > 16) V3.cache.delete(V3.cache.keys().next().value);
-}
-/* refine the still: one path-traced sample per frame until it is clean, then stop */
-function trace3D(ck) {
-  const g = ++V3.gen,
-    pt = V3.pt,
-    max = PT_MAX();
+    const ac = renderer.autoClear;
+    renderer.autoClear = false;
+    quad.render(renderer);
+    renderer.autoClear = ac;
+    quad.material = m;
+  };
+  const out = (window.__prerender = { status: 'room' });
+  pt.setScene(sc, cam);
   const step = () => {
-    if (g !== V3.gen || !V3.r.domElement.isConnected) return;
-    try {
-      // a few samples per frame while the picture is out of sight
-      for (let k = 0; k < 2; k++) pt.renderSample();
-    } catch (e) {
-      V3.pt = null;
-      V3.r.render(V3.sc, V3.cam);
-      grabShot(false);
-      return msg3D('');
+    pt.renderSample();
+    out.samples = pt.samples;
+    if (pt.samples < spp - 1) return requestAnimationFrame(step);
+    if (!clean) {
+      clean = true;
+      return requestAnimationFrame(step);
     }
-    const n = Math.floor(pt.samples);
-    if (n < max) {
-      msg3D('Rendering', n / max);
-      requestAnimationFrame(step);
-    } else {
-      grabShot(false);
-      keepShot(ck);
-      document.getElementById('rimg').classList.remove('working', 'draft');
-      msg3D('');
-    }
+    clean = false;
+    out.bg = r.domElement.toDataURL('image/jpeg', 0.86);
+    // the light of the room, seen from where the cabinets stand: an HDR panorama
+    out.status = 'env';
+    r.setSize(256, 128);
+    const ec = new PT.EquirectCamera();
+    ec.position.set(...ROOM.envAt);
+    ec.updateMatrixWorld();
+    pt.setScene(sc, ec);
+    const step2 = () => {
+      pt.renderSample();
+      out.samples = pt.samples;
+      if (pt.samples < espp) return requestAnimationFrame(step2);
+      const tg = pt.target,
+        px = new Float32Array(tg.width * tg.height * 4);
+      r.readRenderTargetPixels(tg, 0, 0, tg.width, tg.height, px);
+      const c = document.createElement('canvas');
+      c.width = tg.width;
+      c.height = tg.height;
+      const g = c.getContext('2d'),
+        im = g.createImageData(c.width, c.height);
+      for (let y = 0; y < c.height; y++)
+        for (let x = 0; x < c.width; x++) {
+          const i = ((c.height - 1 - y) * c.width + x) * 4, // the target is bottom-up
+            o = (y * c.width + x) * 4,
+            m = Math.max(px[i], px[i + 1], px[i + 2]);
+          if (m < 1e-32) continue;
+          const e = Math.ceil(Math.log2(m)),
+            sc2 = Math.pow(2, -e) * 256;
+          im.data[o] = Math.min(255, px[i] * sc2);
+          im.data[o + 1] = Math.min(255, px[i + 1] * sc2);
+          im.data[o + 2] = Math.min(255, px[i + 2] * sc2);
+          im.data[o + 3] = e + 128;
+        }
+      g.putImageData(im, 0, 0);
+      out.env = c.toDataURL('image/png');
+      out.status = 'done';
+    };
+    requestAnimationFrame(step2);
   };
   requestAnimationFrame(step);
 }
-function msg3D(t, f) {
-  const b = document.getElementById('rbar');
-  if (!b) return;
-  b.hidden = !t;
-  document.getElementById('rmsg').textContent = t;
-  document.getElementById('rbarI').style.width = Math.round((f || 0.02) * 100) + '%';
-}
+
 /* on top of the render: the outline of the selected front, at its place in the picture */
 function overlay3D() {
   const svg = document.getElementById('rover');
@@ -851,14 +1100,16 @@ function overlay3D() {
     };
   svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
   let o = '';
-  const f = S.sel && V3.L.fronts.find(x => x.id === S.sel);
-  if (f) {
-    const z = 21,
+  // the selected front: the front face of its mesh, in the picture
+  const ms = S.sel && V3.meshes.find(m => m.userData.fid === S.sel);
+  if (ms) {
+    const b = new T.Box3().setFromObject(ms),
+      z = b.max.z + 2,
       pts = [
-        P(f.x - 4, f.y - 4, z),
-        P(f.x + f.w + 4, f.y - 4, z),
-        P(f.x + f.w + 4, f.y + f.h + 4, z),
-        P(f.x - 4, f.y + f.h + 4, z)
+        P(b.min.x - 4, b.min.y - 4, z),
+        P(b.max.x + 4, b.min.y - 4, z),
+        P(b.max.x + 4, b.max.y + 4, z),
+        P(b.min.x - 4, b.max.y + 4, z)
       ];
     o += `<polygon points="${pts.map(p => p.join(',')).join(' ')}" class="osel"/>`;
   }
