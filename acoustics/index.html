@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BRUIS Acoustics — quieter rooms, measured (prototype)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&display=swap">
+<style>
+:root {
+  --bg: #ecebe6; --raised: #f8f7f3; --ink: #1b1d1c; --ink2: #575a57; --ink3: #878a86; --line: #d5d4cd;
+  --felt: #3d4541; --oak: #c9a06b; --before: #b4552f; --after: #2f6b5a;
+  --f: 'Bricolage Grotesque', system-ui, -apple-system, sans-serif;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+button, input, select, textarea { font: inherit; color: inherit; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.wrap { max-width: 1160px; margin: 0 auto; padding: 0 28px; }
+header.top { border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 10; background: var(--bg); }
+header.top .wrap { display: flex; align-items: baseline; gap: 26px; padding-top: 14px; padding-bottom: 14px; }
+.brand { display: flex; gap: 8px; align-items: baseline; text-decoration: none; }
+.brand b { font-weight: 800; font-size: 22px; }
+.brand small { color: var(--ink3); font-size: 13px; }
+nav.links { margin-left: auto; display: flex; gap: 22px; font-size: 14px; }
+nav.links a { text-decoration: none; color: var(--ink2); }
+
+/* hero: the echo itself */
+.hero { padding: 52px 0 36px; }
+h1 { font-weight: 400; font-size: clamp(44px, 7vw, 96px); line-height: 0.92; letter-spacing: -0.035em; margin: 0 0 20px; font-variation-settings: 'wdth' 78, 'opsz' 96; max-width: 11em; }
+.lede { font-size: 19px; color: var(--ink2); max-width: 32em; margin: 0 0 24px; }
+.btns { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn { display: inline-block; border: 1px solid var(--ink); background: none; padding: 12px 18px; border-radius: 2px; cursor: pointer; text-decoration: none; font-weight: 500; font-size: 15px; }
+.btn.pri { background: var(--ink); color: var(--raised); }
+.decay { margin-top: 34px; background: var(--raised); padding: 18px 20px 14px; }
+.decay svg { width: 100%; height: auto; display: block; }
+.decay .cap { display: flex; flex-wrap: wrap; gap: 6px 22px; font-size: 14px; color: var(--ink2); margin-top: 8px; }
+.decay .cap i { display: inline-block; width: 18px; height: 3px; vertical-align: middle; margin-right: 6px; }
+
+section.block { border-top: 1px solid var(--line); padding: 56px 0; }
+h2 { font-weight: 400; font-size: clamp(30px, 3.8vw, 46px); letter-spacing: -0.02em; line-height: 1.02; margin: 0 0 12px; font-variation-settings: 'wdth' 86, 'opsz' 72; }
+.sub { color: var(--ink2); max-width: 38em; margin: 0 0 30px; }
+
+/* calculator */
+.calc { display: grid; grid-template-columns: 6fr 5fr; gap: 48px; align-items: start; }
+.field { margin-bottom: 20px; }
+.field > span { display: block; font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+.dims { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.dims label { font-size: 13px; color: var(--ink2); }
+.dims input { width: 100%; border: 1px solid var(--line); background: #fff; padding: 10px 12px; border-radius: 2px; margin-top: 4px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 1px solid var(--line); background: var(--raised); padding: 8px 12px; border-radius: 2px; cursor: pointer; font-size: 14px; }
+.chip[aria-pressed=true] { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.res { background: var(--felt); color: #eef0ec; padding: 24px 26px; position: sticky; top: 76px; }
+.res .big { display: flex; gap: 28px; align-items: baseline; margin-bottom: 14px; }
+.res .big div { line-height: 1.1; }
+.res .big b { display: block; font-size: 44px; font-weight: 500; font-variation-settings: 'wdth' 80; letter-spacing: -0.02em; }
+.res .big small { color: #b9beb8; font-size: 13px; }
+.res .row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 15px; color: #d7dbd5; border-top: 1px solid rgba(255,255,255,.12); }
+.res .row b { color: #fff; font-weight: 600; }
+.res .note { font-size: 12.5px; color: #aeb3ad; margin: 12px 0 0; }
+.res .btn { border-color: #eef0ec; color: #eef0ec; width: 100%; text-align: center; margin-top: 14px; }
+.meter { height: 8px; background: rgba(255,255,255,.12); position: relative; margin: 4px 0 18px; }
+.meter i { position: absolute; top: -4px; width: 3px; height: 16px; }
+.meter .t { position: absolute; top: 0; height: 8px; background: rgba(255,255,255,.22); }
+
+/* steps */
+.steps { list-style: none; counter-reset: s; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; border-top: 1px solid var(--ink); }
+.steps li { counter-increment: s; padding: 18px 18px 0 0; }
+.steps li::before { content: counter(s); display: block; font-size: 40px; font-weight: 300; line-height: 1; margin-bottom: 10px; color: var(--ink3); font-variation-settings: 'wdth' 75; }
+.steps b { display: block; margin-bottom: 4px; }
+.steps p { margin: 0; color: var(--ink2); font-size: 15px; }
+
+/* panels */
+.panels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+.panel svg { width: 100%; height: auto; display: block; background: var(--raised); }
+.panel h3 { margin: 14px 0 4px; font-size: 19px; font-weight: 600; }
+.panel p { margin: 0 0 6px; color: var(--ink2); font-size: 15px; }
+.panel .pr { color: var(--ink); font-weight: 600; }
+
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+.two h3 { font-size: 22px; font-weight: 500; margin: 0 0 8px; }
+.two ul { margin: 0; padding-left: 18px; color: var(--ink2); }
+.two li { margin-bottom: 6px; }
+
+.proof { display: grid; grid-template-columns: 5fr 6fr; gap: 40px; align-items: center; }
+.proof svg { width: 100%; height: auto; background: var(--raised); }
+.proof p { color: var(--ink2); }
+
+.faq details { border-bottom: 1px solid var(--line); padding: 14px 0; }
+.faq summary { cursor: pointer; font-weight: 600; font-size: 17px; }
+.faq p { color: var(--ink2); margin: 8px 0 0; max-width: 46em; }
+
+form.ask { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 760px; }
+form.ask label { font-size: 14px; color: var(--ink2); }
+form.ask input, form.ask select, form.ask textarea { width: 100%; border: 1px solid var(--line); background: #fff; padding: 10px 12px; border-radius: 2px; margin-top: 4px; }
+form.ask .full { grid-column: 1 / -1; }
+#sent { margin: 12px 0 0; font-weight: 600; }
+
+footer { border-top: 1px solid var(--line); padding: 26px 0 50px; color: var(--ink3); font-size: 13px; }
+
+@media (max-width: 860px) {
+  nav.links { display: none; }
+  .calc, .two, .proof { grid-template-columns: 1fr; }
+  .res { position: static; }
+  .steps { grid-template-columns: 1fr 1fr; }
+  .panels { grid-template-columns: 1fr; }
+}
+@media (max-width: 520px) {
+  .wrap { padding: 0 18px; }
+  .dims { grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+  .steps { grid-template-columns: 1fr; }
+  form.ask { grid-template-columns: 1fr; }
+  .res .big b { font-size: 36px; }
+}
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="#"><b>BRUIS</b><small>Acoustics</small></a>
+  <nav class="links"><a href="#calc">Your room</a><a href="#how">How it works</a><a href="#panels">Panels</a><a href="#faq">Questions</a><a href="#ask">Book a measurement</a></nav>
+</div></header>
+
+<main class="wrap">
+  <section class="hero">
+    <h1>Rooms that stop echoing.</h1>
+    <p class="lede">We measure how long your room rings, make panels in oak, felt and fabric to fit it, hang them, and measure again. You get the graph that proves it worked.</p>
+    <div class="btns"><a class="btn pri" href="#ask">Book a measurement, €150</a><a class="btn" href="#calc">Check your room first</a></div>
+    <div class="decay" aria-label="Example: how long a clap rings in a room before and after panels">
+      <svg viewBox="0 0 1000 200" role="img" aria-labelledby="dt">
+        <title id="dt">Sound level after a clap: before, it takes 1.4 seconds to die away; after, 0.6 seconds</title>
+        <g id="hgrid"></g>
+        <path id="hb" fill="none" stroke="var(--before)" stroke-width="2.5"/>
+        <path id="ha" fill="none" stroke="var(--after)" stroke-width="2.5"/>
+      </svg>
+      <div class="cap"><span><i style="background:var(--before)"></i>Before: 1.4 s to die away</span><span><i style="background:var(--after)"></i>After 16 m² of panels: 0.6 s</span><span>Example living room, 6 × 5 m, tiled floor</span></div>
+    </div>
+  </section>
+
+  <section class="block" id="calc">
+    <h2>How much does your room ring?</h2>
+    <p class="sub">A rough estimate from the room's size and surfaces. The measurement on site tells us exactly.</p>
+    <div class="calc">
+      <div>
+        <div class="field"><span>Room size (m)</span>
+          <div class="dims">
+            <label>Length<input type="number" id="L" min="2" max="40" step="0.1" value="6"></label>
+            <label>Width<input type="number" id="W" min="2" max="40" step="0.1" value="5"></label>
+            <label>Height<input type="number" id="H" min="2" max="8" step="0.1" value="2.7"></label>
+          </div>
+        </div>
+        <div class="field"><span>The room is a</span><div class="chips" data-k="use"></div></div>
+        <div class="field"><span>Floor</span><div class="chips" data-k="floor"></div></div>
+        <div class="field"><span>Ceiling</span><div class="chips" data-k="ceil"></div></div>
+        <div class="field"><span>Furniture and curtains</span><div class="chips" data-k="furn"></div></div>
+        <div class="field"><span>Panels you like</span><div class="chips" data-k="panel"></div></div>
+      </div>
+      <aside class="res" aria-live="polite">
+        <div class="big"><div><b id="rtNow">–</b><small>now, seconds</small></div><div><b id="rtGoal">–</b><small>goal, seconds</small></div></div>
+        <div class="meter" aria-hidden="true"><span class="t" id="mT"></span><i id="mNow" style="background:var(--before)"></i><i id="mGoal" style="background:#9ed3c0"></i></div>
+        <div class="row"><span>Panels needed</span><b id="m2">–</b></div>
+        <div class="row"><span>Made, delivered and hung</span><b id="pr">–</b></div>
+        <div class="row"><span>Measurement before and after</span><b>€150, taken off the order</b></div>
+        <p class="note" id="vat"></p>
+        <a class="btn" href="#ask">Book a measurement</a>
+      </aside>
+    </div>
+  </section>
+
+  <section class="block" id="how">
+    <h2>How it works</h2>
+    <p class="sub">One visit to measure, one day to hang. Most rooms are done within three weeks.</p>
+    <ol class="steps">
+      <li><b>Measure</b><p>We play a test sweep and record how long the room rings at every pitch. About an hour.</p></li>
+      <li><b>Design</b><p>You get a drawing of your wall or ceiling with the panels on it, and the expected result.</p></li>
+      <li><b>Make</b><p>We make the panels in our workshop in Kortrijk, to the centimetre of your room.</p></li>
+      <li><b>Hang</b><p>One day on site for most rooms. No dust: everything is cut before we arrive.</p></li>
+      <li><b>Measure again</b><p>The same test after hanging. You get both graphs, before and after.</p></li>
+    </ol>
+  </section>
+
+  <section class="block" id="panels">
+    <h2>Three kinds of panel</h2>
+    <p class="sub">Mix them: slats where people look, fabric where it needs to work hardest, a cloud above the table.</p>
+    <div class="panels">
+      <div class="panel">
+        <svg viewBox="0 0 300 200" aria-hidden="true"><rect width="300" height="200" fill="var(--felt)"/><g id="slats"></g></svg>
+        <h3>Oak slats on felt</h3><p>Solid oak slats on black acoustic felt, over stone wool. Warm to look at, works well on voices.</p><p class="pr">From €230 per m², hung</p>
+      </div>
+      <div class="panel">
+        <svg viewBox="0 0 300 200" aria-hidden="true"><rect width="300" height="200" fill="#d9d6cc"/><rect x="40" y="30" width="100" height="140" fill="#8c9a8f"/><rect x="160" y="30" width="100" height="140" fill="#b7a58a"/></svg>
+        <h3>Fabric panels</h3><p>A wooden frame with stone wool, wrapped in acoustic fabric in your colour. The most absorption per euro.</p><p class="pr">From €160 per m², hung</p>
+      </div>
+      <div class="panel">
+        <svg viewBox="0 0 300 200" aria-hidden="true"><rect width="300" height="200" fill="#e4e2db"/><line x1="90" y1="0" x2="90" y2="70" stroke="#999" /><line x1="210" y1="0" x2="210" y2="70" stroke="#999"/><rect x="50" y="70" width="200" height="22" fill="var(--felt)"/><rect x="70" y="150" width="160" height="10" fill="var(--oak)"/></svg>
+        <h3>Ceiling clouds</h3><p>Panels hung under the ceiling, above a dining table or a desk. For rooms with no free walls.</p><p class="pr">From €250 per m², hung</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="two">
+      <div><h3>For homes</h3><ul>
+        <li>Open-plan living rooms with tiles or concrete</li>
+        <li>Home cinemas and music rooms</li>
+        <li>Home studios and podcast corners</li>
+        <li>A typical room: 8 to 16 m² of panels</li>
+      </ul></div>
+      <div><h3>For businesses</h3><ul>
+        <li>Restaurants and cafés where guests can't hear each other</li>
+        <li>Meeting rooms and open offices</li>
+        <li>Practices, waiting rooms and childcare</li>
+        <li>Fire-rated materials for every public space, with the certificates for your file</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="proof">
+      <div>
+        <h2>The graph you get</h2>
+        <p>Ringing time at every pitch, from low hum to high hiss, before and after. Speech lives in the middle: that's where the gap should be biggest.</p>
+        <p>Every job ends with this report, so you know what you paid for.</p>
+      </div>
+      <svg viewBox="0 0 560 300" role="img" aria-labelledby="pt"><title id="pt">Example report: ringing time per pitch before and after panels</title><g id="proof"></g></svg>
+    </div>
+  </section>
+
+  <section class="block faq" id="faq">
+    <h2>Questions</h2>
+    <details><summary>Will panels stop noise from the neighbours?</summary><p>No. Panels stop echo inside the room. Keeping sound out of a room is soundproofing, which means building work. We'll tell you honestly if that's what you need.</p></details>
+    <details><summary>Are the panels fire-safe?</summary><p>For restaurants, offices and other public spaces we only use materials with an official fire rating (at least B-s2, d0) and give you the certificates. Oak slats for public spaces get a fire-retardant treatment.</p></details>
+    <details><summary>How are they fixed?</summary><p>Screwed to the wall or hung from the ceiling on cables. They come off again without damage, apart from a few screw holes.</p></details>
+    <details><summary>Why measure? Can't you just guess?</summary><p>A guess puts too much or too little on the wall. Measuring shows which pitches ring, where, and how much panel you really need. You pay for less panel, not more.</p></details>
+    <details><summary>Which area do you cover?</summary><p>Kortrijk and the rest of West and East Flanders. Further away on request, with a travel cost by distance.</p></details>
+  </section>
+
+  <section class="block" id="ask">
+    <h2>Book a measurement</h2>
+    <p class="sub">€150, taken off the order if you go ahead. Leave your details and we'll call to set a date.</p>
+    <form class="ask" id="form">
+      <label>Name<input required name="n" autocomplete="name"></label>
+      <label>Phone<input required name="p" type="tel" autocomplete="tel"></label>
+      <label>Postcode<input required name="z" inputmode="numeric" autocomplete="postal-code"></label>
+      <label>The room is a<select name="r"><option>Living room</option><option>Home cinema or studio</option><option>Restaurant or café</option><option>Office or meeting room</option><option>Something else</option></select></label>
+      <label class="full">What bothers you about the sound?<textarea name="t" rows="3"></textarea></label>
+      <div class="full"><button class="btn pri" type="submit">Send request</button><p id="sent" hidden>Request noted. This is a prototype: nothing was sent.</p></div>
+    </form>
+  </section>
+</main>
+<footer><div class="wrap">BRUIS Acoustics · Kortrijk · Prototype: nothing on this page is sold, booked or sent. Prices are estimates incl. VAT for homes.</div></footer>
+
+<script>
+/* Sabine's formula: ringing time = 0.161 × room volume ÷ total absorption */
+const OPTS = {
+  use: [['living', 'Living room', 0.6], ['cinema', 'Home cinema', 0.35], ['studio', 'Studio', 0.3], ['resto', 'Restaurant', 0.6], ['office', 'Office', 0.5]],
+  floor: [['tile', 'Tiles or concrete', 0.02], ['wood', 'Wood or laminate', 0.07], ['rug', 'With a big rug', 0.15], ['carpet', 'Carpet', 0.3]],
+  ceil: [['plaster', 'Plaster', 0.03], ['wood', 'Wood', 0.08], ['tiles', 'Ceiling tiles', 0.5]],
+  furn: [['bare', 'Almost empty', 0.07], ['normal', 'Normal', 0.15], ['full', 'Sofa, curtains, shelves', 0.25]],
+  panel: [['slat', 'Oak slats', 230, 0.8], ['fabric', 'Fabric', 160, 0.95], ['mix', 'A mix', 195, 0.88]]
+};
+const S = { use: 'living', floor: 'tile', ceil: 'plaster', furn: 'normal', panel: 'mix' };
+const get = k => OPTS[k].find(o => o[0] === S[k]);
+document.querySelectorAll('.chips').forEach(box => {
+  const k = box.dataset.k;
+  box.innerHTML = OPTS[k].map(o => `<button type="button" class="chip" data-v="${o[0]}">${o[1]}</button>`).join('');
+  box.addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; S[k] = b.dataset.v; calc(); });
+});
+['L', 'W', 'H'].forEach(id => document.getElementById(id).addEventListener('input', calc));
+const eur = n => '€' + Math.round(n).toLocaleString('nl-BE');
+function calc() {
+  document.querySelectorAll('.chips').forEach(box => box.querySelectorAll('.chip').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === S[box.dataset.k])));
+  const L = Math.max(2, +document.getElementById('L').value || 0), W = Math.max(2, +document.getElementById('W').value || 0), H = Math.max(2, +document.getElementById('H').value || 0);
+  const V = L * W * H, floor = L * W, walls = 2 * (L + W) * H;
+  const A0 = floor * get('floor')[2] + floor * get('ceil')[2] + walls * 0.04 + floor * get('furn')[2];
+  const now = 0.161 * V / A0, goal = get('use')[2];
+  const p = get('panel'), need = Math.max(0, (0.161 * V / goal - A0) / (p[3] - 0.04));
+  const m2 = Math.ceil(need);
+  document.getElementById('rtNow').textContent = now.toFixed(1);
+  document.getElementById('rtGoal').textContent = goal.toFixed(1);
+  document.getElementById('m2').textContent = m2 ? `${m2} m²` : 'none needed';
+  const price = m2 ? Math.max(900, m2 * p[2]) : 0;
+  document.getElementById('pr').textContent = m2 ? `about ${eur(price)}` : '–';
+  document.getElementById('vat').textContent = S.use === 'resto' || S.use === 'office'
+    ? 'Business prices are the same amount excl. VAT if BRUIS charges VAT. Fire-rated materials included.'
+    : 'Incl. VAT. Smallest job €900. The measurement on site sets the final number.';
+  const max = 3, pos = v => Math.min(100, v / max * 100) + '%';
+  document.getElementById('mNow').style.left = pos(now);
+  document.getElementById('mGoal').style.left = pos(goal);
+  const t = document.getElementById('mT'); t.style.left = pos(goal * 0.9); t.style.width = (goal * 0.2 / max * 100) + '%';
+}
+calc();
+
+/* hero decay curves: level in dB falls by 60 dB over the ringing time */
+(function () {
+  const W = 1000, H = 200, T = 2, top = 18, bot = 182, y = db => top + (-db / 70) * (bot - top), x = t => 40 + t / T * (W - 60);
+  const curve = rt => { let d = ''; for (let i = 0; i <= 200; i++) { const t = i / 200 * T; const n = Math.sin(i * 1.7) * 1.6 + Math.sin(i * 0.53) * 1.1; const db = Math.max(-68, -60 * t / rt + (t > 0.02 ? n : 0)); d += (i ? 'L' : 'M') + x(t).toFixed(1) + ' ' + y(db).toFixed(1); } return d; };
+  document.getElementById('hb').setAttribute('d', curve(1.4));
+  document.getElementById('ha').setAttribute('d', curve(0.6));
+  let g = '';
+  for (let s = 0; s <= T; s += 0.5) g += `<line x1="${x(s)}" x2="${x(s)}" y1="${top}" y2="${bot}" stroke="var(--line)"/><text x="${x(s)}" y="198" font-size="12" text-anchor="middle" fill="var(--ink3)">${s} s</text>`;
+  g += `<line x1="40" x2="${W - 20}" y1="${y(-60)}" y2="${y(-60)}" stroke="var(--ink3)" stroke-dasharray="4 4"/><text x="${W - 20}" y="${y(-60) - 6}" font-size="12" text-anchor="end" fill="var(--ink3)">silent (−60 dB)</text>`;
+  document.getElementById('hgrid').innerHTML = g;
+})();
+
+/* slats */
+(function () { let s = ''; for (let i = 0; i < 13; i++) s += `<rect x="${18 + i * 21}" y="0" width="14" height="200" fill="var(--oak)" opacity="${0.86 + (i % 3) * 0.05}"/>`; document.getElementById('slats').innerHTML = s; })();
+
+/* proof chart: ringing time per octave */
+(function () {
+  const f = ['125', '250', '500', '1k', '2k', '4k'], b = [1.3, 1.45, 1.5, 1.4, 1.25, 1.0], a = [0.8, 0.6, 0.48, 0.45, 0.45, 0.42];
+  const X = i => 70 + i * 90, Y = v => 260 - v / 1.6 * 220;
+  let s = '';
+  for (let v = 0; v <= 1.6; v += 0.4) s += `<line x1="60" x2="540" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)"/><text x="52" y="${Y(v) + 4}" font-size="12" text-anchor="end" fill="var(--ink3)">${v.toFixed(1)} s</text>`;
+  f.forEach((l, i) => s += `<text x="${X(i)}" y="282" font-size="12" text-anchor="middle" fill="var(--ink3)">${l} Hz</text>`);
+  const line = (d, c) => `<polyline fill="none" stroke="${c}" stroke-width="2.5" points="${d.map((v, i) => X(i) + ',' + Y(v)).join(' ')}"/>` + d.map((v, i) => `<circle cx="${X(i)}" cy="${Y(v)}" r="4" fill="${c}"/>`).join('');
+  s += line(b, 'var(--before)') + line(a, 'var(--after)');
+  s += `<text x="${X(5) + 6}" y="${Y(b[5]) - 10}" font-size="13" text-anchor="end" fill="var(--before)" dy="-8">before</text><text x="${X(5) + 6}" y="${Y(a[5]) + 20}" font-size="13" text-anchor="end" fill="var(--after)">after</text>`;
+  document.getElementById('proof').innerHTML = s;
+})();
+
+document.getElementById('form').addEventListener('submit', e => { e.preventDefault(); document.getElementById('sent').hidden = false; });
+</script>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BRUIS Elektro — solar inverter replaced, paperwork included (prototype)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&display=swap">
+<style>
+:root {
+  --bg: #f2f1ec; --raised: #fbfaf6; --ink: #161616; --ink2: #575652; --ink3: #898781; --line: #d9d7cf;
+  --sun: #d4a017; --dark: #1f2a30; --ok: #2f7a4f; --off: #b4452f;
+  --f: 'Bricolage Grotesque', system-ui, -apple-system, sans-serif;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+button, input, select, textarea { font: inherit; color: inherit; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.wrap { max-width: 1160px; margin: 0 auto; padding: 0 28px; }
+header.top { border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 10; background: var(--bg); }
+header.top .wrap { display: flex; align-items: baseline; gap: 26px; padding-top: 14px; padding-bottom: 14px; }
+.brand { display: flex; gap: 8px; align-items: baseline; text-decoration: none; }
+.brand b { font-weight: 800; font-size: 22px; }
+.brand small { color: var(--ink3); font-size: 13px; }
+nav.links { margin-left: auto; display: flex; gap: 22px; font-size: 14px; align-items: baseline; }
+nav.links a { text-decoration: none; color: var(--ink2); }
+nav.links .call { color: var(--ink); font-weight: 600; }
+
+/* hero: the inverter display */
+.hero { display: grid; grid-template-columns: 6fr 5fr; gap: 48px; align-items: center; padding: 52px 0 44px; }
+h1 { font-weight: 400; font-size: clamp(44px, 7vw, 92px); line-height: 0.92; letter-spacing: -0.035em; margin: 0 0 20px; font-variation-settings: 'wdth' 78, 'opsz' 96; }
+.lede { font-size: 19px; color: var(--ink2); max-width: 30em; margin: 0 0 24px; }
+.btns { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn { display: inline-block; border: 1px solid var(--ink); background: none; padding: 12px 18px; border-radius: 2px; cursor: pointer; text-decoration: none; font-weight: 500; font-size: 15px; }
+.btn.pri { background: var(--ink); color: var(--raised); }
+.box { background: #d8d6cf; border-radius: 6px; padding: 22px; box-shadow: inset 0 0 0 1px #c6c3ba; }
+.screen { background: var(--dark); color: #cfe3d8; border-radius: 3px; padding: 16px 18px; font-variant-numeric: tabular-nums; }
+.screen .st { display: flex; justify-content: space-between; font-size: 13px; color: #8fa6b0; }
+.screen .err { color: #ff9b85; font-weight: 600; font-size: 22px; margin: 10px 0 4px; letter-spacing: 0.02em; }
+.screen .w { font-size: 44px; font-weight: 300; line-height: 1; margin: 6px 0; }
+.leds { display: flex; gap: 14px; margin-top: 14px; font-size: 12px; color: var(--ink2); }
+.leds i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; background: #9c9a93; }
+.leds .r i { background: var(--off); box-shadow: 0 0 8px var(--off); }
+.flip { margin-top: 12px; font-size: 13px; color: var(--ink3); }
+
+section.block { border-top: 1px solid var(--line); padding: 56px 0; }
+h2 { font-weight: 400; font-size: clamp(30px, 3.8vw, 46px); letter-spacing: -0.02em; line-height: 1.02; margin: 0 0 12px; font-variation-settings: 'wdth' 86, 'opsz' 72; }
+.sub { color: var(--ink2); max-width: 38em; margin: 0 0 30px; }
+
+.calc { display: grid; grid-template-columns: 6fr 5fr; gap: 48px; align-items: start; }
+.field { margin-bottom: 20px; }
+.field > span { display: block; font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 1px solid var(--line); background: var(--raised); padding: 8px 12px; border-radius: 2px; cursor: pointer; font-size: 14px; }
+.chip[aria-pressed=true] { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.res { background: var(--dark); color: #e9eef0; padding: 24px 26px; position: sticky; top: 76px; }
+.res .row { display: flex; justify-content: space-between; padding: 7px 0; font-size: 15px; border-top: 1px solid rgba(255,255,255,.14); }
+.res .row:first-child { border-top: 0; }
+.res .loss { color: #ffb4a3; }
+.res .big { font-size: 32px; font-weight: 600; }
+.res .note { font-size: 12.5px; color: #a9b8bf; margin: 12px 0 0; }
+.res .btn { border-color: #e9eef0; color: #e9eef0; width: 100%; text-align: center; margin-top: 14px; }
+
+table.prices { width: 100%; border-collapse: collapse; font-size: 15px; }
+table.prices th, table.prices td { text-align: left; padding: 12px 10px 12px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.prices th { font-weight: 600; font-size: 13px; color: var(--ink2); }
+table.prices td.p { font-weight: 600; white-space: nowrap; text-align: right; }
+table.prices th.p { text-align: right; }
+
+.steps { list-style: none; counter-reset: s; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--ink); }
+.steps li { counter-increment: s; padding: 18px 20px 0 0; }
+.steps li::before { content: counter(s); display: block; font-size: 40px; font-weight: 300; line-height: 1; margin-bottom: 10px; color: var(--sun); font-variation-settings: 'wdth' 75; }
+.steps b { display: block; margin-bottom: 4px; }
+.steps p { margin: 0; color: var(--ink2); font-size: 15px; }
+
+.faq details { border-bottom: 1px solid var(--line); padding: 14px 0; }
+.faq summary { cursor: pointer; font-weight: 600; font-size: 17px; }
+.faq p { color: var(--ink2); margin: 8px 0 0; max-width: 46em; }
+
+form.ask { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 760px; }
+form.ask label { font-size: 14px; color: var(--ink2); }
+form.ask input, form.ask select, form.ask textarea { width: 100%; border: 1px solid var(--line); background: #fff; padding: 10px 12px; border-radius: 2px; margin-top: 4px; }
+form.ask .full { grid-column: 1 / -1; }
+#sent { margin: 12px 0 0; font-weight: 600; }
+footer { border-top: 1px solid var(--line); padding: 26px 0 50px; color: var(--ink3); font-size: 13px; }
+
+@media (max-width: 860px) {
+  nav.links a:not(.call) { display: none; }
+  .hero, .calc { grid-template-columns: 1fr; }
+  .res { position: static; }
+  .steps { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 520px) {
+  .wrap { padding: 0 18px; }
+  .steps { grid-template-columns: 1fr; }
+  form.ask { grid-template-columns: 1fr; }
+  table.prices th:nth-child(2), table.prices td:nth-child(2) { display: none; }
+}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="#"><b>BRUIS</b><small>Elektro</small></a>
+  <nav class="links"><a href="#cost">What it costs you</a><a href="#prices">Prices</a><a href="#how">How it works</a><a href="#faq">Questions</a><a class="call" href="#ask">Report a broken inverter</a></nav>
+</div></header>
+
+<main class="wrap">
+  <section class="hero">
+    <div>
+      <h1>Inverter broken? Back online within a week.</h1>
+      <p class="lede">A qualified electrician replaces your solar inverter at a fixed price, with the report to Fluvius and the AREI inspection arranged for you. Kortrijk and the rest of West Flanders.</p>
+      <div class="btns"><a class="btn pri" href="#ask">Report a broken inverter</a><a class="btn" href="#cost">See what it costs you now</a></div>
+    </div>
+    <div class="box" aria-label="Example of an inverter showing an error">
+      <div class="screen">
+        <div class="st"><span>Inverter</span><span>Today</span></div>
+        <div class="err">ERROR · GRID FAULT</div>
+        <div class="w">0 W</div>
+        <div class="st"><span>Today 0.0 kWh</span><span>Total 41,206 kWh</span></div>
+      </div>
+      <div class="leds"><span><i></i>Power</span><span><i></i>Grid</span><span class="r"><i></i>Fault</span></div>
+      <p class="flip">Red light, nothing on the display, or 0 kWh on a sunny day? Your panels are fine; it's almost always the inverter.</p>
+    </div>
+  </section>
+
+  <section class="block" id="cost">
+    <h2>What a broken inverter costs you</h2>
+    <p class="sub">Every day it's off, your panels make nothing. A rough estimate from the size of your installation.</p>
+    <div class="calc">
+      <div>
+        <div class="field"><span>Size of your installation</span><div class="chips" data-k="kwp"></div></div>
+        <div class="field"><span>Season</span><div class="chips" data-k="season"></div></div>
+        <div class="field"><span>What you want</span><div class="chips" data-k="type"></div></div>
+      </div>
+      <aside class="res" aria-live="polite">
+        <div class="row"><span>You lose per day</span><b class="loss" id="day">–</b></div>
+        <div class="row"><span>Per month</span><b class="loss" id="mon">–</b></div>
+        <div class="row"><span>Replaced, all in</span><b class="big" id="price">–</b></div>
+        <p class="note" id="note"></p>
+        <a class="btn" href="#ask">Report a broken inverter</a>
+      </aside>
+    </div>
+  </section>
+
+  <section class="block" id="prices">
+    <h2>Fixed prices</h2>
+    <p class="sub">Incl. 6% VAT for homes older than 10 years. Diagnosis, the new inverter, fitting, the report to Fluvius and the AREI inspection are all in the price.</p>
+    <table class="prices">
+      <thead><tr><th>What</th><th>For</th><th class="p">Price</th></tr></thead>
+      <tbody>
+        <tr><td>Inverter up to 3.6 kW</td><td>Most installations from 2009–2014</td><td class="p">€1,550</td></tr>
+        <tr><td>Inverter 4–6 kW</td><td>Larger roofs</td><td class="p">€1,750</td></tr>
+        <tr><td>Hybrid inverter, ready for a home battery</td><td>If you're thinking about a battery later</td><td class="p">from €2,450</td></tr>
+        <tr><td>Diagnosis only</td><td>Taken off the price if you go ahead</td><td class="p">€95</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="block" id="how">
+    <h2>How it works</h2>
+    <p class="sub">Most inverters are replaced within a week of your call. The work itself takes about two hours.</p>
+    <ol class="steps">
+      <li><b>Send a photo</b><p>Of the display or the label. We tell you by phone if it's the inverter and what it will cost.</p></li>
+      <li><b>Diagnosis</b><p>We measure the panels and the inverter on site, so you only replace what's broken.</p></li>
+      <li><b>Replace</b><p>A new inverter from SMA, Fronius or SolarEdge, fitted and tested. Your monitoring app set up again.</p></li>
+      <li><b>Paperwork</b><p>We report the change to Fluvius and book the AREI inspection. You get the certificate.</p></li>
+    </ol>
+  </section>
+
+  <section class="block faq" id="faq">
+    <h2>Questions</h2>
+    <details><summary>Is it really the inverter, not the panels?</summary><p>In most cases, yes: panels last 25 years or more, inverters usually 10 to 15. We measure both before we replace anything.</p></details>
+    <details><summary>Why does it need an inspection?</summary><p>A replaced inverter must be reported to Fluvius and the installation needs a new AREI inspection. We arrange both; the cost is in the price.</p></details>
+    <details><summary>What warranty do I get?</summary><p>The maker's warranty on the inverter (usually 5 to 10 years, longer with registration) and 2 years on our work.</p></details>
+    <details><summary>Can I add a home battery later?</summary><p>Choose the hybrid inverter and a battery can be connected later without changing the inverter again.</p></details>
+    <details><summary>Do you do other electrical work?</summary><p>Yes: fixing the points from a failed electrical inspection, extra circuits, sockets and lights, planned on weekdays after hours or on Saturdays. No emergency call-outs.</p></details>
+  </section>
+
+  <section class="block" id="ask">
+    <h2>Report a broken inverter</h2>
+    <p class="sub">Leave your details and a photo of the display or the label. We call you back within one working day.</p>
+    <form class="ask" id="form">
+      <label>Name<input required name="n" autocomplete="name"></label>
+      <label>Phone<input required name="p" type="tel" autocomplete="tel"></label>
+      <label>Postcode<input required name="z" inputmode="numeric" autocomplete="postal-code"></label>
+      <label>Brand of inverter (if you know)<input name="b"></label>
+      <label class="full">Photo of the display or label<input type="file" name="f" accept="image/*"></label>
+      <label class="full">What do you see?<textarea name="t" rows="3"></textarea></label>
+      <div class="full"><button class="btn pri" type="submit">Send</button><p id="sent" hidden>Request noted. This is a prototype: nothing was sent.</p></div>
+    </form>
+  </section>
+</main>
+<footer><div class="wrap">BRUIS Elektro · Kortrijk · Prototype: nothing on this page is sold, booked or sent. Prices are estimates incl. 6% VAT for homes older than 10 years.</div></footer>
+
+<script>
+/* a Belgian roof makes about 950 kWh per kWp a year; each kWh you don't make costs about €0.30 to buy */
+const OPTS = {
+  kwp: [['3', 'About 3 kWp (12 panels)', 3], ['4', 'About 4 kWp (16 panels)', 4], ['6', 'About 6 kWp (24 panels)', 6]],
+  season: [['summer', 'Spring and summer', 1.45], ['winter', 'Autumn and winter', 0.55]],
+  type: [['std', 'The same kind of inverter', 0], ['hyb', 'Hybrid, ready for a battery', 1]]
+};
+const S = { kwp: '4', season: 'summer', type: 'std' };
+const eur = n => '€' + (n < 10 ? n.toFixed(2) : Math.round(n).toLocaleString('en-US'));
+document.querySelectorAll('.chips').forEach(box => {
+  const k = box.dataset.k;
+  box.innerHTML = OPTS[k].map(o => `<button type="button" class="chip" data-v="${o[0]}">${o[1]}</button>`).join('');
+  box.addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; S[k] = b.dataset.v; calc(); });
+});
+function calc() {
+  document.querySelectorAll('.chips').forEach(box => box.querySelectorAll('.chip').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === S[box.dataset.k])));
+  const g = k => OPTS[k].find(o => o[0] === S[k])[2];
+  const day = g('kwp') * 950 / 365 * g('season') * 0.30;
+  document.getElementById('day').textContent = eur(day);
+  document.getElementById('mon').textContent = eur(day * 30);
+  const base = g('kwp') > 3.6 ? 1750 : 1550, price = g('type') ? base + 900 : base;
+  document.getElementById('price').textContent = eur(price);
+  document.getElementById('note').textContent = `So a broken inverter costs you about ${eur(day * 30)} a month in ${S.season === 'summer' ? 'spring and summer' : 'autumn and winter'}. Price incl. 6% VAT for homes older than 10 years.`;
+}
+calc();
+document.getElementById('form').addEventListener('submit', e => { e.preventDefault(); document.getElementById('sent').hidden = false; });
+</script>
+</body>
+</html>
