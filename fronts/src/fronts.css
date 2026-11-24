@@ -4,41 +4,58 @@
    Phone: picture on top, panel below, steps and price bar at the bottom. */
 /* BRUIS look: a maker's sample board. Cool plaster instead of cream, graphite ink, one cobalt for actions,
    raw-MDF tan for small structure; one family (Bricolage Grotesque), condensed and heavy for headings. */
+/* BRUIS: a studio look. Stone white, soft black ink, hairline rules; colour comes only from the fronts.
+   One light theme on every device, like a brand site (dark-mode tokens from Fitted are overridden). */
 :root {
-  --bg: #eceeea;
-  --surface: #f7f8f5;
-  --raised: #ffffff;
-  --ink: #1f2428;
-  --ink2: #5b6369;
-  --ink3: #7a8187;
-  --line: #d9dcd6;
-  --accent: #2438c8;
-  --accent-ink: #ffffff;
-  --accent-soft: rgba(36, 56, 200, 0.09);
-  --mdf: #bfa888;
-  --wall: #e2e5df;
-  --stage: #e2e5df;
-  --floor: #cfc9be;
+  --bg: #f3f3f1;
+  --surface: #f3f3f1;
+  --raised: #fbfbfa;
+  --ink: #1a1a1a;
+  --ink2: #6b6b67;
+  --ink3: #8f8f8a;
+  --line: #dcdbd6;
+  --accent: #1a1a1a;
+  --accent-ink: #fbfbfa;
+  --accent-soft: rgba(26, 26, 26, 0.05);
+  --warn: #8a5a2b;
+  --warn-soft: rgba(138, 90, 43, 0.1);
+  --mdf: #b49c7c;
+  --wall: #e9e8e4;
+  --stage: #e9e8e4;
+  --floor: #d6d0c6;
+  --hatch: #d3d5d1;
+  --paper: #fbfbfa;
+  --shade: rgba(20, 20, 20, 0.18);
   --f-d: 'Bricolage Grotesque', system-ui, -apple-system, sans-serif;
   --f-b: 'Bricolage Grotesque', system-ui, -apple-system, sans-serif;
   --f-m: 'Bricolage Grotesque', ui-monospace, Menlo, monospace;
+  color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --bg: #15181a;
-    --surface: #1b1f22;
-    --raised: #23282c;
-    --ink: #eceeea;
-    --ink2: #a3aaaf;
-    --ink3: #8c9398;
-    --line: #30363a;
-    --accent: #8d9bff;
-    --accent-ink: #0d1030;
-    --accent-soft: rgba(141, 155, 255, 0.14);
-    --mdf: #8f7d62;
-    --wall: #1d2124;
-    --stage: #1d2124;
-    --floor: #2b2f32;
+    --bg: #f3f3f1;
+    --surface: #f3f3f1;
+    --raised: #fbfbfa;
+    --ink: #1a1a1a;
+    --ink2: #6b6b67;
+    --ink3: #8f8f8a;
+    --line: #dcdbd6;
+    --accent: #1a1a1a;
+    --accent-ink: #fbfbfa;
+    --accent-soft: rgba(26, 26, 26, 0.05);
+    --warn: #8a5a2b;
+    --warn-soft: rgba(138, 90, 43, 0.1);
+    --mdf: #b49c7c;
+    --wall: #e9e8e4;
+    --stage: #e9e8e4;
+    --floor: #d6d0c6;
+    --hatch: #d3d5d1;
+    --paper: #fbfbfa;
+    --shade: rgba(20, 20, 20, 0.18);
+    --f-d: 'Bricolage Grotesque', system-ui, -apple-system, sans-serif;
+    --f-b: 'Bricolage Grotesque', system-ui, -apple-system, sans-serif;
+    --f-m: 'Bricolage Grotesque', ui-monospace, Menlo, monospace;
+    color-scheme: light;
   }
 }
 * {
@@ -1395,4 +1412,484 @@ header.top {
 }
 .rmsg[hidden] {
   display: none;
+}
+
+/* the finished render is a picture; the canvas works underneath, out of sight */
+.pic3d canvas {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+.rimg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  transition: filter 0.6s ease;
+}
+.rimg:not([src]) {
+  visibility: hidden;
+}
+.rimg.draft {
+  filter: blur(10px) saturate(0.9);
+}
+.rimg.fresh {
+  animation: rfade 0.7s ease;
+}
+@keyframes rfade {
+  from {
+    opacity: 0.35;
+  }
+}
+.pic3d {
+  overflow: hidden;
+}
+.rbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 26px;
+  display: flex;
+  align-items: flex-end;
+  pointer-events: none;
+}
+.rbar[hidden] {
+  display: none;
+}
+.rbar i {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.9);
+  transition: width 0.3s linear;
+}
+.rbar span {
+  position: relative;
+  margin: 0 0 8px 12px;
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: #fff;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.45);
+}
+@media (prefers-reduced-motion: reduce) {
+  .rimg.fresh {
+    animation: none;
+  }
+}
+
+/* ==== studio layer: image first, quiet type, hairlines instead of boxes ==== */
+body {
+  font-weight: 400;
+  letter-spacing: 0.002em;
+}
+h2 {
+  font-weight: 380;
+  font-stretch: 100%;
+  font-variation-settings:
+    'wdth' 100,
+    'opsz' 96;
+  font-size: 38px;
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  margin: 6px 0 12px;
+}
+h3,
+h3.big {
+  font-size: 13px;
+  font-weight: 560;
+  color: var(--ink);
+  margin: 34px 0 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.lede {
+  color: var(--ink2);
+  font-size: 15px;
+  line-height: 1.5;
+}
+.hint {
+  font-size: 13px;
+}
+
+/* header: wordmark, then the steps as small numbered text */
+header.top {
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  padding: 14px 28px;
+}
+.brand span {
+  font-size: 15px;
+  font-weight: 450;
+}
+.brand small {
+  color: var(--ink3);
+}
+.steps button {
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--ink3);
+  padding: 6px 2px 6px 18px;
+}
+.steps button + button::before {
+  width: 18px;
+  border-top: 1px solid var(--line);
+}
+.steps button i,
+.bsteps button i {
+  border: 0;
+  width: auto;
+  height: auto;
+  background: none !important;
+  color: inherit !important;
+  font-size: 12px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.steps button.on,
+.bsteps button.on {
+  color: var(--ink);
+  background: none;
+}
+.steps button.on span,
+.bsteps button.on span {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 6px;
+}
+
+/* the stage: the render runs edge to edge, the caption underneath */
+.stage {
+  padding: 0;
+  background: var(--stage);
+}
+.pic3d {
+  margin: 0;
+  border-radius: 0;
+}
+.pic {
+  padding: 0;
+}
+.stagebar {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 12px 28px 16px;
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+}
+.cap {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--ink2);
+  line-height: 1.45;
+  flex: 1;
+}
+.cap b {
+  color: var(--ink);
+  font-weight: 560;
+}
+.cap span {
+  display: block;
+  color: var(--ink3);
+  font-size: 12.5px;
+}
+.lnk.surp {
+  font-weight: 500;
+  font-size: 13.5px;
+  color: var(--ink);
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+  white-space: nowrap;
+}
+.rover .osel {
+  stroke: #fff;
+  stroke-width: 2;
+  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.5));
+}
+
+/* the panel: a spec sheet */
+.panel {
+  background: var(--bg);
+  border-left: 1px solid var(--line);
+  padding: 26px 28px 40px;
+}
+.btn {
+  border-radius: 2px;
+  border: 1px solid var(--ink);
+  background: transparent;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+.btn.sm {
+  border-radius: 2px;
+}
+.btn.pri {
+  background: var(--ink);
+  color: var(--accent-ink);
+  box-shadow: none;
+}
+.btn.surp {
+  border-radius: 2px;
+  background: transparent;
+  color: var(--ink);
+}
+.lnk {
+  color: var(--ink);
+  font-weight: 500;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.seg {
+  border-radius: 2px;
+  background: transparent;
+  border: 1px solid var(--line);
+  padding: 2px;
+}
+.seg button {
+  border-radius: 1px;
+  font-weight: 450;
+  color: var(--ink2);
+}
+.seg button.on {
+  background: var(--ink);
+  color: var(--accent-ink);
+}
+
+/* choices: borderless pictures with a caption; the chosen one gets a fine ink rule */
+.tile,
+.stc,
+.sys {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+}
+.tile.on,
+.stc.on,
+.sys.on {
+  box-shadow: none;
+}
+.tpic,
+.stc svg {
+  border-radius: 2px;
+  outline: 1px solid transparent;
+  outline-offset: 3px;
+}
+.tile.on .tpic,
+.stc.on svg {
+  outline-color: var(--ink);
+}
+.tile:hover .tpic,
+.stc:hover svg {
+  outline-color: var(--line);
+}
+.tile b,
+.stc b {
+  font-size: 14px;
+  font-weight: 560;
+  padding: 0;
+  margin-top: 9px;
+}
+.tile small,
+.stc small {
+  padding: 0;
+  font-size: 12.5px;
+}
+.tiles {
+  gap: 22px 16px;
+}
+.syss {
+  gap: 0;
+  border: 1px solid var(--line);
+}
+.sys {
+  padding: 12px 14px;
+  border-right: 1px solid var(--line);
+}
+.sys:last-child {
+  border-right: 0;
+}
+.sys.on {
+  background: var(--ink);
+  color: var(--accent-ink);
+}
+.sys.on span {
+  color: inherit;
+  opacity: 0.75;
+}
+.sys b {
+  font-variation-settings: 'wdth' 100;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+/* materials as a list of rows */
+.mats {
+  grid-template-columns: 1fr;
+  gap: 0;
+  border-top: 1px solid var(--line);
+}
+.mat {
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  padding: 12px 4px;
+  box-shadow: none;
+}
+.mat.on {
+  box-shadow: none;
+  background: var(--accent-soft);
+}
+.mat b {
+  font-weight: 560;
+}
+.mat .sw {
+  width: 22px;
+  height: 22px;
+  border-radius: 1px;
+}
+.mat.on b::after {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-left: 8px;
+  vertical-align: middle;
+  background: var(--ink);
+  border-radius: 50%;
+}
+.mat .tag {
+  background: none;
+  color: var(--warn);
+  padding: 0;
+  font-weight: 500;
+}
+.swb {
+  border-radius: 1px;
+  border: 0;
+  box-shadow: none;
+  outline: 1px solid transparent;
+  outline-offset: 3px;
+}
+.swb.on {
+  box-shadow: none;
+  outline-color: var(--ink);
+}
+
+/* cards that stay boxes: the IKEA list, cabinets, the selected front */
+.impcard {
+  border: 1px solid var(--ink);
+  box-shadow: none;
+  border-radius: 2px;
+  background: var(--raised);
+}
+.impcard textarea {
+  border-radius: 2px;
+  background: var(--bg);
+}
+.cab,
+details.cab {
+  border-radius: 2px;
+  background: transparent;
+}
+.cabh b {
+  background: none;
+  color: var(--ink3);
+  width: auto;
+  font-weight: 500;
+}
+.ib {
+  border-radius: 2px;
+}
+.selcard {
+  border: 1px solid var(--ink);
+  border-radius: 2px;
+  background: var(--raised);
+}
+.impok {
+  border-radius: 2px;
+  background: var(--accent-soft);
+}
+.hint.warn {
+  border-radius: 2px;
+}
+.or {
+  font-size: 12.5px;
+  color: var(--ink3);
+}
+.ord .tot td {
+  border-top: 1px solid var(--ink);
+}
+.btn.big {
+  border-radius: 2px;
+  padding: 16px;
+}
+
+/* the price bar */
+.pbar {
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+  padding: 12px 28px;
+}
+.pchip {
+  border-radius: 2px;
+  background: transparent;
+  border: 0;
+}
+.pchip i {
+  border-radius: 1px;
+  width: 40px;
+}
+.ptot b {
+  font-weight: 450;
+  font-variation-settings:
+    'wdth' 100,
+    'opsz' 36;
+  font-size: 24px;
+  letter-spacing: -0.01em;
+}
+.ptot span {
+  color: var(--ink3);
+}
+
+@media (max-width: 860px) {
+  header.top {
+    padding: 12px 16px;
+  }
+  .stage {
+    height: auto;
+    padding: 0;
+  }
+  .pic3d {
+    height: 40vh;
+    min-height: 240px;
+  }
+  .stagebar {
+    padding: 10px 16px 12px;
+  }
+  .panel {
+    padding: 20px 16px 40px;
+  }
+  h2 {
+    font-size: 32px;
+  }
+  .pbar {
+    padding: 10px 16px;
+  }
+  .bsteps {
+    background: var(--bg);
+  }
+  .bsteps button {
+    font-size: 12.5px;
+  }
+  .bsteps button i {
+    font-size: 11px;
+  }
 }

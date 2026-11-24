@@ -36,9 +36,9 @@ function render() {
   document.getElementById('pic3d').hidden = !v3;
   if (v3) open3D();
   else drawPic();
+  // the caption under the picture: what it shows, a hint, and Surprise me
   document.getElementById('stagebar').innerHTML =
-    `<span class="chip"><b>${SYS[S.sys].name}</b> ${countWords(P)}</span>${S.recipe ? `<span class="chip rec">✨ ${esc(S.recipeSay || S.recipe)}</span>` : ''}<span class="sp"></span><button type="button" class="btn sm surp" data-act="surprise" aria-label="Surprise me">✨<span> Surprise me</span></button>`;
-  document.getElementById('pichint').textContent = L.fronts.length ? 'Tap a front to change just that one' : '';
+    `<p class="cap"><b>${SYS[S.sys].name} ${SYS[S.sys].what.toLowerCase()}</b>, ${countWords(P).replace(' + ', ' and ')}${S.recipe ? `. ${esc(S.recipeSay || S.recipe)}` : S.demo ? `. ${esc(S.demo)}` : ''}<span>${L.fronts.length ? 'Tap a front to give it its own look' : ''}</span></p><button type="button" class="lnk surp" data-act="surprise">Surprise me</button>`;
   document.getElementById('pbar').innerHTML =
     `${chipHTML()}<div class="ptot"><span>${countWords(P)} · incl. VAT${P.del ? ' + delivery' : ''}</span><b>${eur(P.total)}</b></div>${
       S.step === 'order'

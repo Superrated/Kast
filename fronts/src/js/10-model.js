@@ -218,19 +218,36 @@ function layout() {
   const plinth = S.sys === 'metod' ? 100 : S.sys === 'besta' ? 120 : 0;
   let xb = 0,
     xw = 0;
+  // the floor row first (base and tall cabinets), so the wall row can skip the tall ones
+  const tall = [],
+    pos = new Map();
   S.cabs.forEach(c => {
     const kd = SYS[c.sys].kinds[c.kind] || {};
-    let x, y;
-    if (c.sys === 'metod' && kd.row === 'wall') {
-      x = xw;
-      xw += c.w * 10;
-      y = 2200 - c.h * 10; // wall cabinets hang with their tops in one line
-    } else {
-      x = xb;
-      xb += c.w * 10;
-      y = plinth;
+    if (c.sys === 'metod' && kd.row === 'wall') return;
+    pos.set(c.id, [xb, plinth]);
+    if (c.kind === 'high') tall.push([xb, xb + c.w * 10]);
+    xb += c.w * 10;
+  });
+  S.cabs.forEach(c => {
+    const kd = SYS[c.sys].kinds[c.kind] || {};
+    if (!(c.sys === 'metod' && kd.row === 'wall')) return;
+    // a wall cabinet never hangs where a tall cabinet stands: move along past it
+    let moved = true;
+    while (moved) {
+      moved = false;
+      tall.forEach(([a, b]) => {
+        if (xw < b && xw + c.w * 10 > a) {
+          xw = b;
+          moved = true;
+        }
+      });
     }
-    const pc = { c, x, y, w: c.w * 10, h: c.h * 10 };
+    pos.set(c.id, [xw, 2200 - c.h * 10]); // wall cabinets hang with their tops in one line
+    xw += c.w * 10;
+  });
+  S.cabs.forEach(c => {
+    const [x, y] = pos.get(c.id),
+      pc = { c, x, y, w: c.w * 10, h: c.h * 10 };
     cabs.push(pc);
     frontsOf(c, x, y).forEach(f => fronts.push(f));
   });
@@ -284,10 +301,15 @@ function sidesOf(cabs) {
     if (S.sides === 'left' || S.sides === 'both') out.push(mk(first, 'L'));
     if (S.sides === 'right' || S.sides === 'both') out.push(mk(last, 'R'));
   });
-  // a tall cabinet at the end already has a full-height panel: no second panel for the wall cabinet above it
-  return out.filter(
-    sd => sd.row !== 'wall' || !out.some(o => o.row !== 'wall' && Math.abs(o.x - sd.x) < 1 && o.y + o.h > sd.y)
-  );
+  // no panel where another cabinet stands right against that side (a wall cabinet next to a tall one),
+  // and no second panel above a tall cabinet's full-height panel
+  const yOver = (a, b) => Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y) > 1;
+  return out.filter(sd => {
+    const p = cabs.find(q => q.c.id === sd.cab),
+      edge = sd.end === 'L' ? p.x : p.x + p.w;
+    if (cabs.some(q => q !== p && yOver(q, p) && Math.abs((sd.end === 'L' ? q.x + q.w : q.x) - edge) < 1)) return false;
+    return sd.row !== 'wall' || !out.some(o => o.row !== 'wall' && Math.abs(o.x - sd.x) < 1 && o.y + o.h > sd.y);
+  });
 }
 /* sides take the look of "all fronts"; glass is for doors only, so glass sides become painted */
 function sideLook() {

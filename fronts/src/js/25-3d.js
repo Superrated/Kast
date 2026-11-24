@@ -7,19 +7,56 @@
    If 3D can't load (no internet, no WebGL), the flat drawing from 20-draw.js is shown instead.
    three r170 and the path tracer come from jsDelivr through the import map in app.html.
 */
-const V3 = { ready: false, loading: false, failed: false, tex: {}, meshes: [], gen: 0 };
-const PT_MAX = () => (innerWidth <= 860 ? 96 : 220); // samples per still: enough to clear the noise
+const V3 = { ready: false, loading: false, failed: false, tex: {}, meshes: [], gen: 0, cache: new Map() };
+const PT_MAX = () => V3.max || (innerWidth <= 860 ? 140 : 320); // samples per still: enough to clear the noise
 
+/* the stage: the last finished render as a picture, the working canvas hidden under it, the selection on top */
+const STAGE3D =
+  '<img class="rimg" id="rimg" alt="Your cabinets with the new fronts, in a room"><svg class="rover" id="rover" aria-hidden="true"></svg><div class="rbar" id="rbar"><i id="rbarI"></i><span id="rmsg"></span></div>';
+function showShot(src, instant) {
+  const im = document.getElementById('rimg');
+  if (!im) return;
+  im.classList.toggle('draft', !!V3.drafting);
+  if (instant) im.src = src;
+  else {
+    const n = new Image();
+    n.onload = () => {
+      im.src = src;
+      im.classList.remove('fresh');
+      void im.offsetWidth;
+      im.classList.add('fresh');
+    };
+    n.src = src;
+  }
+}
+function grabShot(draft) {
+  try {
+    V3.drafting = draft;
+    const src = V3.r.domElement.toDataURL('image/jpeg', 0.92);
+    if (!draft) V3.shot = src;
+    if (!draft || !V3.shot) showShot(src, draft);
+    else document.getElementById('rimg').classList.add('working');
+  } catch (e) {
+    /* keep what is shown */
+  }
+}
 function open3D() {
   const el = document.getElementById('pic3d');
   if (V3.ready) return start3D(el);
   if (V3.loading) return;
   V3.loading = true;
   el.innerHTML = '<p class="hint c3">Setting up the render…</p>';
-  Promise.all([import('three'), import('three-gpu-pathtracer').catch(() => null)])
-    .then(([T, PT]) => {
+  Promise.all([
+    import('three'),
+    import('three-gpu-pathtracer').catch(() => null),
+    import('three/examples/jsm/geometries/RoundedBoxGeometry.js').catch(() => null),
+    import('three/examples/jsm/utils/BufferGeometryUtils.js').catch(() => null)
+  ])
+    .then(([T, PT, RB, BGU]) => {
+      V3.merge = BGU && BGU.mergeGeometries;
       V3.T = T;
       V3.PT = PT;
+      V3.RB = RB && RB.RoundedBoxGeometry;
       start3D(el);
     })
     .catch(() => {
@@ -66,8 +103,8 @@ function start3D(el) {
     }
     r.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
     r.outputColorSpace = T.SRGBColorSpace;
-    r.toneMapping = T.ACESFilmicToneMapping;
-    r.toneMappingExposure = 0.95;
+    r.toneMapping = T.NeutralToneMapping;
+    r.toneMappingExposure = 0.82;
     r.shadowMap.enabled = true;
     r.shadowMap.type = T.PCFSoftShadowMap;
     const sc = new T.Scene();
@@ -85,8 +122,8 @@ function start3D(el) {
       try {
         pt = new V3.PT.WebGLPathTracer(r);
         pt.bounces = 4;
-        pt.minSamples = 3;
-        pt.fadeDuration = 400;
+        pt.minSamples = 1;
+        pt.fadeDuration = 0;
         pt.renderDelay = 0;
         pt.filterGlossyFactor = 0.5;
         pt.renderScale = innerWidth <= 860 ? 0.75 : 1;
@@ -118,13 +155,14 @@ function start3D(el) {
         pt = null;
       }
     Object.assign(V3, { r, sc, cam, sun, pt, ready: true, loading: false, root: null });
-    el.innerHTML = '<div class="rmsg" id="rmsg"></div><svg class="rover" id="rover" aria-hidden="true"></svg>';
+    el.innerHTML = STAGE3D;
     el.prepend(r.domElement);
-    r.domElement.addEventListener('click', tap3D);
+    el.addEventListener('click', tap3D);
     new ResizeObserver(() => draw3D(true)).observe(el);
   } else if (!el.contains(V3.r.domElement)) {
-    el.innerHTML = '<div class="rmsg" id="rmsg"></div><svg class="rover" id="rover" aria-hidden="true"></svg>';
+    el.innerHTML = STAGE3D;
     el.prepend(V3.r.domElement);
+    if (V3.shot) showShot(V3.shot, true);
   }
   build3D();
 }
@@ -253,10 +291,11 @@ function grooveTex(dir) {
     );
   return (V3.tex[key] = t);
 }
-function matFor(lk, f) {
+function matFor(lk, f, noRelief) {
   const T = V3.T,
     m = MATS[lk.mat],
-    o = { roughness: 0.62, metalness: 0 };
+    o = { roughness: 0.52, metalness: 0 };
+  // matt spray paint; hardwax oil gives wood a soft satin sheen
   if (m.paint) o.color = new T.Color(colHex(lk.col));
   else if (m.glass) return null;
   else {
@@ -264,9 +303,10 @@ function matFor(lk, f) {
     t.needsUpdate = true;
     t.repeat.set(f.w / 260, f.h / 1000);
     o.map = t;
-    o.roughness = m.raw ? 0.85 : m.ply ? 0.6 : 0.5;
+    o.roughness = m.raw ? 0.85 : 0.5;
+    if (m.oil) Object.assign(o, { clearcoat: 0.22, clearcoatRoughness: 0.45 });
   }
-  if (lk.style === 'fluted' || lk.style === 'grooves') {
+  if (!noRelief && (lk.style === 'fluted' || lk.style === 'grooves')) {
     const gr = lk.style === 'grooves',
       p = gr ? S.flute.gpitch : S.flute.pitch,
       n = (gr ? grooveTex : fluteTex)(S.flute.dir).clone();
@@ -274,9 +314,33 @@ function matFor(lk, f) {
     if (S.flute.dir === 'v') n.repeat.set(f.w / p, 1);
     else n.repeat.set(1, f.h / p);
     o.normalMap = n;
-    o.normalScale = new T.Vector2(gr ? 2 : 1.4, gr ? 2 : 1.4);
+    o.normalScale = new T.Vector2(gr ? 3 : 1.4, gr ? 3 : 1.4);
   }
-  return new T.MeshStandardMaterial(o);
+  return new T.MeshPhysicalMaterial(o);
+}
+
+/* the ribs of a fluted front, as one mesh centred on the front: half-rounds side by side at the chosen pitch,
+   7.5 mm proud of the slab, stopping 12 mm short of the edges like a routed panel */
+const FLUTE_D = 7.5;
+function fluteMesh(f, mat, FT) {
+  const T = V3.T,
+    v = S.flute.dir === 'v',
+    span = v ? f.w : f.h,
+    len = (v ? f.h : f.w) - 24,
+    n = Math.max(2, Math.round((span - 8) / S.flute.pitch)),
+    pw = (span - 8) / n,
+    parts = [];
+  for (let i = 0; i < n; i++) {
+    const g = new T.CylinderGeometry(pw / 2, pw / 2, len, 12, 1, true, -Math.PI / 2, Math.PI);
+    g.scale(1, 1, FLUTE_D / (pw / 2)); // as deep as a routed flute
+    if (!v) g.rotateZ(Math.PI / 2);
+    const o = -span / 2 + 4 + pw / 2 + i * pw;
+    g.translate(v ? o : 0, v ? 0 : o, FT / 2 - FLUTE_D);
+    parts.push(g);
+  }
+  const ms = new T.Mesh(V3.merge(parts), mat);
+  ms.castShadow = ms.receiveShadow = true;
+  return ms;
 }
 
 /* ---------- the scene ---------- */
@@ -323,6 +387,16 @@ function build3D() {
     ms.position.set(x, y, z);
     ms.castShadow = cast;
     ms.receiveShadow = true;
+    root.add(ms);
+    return ms;
+  };
+  // fronts and side panels with their real edge: a 2 mm round, or a small chamfer
+  const rbox = (w, h, d, mat, x, y, z) => {
+    if (!V3.RB) return box(w, h, d, mat, x, y, z);
+    const ch = S.edge === 'chamfer',
+      ms = new T.Mesh(new V3.RB(w, h, d, ch ? 1 : 3, ch ? 3.5 : 2.5), mat);
+    ms.position.set(x, y, z);
+    ms.castShadow = ms.receiveShadow = true;
     root.add(ms);
     return ms;
   };
@@ -387,7 +461,7 @@ function build3D() {
   // side panels, flush with the front of the fronts
   L.sides.forEach(sd => {
     const lk = sideLook();
-    box(SIDE_T, sd.h, sd.w, matFor(lk, { w: sd.w, h: sd.h }), sd.x + SIDE_T / 2, sd.y + sd.h / 2, 20 - sd.w / 2);
+    rbox(SIDE_T, sd.h, sd.w, matFor(lk, { w: sd.w, h: sd.h }), sd.x + SIDE_T / 2, sd.y + sd.h / 2, 20 - sd.w / 2);
   });
   // the fronts
   const FT = 19,
@@ -425,7 +499,16 @@ function build3D() {
         normalScale: new T.Vector2(2, 2)
       });
       hit = box(f.w - 2 * fr, f.h - 2 * fr, 6, gm, cx, cy, cz, false);
-    } else hit = box(f.w, f.h, FT, matFor(lk, f), cx, cy, cz);
+    } else if (lk.style === 'fluted' && V3.merge) {
+      // real flutes: half-round ribs on a thinner slab, so they catch the light like the routed board
+      const mat = matFor(lk, f, true);
+      hit = rbox(f.w, f.h, FT - FLUTE_D, mat, cx, cy, cz - FLUTE_D / 2);
+      const fl = fluteMesh(f, mat, FT);
+      fl.position.set(cx, cy, cz);
+      fl.userData.fid = f.id;
+      root.add(fl);
+      V3.meshes.push(fl);
+    } else hit = rbox(f.w, f.h, FT, matFor(lk, f), cx, cy, cz);
     hit.userData.fid = f.id;
     V3.meshes.push(hit);
     handle3D(f, lk, root, hcache, FT);
@@ -440,7 +523,6 @@ function build3D() {
   V3.sun.target.position.set(W / 2 + 400, 300, -300);
   V3.sun.position.set(W / 2 - 7200, 4600, 2600);
   V3.L = L;
-  V3.dirty = true;
   draw3D();
 }
 function handle3D(f, lk, root, cache, FT) {
@@ -599,6 +681,14 @@ function room3D(T, root, L, box) {
     y0 - 15,
     (w0 + w1) / 2
   );
+  // the ceiling: closes the room so light comes in through the window and the open front, like an interior
+  const ceil = new T.Mesh(
+    new T.PlaneGeometry(xr - xl, zf + D),
+    new T.MeshStandardMaterial({ color: '#f4f2ee', roughness: 0.9 })
+  );
+  ceil.rotation.x = Math.PI / 2;
+  ceil.position.set((xl + xr) / 2, Math.max(wallH, L.H + 350), (zf - D) / 2);
+  root.add(ceil);
   // a wool rug in front of the cabinets
   const rw = Math.min(W * 0.75, 3000),
     rug = box(rw, 10, 1500, new T.MeshStandardMaterial({ color: '#cbbfa9', roughness: 1 }), W / 2, 5, 1250);
@@ -659,7 +749,7 @@ function draw3D(resized) {
   const H = Math.max(L.H, 900),
     tgt = new T.Vector3((L.W + 200) / 2, H / 2 + 60, 0),
     yaw = -0.2,
-    pitch = 0.06;
+    pitch = 0; // level camera: verticals stay straight, like an architectural photo
   cam.aspect = w / h;
   const span = Math.max((L.W + 1700) / cam.aspect, H + 500) * 1.08,
     dist = span / 2 / Math.tan((cam.fov * Math.PI) / 360);
@@ -671,51 +761,80 @@ function draw3D(resized) {
   cam.lookAt(tgt);
   cam.updateProjectionMatrix();
   overlay3D();
-  if (!V3.pt) {
-    V3.r.render(V3.sc, cam);
+  // a design already rendered at this size shows straight away
+  const ck = V3.key + '|' + w + 'x' + h;
+  if (V3.cache.has(ck)) {
+    V3.gen++;
+    V3.drafting = false;
+    V3.shot = V3.cache.get(ck);
+    showShot(V3.shot, true);
+    document.getElementById('rimg').classList.remove('working', 'draft');
     return msg3D('');
   }
-  if (V3.dirty) {
-    msg3D('Rendering…');
+  if (!V3.pt) {
+    V3.r.render(V3.sc, cam);
+    grabShot(false);
+    keepShot(ck);
+    return msg3D('');
+  }
+  if (V3.ptScene !== V3.key) {
+    msg3D('Rendering');
+    // a quick first frame, shown soft until the traced one is ready
+    V3.r.render(V3.sc, cam);
+    grabShot(true);
     try {
       V3.pt.setScene(V3.sc, cam);
     } catch (e) {
       V3.pt = null;
       V3.r.render(V3.sc, cam);
+      grabShot(false);
       return msg3D('');
     }
-    V3.dirty = false;
-  } else if (resized) V3.pt.updateCamera();
-  trace3D();
+    V3.ptScene = V3.key;
+  } else V3.pt.updateCamera();
+  trace3D(ck);
+}
+/* finished renders, kept for this visit (the last 16) */
+function keepShot(ck) {
+  if (!V3.shot) return;
+  V3.cache.set(ck, V3.shot);
+  if (V3.cache.size > 16) V3.cache.delete(V3.cache.keys().next().value);
 }
 /* refine the still: one path-traced sample per frame until it is clean, then stop */
-function trace3D() {
+function trace3D(ck) {
   const g = ++V3.gen,
     pt = V3.pt,
     max = PT_MAX();
   const step = () => {
     if (g !== V3.gen || !V3.r.domElement.isConnected) return;
     try {
-      pt.renderSample();
+      // a few samples per frame while the picture is out of sight
+      for (let k = 0; k < 2; k++) pt.renderSample();
     } catch (e) {
       V3.pt = null;
       V3.r.render(V3.sc, V3.cam);
+      grabShot(false);
       return msg3D('');
     }
     const n = Math.floor(pt.samples);
     if (n < max) {
-      msg3D(`Rendering ${Math.round((n / max) * 100)}%`);
+      msg3D('Rendering', n / max);
       requestAnimationFrame(step);
-    } else msg3D('');
+    } else {
+      grabShot(false);
+      keepShot(ck);
+      document.getElementById('rimg').classList.remove('working', 'draft');
+      msg3D('');
+    }
   };
   requestAnimationFrame(step);
 }
-function msg3D(t) {
-  const m = document.getElementById('rmsg');
-  if (m) {
-    m.textContent = t;
-    m.hidden = !t;
-  }
+function msg3D(t, f) {
+  const b = document.getElementById('rbar');
+  if (!b) return;
+  b.hidden = !t;
+  document.getElementById('rmsg').textContent = t;
+  document.getElementById('rbarI').style.width = Math.round((f || 0.02) * 100) + '%';
 }
 /* on top of the render: the outline of the selected front, at its place in the picture */
 function overlay3D() {

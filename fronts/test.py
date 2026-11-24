@@ -27,6 +27,13 @@ CHECK = """(()=>{const bad=[];
     S.cabs.forEach((c,k)=>{ if(c.layout!==d.cabs[k][3]) bad.push(`demo ${d.name}: cabinet ${k+1} layout ${c.layout}`) });
     Ld.fronts.forEach(f=>{ const lk=lookOf(f); if(!matOk(lk.style,lk.mat)) bad.push('demo bad look: '+d.name) });
     for (const st of ['cabs','fronts','handles','order']) { S.step=st; render(); } });
+  // no cabinet overlaps another (a tall cabinet and the wall cabinets above the run)
+  for (const sys of ['metod']) { const qs=QUICK[sys].map(q=>q[1]); DEMOS.forEach((d,i)=>{ if(d.sys===sys) qs.push(null) });
+    QUICK[sys].forEach(q=>{ S=freshState(sys); S.cabs=quickMake(q[1]); const c=layout().cabs;
+      for(let i=0;i<c.length;i++) for(let j=i+1;j<c.length;j++){ const a=c[i],b=c[j];
+        if(Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x)>1&&Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y)>1) bad.push('cabinets overlap in '+q[0]) } }) }
+  S=freshState('metod'); { const c=layout().cabs; for(let i=0;i<c.length;i++) for(let j=i+1;j<c.length;j++){ const a=c[i],b=c[j];
+    if(Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x)>1&&Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y)>1) bad.push('cabinets overlap in the example kitchen') } }
   // side panels: priced and in the order list
   S=freshState('metod'); S.sides='both'; let Ls=layout(); if(Ls.sides.length!==3) bad.push('kitchen sides (tall at the left end covers the wall row too): '+Ls.sides.length);
   if(!(priceAll(Ls).ns===3&&grouped(Ls).some(r=>r.kind==='side'))) bad.push('sides not priced/listed');
@@ -58,7 +65,7 @@ with sync_playwright() as pw:
     p = br.new_page()
     errs = []
     p.on("pageerror", lambda e: errs.append(str(e)))
-    p.on("console", lambda m: m.type == "error" and errs.append(m.text))
+    p.on("console", lambda m: m.type == "error" and "Failed to load" not in m.text and errs.append(m.text))  # without NPM_DIR the render modules are missing: the flat drawing is used
     npm = os.environ.get("NPM_DIR")
 
     def route(r):
