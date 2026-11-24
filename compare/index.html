@@ -279,7 +279,7 @@ footer p { margin: 0 0 6px; max-width: 52em; }
 </div>
 
 <footer><div class="wrap">
-  <p>Prices and costs come from the five financial plans. Sales come from comparable companies, not from the plans (<a href="https://claude.ai/artifact/12Lj4QgKXyPhPsmdEkGcki" target="_blank" rel="noopener">BRUIS — what comparable companies show</a>). Marketing: the first euros win a sale at the cost seen in public benchmarks; each next euro wins a bit less. "The budget that works" keeps spending while one more sale still leaves you at least half its money.</p>
+  <p>Prices and costs come from the five financial plans. Sales come from comparable companies, not from the plans (<a href="https://claude.ai/artifact/12Lj4QgKXyPhPsmdEkGcki" target="_blank" rel="noopener">BRUIS — what comparable companies show</a>). Marketing: the first euros win a sale at the cost seen in public benchmarks; each next euro wins a bit less. "The budget that works" keeps spending while one more sale still leaves you at least half its money. Every idea also pays yearly insurance (business and product liability, the workshop on the home policy) and keeps a share of turnover aside for returns, repairs and the 2-year guarantee; card, booking and Etsy fees come from the plans.</p>
   <p>Home: as a sole trader you can't rent to yourself, so BRUIS carries the business share of your home costs (loan interest, insurance, property tax by floor area; energy by the workshop meter) and pays the workshop upgrades; with a BV you could charge it real rent. Van: a light van is up to 100% deductible when used only for the business; private use lowers that.</p>
   <p>Tax: social contributions for a side business and income tax at the top rate on top of a job. All figures are estimates to check with your accountant.</p>
 </div></footer>
@@ -323,7 +323,7 @@ const KEEP = (1 - 0.205 * 1.042) * (1 - 0.535);
 const IDEAS = [
   { id: 'fronts', name: 'Fronts', what: 'Custom fronts for IKEA cabinets', unit: 'orders',
     turnUnit: 2285, left: 1361, vatK: 0.822, hUnit: 15, adminMo: 8, fixedMo: 260, extraFix: 0, extraH: 0,
-    startup: 1772, tools: 4450, toolSave: 120, wYears: 5, small: 1150,
+    startup: 1372, tools: 4450, toolSave: 120, wYears: 5, small: 1150,
     org: [4, 8, 12], cap: [6, 12, 16], cac: 250, toolYear: { real: 2 }, flex: 0.75,
     grow: 'Year 2: buy the CNC and do your own cutting (saves €120 an order). Year 3: about 20 orders, one every two to three weeks.',
     worst: 'Nobody orders, or a measuring mistake means remaking a set of fronts.',
@@ -331,7 +331,7 @@ const IDEAS = [
     limit: 'Customers measure with your checklist. Use a cutting partner first; buy the CNC (€3,000) only once orders come in.' },
   { id: 'tables', name: 'Tables', what: 'New oak tables from old ones', unit: 'tables',
     turnUnit: 2085, left: 1455, vatK: 0.823, hUnit: 22, adminMo: 8, fixedMo: 220, extraFix: 0, extraH: 0,
-    startup: 1432, tools: 2570, toolSave: 120, wYears: 5, small: 1050,
+    startup: 1032, tools: 2570, toolSave: 120, wYears: 5, small: 1050,
     org: [4, 7, 10], cap: [5, 8, 10], cac: 250, toolYear: { real: 2 }, flex: 0.6,
     grow: 'Year 2: a second-hand planer (saves €120 a table) and a stock of old tables. Year 3: about 16 tables, with a helper for deliveries.',
     worst: 'No sales, or a top warps or cracks after delivery.',
@@ -339,7 +339,7 @@ const IDEAS = [
     limit: 'Check moisture (8–12%), steel strips under every top, and sell the showroom table first.' },
   { id: 'workshops', name: 'Workshops', what: 'Woodworking for kids, families, adults', unit: 'sessions',
     turnUnit: 421.3, left: 295.1, vatK: 0.79, hUnit: 5.46, adminMo: 6, fixedMo: 180, extraFix: 0, extraH: 0,
-    startup: 1136, tools: 1710, toolSave: 0, wYears: 3, small: 450,
+    startup: 686, tools: 1710, toolSave: 0, wYears: 3, small: 450,
     org: [18, 28, 34], cap: [15, 25, 30], cac: 85, toolYear: { real: 1 }, flex: 0.2,
     grow: 'Year 2: a full year of sessions plus school holidays. Year 3: about 64 sessions, more adult days and team days.',
     worst: 'Too few bookings, the city says no to groups at home, or a child gets hurt.',
@@ -347,7 +347,7 @@ const IDEAS = [
     limit: 'Ask Kortrijk first, insure participants, and cancel a week ahead below 4 bookings.' },
   { id: 'objects', name: 'Objects', what: 'Concrete, oak and 3D-printed decor', unit: 'pieces',
     turnUnit: 48.03, left: 35.51, vatK: 0.807, hUnit: 0.48, adminMo: 10, fixedMo: 110, extraFix: 320, extraH: 40,
-    startup: 1062, tools: 160, toolSave: 0, wYears: 3, small: 450, shopShare: [0, 0.35, 0.35],
+    startup: 812, tools: 160, toolSave: 0, wYears: 3, small: 450, shopShare: [0, 0.35, 0.35],
     org: [50, 120, 200], cap: [100, 200, 300], cac: 12, toolYear: { real: 1 }, flex: 1,
     grow: 'Years 2 and 3: about a third sold through shops at a wholesale price (60% of the shop price), so more pieces but less per piece.',
     worst: 'Pieces don’t sell and you sit on stock, or a lamp or candle holder leads to a complaint.',
@@ -355,7 +355,7 @@ const IDEAS = [
     limit: 'Small batches, test at one market first, a bought CE-marked LED module, a warning card with every candle holder.' },
   { id: 'speakers', name: 'Speakers', what: 'Active hi-fi speakers, old oak front', unit: 'pairs',
     turnUnit: 1580, left: 834, vatK: 0.821, hUnit: 16, adminMo: 8, fixedMo: 180, extraFix: 0, extraH: 0, devH: 120,
-    startup: 4082, tools: 480, toolSave: 0, wYears: 5, small: 600,
+    startup: 3632, tools: 480, toolSave: 0, wYears: 5, small: 600,
     org: [2, 3, 5], cap: [3, 6, 8], cac: 350, toolYear: { real: 1 }, flex: 0.8,
     grow: 'Year 1: four months of design, prototypes and an EMC test, first pairs from May. Years 2 and 3: word of mouth and listening sessions, a pair every three to four weeks.',
     worst: 'Nobody buys at €1,495 from an unknown brand, or the EMC test fails and the design needs changes.',
@@ -363,6 +363,14 @@ const IDEAS = [
     limit: 'Pre-test the EMC early, use a certified power adapter, sell the two prototype pairs, and take deposits before building.' }
 ];
 
+/* added costs: insurance per year (business and product liability, workshop on the home policy),
+   a reserve for returns, repairs and the 2-year guarantee (share of turnover),
+   and fixed costs without the ads and insurance that are now on their own lines */
+const ADDED = {
+  fronts: { ins: 400, res: 0.02, fixedMo: 180 }, tables: { ins: 400, res: 0.02, fixedMo: 140 },
+  workshops: { ins: 600, res: 0.01, fixedMo: 70 }, objects: { ins: 350, res: 0.04, fixedMo: 60 },
+  speakers: { ins: 500, res: 0.05, fixedMo: 100 } };
+IDEAS.forEach(i => { const a = ADDED[i.id]; i.ins = a.ins; i.res = a.res; i.fixedMo = a.fixedMo; i.extraFix += a.ins; i.left -= i.turnUnit * a.res; });
 const LINKS = {fronts: { site: 'https://claude.ai/artifact/Tc6UC5ZcFp6XLm8RLnDVMx', road: 'https://claude.ai/artifact/XxtHQCPJ8nLRT35rMg5ast', plan: 'https://claude.ai/artifact/8qeEBFpPbccb2s1rvuYJTw' }, tables: { site: 'https://claude.ai/artifact/T2oqdE58pfwEdyjtS8i3K1', road: 'https://claude.ai/artifact/9N8ZcwptFzEesuWFNni7Eo', plan: 'https://claude.ai/artifact/Dr1k7qUhT6e2rRFs4wDV8T' }, workshops: { site: 'https://claude.ai/artifact/8D48bM9VkNdHRa1CaTxndv', road: 'https://claude.ai/artifact/W1zvtcXTRKGFNJur8pT6zm', plan: 'https://claude.ai/artifact/9fcFeTgGchC5VfwiJB7m6v' }, objects: { site: 'https://claude.ai/artifact/YEuEXJzCFmmT4pMdZGJPcY', road: 'https://claude.ai/artifact/3Tc3YpTKqzmNacSNdb5yt6', plan: 'https://claude.ai/artifact/BGtVRwHDMFwTrwTA1DbCFG' }, speakers: { site: 'https://claude.ai/artifact/PuTq1iLUbk59E7j9Jyyx9y', road: 'https://claude.ai/artifact/BQUV687GrnAYQMJcuoUjt7', plan: 'https://claude.ai/artifact/VMC5fg3FKyaEMdjvK64gwz' }};
 let S = 'real', VANON = true, MK = 1;
 /* marketing: the first euros win a sale for "cac"; each next euro wins a bit less, up to "cap" extra sales a year.
@@ -594,7 +602,7 @@ function totals() {
 let tY = 1;
 function table() {
   yrs('tyrs', () => tY, y => { tY = y; table(); });
-  const rows = [['What', i => i.what], ['Pages', i => lk(i, '<br>')], ['Sold', i => `${unitsOf(i, tY)} ${i.unit}`], ['Of which from marketing', i => `${mk(i, tY).n} ${i.unit}`], [`Marketing budget (year ${tY})`, i => `${eur(mk(i, tY).B)}<br>${eur(mk(i, tY).B / 12)}/month`],
+  const rows = [['What', i => i.what], ['Pages', i => lk(i, '<br>')], ['Sold', i => `${unitsOf(i, tY)} ${i.unit}`], ['Of which from marketing', i => `${mk(i, tY).n} ${i.unit}`], ['Insurance and returns reserve', i => `${eur(i.ins)} a year<br>${Math.round(i.res * 100)}% of turnover`], [`Marketing budget (year ${tY})`, i => `${eur(mk(i, tY).B)}<br>${eur(mk(i, tY).B / 12)}/month`],
     ...METRICS.map(m => [m.label + (m.y ? ` (year ${tY})` : ''), i => m.fmt(m.get(i, tY))]),
     ['Kept, three years together', i => eur(tot3(i))]];
   document.getElementById('tbl').innerHTML = `<thead><tr><th></th>${IDEAS.map(i => `<th>${i.name}</th>`).join('')}</tr></thead>
