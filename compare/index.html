@@ -149,6 +149,14 @@ footer p { margin: 0 0 6px; max-width: 52em; }
   .totals.y3 .rl { font-size: 12px; }
   .totals.y3 .v { font-size: 17px; }
 }
+
+.grow-ctl { display: grid; grid-template-columns: minmax(240px, 360px) 1fr; gap: 28px; align-items: end; margin-bottom: 22px; }
+.grow-ctl label { display: flex; justify-content: space-between; font-weight: 600; }
+.grow-ctl output { font-size: 28px; font-weight: 300; font-variation-settings: 'wdth' 85; }
+.grow-ctl p { margin: 0; font-size: 13px; color: var(--ink2); }
+.flag { display: inline-block; font-size: 11.5px; color: var(--warn); }
+.three .tg { grid-column: 1 / -1; padding: 16px 0 0; border-bottom: 0; font-size: 13px; color: var(--ink2); }
+@media (max-width: 720px) { .grow-ctl { grid-template-columns: 1fr; gap: 10px; } }
 </style>
 </head>
 <body>
@@ -171,6 +179,17 @@ footer p { margin: 0 0 6px; max-width: 52em; }
     <p class="sub">What each idea leaves in your pocket after tax, as you take on more work in years two and three. Under it: hours a week and whether BRUIS must charge VAT.</p>
     <div class="three" id="three"></div>
     <details class="assume" id="assume"></details>
+  </section>
+
+  <section>
+    <h2>Grow to full-time</h2>
+    <p class="sub">Choose how many hours a week BRUIS gets in year three. Year one stays at up to 10 hours, year two sits halfway. From 30 hours a week BRUIS is your main job: no salary next to it, lower income tax, but a minimum social contribution.</p>
+    <div class="grow-ctl">
+      <div><label for="gh">Hours a week in year three <output id="gho">40 h</output></label>
+      <input type="range" id="gh" min="10" max="40" step="5" value="40"></div>
+      <p>Shows what you'd keep each month <b>if you can sell everything you make</b>. Red means more than a one-person brand is likely to sell; the ticked ideas under "Combine ideas" share the hours in the last row.</p>
+    </div>
+    <div class="three" id="grow"></div>
   </section>
 
   <section>
@@ -440,7 +459,7 @@ const picked = new Set(['fronts', 'objects']);
 function combo() {
   const el = document.getElementById('combo');
   el.innerHTML = IDEAS.map(i => `<label><input type="checkbox" value="${i.id}" ${picked.has(i.id) ? 'checked' : ''}><i class="dot" style="background:${COL(i.id)}"></i>${i.name}</label>`).join('');
-  el.querySelectorAll('input').forEach(c => c.addEventListener('change', () => { c.checked ? picked.add(c.value) : picked.delete(c.value); totals(); }));
+  el.querySelectorAll('input').forEach(c => c.addEventListener('change', () => { c.checked ? picked.add(c.value) : picked.delete(c.value); totals(); grow(); }));
   totals();
 }
 function totals() {
@@ -472,7 +491,70 @@ function table() {
     <tbody>${rows.map(([l, f]) => `<tr><td>${l}</td>${IDEAS.map(i => `<td>${f(i)}</td>`).join('')}</tr>`).join('')}</tbody>`;
 }
 
-function all() { scen(); three(); rank(); seg(); bars(); worst(); totals(); table(); }
+function all() { scen(); three(); grow(); rank(); seg(); bars(); worst(); totals(); table(); }
+
+/* ---------- grow to full-time ---------- */
+let H3 = 40;
+const MAKE = { fronts: 0.8, tables: 0.8, workshops: 0.8, objects: 0.7 };
+const CEIL = { fronts: 40, tables: 30, workshops: 100, objects: 1500 };   // a year, realistic for one person
+const VAN = 7200;
+function incomeTax(x) {
+  x = Math.max(0, x); let t = 0, prev = 0;
+  for (const [lim, r] of [[16720, .25], [29510, .40], [51070, .45], [1e12, .50]]) { if (x > prev) t += (Math.min(x, lim) - prev) * r; prev = lim; }
+  return Math.max(0, t - 11180 * .25) * 1.07;
+}
+const yHours = y => [Math.min(10, H3), (Math.min(10, H3) + H3) / 2, H3][y - 1];
+function gOps(i, y, wk, vat) {
+  const units = Math.round(wk * 52 * MAKE[i.id] / (i.hUnit * learnK(y)));
+  const share = i.id === 'objects' ? (units > 1500 ? 0.5 : y > 1 ? 0.35 : 0) : 0;
+  const turnover = units * i.turnUnit * (1 - share * 0.4);
+  const isVat = vat === null ? turnover > THR[y - 1] : vat;
+  const own = i.toolYear[S] <= y;
+  const per = (i.left + (own ? i.toolSave : 0)) * (isVat ? i.vatK : 1) * failK(y);
+  const perShop = per - i.turnUnit * 0.4 * (isVat ? 1 / 1.21 : 1);
+  const variable = units * ((1 - share) * per + share * perShop);
+  const van = (i.id === 'fronts' || i.id === 'tables') && wk >= 20 ? VAN : 0;
+  const tb = i.toolYear[S] === y ? i.tools : 0, ty = i.toolYear[S];
+  return { units, turnover, isVat, profit: variable - i.fixedMo * 12 - i.extraFix - van,
+    startup: y === 1 ? i.startup : 0, toolsBought: tb, writeoff: y >= ty && y < ty + i.wYears ? i.tools / i.wYears : 0,
+    inv: tb * 0.1, small: i.small, hard: units > CEIL[i.id] * (S === 'plan' ? 1.5 : 1) };
+}
+function gRun(list, y) {
+  const wk = yHours(y), each = wk / list.length, solo = list.length === 1;
+  const vat = solo ? null : list.reduce((a, i) => a + gOps(i, y, each, false).turnover, 0) > THR[y - 1];
+  const o = list.map(i => gOps(i, y, each, solo ? null : vat));
+  const sum = k => o.reduce((a, x) => a + x[k], 0);
+  const profit = sum('profit') - (S === 'real' ? ACC : 0);
+  const startup = sum('startup') - (y === 1 ? (list.length - 1) * 111.5 : 0);
+  const taxable = Math.max(0, profit - startup - WS_DED - sum('writeoff') - sum('inv') - sum('small'));
+  const main = wk >= 30;
+  let social, income;
+  if (main) { social = Math.min(Math.max(3561.68, taxable * 0.205 * 1.042), 5103.05 * 4 * 1.042); income = incomeTax(taxable - social); }
+  else { const t = tax(taxable); social = t.social; income = t.income; }
+  const kept = profit - startup - sum('toolsBought') - sum('small') - social - income;
+  return { wk, main, kept, mo: kept / 12, isVat: o.some(x => x.isVat), turnover: sum('turnover'), units: o.map(x => x.units), hard: o.some(x => x.hard) };
+}
+function grow() {
+  document.getElementById('gho').textContent = H3 + ' h';
+  const rows = IDEAS.map(i => ({ name: i.name, id: i.id, unit: i.unit, r: [1, 2, 3].map(y => gRun([i], y)) }));
+  const sel = IDEAS.filter(i => picked.has(i.id));
+  if (sel.length > 1) rows.push({ name: 'Together', id: null, unit: '', sel, r: [1, 2, 3].map(y => gRun(sel, y)) });
+  const mx = Math.max(...rows.flatMap(x => x.r.map(r => Math.abs(r.mo))), 1);
+  let h = `<div class="h"></div>${[1, 2, 3].map(y => `<div class="h">Year ${y}<br>${yHours(y)} h a week${yHours(y) >= 30 ? ', main job' : ''}</div>`).join('')}`;
+  rows.forEach(x => {
+    if (!x.id) h += `<div class="tg">${x.sel.map(i => i.name).join(' + ')}, hours shared equally</div>`;
+    h += `<div class="nm">${x.id ? `<i class="dot" style="background:${COL(x.id)}"></i>` : ''}${x.name}</div>`;
+    x.r.forEach(r => {
+      const sold = x.id ? `${(r.units[0] / 52).toFixed(r.units[0] < 520 ? 1 : 0)} ${x.unit}/wk` : r.units.map((u, k) => `${(u / 52).toFixed(1)} ${x.sel[k].unit}`).join(', ') + ' /wk';
+      h += `<div><div class="k ${r.mo < 0 ? 'neg' : ''}">${eur(r.mo)}<span style="font-size:13px;color:var(--ink3)"> /mo</span></div>
+        <div class="kb"><i style="width:${Math.max(0, r.mo) / mx * 100}%;background:${x.id ? COL(x.id) : 'var(--ink)'}"></i></div>
+        <div class="d">${sold}${r.hard ? ' <span class="flag">hard to sell</span>' : ''}<br>${eur(r.turnover)} turnover${r.isVat ? ' · <span class="w">VAT</span>' : ''}</div></div>`;
+    });
+  });
+  document.getElementById('grow').innerHTML = h;
+}
+document.getElementById('gh').addEventListener('input', e => { H3 = +e.target.value; grow(); });
+
 key(); sliders(); combo(); all();
 </script>
 </body>
