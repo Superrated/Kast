@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BRUIS Speakers — active speakers in old oak (prototype)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&display=swap">
+<style>
+:root {
+  --bg: #efeeeb; --raised: #f9f9f7; --ink: #171717; --ink2: #5c5c58; --ink3: #8a8a85; --line: #d8d7d1;
+  --oak: #cda470; --oak2: #a8804f; --cab: #2b2b2a;
+  --f: 'Bricolage Grotesque', system-ui, -apple-system, sans-serif;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+button, input, select { font: inherit; color: inherit; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+header.top { border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 10; background: var(--bg); }
+header.top .wrap { display: flex; align-items: baseline; gap: 26px; padding-top: 14px; padding-bottom: 14px; }
+.brand { display: flex; gap: 8px; align-items: baseline; text-decoration: none; }
+.brand b { font-weight: 800; font-size: 22px; }
+.brand small { color: var(--ink3); font-size: 13px; }
+nav.links { margin-left: auto; display: flex; gap: 22px; font-size: 14px; }
+nav.links a { text-decoration: none; color: var(--ink2); }
+
+.hero { display: grid; grid-template-columns: 5fr 6fr; gap: 40px; align-items: center; padding: 48px 0 40px; }
+h1 { font-weight: 400; font-size: clamp(40px, 6vw, 80px); line-height: 0.95; letter-spacing: -0.03em; margin: 0 0 18px; font-variation-settings: 'wdth' 80, 'opsz' 96; }
+.lede { font-size: 18px; color: var(--ink2); max-width: 30em; margin: 0 0 22px; }
+.price { font-size: 15px; color: var(--ink2); margin: 0 0 20px; }
+.price b { font-size: 30px; color: var(--ink); font-weight: 600; margin-right: 6px; }
+.btns { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn { display: inline-block; border: 1px solid var(--ink); background: none; padding: 12px 18px; border-radius: 2px; cursor: pointer; text-decoration: none; font-weight: 500; font-size: 15px; }
+.btn.pri { background: var(--ink); color: var(--raised); }
+.stage svg { width: 100%; height: auto; display: block; }
+
+section.block { border-top: 1px solid var(--line); padding: 56px 0; }
+h2 { font-weight: 400; font-size: clamp(30px, 3.8vw, 46px); letter-spacing: -0.02em; line-height: 1.02; margin: 0 0 12px; font-variation-settings: 'wdth' 88, 'opsz' 72; }
+.sub { color: var(--ink2); max-width: 38em; margin: 0 0 30px; }
+
+.cfg { display: grid; grid-template-columns: 6fr 5fr; gap: 48px; align-items: start; }
+.opt { margin-bottom: 22px; }
+.opt h3 { margin: 0 0 8px; font-size: 15px; font-weight: 600; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 1px solid var(--line); background: var(--raised); padding: 8px 12px; border-radius: 2px; cursor: pointer; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; }
+.chip[aria-pressed=true] { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.chip i { width: 16px; height: 16px; border-radius: 50%; display: inline-block; border: 1px solid rgba(0,0,0,.15); }
+.chip small { color: var(--ink3); }
+.sum { background: var(--raised); padding: 22px 24px; position: sticky; top: 76px; }
+.sum .row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 15px; color: var(--ink2); }
+.sum .row.big { color: var(--ink); font-size: 24px; font-weight: 600; border-top: 1px solid var(--line); margin-top: 8px; padding-top: 12px; }
+.sum label { display: block; font-size: 14px; margin: 14px 0 4px; color: var(--ink2); }
+.sum input { width: 100%; border: 1px solid var(--line); background: #fff; padding: 10px 12px; border-radius: 2px; }
+.sum .note { font-size: 12.5px; color: var(--ink3); margin: 10px 0 0; }
+.sum .btn { width: 100%; text-align: center; margin-top: 14px; }
+
+.specs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 48px; }
+.specs div { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
+.specs span:first-child { color: var(--ink2); }
+.specs span:last-child { text-align: right; }
+
+.how { display: grid; grid-template-columns: repeat(4, 1fr); gap: 26px; }
+.how h3 { font-size: 17px; margin: 10px 0 6px; font-weight: 600; }
+.how p { margin: 0; color: var(--ink2); font-size: 14.5px; }
+.how .n { font-size: 13px; color: var(--ink3); }
+
+.listen { display: grid; grid-template-columns: 6fr 5fr; gap: 40px; align-items: center; }
+.slots { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+.slot { border: 1px solid var(--line); background: var(--raised); padding: 8px 12px; border-radius: 2px; cursor: pointer; font-size: 14px; }
+.slot[aria-pressed=true] { background: var(--ink); color: var(--raised); border-color: var(--ink); }
+
+details { border-bottom: 1px solid var(--line); padding: 14px 0; max-width: 760px; }
+summary { cursor: pointer; font-weight: 600; }
+details p { color: var(--ink2); margin: 8px 0 0; }
+footer { border-top: 1px solid var(--line); padding: 28px 0 60px; color: var(--ink3); font-size: 13px; }
+footer p { margin: 0 0 6px; }
+.toast { position: fixed; left: 50%; bottom: 22px; transform: translate(-50%, 20px); background: var(--ink); color: var(--raised); padding: 10px 16px; border-radius: 2px; font-size: 14px; opacity: 0; transition: .2s; z-index: 40; pointer-events: none; }
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+@media (max-width: 860px) {
+  .hero, .cfg, .listen { grid-template-columns: 1fr; gap: 28px; }
+  .how { grid-template-columns: 1fr 1fr; }
+  .specs { grid-template-columns: 1fr; }
+  .sum { position: static; }
+}
+@media (max-width: 560px) {
+  .wrap { padding: 0 18px; }
+  nav.links a:not(:last-child) { display: none; }
+  .how { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="#"><b>BRUIS</b><small>Speakers</small></a>
+  <nav class="links"><a href="#build">Build yours</a><a href="#specs">Specs</a><a href="#listen">Listen first</a></nav>
+</div></header>
+
+<main>
+<div class="wrap">
+  <div class="hero">
+    <div>
+      <h1>Plug in two speakers. That's the whole hi-fi.</h1>
+      <p class="lede">Active stand-mount speakers with the amplifier and the crossover built in. A solid old oak front, tuned with a measuring microphone in our workshop in Heule.</p>
+      <p class="price"><b>€1,495</b>the pair; we deliver and set up from €45</p>
+      <div class="btns"><a class="btn pri" href="#build">Build your pair</a><a class="btn" href="#listen">Listen in the workshop</a></div>
+    </div>
+    <div class="stage" id="stage"></div>
+  </div>
+</div>
+
+<section class="block" id="build"><div class="wrap cfg">
+  <div>
+    <h2>Build your pair</h2>
+    <p class="sub">Every pair is made to order in about four weeks.</p>
+    <div class="opt"><h3>Cabinet</h3><div class="chips" id="cab"></div></div>
+    <div class="opt"><h3>Old oak front, oil</h3><div class="chips" id="oil"></div></div>
+    <div class="opt"><h3>Amplifier</h3><div class="chips" id="amp"></div></div>
+    <div class="opt"><h3>Stands</h3><div class="chips" id="stands"></div></div>
+  </div>
+  <aside class="sum" aria-live="polite">
+    <div class="row"><span id="sname">BRUIS Twee</span><span id="sbase"></span></div>
+    <div class="row" id="srow"></div>
+    <div class="row" id="arow"></div>
+    <label for="pc">Your postcode, for delivery and set-up</label>
+    <input id="pc" inputmode="numeric" maxlength="4" placeholder="e.g. 9000">
+    <div class="row" id="drow"></div>
+    <div class="row big"><span>Total</span><span id="tot"></span></div>
+    <button class="btn pri" type="button" id="order">Reserve your pair</button>
+    <p class="note">Prototype: nothing is reserved or paid. Recupel contribution included.</p>
+  </aside>
+</div></section>
+
+<section class="block" id="specs"><div class="wrap">
+  <h2>What's inside</h2>
+  <p class="sub">Two drivers, an amplifier for each, and a DSP that splits the sound between them. No passive crossover and no separate amplifier.</p>
+  <div class="specs">
+    <div><span>Type</span><span>2-way active stand-mount, closed box</span></div>
+    <div><span>Woofer</span><span>6½″ with a natural-fibre cone</span></div>
+    <div><span>Tweeter</span><span>1″ dome</span></div>
+    <div><span>Amplifier, Twee</span><span>2 × 50 W class D per speaker, DSP crossover</span></div>
+    <div><span>Amplifier, Twee Reference</span><span>Hypex FusionAmp, 2 × 125 W per speaker</span></div>
+    <div><span>Inputs</span><span>Analogue RCA, optical</span></div>
+    <div><span>Power</span><span>CE-marked 24 V adapter (Twee); mains (Reference)</span></div>
+    <div><span>Size</span><span>36 × 21 × 28 cm (h × w × d)</span></div>
+    <div><span>Cabinet</span><span>18 mm birch ply, solid old oak front</span></div>
+    <div><span>Warranty</span><span>2 years, repairs in our workshop</span></div>
+  </div>
+</div></section>
+
+<section class="block"><div class="wrap">
+  <h2>How each pair is made</h2>
+  <p class="sub">Small batches, every pair measured before it leaves.</p>
+  <div class="how">
+    <div><span class="n">Step 1</span><h3>Cabinets</h3><p>Birch ply panels, glued and braced. The front is a slab of old oak from a dining table we rescued.</p></div>
+    <div><span class="n">Step 2</span><h3>Finish</h3><p>Rubio Monocoat oil on the oak, in the colour you choose. Paint or ply on the sides.</p></div>
+    <div><span class="n">Step 3</span><h3>Tuning</h3><p>Each pair is measured with a microphone and the DSP is set for a flat, natural sound.</p></div>
+    <div><span class="n">Step 4</span><h3>Your room</h3><p>We bring them, place them and adjust the bass for your room, wall or no wall.</p></div>
+  </div>
+</div></section>
+
+<section class="block" id="listen"><div class="wrap listen">
+  <div>
+    <h2>Listen first</h2>
+    <p class="sub">Bring your own music. The listening corner in our workshop in Heule (Kortrijk) is open on Saturdays by appointment.</p>
+    <div class="slots" id="slots"></div>
+    <button class="btn pri" type="button" id="book">Book a listening hour</button>
+  </div>
+  <div>
+    <details><summary>Why active?</summary><p>Each driver gets its own amplifier and the DSP does the crossover. You need no separate amplifier, and the speaker is tuned exactly for its drivers and box.</p></details>
+    <details><summary>Can I stream to them?</summary><p>Plug in any streamer, a turntable with a phono stage, or a TV through the optical input. We keep wireless out of the speaker so it stays simple and lasts.</p></details>
+    <details><summary>Twee or Twee Reference?</summary><p>Twee uses compact class D boards and an external power adapter. Reference uses Hypex FusionAmp modules with more power and finer DSP, for bigger rooms and louder listening.</p></details>
+    <details><summary>Is it safe and legal?</summary><p>Every pair carries the CE mark, a Recupel take-back contribution and a label with our name, address and batch number. The Twee runs on a certified 24 V adapter, so no mains voltage enters the speaker.</p></details>
+  </div>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <p>BRUIS Speakers · Heule (Kortrijk), Belgium · hello@bruis.example</p>
+  <p>Prototype: nothing is sold, reserved or paid. Prices include no VAT while BRUIS uses the small-business exemption.</p>
+</div></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const CABS = [
+  { k: 'black', name: 'Black', c: '#2b2b2a' },
+  { k: 'ply', name: 'Birch ply', c: '#d9c7a3' },
+  { k: 'sage', name: 'Sage', c: '#8b9a83' },
+  { k: 'ink', name: 'Ink blue', c: '#2f3d55' }
+];
+const OILS = [
+  { k: 'pure', name: 'Pure', c: '#d8b27c' },
+  { k: 'smoke', name: 'Smoke', c: '#b79a78' },
+  { k: 'choc', name: 'Chocolate', c: '#6b4a33' }
+];
+const AMPS = [
+  { k: 'twee', name: 'Twee', add: 0, sub: '2 × 50 W, adapter' },
+  { k: 'ref', name: 'Twee Reference', add: 800, sub: 'Hypex, 2 × 125 W' }
+];
+const STANDS = [
+  { k: 'none', name: 'No stands', add: 0 },
+  { k: 'oak', name: 'Oak stands, 60 cm', add: 249 }
+];
+const S = { cab: 'black', oil: 'pure', amp: 'twee', stands: 'none', slot: null };
+const BASE = 1495;
+const eur = n => '€' + n.toLocaleString('en-US');
+/* delivery by distance from 8501, same bands as the other BRUIS sites */
+const PC = { 10:[50.85,4.35],15:[50.73,4.23],18:[50.93,4.43],19:[50.88,4.5],20:[51.22,4.4],22:[51.19,4.55],25:[51.13,4.57],28:[51.03,4.48],30:[50.88,4.7],33:[50.9,4.8],35:[50.93,5.33],36:[51.12,5.5],38:[50.94,5.1],39:[51.2,5.2],40:[50.63,5.57],45:[50.5,5.3],48:[50.6,5.87],50:[50.47,4.87],60:[50.41,4.44],65:[50.45,4.1],70:[50.45,3.95],75:[50.6,3.38],80:[51.21,3.22],84:[51.23,2.92],85:[50.83,3.27],86:[51.0,2.85],87:[50.94,3.12],88:[50.9,3.12],89:[50.85,2.88],90:[51.05,3.72],92:[51.0,3.98],93:[50.95,4.05],94:[50.85,4.0],95:[50.85,3.6],96:[50.83,3.6],97:[50.87,3.6],98:[51.0,3.56],99:[51.18,3.56] };
+const HOME = [50.84, 3.24];
+function km(pc) {
+  const a = PC[pc.slice(0, 2)] || PC[pc[0] + '0']; if (!a) return null;
+  const R = 6371, r = Math.PI / 180, dLa = (a[0] - HOME[0]) * r, dLo = (a[1] - HOME[1]) * r;
+  const h = Math.sin(dLa / 2) ** 2 + Math.cos(HOME[0] * r) * Math.cos(a[0] * r) * Math.sin(dLo / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h)) * 1.3;
+}
+function delivery(pc) {
+  if (!/^\d{4}$/.test(pc)) return null; const k = km(pc); if (k == null) return null;
+  return k <= 30 ? 45 : k <= 80 ? 85 : k <= 150 ? 135 : 185;
+}
+
+function speaker(x, cab, oil, ref) {
+  return `<g transform="translate(${x} 40)">
+    <rect x="0" y="0" width="150" height="250" rx="6" fill="${cab}"/>
+    <rect x="10" y="8" width="130" height="234" rx="4" fill="${oil}"/>
+    <path d="M14 40 q60 -6 120 2 M14 120 q50 6 122 -4 M14 200 q70 -4 120 3" stroke="rgba(0,0,0,.12)" fill="none"/>
+    <circle cx="75" cy="62" r="17" fill="#1d1d1c"/><circle cx="75" cy="62" r="9" fill="#3a3a38"/>
+    <circle cx="75" cy="160" r="52" fill="#1d1d1c"/><circle cx="75" cy="160" r="44" fill="#2e2c29"/><circle cx="75" cy="160" r="15" fill="#3e3b37"/>
+    ${ref ? '<rect x="60" y="226" width="30" height="4" rx="2" fill="#1d1d1c" opacity=".55"/>' : ''}
+  </g>`;
+}
+function stage() {
+  const cab = CABS.find(c => c.k === S.cab).c, oil = OILS.find(o => o.k === S.oil).c, ref = S.amp === 'ref';
+  const st = S.stands === 'oak';
+  const legs = x => st ? `<g transform="translate(${x} 290)"><rect x="40" y="0" width="70" height="8" fill="#a8804f"/><rect x="66" y="8" width="18" height="96" fill="#cda470"/><rect x="30" y="104" width="90" height="10" fill="#a8804f"/></g>` : '';
+  document.getElementById('stage').innerHTML = `<svg viewBox="0 0 560 ${st ? 420 : 320}" role="img" aria-label="A pair of BRUIS speakers, ${CABS.find(c => c.k === S.cab).name.toLowerCase()} with ${OILS.find(o => o.k === S.oil).name.toLowerCase()} oak fronts">
+    <ellipse cx="280" cy="${st ? 408 : 300}" rx="260" ry="10" fill="rgba(0,0,0,.07)"/>
+    ${speaker(60, cab, oil, ref)}${speaker(350, cab, oil, ref)}${legs(60)}${legs(350)}</svg>`;
+}
+function chips(id, list, key, fmt) {
+  const el = document.getElementById(id);
+  el.innerHTML = list.map(o => `<button type="button" class="chip" data-k="${o.k}" aria-pressed="${S[key] === o.k}">${o.c ? `<i style="background:${o.c}"></i>` : ''}${o.name}${fmt ? ` <small>${fmt(o)}</small>` : ''}</button>`).join('');
+  el.querySelectorAll('.chip').forEach(b => b.onclick = () => { S[key] = b.dataset.k; render(); });
+}
+function render() {
+  chips('cab', CABS, 'cab'); chips('oil', OILS, 'oil');
+  chips('amp', AMPS, 'amp', o => o.add ? `+${eur(o.add)} · ${o.sub}` : o.sub);
+  chips('stands', STANDS, 'stands', o => o.add ? `+${eur(o.add)}` : '');
+  stage();
+  const amp = AMPS.find(a => a.k === S.amp), st = STANDS.find(s => s.k === S.stands);
+  const pc = document.getElementById('pc').value.trim(), d = delivery(pc);
+  document.getElementById('sname').textContent = amp.name + ', ' + CABS.find(c => c.k === S.cab).name.toLowerCase() + ' with ' + OILS.find(o => o.k === S.oil).name.toLowerCase() + ' oak';
+  document.getElementById('sbase').textContent = eur(BASE);
+  document.getElementById('arow').innerHTML = amp.add ? `<span>Hypex amplifiers</span><span>+${eur(amp.add)}</span>` : '';
+  document.getElementById('srow').innerHTML = st.add ? `<span>Oak stands</span><span>+${eur(st.add)}</span>` : '';
+  document.getElementById('drow').innerHTML = `<span>Delivery and set-up</span><span>${d == null ? (pc ? 'check postcode' : 'enter postcode') : eur(d)}</span>`;
+  document.getElementById('tot').textContent = eur(BASE + amp.add + st.add + (d || 0));
+}
+document.getElementById('pc').addEventListener('input', render);
+const SLOTS = ['Sat 9 Jan, 10:00', 'Sat 9 Jan, 14:00', 'Sat 16 Jan, 10:00', 'Sat 23 Jan, 14:00', 'Sat 30 Jan, 10:00'];
+function slots() {
+  const el = document.getElementById('slots');
+  el.innerHTML = SLOTS.map(s => `<button type="button" class="slot" aria-pressed="${S.slot === s}">${s}</button>`).join('');
+  el.querySelectorAll('.slot').forEach((b, i) => b.onclick = () => { S.slot = SLOTS[i]; slots(); });
+}
+let tt;
+function toast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('on'), 2400); }
+document.getElementById('order').onclick = () => toast('Prototype: nothing is reserved or paid');
+document.getElementById('book').onclick = () => toast(S.slot ? `Prototype: ${S.slot} is not really booked` : 'Pick a time first');
+render(); slots();
+</script>
+</body>
+</html>
