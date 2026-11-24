@@ -653,7 +653,7 @@ function worst() {
 }
 
 /* ---------- combine ---------- */
-const picked = new Set(['fronts', 'objects']);
+const picked = new Set(['studio', 'elektro']);
 function combo() {
   const el = document.getElementById('combo');
   el.innerHTML = IDEAS.map(i => `<label><input type="checkbox" value="${i.id}" ${picked.has(i.id) ? 'checked' : ''}><i class="dot" style="background:${COL(i.id)}"></i>${i.name}</label>`).join('');
