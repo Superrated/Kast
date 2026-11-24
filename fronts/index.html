@@ -1906,14 +1906,341 @@ details.cab {
   padding: 0;
 }
 
+/* ==== the landing page ==== */
+.home[hidden] {
+  display: none;
+}
+.app[data-step='home'] .main,
+.app[data-step='home'] .pbar {
+  display: none;
+}
+.app[data-step='home'] {
+  height: auto;
+  display: block;
+}
+.app[data-step='home'] .steps button.on span {
+  text-decoration: none;
+}
+button.brand {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--ink);
+  text-align: left;
+}
+.home {
+  background: var(--bg);
+}
+.hero {
+  position: relative;
+}
+.hpic {
+  aspect-ratio: 1800 / 860;
+  max-height: 80vh;
+  width: 100%;
+  overflow: hidden;
+  background: var(--stage);
+}
+.hpic img,
+.hpic .tdraw {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.hpic .tdraw svg {
+  width: 100%;
+  height: 100%;
+}
+.htext {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 36px 28px 8px;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 12px 48px;
+  align-items: end;
+}
+.htext h1 {
+  font-family: var(--f-d);
+  font-weight: 360;
+  font-variation-settings:
+    'wdth' 100,
+    'opsz' 96;
+  font-size: clamp(34px, 4.6vw, 62px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin: 0;
+  grid-row: span 2;
+}
+.htext p {
+  margin: 0;
+  color: var(--ink2);
+  font-size: 16px;
+  line-height: 1.5;
+  max-width: 46ch;
+}
+.hcta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.hcta .btn {
+  padding: 13px 20px;
+  font-size: 15px;
+}
+.hsec {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 56px 28px 0;
+}
+.hsec h2 {
+  font-size: 28px;
+  margin: 0 0 18px;
+}
+.hhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 24px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+  margin-bottom: 18px;
+}
+.hhead h2 {
+  margin: 0;
+}
+.hhead p {
+  margin: 0;
+  color: var(--ink2);
+  font-size: 14px;
+}
+.hsteps ol {
+  list-style: none;
+  counter-reset: s;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--line);
+}
+.hsteps li {
+  counter-increment: s;
+  padding: 18px 24px 0 0;
+}
+.hsteps li::before {
+  content: counter(s);
+  display: block;
+  font-size: 13px;
+  color: var(--ink3);
+  margin-bottom: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.hsteps b,
+.hfacts b,
+.hcard h3 {
+  display: block;
+  font-size: 17px;
+  font-weight: 560;
+  margin: 0 0 6px;
+  padding: 0;
+  border: 0;
+  color: var(--ink);
+}
+.hsteps span,
+.hfacts span,
+.hcard p {
+  color: var(--ink2);
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+.hdemos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px 20px;
+}
+.hdemo {
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.hdemo .tpic {
+  height: auto;
+  aspect-ratio: 3 / 2;
+  padding: 0;
+}
+.hdemo:hover .tpic {
+  outline-color: var(--ink3);
+}
+.hdl {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+}
+.hdl b {
+  font-size: 15px;
+  font-weight: 560;
+}
+.hdl em {
+  font-style: normal;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+.hdemo small {
+  font-size: 13px;
+  color: var(--ink2);
+  line-height: 1.4;
+}
+.hsplit {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.hcard {
+  border-top: 1px solid var(--ink);
+  padding-top: 18px;
+}
+.hcard .btn {
+  margin-top: 6px;
+}
+.hchips {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+.hchips i {
+  flex: 1;
+  height: 34px;
+  border-radius: 1px;
+}
+.hfacts ul {
+  list-style: none;
+  margin: 0;
+  padding: 18px 0 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  border-top: 1px solid var(--line);
+}
+.hfoot {
+  max-width: 1200px;
+  margin: 64px auto 0;
+  padding: 18px 28px 40px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+  color: var(--ink3);
+  font-size: 13px;
+}
+.hfoot b {
+  font-weight: 800;
+  font-variation-settings: 'wdth' 75;
+  font-size: 18px;
+  color: var(--ink);
+}
+/* the order step: plan check and sample box */
+.chk {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin: 18px 0 4px;
+  font-size: 14px;
+  line-height: 1.45;
+  cursor: pointer;
+}
+.chk input {
+  width: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+  accent-color: var(--ink);
+  flex: none;
+}
+.chk b {
+  display: block;
+  font-weight: 560;
+}
+.chk span {
+  color: var(--ink2);
+}
+.sbox {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+}
+.sbox div {
+  flex: 1;
+}
+.sbox b {
+  display: block;
+  font-weight: 560;
+}
+.sbox span {
+  color: var(--ink2);
+}
+@media (max-width: 860px) {
+  .hpic {
+    aspect-ratio: 4 / 3;
+  }
+  .htext {
+    grid-template-columns: 1fr;
+    padding: 24px 16px 0;
+  }
+  .htext h1 {
+    grid-row: auto;
+  }
+  .hsec {
+    padding: 44px 16px 0;
+  }
+  .hsteps ol,
+  .hfacts ul {
+    grid-template-columns: 1fr;
+  }
+  .hsteps li {
+    padding: 16px 0 0;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 16px;
+  }
+  .hdemos {
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 12px;
+  }
+  .hsplit {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  .hfoot {
+    padding: 18px 16px 110px;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .app[data-step='home'] .bsteps {
+    display: none;
+  }
+}
+.hdl em {
+  white-space: nowrap;
+}
+
 </style>
 </head>
 <body>
 <div class="app" id="app">
   <header class="top">
-    <div class="brand"><b>BRUIS</b><span>Fronts</span><small>for IKEA PAX, METOD and BESTÅ (prototype)</small></div>
+    <button type="button" class="brand" data-act="home" aria-label="BRUIS Fronts, home"><b>BRUIS</b><span>Fronts</span><small>for IKEA PAX, METOD and BESTÅ (prototype)</small></button>
     <nav class="steps" id="steps" aria-label="Steps"></nav>
   </header>
+  <section class="home" id="home" hidden></section>
   <main class="main">
     <section class="stage" aria-label="Your cabinets with the new fronts">
       <div class="pic" id="pic"></div>
@@ -2032,9 +2359,9 @@ function woodCol(mat, oil) {
 }
 /* the curated range: two styles … */
 const STYLES = {
-  flat: { name: 'Flat', blurb: 'Clean and calm', f: 1 },
-  fluted: { name: 'Fluted', blurb: 'Rounded flutes, routed into MDF', f: 1.3, mdf: true },
-  grooves: { name: 'Grooves', blurb: 'Fine V-grooves in MDF, calm and graphic', f: 1.3, mdf: true }
+  flat: { name: 'Effen', en: 'flat', blurb: 'Flat and calm, the classic', f: 1 },
+  fluted: { name: 'Riet', en: 'fluted', blurb: 'Rounded flutes like reeds, routed into MDF', f: 1.3, mdf: true },
+  grooves: { name: 'Voeg', en: 'grooves', blurb: 'Fine V-grooves in MDF, calm and graphic', f: 1.3, mdf: true }
 };
 const FLUTE = {
   pitch: [
@@ -2167,6 +2494,13 @@ const HFIN = {
   match: { name: 'Same as the front', hex: null }
 };
 
+/* extras around the fronts */
+const EXTRAS = {
+  plinthPerM: 55, // a plinth (kick plate) in the look of the fronts, per metre of run
+  filler: 35, // a filler strip in the look of the fronts, up to 10 cm wide, any height
+  sampleBox: 25, // every colour and material as a 10 × 15 cm chip; the €25 comes off the order
+  planCheckFrom: 0 // checking your IKEA list and every size before we cut: free
+};
 const PRICE = {
   perFront: 30, // cutting, edging, drilling set-up, packing
   hinge: 3, // drilling the hinge cups for the IKEA hinges
@@ -2199,10 +2533,13 @@ function freshState(sys) {
     oil: 'pure',
     edge: 'round',
     sides: 'none',
+    plinth: 'ikea', // the plinth under a kitchen: IKEA's own, or one in the look of the fronts
+    fillers: 0, // filler strips in the look of the fronts
+    planCheck: true,
     gframe: 'black',
     handle: 'knob',
     hfin: 'brass',
-    step: 'cabs',
+    step: 'home',
     view: '2d',
     flip: {},
     fx: {}, // fronts with their own look: id → { style, mat, col }
@@ -2260,6 +2597,9 @@ if (!S.flute.gpitch) S.flute.gpitch = 50;
 if (!OILS[S.oil]) S.oil = 'pure';
 if (!EDGES[S.edge]) S.edge = 'round';
 if (!SIDES[S.sides]) S.sides = 'none';
+if (!['ikea', 'match'].includes(S.plinth)) S.plinth = 'ikea';
+if (!(S.fillers >= 0 && S.fillers <= 6)) S.fillers = 0;
+if (S.planCheck === undefined) S.planCheck = true;
 function save() {
   try {
     localStorage.setItem(KEY, JSON.stringify(S));
@@ -2527,7 +2867,7 @@ function lookOf(f) {
 }
 function lookName(lk) {
   const m = MATS[lk.mat];
-  return `${STYLES[lk.style].name} ${m.paint ? COLOURS[lk.col].name.toLowerCase() : m.name.toLowerCase()}${m.oil ? ', oil ' + OILS[lk.oil].name : ''}`;
+  return `${STYLES[lk.style].name} (${STYLES[lk.style].en}) ${m.paint ? COLOURS[lk.col].name.toLowerCase() : m.name.toLowerCase()}${m.oil ? ', oil ' + OILS[lk.oil].name : ''}`;
 }
 function lookKey(lk) {
   const m = MATS[lk.mat];
@@ -2550,12 +2890,38 @@ function sidePrice(sd) {
     area = Math.max(PRICE.minArea, (sd.w * sd.h) / 1e6);
   return Math.round((PRICE.perFront + area * m.rate * STYLES[lk.style].f) * 100) / 100;
 }
+/* the plinth and filler strips, as order lines */
+function extrasOf(L) {
+  const out = [];
+  if (S.sys === 'metod' && S.plinth === 'match') {
+    const base = L.cabs.filter(p => p.c.kind !== 'wall'),
+      m = base.reduce((a, p) => a + p.w, 0) / 1000;
+    if (m)
+      out.push({
+        kind: 'plinth',
+        name: 'Plinth',
+        note: `${f1(m)} m, 10 cm high`,
+        n: 1,
+        p: Math.round(m * EXTRAS.plinthPerM)
+      });
+  }
+  if (S.fillers)
+    out.push({
+      kind: 'filler',
+      name: 'Filler strip',
+      note: 'up to 10 cm wide, cut to fit',
+      n: S.fillers,
+      p: EXTRAS.filler
+    });
+  return out;
+}
 function priceAll(L) {
   const fr = L.fronts.map(f => ({ f, p: frontPrice(f) })),
     sd = (L.sides || []).map(s => ({ s, p: sidePrice(s) })),
-    sub = fr.reduce((a, b) => a + b.p, 0) + sd.reduce((a, b) => a + b.p, 0),
+    ex = extrasOf(L),
+    sub = fr.reduce((a, b) => a + b.p, 0) + sd.reduce((a, b) => a + b.p, 0) + ex.reduce((a, b) => a + b.p * b.n, 0),
     del = sub >= PRICE.deliveryFree || !fr.length ? 0 : PRICE.delivery;
-  return { fr, sd, sub, del, total: sub + del, n: fr.length, ns: sd.length };
+  return { fr, sd, ex, sub, del, total: sub + del, n: fr.length, ns: sd.length };
 }
 /* "5 fronts + 2 sides" */
 function countWords(P) {
@@ -2587,6 +2953,17 @@ function grouped(L) {
       b.h - a.h ||
       b.w - a.w
   );
+}
+
+/* the price of another design (a demo or a preset) without touching yours */
+function priceOfDesign(st) {
+  const keep = S;
+  try {
+    S = Object.assign({}, keep, { fx: {}, flip: {}, sel: null, plinth: 'ikea', fillers: 0 }, st);
+    return priceAll(layout()).total;
+  } finally {
+    S = keep;
+  }
 }
 
 /* ==== 20-draw.js ====
@@ -3106,7 +3483,7 @@ function cropFor(L, aspect) {
 function draw3D(tw, th) {
   if (!V3.ready || !V3.L) return;
   const el = V3.r.domElement.parentElement;
-  if (!tw && (!el || !el.clientWidth)) return;
+  if (!tw && (!el || !el.clientWidth)) return queueThumbs(); // the stage is hidden (landing page): only cards
   const w = tw || el.clientWidth,
     h = th || el.clientHeight,
     r = V3.r;
@@ -3162,11 +3539,12 @@ function thumbKey(key, st) {
   );
 }
 /* the card picture: the render if it is ready, otherwise the drawing; asks for the render */
-function thumbHTML(key, st, svg) {
-  const k = thumbKey(key, st),
+function thumbHTML(key, st, svg, w, h) {
+  const k = thumbKey(key, st) + (w ? `|${w}x${h}` : ''),
     got = V3.thumbs.get(k);
   if (got) return `<img src="${got}" alt="" data-tk="${esc(k)}">`;
-  if (!V3.failed && !V3.thumbQ.some(q => q.k === k)) V3.thumbQ.push({ k, st });
+  // big pictures (the landing page) go first
+  if (!V3.failed && !V3.thumbQ.some(q => q.k === k)) V3.thumbQ[w ? 'unshift' : 'push']({ k, st, w, h });
   return `<span class="tdraw" data-tk="${esc(k)}">${svg}</span>`;
 }
 function queueThumbs() {
@@ -3183,7 +3561,7 @@ function queueThumbs() {
       S = Object.assign({}, keep, { fx: {}, sel: null, flip: {}, sides: 'none' }, job.st);
       V3.key = null;
       build3D(true);
-      draw3D(THUMB_W, THUMB_H);
+      draw3D(job.w || THUMB_W, job.h || THUMB_H);
       url = V3.r.domElement.toDataURL('image/jpeg', 0.82);
     } catch (e) {
       url = '';
@@ -3200,7 +3578,10 @@ function queueThumbs() {
       });
       try {
         const o = {};
-        [...V3.thumbs.entries()].slice(-24).forEach(([k, v]) => (o[k] = v));
+        [...V3.thumbs.entries()]
+          .filter(([k]) => !k.startsWith('hero'))
+          .slice(-24)
+          .forEach(([k, v]) => (o[k] = v));
         localStorage.setItem('bruis-fronts-thumbs', JSON.stringify(o));
       } catch (e) {
         /* storage full: they stay for this visit */
@@ -3404,7 +3785,8 @@ function sceneKey() {
     S.gframe,
     S.flute,
     S.sides,
-    S.edge
+    S.edge,
+    S.plinth
   ]);
 }
 function build3D(noDraw) {
@@ -3472,7 +3854,9 @@ function build3D(noDraw) {
         b - a,
         L.plinth - 10,
         18,
-        new T.MeshStandardMaterial({ color: shade(faceHex(lookOf(null)), -0.3), roughness: 0.7 }),
+        S.plinth === 'match'
+          ? matFor(Object.assign({}, sideLook(), { style: 'flat' }), { w: b - a, h: L.plinth })
+          : new T.MeshStandardMaterial({ color: '#2a2a28', roughness: 0.6 }),
         (a + b) / 2,
         (L.plinth - 10) / 2,
         -40
@@ -4012,6 +4396,15 @@ function render() {
   ).join('');
   document.getElementById('steps').innerHTML = stepBtns;
   document.getElementById('bsteps').innerHTML = stepBtns;
+  // the landing page: everything else waits; the render still starts, so the pictures can be made
+  const home = S.step === 'home';
+  document.getElementById('home').hidden = !home;
+  document.getElementById('app').dataset.step = S.step;
+  if (home) {
+    document.getElementById('home').innerHTML = homeHTML();
+    if (!V3.failed) open3D();
+    return;
+  }
   // the picture: a still render of a room; the flat drawing only when 3D can't run
   const v3 = !V3.failed;
   document.getElementById('pic').hidden = v3;
@@ -4042,7 +4435,7 @@ function chipHTML() {
     hex = m.glass ? '#cfdcd8' : faceHex(lk),
     name = m.paint ? COLOURS[lk.col].name : m.name,
     sub = m.paint
-      ? `RAL ${COLOURS[lk.col].ral}, ${STYLES[lk.style].name.toLowerCase()}`
+      ? `RAL ${COLOURS[lk.col].ral}, ${STYLES[lk.style].name}`
       : m.oil
         ? `${STYLES[lk.style].name}, ${OILS[lk.oil].name} oil`
         : STYLES[lk.style].name;
@@ -4409,8 +4802,20 @@ function frontsHTML(L) {
   )}<p class="hint">${
     S.sides === 'none'
       ? 'Cover the white IKEA side at the end of your run with a panel in the same look as your fronts.'
-      : `${L.sides.length} panel${L.sides.length === 1 ? '' : 's'} in ${esc(lookName(sl).toLowerCase())}, ${[...new Set(L.sides.map(x => x.nom.replace('×', ' × ')))].join(' and ')} cm, flush with the fronts.${MATS[lookOf(null).mat].glass ? ' Glass is for doors only, so the sides are painted.' : ''}`
+      : `${L.sides.length} panel${L.sides.length === 1 ? '' : 's'} in ${esc(lookName(sl))}, ${[...new Set(L.sides.map(x => x.nom.replace('×', ' × ')))].join(' and ')} cm, flush with the fronts.${MATS[lookOf(null).mat].glass ? ' Glass is for doors only, so the sides are painted.' : ''}`
   }</p>`;
+  h += `<h3>${S.sys === 'metod' ? 'Plinth and filler strips' : 'Filler strips'}</h3>${
+    S.sys === 'metod'
+      ? `<div class="row"><label>Plinth</label>${seg('plinth', S.plinth, [
+          ['ikea', 'IKEA’s own'],
+          ['match', 'Same look']
+        ])}</div>`
+      : ''
+  }<div class="row"><label>Fillers</label>${seg(
+    'fillers',
+    S.fillers,
+    [0, 1, 2, 3, 4].map(n => [n, n ? String(n) : 'None'])
+  )}</div><p class="hint">${S.sys === 'metod' ? `A plinth in the look of your fronts, ${eur(EXTRAS.plinthPerM)} a metre. ` : ''}Filler strips close the gap to a wall or ceiling, ${eur(EXTRAS.filler)} each, cut to fit.</p>`;
   h += `<h3>Edges</h3>${seg(
     'edge',
     S.edge,
@@ -4490,9 +4895,21 @@ function orderHTML(L, P) {
   return `<h2>Your order</h2><p class="lede">${countWords(P)}, ${esc(EDGES[S.edge].name.toLowerCase())} edges, with ${esc(HANDLES[S.handle].name.toLowerCase())}${S.handle === 'push' ? ' latches' : S.handle === 'grip' ? 's' : 's in ' + esc(HFIN[S.hfin].name.toLowerCase())}. Made to measure and drilled for your IKEA hinges; ready ${leadOf(L)} after you order${L.fronts.some(f => MATS[lookOf(f).mat].paint) ? ' (painted fronts take 1–2 weeks longer: they go to our spray shop)' : ''}.</p>
     ${
       P.n
-        ? `<table class="ord"><thead><tr><th></th><th>Front</th><th class="num">Size, mm</th><th class="num">Price</th></tr></thead><tbody>${rows}</tbody>
-    <tfoot><tr><td></td><td colspan="2">${P.ns ? 'Fronts and sides' : 'Fronts'}</td><td class="num">${eur(P.sub)}</td></tr><tr><td></td><td colspan="2">Delivery${P.del ? ` <small>free from ${eur(PRICE.deliveryFree)}</small>` : ' — free'}</td><td class="num">${P.del ? eur(P.del) : '€ 0'}</td></tr><tr class="tot"><td></td><td colspan="2">Total incl. VAT</td><td class="num">${eur(P.total)}</td></tr></tfoot></table>
-    <button type="button" class="btn pri big" data-act="orderNow">Order these fronts</button>`
+        ? `<table class="ord"><thead><tr><th></th><th>Front</th><th class="num">Size, mm</th><th class="num">Price</th></tr></thead><tbody>${rows}${
+            P.ex.length
+              ? `<tr class="lkh"><td colspan="4">Extras</td></tr>` +
+                P.ex
+                  .map(
+                    x =>
+                      `<tr><td>${x.n}×</td><td>${esc(x.name)}<small>${esc(x.note)}</small></td><td class="num"></td><td class="num">${eur(x.p * x.n)}</td></tr>`
+                  )
+                  .join('')
+              : ''
+          }</tbody>
+    <tfoot><tr><td></td><td colspan="2">Subtotal</td><td class="num">${eur(P.sub)}</td></tr><tr><td></td><td colspan="2">Delivery${P.del ? ` <small>free from ${eur(PRICE.deliveryFree)}</small>` : ' — free'}</td><td class="num">${P.del ? eur(P.del) : '€ 0'}</td></tr><tr class="tot"><td></td><td colspan="2">Total incl. VAT</td><td class="num">${eur(P.total)}</td></tr></tfoot></table>
+    <label class="chk"><input type="checkbox" data-act="planCheck"${S.planCheck ? ' checked' : ''}><span><b>Free plan check</b> We go through your IKEA list and every size with you before anything is cut.</span></label>
+    <button type="button" class="btn pri big" data-act="orderNow">Order these fronts</button>
+    <div class="sbox"><div><b>Not sure yet? Order the sample box</b><span>Every colour and material as a 10 × 15 cm chip, ${eur(EXTRAS.sampleBox)}, taken off your order later.</span></div><button type="button" class="btn" data-act="samples">Order samples</button></div>`
         : '<p class="hint">Add a cabinet with fronts first.</p>'
     }
     <p class="hint">Keep your IKEA frames, hinges and drawers — only the fronts change. Hinges and drawer fittings are not included.${L.fronts.some(f => MATS[lookOf(f).mat].budget) ? ' Raw MDF and untreated ply come sanded and unfinished: paint, oil or wax them before you hang them.' : ''}</p>`;
@@ -4525,7 +4942,9 @@ function orderText() {
       r =>
         `${r.n} × ${r.kind === 'door' ? 'door' : r.kind === 'side' ? 'side panel' : 'drawer front'} ${f1(r.w)} × ${f1(r.h)} mm (${r.kind === 'side' ? 'depth × height' : 'IKEA ' + r.nom})${r.hinge ? ', hinge ' + (r.hinge === 'L' ? 'left' : 'right') : ''} — ${lookName(r.look)}${MATS[r.look.mat].paint ? ' (RAL ' + COLOURS[r.look.col].ral + ')' : ''}`
     ),
+    ...P.ex.map(x => `${x.n} × ${x.name.toLowerCase()} (${x.note}) — ${eur(x.p * x.n)}`),
     '',
+    `Plan check before cutting: ${S.planCheck ? 'yes, please' : 'no, the sizes are final'}`,
     `Total ${eur(P.total)} incl. VAT${P.del ? ' and delivery' : ''}`
   ].join('\n');
 }
@@ -4547,6 +4966,29 @@ function sendOrder() {
     `<h2>Thank you, ${esc(v('oName').split(' ')[0])}!</h2><p class="lede">In the real shop BRUIS would now e-mail you to check the sizes and send a payment link. In this prototype nothing was sent — here is the order as text:</p><pre class="otext">${esc(txt)}</pre><div class="adds"><button type="button" class="btn pri" data-act="copyOrder">Copy</button><button type="button" class="btn" data-act="close">Close</button></div>`;
   S.lastOrder = txt;
   save();
+}
+
+/* ---------- the sample box (prototype: nothing is sent) ---------- */
+function openSamples() {
+  document.getElementById('mbox').innerHTML =
+    `<h2>The sample box</h2><p class="lede">Every colour and material we make, as 10 × 15 cm chips with the real edge and a piece of each profile: Effen, Riet and Voeg. ${eur(EXTRAS.sampleBox)} including delivery, and we take it off your order later.</p>
+    <label class="field"><span>Your name</span><input id="sName" autocomplete="name"></label>
+    <label class="field"><span>E-mail</span><input id="sMail" type="email" autocomplete="email"></label>
+    <label class="field"><span>Address</span><textarea id="sAddr" rows="3" autocomplete="street-address"></textarea></label>
+    <div class="adds"><button type="button" class="btn pri" data-act="sendSamples">Order the sample box</button><button type="button" class="btn" data-act="close">Not now</button></div>
+    <p class="hint">This is a prototype: the request is not sent anywhere yet.</p>`;
+  document.getElementById('modal').hidden = false;
+  setTimeout(() => document.getElementById('sName').focus(), 30);
+}
+function sendSamples() {
+  const v = id => (document.getElementById(id).value || '').trim();
+  if (!v('sName') || !/.+@.+\..+/.test(v('sMail')) || !v('sAddr')) {
+    document.querySelector('#mbox .hint').textContent =
+      'Please fill in your name, a valid e-mail address and your address.';
+    return;
+  }
+  document.getElementById('mbox').innerHTML =
+    `<h2>Thank you, ${esc(v('sName').split(' ')[0])}!</h2><p class="lede">In the real shop your sample box would be on its way within two working days. In this prototype nothing was sent.</p><div class="adds"><button type="button" class="btn pri" data-act="close">Close</button></div>`;
 }
 
 /* ---------- a look change, for all fronts or for one ---------- */
@@ -4782,6 +5224,42 @@ document.addEventListener('click', e => {
     case 'sides':
       S.sides = a;
       break;
+    case 'plinth':
+      S.plinth = a;
+      break;
+    case 'fillers':
+      S.fillers = +a;
+      break;
+    case 'planCheck':
+      S.planCheck = !!b.checked;
+      break;
+    case 'samples':
+      openSamples();
+      return;
+    case 'sendSamples':
+      sendSamples();
+      return;
+    case 'home':
+      S.step = 'home';
+      window.scrollTo({ top: 0 });
+      break;
+    case 'goPaste':
+      S.step = 'cabs';
+      window.scrollTo({ top: 0 });
+      render();
+      setTimeout(() => {
+        const t = document.getElementById('impText');
+        if (t) {
+          t.scrollIntoView({ block: 'center', behavior: 'smooth' });
+          t.focus({ preventScroll: true });
+        }
+      }, 60);
+      return;
+    case 'demoGo':
+      loadDemo(+a);
+      S.step = 'fronts';
+      window.scrollTo({ top: 0 });
+      break;
     case 'handle':
       S.handle = a;
       if (a === 'tab' && S.hfin === 'steel') S.hfin = 'black';
@@ -4861,6 +5339,44 @@ document.addEventListener('keydown', e => {
 document.getElementById('modal').addEventListener('click', e => {
   if (e.target.id === 'modal') e.currentTarget.hidden = true;
 });
+
+/* ==== 35-home.js ====
+   The landing page, before the configurator: a large render, what BRUIS does in one line, three steps,
+   the demos with their price, the sample box and plan check, and a few plain facts.
+   The pictures are made by the same renderer as the stage (25-3d.js), while the browser is idle. */
+function homeHTML() {
+  const d0 = demoState(0),
+    hero =
+      innerWidth <= 860
+        ? thumbHTML('hero', d0, designThumb('demo0', d0), 960, 720)
+        : thumbHTML('hero', d0, designThumb('demo0', d0), 1800, 860),
+    demos = DEMOS.map((d, i) => {
+      const st = demoState(i);
+      return `<button type="button" class="hdemo" data-act="demoGo" data-a="${i}"><span class="tpic">${thumbHTML('demo' + i, st, designThumb('demo' + i, st))}</span><span class="hdl"><b>${esc(d.name)}</b><em>${eur(priceOfDesign(st))}</em></span><small>${SYS[d.sys].name}, ${esc(d.say.charAt(0).toLowerCase() + d.say.slice(1))}</small></button>`;
+    }).join(''),
+    chips = Object.keys(COLOURS)
+      .map(k => `<i style="background:${colHex(k)}" title="${esc(COLOURS[k].name)}"></i>`)
+      .join('');
+  return `<div class="hero"><div class="hpic">${hero}</div>
+    <div class="htext"><h1>Your IKEA cabinets, with fronts made for your home.</h1>
+      <p>Paste your IKEA list, see your kitchen or wardrobe in the room, and get the price straight away. Made to measure in Belgium, for PAX, METOD and BESTÅ.</p>
+      <div class="hcta"><button type="button" class="btn pri" data-act="goPaste">Paste your IKEA list</button><button type="button" class="btn" data-act="step" data-a="cabs">Start without a list</button></div>
+    </div></div>
+    <section class="hsec hsteps"><h2>How it works</h2><ol>
+      <li><b>Paste your IKEA list</b><span>From the IKEA planner, your cart or your order. We read the cabinets and their sizes in seconds — no drawings, no waiting for a quote.</span></li>
+      <li><b>Choose your fronts</b><span>Effen, Riet or Voeg; twelve colours, oak, walnut or plywood; edges, side panels and handles. You see it in the room as you go.</span></li>
+      <li><b>We check, make and deliver</b><span>We go through every size with you before anything is cut, make your fronts to measure and deliver them drilled for your IKEA hinges.</span></li></ol></section>
+    <section class="hsec"><div class="hhead"><h2>Start from a design</h2><p>Open one, then change anything. Prices are for the whole design, delivered.</p></div><div class="hdemos">${demos}</div></section>
+    <section class="hsec hsplit">
+      <div class="hcard"><div class="hchips">${chips}</div><h3>The sample box</h3><p>Every colour and material as a 10 × 15 cm chip, with the real edge and a piece of each profile. ${eur(EXTRAS.sampleBox)}, taken off your order later.</p><button type="button" class="btn" data-act="samples">Order samples</button></div>
+      <div class="hcard"><h3>Free plan check</h3><p>Not sure your IKEA list is right? Before anything is cut, we go through every cabinet and size with you — and tell you if a filler strip or side panel would make it look built in.</p><button type="button" class="btn" data-act="goPaste">Paste your list</button></div>
+    </section>
+    <section class="hsec hfacts"><ul>
+      <li><b>Made to measure in Belgium</b><span>Cut, routed and finished in our own workshop; painted by a local spray shop.</span></li>
+      <li><b>Fits your IKEA hinges</b><span>Drilled for the IKEA hinges and drawers you already have. Keep your frames, change the look.</span></li>
+      <li><b>Clear prices</b><span>The price you see is the price you pay, with free delivery from ${eur(PRICE.deliveryFree)}.</span></li></ul></section>
+    <footer class="hfoot"><b>BRUIS</b><span>Fronts for IKEA PAX, METOD and BESTÅ. A prototype: nothing can be ordered yet.</span></footer>`;
+}
 
 /* ==== 40-import.js ====
    Read an IKEA list — the planner's item list, the shopping cart, an order confirmation, or typed by hand —

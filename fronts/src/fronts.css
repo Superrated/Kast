@@ -1831,3 +1831,329 @@ details.cab {
 .tpic:has(img) {
   padding: 0;
 }
+
+/* ==== the landing page ==== */
+.home[hidden] {
+  display: none;
+}
+.app[data-step='home'] .main,
+.app[data-step='home'] .pbar {
+  display: none;
+}
+.app[data-step='home'] {
+  height: auto;
+  display: block;
+}
+.app[data-step='home'] .steps button.on span {
+  text-decoration: none;
+}
+button.brand {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--ink);
+  text-align: left;
+}
+.home {
+  background: var(--bg);
+}
+.hero {
+  position: relative;
+}
+.hpic {
+  aspect-ratio: 1800 / 860;
+  max-height: 80vh;
+  width: 100%;
+  overflow: hidden;
+  background: var(--stage);
+}
+.hpic img,
+.hpic .tdraw {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.hpic .tdraw svg {
+  width: 100%;
+  height: 100%;
+}
+.htext {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 36px 28px 8px;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 12px 48px;
+  align-items: end;
+}
+.htext h1 {
+  font-family: var(--f-d);
+  font-weight: 360;
+  font-variation-settings:
+    'wdth' 100,
+    'opsz' 96;
+  font-size: clamp(34px, 4.6vw, 62px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin: 0;
+  grid-row: span 2;
+}
+.htext p {
+  margin: 0;
+  color: var(--ink2);
+  font-size: 16px;
+  line-height: 1.5;
+  max-width: 46ch;
+}
+.hcta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.hcta .btn {
+  padding: 13px 20px;
+  font-size: 15px;
+}
+.hsec {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 56px 28px 0;
+}
+.hsec h2 {
+  font-size: 28px;
+  margin: 0 0 18px;
+}
+.hhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 24px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+  margin-bottom: 18px;
+}
+.hhead h2 {
+  margin: 0;
+}
+.hhead p {
+  margin: 0;
+  color: var(--ink2);
+  font-size: 14px;
+}
+.hsteps ol {
+  list-style: none;
+  counter-reset: s;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--line);
+}
+.hsteps li {
+  counter-increment: s;
+  padding: 18px 24px 0 0;
+}
+.hsteps li::before {
+  content: counter(s);
+  display: block;
+  font-size: 13px;
+  color: var(--ink3);
+  margin-bottom: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.hsteps b,
+.hfacts b,
+.hcard h3 {
+  display: block;
+  font-size: 17px;
+  font-weight: 560;
+  margin: 0 0 6px;
+  padding: 0;
+  border: 0;
+  color: var(--ink);
+}
+.hsteps span,
+.hfacts span,
+.hcard p {
+  color: var(--ink2);
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+.hdemos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px 20px;
+}
+.hdemo {
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.hdemo .tpic {
+  height: auto;
+  aspect-ratio: 3 / 2;
+  padding: 0;
+}
+.hdemo:hover .tpic {
+  outline-color: var(--ink3);
+}
+.hdl {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+}
+.hdl b {
+  font-size: 15px;
+  font-weight: 560;
+}
+.hdl em {
+  font-style: normal;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+.hdemo small {
+  font-size: 13px;
+  color: var(--ink2);
+  line-height: 1.4;
+}
+.hsplit {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.hcard {
+  border-top: 1px solid var(--ink);
+  padding-top: 18px;
+}
+.hcard .btn {
+  margin-top: 6px;
+}
+.hchips {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+.hchips i {
+  flex: 1;
+  height: 34px;
+  border-radius: 1px;
+}
+.hfacts ul {
+  list-style: none;
+  margin: 0;
+  padding: 18px 0 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  border-top: 1px solid var(--line);
+}
+.hfoot {
+  max-width: 1200px;
+  margin: 64px auto 0;
+  padding: 18px 28px 40px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+  color: var(--ink3);
+  font-size: 13px;
+}
+.hfoot b {
+  font-weight: 800;
+  font-variation-settings: 'wdth' 75;
+  font-size: 18px;
+  color: var(--ink);
+}
+/* the order step: plan check and sample box */
+.chk {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin: 18px 0 4px;
+  font-size: 14px;
+  line-height: 1.45;
+  cursor: pointer;
+}
+.chk input {
+  width: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+  accent-color: var(--ink);
+  flex: none;
+}
+.chk b {
+  display: block;
+  font-weight: 560;
+}
+.chk span {
+  color: var(--ink2);
+}
+.sbox {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+}
+.sbox div {
+  flex: 1;
+}
+.sbox b {
+  display: block;
+  font-weight: 560;
+}
+.sbox span {
+  color: var(--ink2);
+}
+@media (max-width: 860px) {
+  .hpic {
+    aspect-ratio: 4 / 3;
+  }
+  .htext {
+    grid-template-columns: 1fr;
+    padding: 24px 16px 0;
+  }
+  .htext h1 {
+    grid-row: auto;
+  }
+  .hsec {
+    padding: 44px 16px 0;
+  }
+  .hsteps ol,
+  .hfacts ul {
+    grid-template-columns: 1fr;
+  }
+  .hsteps li {
+    padding: 16px 0 0;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 16px;
+  }
+  .hdemos {
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 12px;
+  }
+  .hsplit {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  .hfoot {
+    padding: 18px 16px 110px;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .app[data-step='home'] .bsteps {
+    display: none;
+  }
+}
+.hdl em {
+  white-space: nowrap;
+}

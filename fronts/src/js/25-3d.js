@@ -251,7 +251,7 @@ function cropFor(L, aspect) {
 function draw3D(tw, th) {
   if (!V3.ready || !V3.L) return;
   const el = V3.r.domElement.parentElement;
-  if (!tw && (!el || !el.clientWidth)) return;
+  if (!tw && (!el || !el.clientWidth)) return queueThumbs(); // the stage is hidden (landing page): only cards
   const w = tw || el.clientWidth,
     h = th || el.clientHeight,
     r = V3.r;
@@ -307,11 +307,12 @@ function thumbKey(key, st) {
   );
 }
 /* the card picture: the render if it is ready, otherwise the drawing; asks for the render */
-function thumbHTML(key, st, svg) {
-  const k = thumbKey(key, st),
+function thumbHTML(key, st, svg, w, h) {
+  const k = thumbKey(key, st) + (w ? `|${w}x${h}` : ''),
     got = V3.thumbs.get(k);
   if (got) return `<img src="${got}" alt="" data-tk="${esc(k)}">`;
-  if (!V3.failed && !V3.thumbQ.some(q => q.k === k)) V3.thumbQ.push({ k, st });
+  // big pictures (the landing page) go first
+  if (!V3.failed && !V3.thumbQ.some(q => q.k === k)) V3.thumbQ[w ? 'unshift' : 'push']({ k, st, w, h });
   return `<span class="tdraw" data-tk="${esc(k)}">${svg}</span>`;
 }
 function queueThumbs() {
@@ -328,7 +329,7 @@ function queueThumbs() {
       S = Object.assign({}, keep, { fx: {}, sel: null, flip: {}, sides: 'none' }, job.st);
       V3.key = null;
       build3D(true);
-      draw3D(THUMB_W, THUMB_H);
+      draw3D(job.w || THUMB_W, job.h || THUMB_H);
       url = V3.r.domElement.toDataURL('image/jpeg', 0.82);
     } catch (e) {
       url = '';
@@ -345,7 +346,10 @@ function queueThumbs() {
       });
       try {
         const o = {};
-        [...V3.thumbs.entries()].slice(-24).forEach(([k, v]) => (o[k] = v));
+        [...V3.thumbs.entries()]
+          .filter(([k]) => !k.startsWith('hero'))
+          .slice(-24)
+          .forEach(([k, v]) => (o[k] = v));
         localStorage.setItem('bruis-fronts-thumbs', JSON.stringify(o));
       } catch (e) {
         /* storage full: they stay for this visit */
@@ -549,7 +553,8 @@ function sceneKey() {
     S.gframe,
     S.flute,
     S.sides,
-    S.edge
+    S.edge,
+    S.plinth
   ]);
 }
 function build3D(noDraw) {
@@ -617,7 +622,9 @@ function build3D(noDraw) {
         b - a,
         L.plinth - 10,
         18,
-        new T.MeshStandardMaterial({ color: shade(faceHex(lookOf(null)), -0.3), roughness: 0.7 }),
+        S.plinth === 'match'
+          ? matFor(Object.assign({}, sideLook(), { style: 'flat' }), { w: b - a, h: L.plinth })
+          : new T.MeshStandardMaterial({ color: '#2a2a28', roughness: 0.6 }),
         (a + b) / 2,
         (L.plinth - 10) / 2,
         -40

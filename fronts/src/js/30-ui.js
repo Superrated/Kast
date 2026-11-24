@@ -30,6 +30,15 @@ function render() {
   ).join('');
   document.getElementById('steps').innerHTML = stepBtns;
   document.getElementById('bsteps').innerHTML = stepBtns;
+  // the landing page: everything else waits; the render still starts, so the pictures can be made
+  const home = S.step === 'home';
+  document.getElementById('home').hidden = !home;
+  document.getElementById('app').dataset.step = S.step;
+  if (home) {
+    document.getElementById('home').innerHTML = homeHTML();
+    if (!V3.failed) open3D();
+    return;
+  }
   // the picture: a still render of a room; the flat drawing only when 3D can't run
   const v3 = !V3.failed;
   document.getElementById('pic').hidden = v3;
@@ -60,7 +69,7 @@ function chipHTML() {
     hex = m.glass ? '#cfdcd8' : faceHex(lk),
     name = m.paint ? COLOURS[lk.col].name : m.name,
     sub = m.paint
-      ? `RAL ${COLOURS[lk.col].ral}, ${STYLES[lk.style].name.toLowerCase()}`
+      ? `RAL ${COLOURS[lk.col].ral}, ${STYLES[lk.style].name}`
       : m.oil
         ? `${STYLES[lk.style].name}, ${OILS[lk.oil].name} oil`
         : STYLES[lk.style].name;
@@ -427,8 +436,20 @@ function frontsHTML(L) {
   )}<p class="hint">${
     S.sides === 'none'
       ? 'Cover the white IKEA side at the end of your run with a panel in the same look as your fronts.'
-      : `${L.sides.length} panel${L.sides.length === 1 ? '' : 's'} in ${esc(lookName(sl).toLowerCase())}, ${[...new Set(L.sides.map(x => x.nom.replace('×', ' × ')))].join(' and ')} cm, flush with the fronts.${MATS[lookOf(null).mat].glass ? ' Glass is for doors only, so the sides are painted.' : ''}`
+      : `${L.sides.length} panel${L.sides.length === 1 ? '' : 's'} in ${esc(lookName(sl))}, ${[...new Set(L.sides.map(x => x.nom.replace('×', ' × ')))].join(' and ')} cm, flush with the fronts.${MATS[lookOf(null).mat].glass ? ' Glass is for doors only, so the sides are painted.' : ''}`
   }</p>`;
+  h += `<h3>${S.sys === 'metod' ? 'Plinth and filler strips' : 'Filler strips'}</h3>${
+    S.sys === 'metod'
+      ? `<div class="row"><label>Plinth</label>${seg('plinth', S.plinth, [
+          ['ikea', 'IKEA’s own'],
+          ['match', 'Same look']
+        ])}</div>`
+      : ''
+  }<div class="row"><label>Fillers</label>${seg(
+    'fillers',
+    S.fillers,
+    [0, 1, 2, 3, 4].map(n => [n, n ? String(n) : 'None'])
+  )}</div><p class="hint">${S.sys === 'metod' ? `A plinth in the look of your fronts, ${eur(EXTRAS.plinthPerM)} a metre. ` : ''}Filler strips close the gap to a wall or ceiling, ${eur(EXTRAS.filler)} each, cut to fit.</p>`;
   h += `<h3>Edges</h3>${seg(
     'edge',
     S.edge,
@@ -508,9 +529,21 @@ function orderHTML(L, P) {
   return `<h2>Your order</h2><p class="lede">${countWords(P)}, ${esc(EDGES[S.edge].name.toLowerCase())} edges, with ${esc(HANDLES[S.handle].name.toLowerCase())}${S.handle === 'push' ? ' latches' : S.handle === 'grip' ? 's' : 's in ' + esc(HFIN[S.hfin].name.toLowerCase())}. Made to measure and drilled for your IKEA hinges; ready ${leadOf(L)} after you order${L.fronts.some(f => MATS[lookOf(f).mat].paint) ? ' (painted fronts take 1–2 weeks longer: they go to our spray shop)' : ''}.</p>
     ${
       P.n
-        ? `<table class="ord"><thead><tr><th></th><th>Front</th><th class="num">Size, mm</th><th class="num">Price</th></tr></thead><tbody>${rows}</tbody>
-    <tfoot><tr><td></td><td colspan="2">${P.ns ? 'Fronts and sides' : 'Fronts'}</td><td class="num">${eur(P.sub)}</td></tr><tr><td></td><td colspan="2">Delivery${P.del ? ` <small>free from ${eur(PRICE.deliveryFree)}</small>` : ' — free'}</td><td class="num">${P.del ? eur(P.del) : '€ 0'}</td></tr><tr class="tot"><td></td><td colspan="2">Total incl. VAT</td><td class="num">${eur(P.total)}</td></tr></tfoot></table>
-    <button type="button" class="btn pri big" data-act="orderNow">Order these fronts</button>`
+        ? `<table class="ord"><thead><tr><th></th><th>Front</th><th class="num">Size, mm</th><th class="num">Price</th></tr></thead><tbody>${rows}${
+            P.ex.length
+              ? `<tr class="lkh"><td colspan="4">Extras</td></tr>` +
+                P.ex
+                  .map(
+                    x =>
+                      `<tr><td>${x.n}×</td><td>${esc(x.name)}<small>${esc(x.note)}</small></td><td class="num"></td><td class="num">${eur(x.p * x.n)}</td></tr>`
+                  )
+                  .join('')
+              : ''
+          }</tbody>
+    <tfoot><tr><td></td><td colspan="2">Subtotal</td><td class="num">${eur(P.sub)}</td></tr><tr><td></td><td colspan="2">Delivery${P.del ? ` <small>free from ${eur(PRICE.deliveryFree)}</small>` : ' — free'}</td><td class="num">${P.del ? eur(P.del) : '€ 0'}</td></tr><tr class="tot"><td></td><td colspan="2">Total incl. VAT</td><td class="num">${eur(P.total)}</td></tr></tfoot></table>
+    <label class="chk"><input type="checkbox" data-act="planCheck"${S.planCheck ? ' checked' : ''}><span><b>Free plan check</b> We go through your IKEA list and every size with you before anything is cut.</span></label>
+    <button type="button" class="btn pri big" data-act="orderNow">Order these fronts</button>
+    <div class="sbox"><div><b>Not sure yet? Order the sample box</b><span>Every colour and material as a 10 × 15 cm chip, ${eur(EXTRAS.sampleBox)}, taken off your order later.</span></div><button type="button" class="btn" data-act="samples">Order samples</button></div>`
         : '<p class="hint">Add a cabinet with fronts first.</p>'
     }
     <p class="hint">Keep your IKEA frames, hinges and drawers — only the fronts change. Hinges and drawer fittings are not included.${L.fronts.some(f => MATS[lookOf(f).mat].budget) ? ' Raw MDF and untreated ply come sanded and unfinished: paint, oil or wax them before you hang them.' : ''}</p>`;
@@ -543,7 +576,9 @@ function orderText() {
       r =>
         `${r.n} × ${r.kind === 'door' ? 'door' : r.kind === 'side' ? 'side panel' : 'drawer front'} ${f1(r.w)} × ${f1(r.h)} mm (${r.kind === 'side' ? 'depth × height' : 'IKEA ' + r.nom})${r.hinge ? ', hinge ' + (r.hinge === 'L' ? 'left' : 'right') : ''} — ${lookName(r.look)}${MATS[r.look.mat].paint ? ' (RAL ' + COLOURS[r.look.col].ral + ')' : ''}`
     ),
+    ...P.ex.map(x => `${x.n} × ${x.name.toLowerCase()} (${x.note}) — ${eur(x.p * x.n)}`),
     '',
+    `Plan check before cutting: ${S.planCheck ? 'yes, please' : 'no, the sizes are final'}`,
     `Total ${eur(P.total)} incl. VAT${P.del ? ' and delivery' : ''}`
   ].join('\n');
 }
@@ -565,6 +600,29 @@ function sendOrder() {
     `<h2>Thank you, ${esc(v('oName').split(' ')[0])}!</h2><p class="lede">In the real shop BRUIS would now e-mail you to check the sizes and send a payment link. In this prototype nothing was sent — here is the order as text:</p><pre class="otext">${esc(txt)}</pre><div class="adds"><button type="button" class="btn pri" data-act="copyOrder">Copy</button><button type="button" class="btn" data-act="close">Close</button></div>`;
   S.lastOrder = txt;
   save();
+}
+
+/* ---------- the sample box (prototype: nothing is sent) ---------- */
+function openSamples() {
+  document.getElementById('mbox').innerHTML =
+    `<h2>The sample box</h2><p class="lede">Every colour and material we make, as 10 × 15 cm chips with the real edge and a piece of each profile: Effen, Riet and Voeg. ${eur(EXTRAS.sampleBox)} including delivery, and we take it off your order later.</p>
+    <label class="field"><span>Your name</span><input id="sName" autocomplete="name"></label>
+    <label class="field"><span>E-mail</span><input id="sMail" type="email" autocomplete="email"></label>
+    <label class="field"><span>Address</span><textarea id="sAddr" rows="3" autocomplete="street-address"></textarea></label>
+    <div class="adds"><button type="button" class="btn pri" data-act="sendSamples">Order the sample box</button><button type="button" class="btn" data-act="close">Not now</button></div>
+    <p class="hint">This is a prototype: the request is not sent anywhere yet.</p>`;
+  document.getElementById('modal').hidden = false;
+  setTimeout(() => document.getElementById('sName').focus(), 30);
+}
+function sendSamples() {
+  const v = id => (document.getElementById(id).value || '').trim();
+  if (!v('sName') || !/.+@.+\..+/.test(v('sMail')) || !v('sAddr')) {
+    document.querySelector('#mbox .hint').textContent =
+      'Please fill in your name, a valid e-mail address and your address.';
+    return;
+  }
+  document.getElementById('mbox').innerHTML =
+    `<h2>Thank you, ${esc(v('sName').split(' ')[0])}!</h2><p class="lede">In the real shop your sample box would be on its way within two working days. In this prototype nothing was sent.</p><div class="adds"><button type="button" class="btn pri" data-act="close">Close</button></div>`;
 }
 
 /* ---------- a look change, for all fronts or for one ---------- */
@@ -799,6 +857,42 @@ document.addEventListener('click', e => {
       break;
     case 'sides':
       S.sides = a;
+      break;
+    case 'plinth':
+      S.plinth = a;
+      break;
+    case 'fillers':
+      S.fillers = +a;
+      break;
+    case 'planCheck':
+      S.planCheck = !!b.checked;
+      break;
+    case 'samples':
+      openSamples();
+      return;
+    case 'sendSamples':
+      sendSamples();
+      return;
+    case 'home':
+      S.step = 'home';
+      window.scrollTo({ top: 0 });
+      break;
+    case 'goPaste':
+      S.step = 'cabs';
+      window.scrollTo({ top: 0 });
+      render();
+      setTimeout(() => {
+        const t = document.getElementById('impText');
+        if (t) {
+          t.scrollIntoView({ block: 'center', behavior: 'smooth' });
+          t.focus({ preventScroll: true });
+        }
+      }, 60);
+      return;
+    case 'demoGo':
+      loadDemo(+a);
+      S.step = 'fronts';
+      window.scrollTo({ top: 0 });
       break;
     case 'handle':
       S.handle = a;

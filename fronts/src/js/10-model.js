@@ -17,10 +17,13 @@ function freshState(sys) {
     oil: 'pure',
     edge: 'round',
     sides: 'none',
+    plinth: 'ikea', // the plinth under a kitchen: IKEA's own, or one in the look of the fronts
+    fillers: 0, // filler strips in the look of the fronts
+    planCheck: true,
     gframe: 'black',
     handle: 'knob',
     hfin: 'brass',
-    step: 'cabs',
+    step: 'home',
     view: '2d',
     flip: {},
     fx: {}, // fronts with their own look: id → { style, mat, col }
@@ -78,6 +81,9 @@ if (!S.flute.gpitch) S.flute.gpitch = 50;
 if (!OILS[S.oil]) S.oil = 'pure';
 if (!EDGES[S.edge]) S.edge = 'round';
 if (!SIDES[S.sides]) S.sides = 'none';
+if (!['ikea', 'match'].includes(S.plinth)) S.plinth = 'ikea';
+if (!(S.fillers >= 0 && S.fillers <= 6)) S.fillers = 0;
+if (S.planCheck === undefined) S.planCheck = true;
 function save() {
   try {
     localStorage.setItem(KEY, JSON.stringify(S));
@@ -345,7 +351,7 @@ function lookOf(f) {
 }
 function lookName(lk) {
   const m = MATS[lk.mat];
-  return `${STYLES[lk.style].name} ${m.paint ? COLOURS[lk.col].name.toLowerCase() : m.name.toLowerCase()}${m.oil ? ', oil ' + OILS[lk.oil].name : ''}`;
+  return `${STYLES[lk.style].name} (${STYLES[lk.style].en}) ${m.paint ? COLOURS[lk.col].name.toLowerCase() : m.name.toLowerCase()}${m.oil ? ', oil ' + OILS[lk.oil].name : ''}`;
 }
 function lookKey(lk) {
   const m = MATS[lk.mat];
@@ -368,12 +374,38 @@ function sidePrice(sd) {
     area = Math.max(PRICE.minArea, (sd.w * sd.h) / 1e6);
   return Math.round((PRICE.perFront + area * m.rate * STYLES[lk.style].f) * 100) / 100;
 }
+/* the plinth and filler strips, as order lines */
+function extrasOf(L) {
+  const out = [];
+  if (S.sys === 'metod' && S.plinth === 'match') {
+    const base = L.cabs.filter(p => p.c.kind !== 'wall'),
+      m = base.reduce((a, p) => a + p.w, 0) / 1000;
+    if (m)
+      out.push({
+        kind: 'plinth',
+        name: 'Plinth',
+        note: `${f1(m)} m, 10 cm high`,
+        n: 1,
+        p: Math.round(m * EXTRAS.plinthPerM)
+      });
+  }
+  if (S.fillers)
+    out.push({
+      kind: 'filler',
+      name: 'Filler strip',
+      note: 'up to 10 cm wide, cut to fit',
+      n: S.fillers,
+      p: EXTRAS.filler
+    });
+  return out;
+}
 function priceAll(L) {
   const fr = L.fronts.map(f => ({ f, p: frontPrice(f) })),
     sd = (L.sides || []).map(s => ({ s, p: sidePrice(s) })),
-    sub = fr.reduce((a, b) => a + b.p, 0) + sd.reduce((a, b) => a + b.p, 0),
+    ex = extrasOf(L),
+    sub = fr.reduce((a, b) => a + b.p, 0) + sd.reduce((a, b) => a + b.p, 0) + ex.reduce((a, b) => a + b.p * b.n, 0),
     del = sub >= PRICE.deliveryFree || !fr.length ? 0 : PRICE.delivery;
-  return { fr, sd, sub, del, total: sub + del, n: fr.length, ns: sd.length };
+  return { fr, sd, ex, sub, del, total: sub + del, n: fr.length, ns: sd.length };
 }
 /* "5 fronts + 2 sides" */
 function countWords(P) {
@@ -405,4 +437,15 @@ function grouped(L) {
       b.h - a.h ||
       b.w - a.w
   );
+}
+
+/* the price of another design (a demo or a preset) without touching yours */
+function priceOfDesign(st) {
+  const keep = S;
+  try {
+    S = Object.assign({}, keep, { fx: {}, flip: {}, sel: null, plinth: 'ikea', fillers: 0 }, st);
+    return priceAll(layout()).total;
+  } finally {
+    S = keep;
+  }
 }

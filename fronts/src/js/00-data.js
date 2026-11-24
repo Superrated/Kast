@@ -102,9 +102,9 @@ function woodCol(mat, oil) {
 }
 /* the curated range: two styles … */
 const STYLES = {
-  flat: { name: 'Flat', blurb: 'Clean and calm', f: 1 },
-  fluted: { name: 'Fluted', blurb: 'Rounded flutes, routed into MDF', f: 1.3, mdf: true },
-  grooves: { name: 'Grooves', blurb: 'Fine V-grooves in MDF, calm and graphic', f: 1.3, mdf: true }
+  flat: { name: 'Effen', en: 'flat', blurb: 'Flat and calm, the classic', f: 1 },
+  fluted: { name: 'Riet', en: 'fluted', blurb: 'Rounded flutes like reeds, routed into MDF', f: 1.3, mdf: true },
+  grooves: { name: 'Voeg', en: 'grooves', blurb: 'Fine V-grooves in MDF, calm and graphic', f: 1.3, mdf: true }
 };
 const FLUTE = {
   pitch: [
@@ -237,6 +237,13 @@ const HFIN = {
   match: { name: 'Same as the front', hex: null }
 };
 
+/* extras around the fronts */
+const EXTRAS = {
+  plinthPerM: 55, // a plinth (kick plate) in the look of the fronts, per metre of run
+  filler: 35, // a filler strip in the look of the fronts, up to 10 cm wide, any height
+  sampleBox: 25, // every colour and material as a 10 × 15 cm chip; the €25 comes off the order
+  planCheckFrom: 0 // checking your IKEA list and every size before we cut: free
+};
 const PRICE = {
   perFront: 30, // cutting, edging, drilling set-up, packing
   hinge: 3, // drilling the hinge cups for the IKEA hinges
