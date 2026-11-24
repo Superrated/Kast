@@ -177,15 +177,19 @@ footer p { margin: 0 0 6px; max-width: 52em; }
 .kl a:hover, td a:hover { color: var(--ink2); }
 @media (max-width: 720px) { .keys { grid-template-columns: 1fr 1fr; } .kc:nth-child(3) { padding-left: 0; border-left: 0; } .kc:nth-child(n+3) { border-top: 1px solid var(--line); } }
 
-.homeset { display: grid; grid-template-columns: 1.2fr 1.4fr 1fr; gap: 26px; align-items: start; background: var(--raised); padding: 18px 20px; margin-bottom: 22px; border-radius: 2px; }
+.homeset { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; align-items: start; background: var(--raised); padding: 18px 20px; margin-bottom: 22px; border-radius: 2px; }
 .homeset label { display: flex; justify-content: space-between; gap: 8px; font-weight: 600; font-size: 15px; }
 .homeset .hchk label { justify-content: flex-start; align-items: center; cursor: pointer; }
-.homeset input[type=checkbox] { accent-color: var(--ink); width: 16px; height: 16px; }
+.homeset input[type=checkbox] { accent-color: var(--ink); width: 16px; height: 16px; flex: none; }
 .homeset p { margin: 2px 0 10px; font-size: 12.5px; color: var(--ink2); }
 .homeset output { font-weight: 400; color: var(--ink2); }
 .hsum .v { font-size: 30px; font-weight: 300; font-variation-settings: 'wdth' 85; }
 .hsum .t { font-size: 12.5px; color: var(--ink2); }
 @media (max-width: 820px) { .homeset { grid-template-columns: 1fr; gap: 8px; } }
+
+.homeset .hl { display: block; font-size: 15px; margin-bottom: 4px; }
+.homeset #upgl label { font-weight: 400; font-size: 14px; padding: 2px 0; }
+.homeset .uc { margin-left: auto; color: var(--ink2); font-variant-numeric: tabular-nums; }
 </style>
 </head>
 <body>
@@ -211,7 +215,9 @@ footer p { margin: 0 0 6px; max-width: 52em; }
       <div><label for="area">Space used only for BRUIS <output id="areao">60 m²</output></label>
       <input type="range" id="area" min="36" max="90" step="2" value="60"><p>Of a 180 m² home: workshop, wood and stock storage, office and photo corner. 36 m² is the workshop alone.</p></div>
       <div class="hchk"><label><input type="checkbox" id="meter" checked> Separate meter for the workshop</label><p>BRUIS pays all real workshop energy (estimate €900 a year) instead of a share of the house.</p>
-      <label><input type="checkbox" id="upg" checked> Workshop upgrades, €3,000</label><p>Insulation, LED lighting, sockets, a door. Written off over 10 years; bought once the sales are there.</p></div>
+      </div>
+      <div class="hchk"><b class="hl">Workshop upgrades</b>
+      <div id="upgl"></div><p id="upgw"></p></div>
       <div class="hsum" id="hsum"></div>
     </div>
     <div id="leg3"></div>
@@ -278,11 +284,23 @@ footer p { margin: 0 0 6px; max-width: 52em; }
 <script>
 /* ---------- the model ---------- */
 const THR = [26000, 27000, 28000];          // VAT limit per year (2027, 2028, 2029)
-let AREA = 60, METER = true, UPG = true;     // home settings, once for all of BRUIS
-const HOME_M2 = 180, HOME_COSTS = 4500, HOME_ENERGY = 2400, WS_ENERGY = 900, UPG_COST = 3000;
+let AREA = 60, METER = true;
+const UPGS = [
+  { k: 'ins', name: 'Insulation, LED lighting, sockets', cost: 3000, on: true },
+  { k: 'epoxy', name: 'Epoxy floor, 36 m²', cost: 3500, on: true },
+  { k: 'gate', name: 'Automatic sectional gate 3 × 3 m', cost: 4200, on: true },
+  { k: 'gate2', name: 'Second automatic gate 2.5 × 1.7 m', cost: 3000, on: true }
+];
+const upgTotal = () => UPGS.reduce((a, u) => a + (u.on ? u.cost : 0), 0);
+const UPG = true;     // home settings, once for all of BRUIS
+const HOME_M2 = 180, HOME_COSTS = 4500, HOME_ENERGY = 2400, WS_ENERGY = 900;
 const wsDed = () => AREA / HOME_M2 * HOME_COSTS + (METER ? WS_ENERGY : AREA / HOME_M2 * HOME_ENERGY);
-const upgYear = () => S === 'real' ? 2 : 1;
-const upg = y => ({ cash: UPG && y === upgYear() ? UPG_COST : 0, wo: UPG && y >= upgYear() ? UPG_COST / 10 : 0, inv: UPG && y === upgYear() ? UPG_COST * 0.1 : 0 });
+const upgShare = () => S === 'real' ? [0, 0.5, 0.5] : [0.5, 0.5, 0];   // half one year, half the next
+const upg = y => {
+  const sh = upgShare(), t = upgTotal(), cash = t * sh[y - 1];
+  const bought = t * sh.slice(0, y).reduce((a, b) => a + b, 0);
+  return { cash, wo: bought / 10, inv: cash * 0.1 };
+};
 const ACC = 600;                            // accountant per year, realistic only
 const KEEP = (1 - 0.205 * 1.042) * (1 - 0.535);
 
@@ -379,7 +397,7 @@ const worstLoss = i => i.startup + 6 * i.fixedMo + (S === 'real' ? ACC / 2 : 0);
 
 /* hours a week to pay a van (€600) and €800 a month take-home, VAT-registered, tools owned, year-3 conditions */
 function vanHours(i) {
-  const dedMo = (wsDed() + (UPG ? UPG_COST / 10 : 0) + i.tools / i.wYears) / 12;
+  const dedMo = (wsDed() + upgTotal() / 10 + i.tools / i.wYears) / 12;
   const need = (800 - (1 - KEEP) * dedMo) / KEEP + 600 + i.fixedMo + i.extraFix / 12 + (S === 'real' ? ACC / 12 : 0);
   const share = i.shopShare ? i.shopShare[2] : 0;
   const per = (i.left + i.toolSave) * i.vatK;
@@ -409,7 +427,7 @@ function benCell(b, col, mx, sub) {
     <div class="kb stack">${seg(b.free, col)}${seg(b.rent, RENTC)}${seg(b.van, VANC)}</div>
     <div class="d"><span class="${b.free < 0 ? 'w' : ''}">${eur(m(b.free))} income</span> · ${eur(m(b.rent))} home${b.van ? ` · ${eur(m(b.van))} van` : ''}<br>${sub}</div></div>`;
 }
-const legend = () => `<div class="legend"><span><i style="background:linear-gradient(90deg,var(--fronts),var(--tables),var(--workshops),var(--objects))"></i>Extra net income: yours to spend</span><span><i style="background:${RENTC}"></i>Home: BRUIS pays the business share of your home costs${UPG ? ' and the workshop upgrades' : ''}</span>${VANON ? `<span><i style="background:${VANC}"></i>Van: BRUIS pays it from year two</span>` : ''}</div>`;
+const legend = () => `<div class="legend"><span><i style="background:linear-gradient(90deg,var(--fronts),var(--tables),var(--workshops),var(--objects))"></i>Extra net income: yours to spend</span><span><i style="background:${RENTC}"></i>Home: BRUIS pays the business share of your home costs${upgTotal() ? ' and the workshop upgrades' : ''}</span>${VANON ? `<span><i style="background:${VANC}"></i>Van: BRUIS pays it from year two</span>` : ''}</div>`;
 
 /* ---------- three years ---------- */
 function three() {
@@ -613,10 +631,15 @@ function grow() {
 }
 document.getElementById('area').addEventListener('input', e => { AREA = +e.target.value; all(); });
 document.getElementById('meter').addEventListener('change', e => { METER = e.target.checked; all(); });
-document.getElementById('upg').addEventListener('change', e => { UPG = e.target.checked; all(); });
+function upgList() {
+  document.getElementById('upgl').innerHTML = UPGS.map(u => `<label><input type="checkbox" data-u="${u.k}" ${u.on ? 'checked' : ''}> ${u.name} <span class="uc">${eur(u.cost)}</span></label>`).join('');
+  document.querySelectorAll('[data-u]').forEach(c => c.addEventListener('change', () => { UPGS.find(u => u.k === c.dataset.u).on = c.checked; all(); }));
+}
+upgList();
 function homeSum() {
+  document.getElementById('upgw').textContent = upgTotal() ? `${eur(upgTotal())} incl. VAT, written off over 10 years; bought half in year ${S === 'real' ? 2 : 1} and half in year ${S === 'real' ? 3 : 2}. About 17% cheaper once BRUIS charges VAT.` : 'No upgrades.';
   document.getElementById('areao').textContent = AREA + ' m²';
-  document.getElementById('hsum').innerHTML = `<div class="v">${eur(wsDed() / 12)}<span class="pm"> /mo</span></div><div class="t">home costs BRUIS carries (${Math.round(AREA / HOME_M2 * 100)}% of the house${METER ? ' + the workshop meter' : ''})${UPG ? `, plus ${eur(UPG_COST)} of upgrades once` : ''}</div>`;
+  document.getElementById('hsum').innerHTML = `<div class="v">${eur(wsDed() / 12)}<span class="pm"> /mo</span></div><div class="t">home costs BRUIS carries (${Math.round(AREA / HOME_M2 * 100)}% of the house${METER ? ' + the workshop meter' : ''})${upgTotal() ? `, plus ${eur(upgTotal())} of upgrades` : ''}</div>`;
 }
 document.getElementById('vanon').addEventListener('change', e => { VANON = e.target.checked; all(); });
 document.getElementById('gh').addEventListener('input', e => { H3 = +e.target.value; grow(); });
