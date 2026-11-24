@@ -156,7 +156,16 @@ footer p { margin: 0 0 6px; max-width: 52em; }
 .grow-ctl p { margin: 0; font-size: 13px; color: var(--ink2); }
 .flag { display: inline-block; font-size: 11.5px; color: var(--warn); }
 .three .tg { grid-column: 1 / -1; padding: 16px 0 0; border-bottom: 0; font-size: 13px; color: var(--ink2); }
-@media (max-width: 720px) { .grow-ctl { grid-template-columns: 1fr; gap: 10px; } }
+@media (max-width: 720px) { .scen .what { display: none; } .grow-ctl { grid-template-columns: 1fr; gap: 10px; } }
+
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--ink2); margin: -10px 0 16px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 12px; height: 8px; border-radius: 2px; display: inline-block; }
+.kb.stack { display: flex; height: 8px; background: var(--line); }
+.kb.stack i { border-radius: 0; }
+.pm { font-size: 13px; color: var(--ink3); }
+.vant { display: inline-flex; gap: 6px; align-items: center; font-size: 14px; cursor: pointer; }
+.vant input { accent-color: var(--ink); }
 </style>
 </head>
 <body>
@@ -164,6 +173,7 @@ footer p { margin: 0 0 6px; max-width: 52em; }
 <div class="scen"><div class="wrap">
   <span class="lab">Numbers</span>
   <div class="tog" role="group" aria-label="Scenario"><button type="button" data-s="real">Realistic</button><button type="button" data-s="plan">As planned</button></div>
+  <label class="vant"><input type="checkbox" id="vanon" checked> BRUIS pays a van from year two (€600 a month)</label>
   <span class="what" id="swhat"></span>
 </div></div>
 
@@ -175,8 +185,9 @@ footer p { margin: 0 0 6px; max-width: 52em; }
   </div>
 
   <section>
-    <h2>Three years, more time each year</h2>
-    <p class="sub">What each idea leaves in your pocket after tax, as you take on more work in years two and three. Under it: hours a week and whether BRUIS must charge VAT.</p>
+    <h2>Your real benefit, three years</h2>
+    <p class="sub">What BRUIS gives you each month as you take on more work: extra net income after tax, plus the costs BRUIS carries for you, the workshop share of your home and a van.</p>
+    <div id="leg3"></div>
     <div class="three" id="three"></div>
     <details class="assume" id="assume"></details>
   </section>
@@ -189,6 +200,7 @@ footer p { margin: 0 0 6px; max-width: 52em; }
       <input type="range" id="gh" min="10" max="40" step="5" value="40"></div>
       <p>Shows what you'd keep each month <b>if you can sell everything you make</b>. Red means more than a one-person brand is likely to sell; the ticked ideas under "Combine ideas" share the hours in the last row.</p>
     </div>
+    <div id="legg"></div>
     <div class="three" id="grow"></div>
   </section>
 
@@ -233,6 +245,7 @@ footer p { margin: 0 0 6px; max-width: 52em; }
 
 <footer><div class="wrap">
   <p>Built from the four financial plans. "As planned" uses their year one; "Realistic" halves year-one sales, adds slower first pieces, 10% failures and an accountant. Years two and three are my assumptions, listed under the three-year view.</p>
+  <p>Rent: as a sole trader you can't rent to yourself, so BRUIS carries the workshop share of your home costs (about €1,380 a year); with a BV you could charge it real rent. Van: a light van is up to 100% deductible when used only for the business; private use lowers that.</p>
   <p>Tax: social contributions for a side business and income tax at the top rate on top of a job. All figures are estimates to check with your accountant.</p>
 </div></footer>
 <script>
@@ -277,7 +290,10 @@ const IDEAS = [
     limit: 'Small batches, test at one market first, a bought CE-marked LED module, a warning card with every candle holder.' }
 ];
 
-let S = 'real';
+let S = 'real', VANON = true;
+const VAN = 7200, RENTC = '#c4a77a', VANC = '#8e9db1';
+const vanCost = y => VANON && y >= 2 ? VAN : 0;
+const benefit = (kept, y) => { const van = vanCost(y); return { free: kept - WS_DED, rent: WS_DED, van, total: kept + van }; };
 const COL = id => `var(--${id})`;
 const eur = n => (n < 0 ? '−€' : '€') + Math.abs(Math.round(n)).toLocaleString('en-US');
 const learnK = y => S === 'real' ? [1.3, 1.1, 1][y - 1] : 1;
@@ -316,14 +332,14 @@ function run(list, y) {
   const o = list.map(i => ops(i, y, solo ? null : vat));
   const sum = k => o.reduce((a, x) => a + x[k], 0);
   const acc = S === 'real' ? ACC : 0;
-  const profit = sum('profit') - acc;
+  const profit = sum('profit') - acc - vanCost(y);
   const startup = sum('startup') - (y === 1 ? (list.length - 1) * 111.5 : 0);
   const taxable = profit - startup - WS_DED - sum('writeoff') - sum('inv') - sum('small');
   const t = tax(taxable);
   const kept = profit - startup - sum('toolsBought') - sum('small') - t.social - t.income;
   const hours = sum('hours');
   return { turnover: sum('turnover'), isVat: o.some(x => x.isVat), profit, hours, wk: hours / 52,
-    perHour: hours ? profit / hours : 0, kept, startup, tools: sum('toolsBought'), units: o.map(x => x.units) };
+    perHour: hours ? (profit + vanCost(y)) / hours : 0, kept, ben: benefit(kept, y), startup, tools: sum('toolsBought'), units: o.map(x => x.units) };
 }
 const one = (i, y) => run([i], y);
 const worstLoss = i => i.startup + 6 * i.fixedMo + (S === 'real' ? ACC / 2 : 0);
@@ -352,19 +368,28 @@ function key() {
   document.getElementById('key').innerHTML = IDEAS.map(i => `<span><i class="dot" style="background:${COL(i.id)}"></i>${i.name}: ${i.what}</span>`).join('');
 }
 
+
+/* one cell: real benefit per month, split into income, rent and van */
+function benCell(b, col, mx, sub) {
+  const m = v => v / 12, seg = (v, c) => v > 0 ? `<i style="width:${v / mx * 100}%;background:${c}"></i>` : '';
+  return `<div><div class="k ${b.total < 0 ? 'neg' : ''}">${eur(m(b.total))}<span class="pm"> /mo</span></div>
+    <div class="kb stack">${seg(b.free, col)}${seg(b.rent, RENTC)}${seg(b.van, VANC)}</div>
+    <div class="d"><span class="${b.free < 0 ? 'w' : ''}">${eur(m(b.free))} income</span> · ${eur(m(b.rent))} rent${b.van ? ` · ${eur(m(b.van))} van` : ''}<br>${sub}</div></div>`;
+}
+const legend = () => `<div class="legend"><span><i style="background:linear-gradient(90deg,var(--fronts),var(--tables),var(--workshops),var(--objects))"></i>Extra net income: yours to spend</span><span><i style="background:${RENTC}"></i>Rent: BRUIS pays the workshop share of your home costs</span>${VANON ? `<span><i style="background:${VANC}"></i>Van: BRUIS pays it from year two</span>` : ''}</div>`;
+
 /* ---------- three years ---------- */
 function three() {
   const rows = IDEAS.map(i => [1, 2, 3].map(y => one(i, y)));
-  const mx = Math.max(...rows.flat().map(r => Math.abs(r.kept)), 1);
+  const mx = Math.max(...rows.flat().map(r => Math.max(0, r.ben.free) + r.ben.rent + r.ben.van), 1);
   let h = `<div class="h"></div>${[1, 2, 3].map(y => `<div class="h">Year ${y}<br>${2026 + y}</div>`).join('')}`;
   IDEAS.forEach((i, n) => {
     h += `<div class="nm"><i class="dot" style="background:${COL(i.id)}"></i>${i.name}</div>`;
-    rows[n].forEach((r, y) => {
-      h += `<div><div class="k ${r.kept < 0 ? 'neg' : ''}">${eur(r.kept)}</div>
-        <div class="kb"><i style="width:${Math.max(0, r.kept) / mx * 100}%;background:${COL(i.id)}"></i></div>
-        <div class="d">${r.units[0]} ${i.unit} · ${r.wk.toFixed(1)} h/wk${r.wk > 10 ? ' <span class="w">over 10</span>' : ''}<br>${r.isVat ? '<span class="w">VAT 21%</span>' : 'no VAT'} · ${eur(r.perHour)}/h</div></div>`;
+    rows[n].forEach(r => {
+      h += benCell(r.ben, COL(i.id), mx, `${r.units[0]} ${i.unit} · ${r.wk.toFixed(1)} h/wk${r.wk > 10 ? ' <span class="w">over 10</span>' : ''} · ${r.isVat ? '<span class="w">VAT</span>' : 'no VAT'}`);
     });
   });
+  document.getElementById('leg3').innerHTML = legend();
   document.getElementById('three').innerHTML = h;
   document.getElementById('assume').innerHTML = `<summary>What grows in years two and three</summary><ul>${IDEAS.map(i => `<li><b>${i.name}:</b> ${i.units[S].join(' → ')} ${i.unit}. ${i.grow}</li>`).join('')}
     <li>${S === 'real' ? 'Realistic: first pieces take 30% longer in year one and 10% longer in year two; 10% of the work fails or is redone in year one, 5% in year two.' : 'As planned: no failures and no learning time.'}</li>
@@ -409,6 +434,7 @@ function rank() {
 
 /* ---------- one measure ---------- */
 const METRICS = [
+  { k: 'ben', label: 'Real benefit /mo', y: true, get: (i, y) => one(i, y).ben.total / 12, fmt: eur, note: 'Extra net income plus the workshop share of your home costs and the van, both paid by BRUIS, per month.' },
   { k: 'kept', label: 'Kept after tax', y: true, get: (i, y) => one(i, y).kept, fmt: eur, note: 'After start-up costs, tools bought that year, contributions and income tax.' },
   { k: 'wk', label: 'Hours a week', y: true, get: (i, y) => one(i, y).wk, fmt: n => n.toFixed(1) + ' h', low: true, note: 'All hours over the year divided by 52. Your budget is 10.' },
   { k: 'ph', label: 'Per hour, all in', y: true, get: (i, y) => one(i, y).perHour, fmt: n => eur(n) + '/h', note: 'Left before tax divided by every hour, selling and admin included.' },
@@ -419,7 +445,7 @@ const METRICS = [
   { k: 'worst', label: 'Worst case', get: worstLoss, fmt: eur, low: true, note: 'Start-up costs plus six months of fixed costs with no sales at all.' },
   { k: 'van', label: 'Hours a week for van + €800', get: i => vanHours(i), fmt: n => n.toFixed(1) + ' h', low: true, note: 'Weekly hours to pay a van and €800 a month to yourself from this idea alone, once VAT-registered with tools owned.' }
 ];
-let cur = 'kept', curY = 1;
+let cur = 'ben', curY = 3;
 function seg() {
   const el = document.getElementById('seg');
   el.innerHTML = METRICS.map(m => `<button type="button" data-k="${m.k}" aria-pressed="${m.k === cur}">${m.label}</button>`).join('');
@@ -472,9 +498,10 @@ function totals() {
     line('Turnover', x => eur(x.turnover), x => x.isVat) +
     line('Hours a week', x => x.wk.toFixed(1) + ' h', x => x.wk > 10) +
     line('Per hour', x => eur(x.perHour)) +
-    line('Kept after tax', x => eur(x.kept), x => x.kept < 0);
+    line('Extra income /mo', x => eur(x.ben.free / 12), x => x.ben.free < 0) +
+    line('Real benefit /mo', x => eur(x.ben.total / 12), x => x.ben.total < 0);
   const total = r.reduce((a, x) => a + x.kept, 0);
-  let t = `Over three years: about ${eur(total)} kept after tax, ${r[0].wk.toFixed(1)} → ${r[2].wk.toFixed(1)} hours a week.`;
+  let t = `Over three years: about ${eur(total)} kept after tax${VANON ? ' and the van paid' : ''}, ${r[0].wk.toFixed(1)} → ${r[2].wk.toFixed(1)} hours a week.`;
   if (r.some(x => x.isVat)) t += ` VAT from year ${r.findIndex(x => x.isVat) + 1}: red turnover means 21% VAT on every sale.`;
   if (r[2].wk > 10) t += ` By year three that is more than your 10 hours a week.`;
   v.textContent = t;
@@ -497,7 +524,6 @@ function all() { scen(); three(); grow(); rank(); seg(); bars(); worst(); totals
 let H3 = 40;
 const MAKE = { fronts: 0.8, tables: 0.8, workshops: 0.8, objects: 0.7 };
 const CEIL = { fronts: 40, tables: 30, workshops: 100, objects: 1500 };   // a year, realistic for one person
-const VAN = 7200;
 function incomeTax(x) {
   x = Math.max(0, x); let t = 0, prev = 0;
   for (const [lim, r] of [[16720, .25], [29510, .40], [51070, .45], [1e12, .50]]) { if (x > prev) t += (Math.min(x, lim) - prev) * r; prev = lim; }
@@ -513,9 +539,8 @@ function gOps(i, y, wk, vat) {
   const per = (i.left + (own ? i.toolSave : 0)) * (isVat ? i.vatK : 1) * failK(y);
   const perShop = per - i.turnUnit * 0.4 * (isVat ? 1 / 1.21 : 1);
   const variable = units * ((1 - share) * per + share * perShop);
-  const van = (i.id === 'fronts' || i.id === 'tables') && wk >= 20 ? VAN : 0;
   const tb = i.toolYear[S] === y ? i.tools : 0, ty = i.toolYear[S];
-  return { units, turnover, isVat, profit: variable - i.fixedMo * 12 - i.extraFix - van,
+  return { units, turnover, isVat, profit: variable - i.fixedMo * 12 - i.extraFix,
     startup: y === 1 ? i.startup : 0, toolsBought: tb, writeoff: y >= ty && y < ty + i.wYears ? i.tools / i.wYears : 0,
     inv: tb * 0.1, small: i.small, hard: units > CEIL[i.id] * (S === 'plan' ? 1.5 : 1) };
 }
@@ -524,7 +549,7 @@ function gRun(list, y) {
   const vat = solo ? null : list.reduce((a, i) => a + gOps(i, y, each, false).turnover, 0) > THR[y - 1];
   const o = list.map(i => gOps(i, y, each, solo ? null : vat));
   const sum = k => o.reduce((a, x) => a + x[k], 0);
-  const profit = sum('profit') - (S === 'real' ? ACC : 0);
+  const profit = sum('profit') - (S === 'real' ? ACC : 0) - vanCost(y);
   const startup = sum('startup') - (y === 1 ? (list.length - 1) * 111.5 : 0);
   const taxable = Math.max(0, profit - startup - WS_DED - sum('writeoff') - sum('inv') - sum('small'));
   const main = wk >= 30;
@@ -532,27 +557,27 @@ function gRun(list, y) {
   if (main) { social = Math.min(Math.max(3561.68, taxable * 0.205 * 1.042), 5103.05 * 4 * 1.042); income = incomeTax(taxable - social); }
   else { const t = tax(taxable); social = t.social; income = t.income; }
   const kept = profit - startup - sum('toolsBought') - sum('small') - social - income;
-  return { wk, main, kept, mo: kept / 12, isVat: o.some(x => x.isVat), turnover: sum('turnover'), units: o.map(x => x.units), hard: o.some(x => x.hard) };
+  return { wk, main, kept, mo: kept / 12, ben: benefit(kept, y), isVat: o.some(x => x.isVat), turnover: sum('turnover'), units: o.map(x => x.units), hard: o.some(x => x.hard) };
 }
 function grow() {
   document.getElementById('gho').textContent = H3 + ' h';
   const rows = IDEAS.map(i => ({ name: i.name, id: i.id, unit: i.unit, r: [1, 2, 3].map(y => gRun([i], y)) }));
   const sel = IDEAS.filter(i => picked.has(i.id));
   if (sel.length > 1) rows.push({ name: 'Together', id: null, unit: '', sel, r: [1, 2, 3].map(y => gRun(sel, y)) });
-  const mx = Math.max(...rows.flatMap(x => x.r.map(r => Math.abs(r.mo))), 1);
+  const mx = Math.max(...rows.flatMap(x => x.r.map(r => Math.max(0, r.ben.free) + r.ben.rent + r.ben.van)), 1);
   let h = `<div class="h"></div>${[1, 2, 3].map(y => `<div class="h">Year ${y}<br>${yHours(y)} h a week${yHours(y) >= 30 ? ', main job' : ''}</div>`).join('')}`;
   rows.forEach(x => {
-    if (!x.id) h += `<div class="tg">${x.sel.map(i => i.name).join(' + ')}, hours shared equally</div>`;
+    if (!x.id) h += `<div class="tg">${x.sel.map(i => i.name).join(' + ')}, hours shared equally, one van</div>`;
     h += `<div class="nm">${x.id ? `<i class="dot" style="background:${COL(x.id)}"></i>` : ''}${x.name}</div>`;
     x.r.forEach(r => {
       const sold = x.id ? `${(r.units[0] / 52).toFixed(r.units[0] < 520 ? 1 : 0)} ${x.unit}/wk` : r.units.map((u, k) => `${(u / 52).toFixed(1)} ${x.sel[k].unit}`).join(', ') + ' /wk';
-      h += `<div><div class="k ${r.mo < 0 ? 'neg' : ''}">${eur(r.mo)}<span style="font-size:13px;color:var(--ink3)"> /mo</span></div>
-        <div class="kb"><i style="width:${Math.max(0, r.mo) / mx * 100}%;background:${x.id ? COL(x.id) : 'var(--ink)'}"></i></div>
-        <div class="d">${sold}${r.hard ? ' <span class="flag">hard to sell</span>' : ''}<br>${eur(r.turnover)} turnover${r.isVat ? ' · <span class="w">VAT</span>' : ''}</div></div>`;
+      h += benCell(r.ben, x.id ? COL(x.id) : 'var(--ink)', mx, `${sold}${r.hard ? ' <span class="flag">hard to sell</span>' : ''} · ${eur(r.turnover)}${r.isVat ? ' · <span class="w">VAT</span>' : ''}`);
     });
   });
+  document.getElementById('legg').innerHTML = legend();
   document.getElementById('grow').innerHTML = h;
 }
+document.getElementById('vanon').addEventListener('change', e => { VANON = e.target.checked; all(); });
 document.getElementById('gh').addEventListener('input', e => { H3 = +e.target.value; grow(); });
 
 key(); sliders(); combo(); all();
