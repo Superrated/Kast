@@ -150,9 +150,9 @@ footer { border-top: 1px solid var(--line); padding: 26px 0 50px; color: var(--i
     <table class="prices">
       <thead><tr><th>What</th><th>For</th><th class="p">Price</th></tr></thead>
       <tbody>
-        <tr><td>Inverter up to 3.6 kW</td><td>Most installations from 2009–2014</td><td class="p">€1,550</td></tr>
-        <tr><td>Inverter 4–6 kW</td><td>Larger roofs</td><td class="p">€1,750</td></tr>
-        <tr><td>Hybrid inverter, ready for a home battery</td><td>If you're thinking about a battery later</td><td class="p">from €2,450</td></tr>
+        <tr><td>Inverter up to 3.6 kW</td><td>Most installations from 2009–2014</td><td class="p">€1,400</td></tr>
+        <tr><td>Inverter 4–6 kW</td><td>Larger roofs</td><td class="p">€1,600</td></tr>
+        <tr><td>Hybrid inverter, ready for a home battery</td><td>If you're thinking about a battery later</td><td class="p">from €2,300</td></tr>
         <tr><td>Diagnosis only</td><td>Taken off the price if you go ahead</td><td class="p">€95</td></tr>
       </tbody>
     </table>
@@ -214,7 +214,7 @@ function calc() {
   const day = g('kwp') * 950 / 365 * g('season') * 0.30;
   document.getElementById('day').textContent = eur(day);
   document.getElementById('mon').textContent = eur(day * 30);
-  const base = g('kwp') > 3.6 ? 1750 : 1550, price = g('type') ? base + 900 : base;
+  const base = g('kwp') > 3.6 ? 1600 : 1400, price = g('type') ? base + 900 : base;
   document.getElementById('price').textContent = eur(price);
   document.getElementById('note').textContent = `So a broken inverter costs you about ${eur(day * 30)} a month in ${S.season === 'summer' ? 'spring and summer' : 'autumn and winter'}. Price incl. 6% VAT for homes older than 10 years.`;
 }
