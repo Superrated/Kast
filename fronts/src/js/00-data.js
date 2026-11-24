@@ -251,10 +251,131 @@ const EXTRAS = {
 const PRICE = {
   perFront: 30, // cutting, edging, drilling set-up, packing
   hinge: 3, // drilling the hinge cups for the IKEA hinges
-  minArea: 0.08, // m² — a small front still costs a small front
-  delivery: 59,
-  deliveryFree: 1500
+  minArea: 0.08 // m² — a small front still costs a small front
 };
+/* ---------- delivery: we bring it ourselves, priced by distance from the workshop ---------- */
+// set this to the workshop's own postcode
+const WORKSHOP_PC = '1000';
+// price bands by road distance (km, one way) from the workshop; incl. VAT
+const DELIVERY_BANDS = [
+  [30, 45, 'Up to 30 km'],
+  [80, 85, '30–80 km'],
+  [150, 135, '80–150 km'],
+  [9999, 185, 'Over 150 km']
+];
+const ROUTE_DAY_OFF = 30; // off when the customer takes the monthly route day for their region
+// the middle of each Belgian postcode area (first two digits), roughly, as [lat, lon]
+const PC_AREAS = {
+  10: [50.85, 4.35],
+  11: [50.85, 4.35],
+  12: [50.84, 4.4],
+  13: [50.67, 4.6],
+  14: [50.6, 4.4],
+  15: [50.73, 4.24],
+  16: [50.8, 4.2],
+  17: [50.87, 4.17],
+  18: [50.93, 4.43],
+  19: [50.88, 4.5],
+  20: [51.22, 4.4],
+  21: [51.23, 4.47],
+  22: [51.17, 4.8],
+  23: [51.32, 4.95],
+  24: [51.19, 5.12],
+  25: [51.12, 4.55],
+  26: [51.17, 4.4],
+  27: [51.2, 4.4],
+  28: [51.03, 4.48],
+  29: [51.32, 4.45],
+  30: [50.88, 4.7],
+  31: [50.97, 4.63],
+  32: [50.98, 4.97],
+  33: [50.8, 4.93],
+  34: [50.75, 5.08],
+  35: [50.93, 5.34],
+  36: [50.97, 5.5],
+  37: [50.78, 5.47],
+  38: [50.82, 5.19],
+  39: [51.2, 5.35],
+  40: [50.63, 5.57],
+  41: [50.56, 5.48],
+  42: [50.65, 5.25],
+  43: [50.68, 5.3],
+  44: [50.6, 5.45],
+  45: [50.52, 5.24],
+  46: [50.7, 5.75],
+  47: [50.63, 6.03],
+  48: [50.59, 5.86],
+  49: [50.45, 5.95],
+  50: [50.47, 4.87],
+  51: [50.4, 4.85],
+  52: [50.45, 4.95],
+  53: [50.49, 5.09],
+  54: [50.35, 4.7],
+  55: [50.26, 4.91],
+  56: [50.2, 4.54],
+  57: [50.4, 4.7],
+  58: [50.4, 4.75],
+  59: [50.45, 4.85],
+  60: [50.41, 4.44],
+  61: [50.4, 4.35],
+  62: [50.48, 4.55],
+  63: [50.3, 4.4],
+  64: [50.05, 4.32],
+  65: [50.41, 4.17],
+  66: [50.0, 5.72],
+  67: [49.68, 5.81],
+  68: [49.92, 5.38],
+  69: [50.23, 5.34],
+  70: [50.45, 3.95],
+  71: [50.48, 4.19],
+  72: [50.45, 3.9],
+  73: [50.43, 3.8],
+  74: [50.5, 3.7],
+  75: [50.61, 3.39],
+  76: [50.51, 3.59],
+  77: [50.74, 3.21],
+  78: [50.63, 3.78],
+  79: [50.6, 3.6],
+  80: [51.21, 3.22],
+  81: [51.15, 3.1],
+  82: [51.15, 3.2],
+  83: [51.34, 3.29],
+  84: [51.22, 2.92],
+  85: [50.83, 3.27],
+  86: [51.03, 2.8],
+  87: [50.95, 3.25],
+  88: [50.95, 3.12],
+  89: [50.85, 2.88],
+  90: [51.05, 3.72],
+  91: [51.15, 4.1],
+  92: [51.03, 4.1],
+  93: [50.94, 4.04],
+  94: [50.83, 4.02],
+  95: [50.77, 3.88],
+  96: [50.75, 3.6],
+  97: [50.85, 3.6],
+  98: [50.98, 3.53],
+  99: [51.18, 3.56]
+};
+/* road km from the workshop to a postcode: straight line × 1.3; null for an unknown postcode */
+function deliveryKm(pc) {
+  const a = PC_AREAS[String(WORKSHOP_PC).slice(0, 2)],
+    b = /^\d{4}$/.test(String(pc || '')) ? PC_AREAS[String(pc).slice(0, 2)] : null;
+  if (!a || !b) return null;
+  const r = Math.PI / 180,
+    dLat = (b[0] - a[0]) * r,
+    dLon = (b[1] - a[1]) * r,
+    h = Math.sin(dLat / 2) ** 2 + Math.cos(a[0] * r) * Math.cos(b[0] * r) * Math.sin(dLon / 2) ** 2;
+  return Math.round(2 * 6371 * Math.asin(Math.sqrt(h)) * 1.3);
+}
+/* the delivery price for a postcode: { band, price } or null when we don't know the postcode yet */
+function deliveryFor(pc, routeDay) {
+  const km = deliveryKm(pc);
+  if (km === null) return null;
+  const b = DELIVERY_BANDS.find(x => km <= x[0]);
+  return { km, band: b[2], price: Math.max(0, b[1] - (routeDay ? ROUTE_DAY_OFF : 0)) };
+}
+
 const LEAD = 'about 3–4 weeks';
 // painted fronts go to the spray shop: 1–2 weeks longer
 const LEAD_PAINTED = 'about 4–6 weeks';

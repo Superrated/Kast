@@ -65,7 +65,7 @@ function render() {
         : ''
     }<button type="button" class="lnk surp" data-act="surprise">Surprise me</button>`;
   document.getElementById('pbar').innerHTML =
-    `<div class="pstep"><button type="button" class="pnav" data-act="prev" aria-label="Previous step" ${i > 0 ? '' : 'disabled'}>‹</button><span><small>${i + 1} of ${STEPS.length}</small>${STEPS[i][1]}</span><button type="button" class="pnav" data-act="next" aria-label="Next step" ${i < STEPS.length - 1 ? '' : 'disabled'}>›</button></div>${chipHTML()}<div class="ptot"><span>${countWords(P)} · incl. VAT${P.del ? ' + delivery' : ''}</span><b>${eur(P.total)}</b></div>${
+    `<div class="pstep"><button type="button" class="pnav" data-act="prev" aria-label="Previous step" ${i > 0 ? '' : 'disabled'}>‹</button><span><small>${i + 1} of ${STEPS.length}</small>${STEPS[i][1]}</span><button type="button" class="pnav" data-act="next" aria-label="Next step" ${i < STEPS.length - 1 ? '' : 'disabled'}>›</button></div>${chipHTML()}<div class="ptot"><span>${countWords(P)} · incl. VAT${P.del ? ' and delivery' : ''}</span><b>${eur(P.total)}</b></div>${
       S.step === 'order'
         ? ''
         : `<button type="button" class="btn ghost" data-act="next">${i < STEPS.length - 2 ? 'Next: ' + STEPS[i + 1][1] : 'See the order'}</button>`
@@ -560,6 +560,19 @@ function handlesHTML(L) {
 }
 
 /* ---------- 4 Order ---------- */
+/* delivery: we bring it ourselves anywhere in Belgium, priced by distance; or you collect */
+function deliveryHTML(P) {
+  return `<div class="deliv"><h3>Delivery</h3>${seg('dmode', S.collect ? 'collect' : 'deliver', [
+    ['deliver', 'We bring it'],
+    ['collect', 'I collect it']
+  ])}${
+    S.collect
+      ? '<p class="hint">Free. We agree a time with you when your fronts are ready.</p>'
+      : `<label class="field pcf"><span>Your postcode</span><input id="pcIn" inputmode="numeric" maxlength="4" autocomplete="postal-code" value="${esc(S.pc || '')}" placeholder="e.g. 9000" data-act="pc"></label>
+        <p class="hint">${P.dv ? `About ${P.dv.km} km from our workshop: <b>${eur(P.dv.price)}</b>, carried to the room on a day we agree with you.` : 'We bring every order ourselves, anywhere in Belgium: € 45 to € 185 by distance.'}</p>
+        <label class="chk"><input type="checkbox" data-act="route"${S.route ? ' checked' : ''}><span><b>Route day, ${eur(ROUTE_DAY_OFF)} off</b> We drive one route per region each month; wait for yours and save.</span></label>`
+  }</div>`;
+}
 /* a close-up render of one look (a 60 × 80 door with your handle), for the order list */
 function lookPic(lk) {
   const st = {
@@ -604,7 +617,8 @@ function orderHTML(L, P) {
                   .join('')
               : ''
           }</tbody>
-    <tfoot><tr><td></td><td colspan="2">Subtotal</td><td class="num">${eur(P.sub)}</td></tr><tr><td></td><td colspan="2">Delivery${P.del ? ` <small>free from ${eur(PRICE.deliveryFree)}</small>` : ' — free'}</td><td class="num">${P.del ? eur(P.del) : '€ 0'}</td></tr><tr class="tot"><td></td><td colspan="2">Total incl. VAT</td><td class="num">${eur(P.total)}</td></tr></tfoot></table>
+    <tfoot><tr><td></td><td colspan="2">Subtotal</td><td class="num">${eur(P.sub)}</td></tr><tr><td></td><td colspan="2">${S.collect ? 'You collect at the workshop' : P.dv ? `Delivery by us <small>${P.dv.band} from the workshop${S.route ? ', on the route day' : ''}</small>` : 'Delivery by us <small>add your postcode below</small>'}</td><td class="num">${S.collect ? '€ 0' : P.dv ? eur(P.del) : '—'}</td></tr><tr class="tot"><td></td><td colspan="2">Total incl. VAT</td><td class="num">${eur(P.total)}</td></tr></tfoot></table>
+    ${deliveryHTML(P)}
     <label class="chk"><input type="checkbox" data-act="planCheck"${S.planCheck ? ' checked' : ''}><span><b>Free plan check</b> We go through your IKEA list and every size with you before anything is cut.</span></label>
     <button type="button" class="btn pri big" data-act="orderNow">Order these fronts</button>
     <div class="adds qa"><button type="button" class="btn sm" data-act="print">Print or save the quote</button><button type="button" class="btn sm" data-act="share">Share this design</button></div>
@@ -620,10 +634,10 @@ function openOrder() {
     P = priceAll(L);
   if (!P.n) return;
   document.getElementById('mbox').innerHTML =
-    `<h2>Order your fronts</h2><p class="lede">${countWords(P)} · <b>${eur(P.total)}</b> incl. VAT and delivery. We check every size with you before we cut.</p>
+    `<h2>Order your fronts</h2><p class="lede">${countWords(P)} · <b>${eur(P.total)}</b> incl. VAT${S.collect ? ', collected at the workshop' : P.dv ? ' and delivery' : ', delivery by postcode'}. We check every size with you before we cut.</p>
     <label class="field"><span>Your name</span><input id="oName" autocomplete="name"></label>
     <label class="field"><span>E-mail</span><input id="oMail" type="email" autocomplete="email"></label>
-    <label class="field"><span>Postcode</span><input id="oZip" autocomplete="postal-code"></label>
+    <label class="field"><span>Postcode</span><input id="oZip" autocomplete="postal-code" value="${esc(S.pc || '')}"></label>
     <label class="field"><span>Anything we should know?</span><textarea id="oNote" rows="3" placeholder="e.g. the left wall is not straight"></textarea></label>
     <div class="adds"><button type="button" class="btn pri" data-act="send">Send order request</button><button type="button" class="btn" data-act="close">Not now</button></div>
     <p class="hint">This is a prototype: the request is not sent anywhere yet.</p>`;
@@ -644,7 +658,7 @@ function orderText() {
     ...P.ex.map(x => `${x.n} × ${x.name.toLowerCase()} (${x.note}) — ${eur(x.p * x.n)}`),
     '',
     `Plan check before cutting: ${S.planCheck ? 'yes, please' : 'no, the sizes are final'}`,
-    `Total ${eur(P.total)} incl. VAT${P.del ? ' and delivery' : ''}`
+    `Total ${eur(P.total)} incl. VAT${S.collect ? ' (collect at the workshop)' : P.dv ? ` and delivery (${P.dv.band}, postcode ${S.pc})` : ' (delivery € 45–185 by postcode)'}`
   ].join('\n');
 }
 function sendOrder() {
@@ -696,7 +710,7 @@ function printQuote() {
     ${pic ? `<img src="${pic}" alt="">` : ''}
     <h1>${SYS[S.sys].name} ${SYS[S.sys].what.toLowerCase()}: ${countWords(P)}</h1>
     <p>Edges ${EDGES[S.edge].name.toLowerCase()} · ${handleWords()} · ready ${esc(leadOf(L))} after ordering</p>
-    <table><tbody>${rows}</tbody><tfoot><tr><td></td><td colspan="2">Delivery</td><td class="num">${P.del ? eur(P.del) : 'free'}</td></tr><tr class="tot"><td></td><td colspan="2">Total incl. VAT</td><td class="num">${eur(P.total)}</td></tr></tfoot></table>
+    <table><tbody>${rows}</tbody><tfoot><tr><td></td><td colspan="2">${S.collect ? 'Collected at the workshop' : P.dv ? `Delivery by us, ${P.dv.band}` : 'Delivery by us, € 45–185 by distance'}</td><td class="num">${S.collect ? '€ 0' : P.dv ? eur(P.del) : 'by postcode'}</td></tr><tr class="tot"><td></td><td colspan="2">Total incl. VAT</td><td class="num">${eur(P.total)}</td></tr></tfoot></table>
     <p>${S.planCheck ? 'Includes our free plan check: we go through your IKEA list and every size with you before anything is cut.' : ''} Hinges and drawer fittings are IKEA's own and not included.</p>
     <p class="link">Open this design again: ${esc(shareLink())}</p>
     <footer>BRUIS — fronts for IKEA PAX, METOD and BESTÅ. Prototype: prices are examples.</footer>`;
@@ -831,6 +845,9 @@ document.addEventListener('click', e => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       break;
     }
+    case 'dmode':
+      S.collect = a === 'collect';
+      break;
     case 'closeStep':
       closeStep(+a);
       return;
@@ -1069,6 +1086,9 @@ document.addEventListener('click', e => {
     case 'planCheck':
       S.planCheck = !!b.checked;
       break;
+    case 'route':
+      S.route = !!b.checked;
+      break;
     case 'samples':
       openSamples();
       return;
@@ -1173,4 +1193,18 @@ document.addEventListener('keydown', e => {
 });
 document.getElementById('modal').addEventListener('click', e => {
   if (e.target.id === 'modal') e.currentTarget.hidden = true;
+});
+
+/* the postcode and the route day: typing a postcode re-prices the delivery */
+document.addEventListener('input', e => {
+  if (e.target.id !== 'pcIn') return;
+  const v = e.target.value.replace(/\D/g, '').slice(0, 4);
+  if (v === S.pc) return;
+  S.pc = v;
+  render();
+  const el = document.getElementById('pcIn');
+  if (el) {
+    el.focus();
+    el.setSelectionRange(v.length, v.length);
+  }
 });

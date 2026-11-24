@@ -46,7 +46,7 @@ function homeHTML() {
     <section class="hsec hfacts"><ul>
       <li><b>Made to measure in Belgium</b><span>Cut, routed and finished in our own workshop; painted by a local spray shop.</span></li>
       <li><b>Fits your IKEA hinges</b><span>Drilled for the IKEA hinges and drawers you already have. Keep your frames, change the look.</span></li>
-      <li><b>Clear prices</b><span>The price you see is the price you pay, with free delivery from ${eur(PRICE.deliveryFree)}.</span></li></ul></section>
+      <li><b>Clear prices</b><span>The price you see is the price you pay. We bring your fronts ourselves, anywhere in Belgium, priced by distance (€ 45–185), or you collect them free.</span></li></ul></section>
     <section class="hsec hfaq"><h2>Questions</h2>${[
       [
         'Do I need to buy IKEA’s doors too?',

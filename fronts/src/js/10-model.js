@@ -84,6 +84,9 @@ if (!SIDES[S.sides]) S.sides = 'none';
 if (!['ikea', 'match'].includes(S.plinth)) S.plinth = 'ikea';
 if (!HANDLES[S.handle]) S.handle = 'knob';
 if (S.view !== 'close') S.view = 'room';
+if (!/^\d{0,4}$/.test(String(S.pc || ''))) S.pc = '';
+S.collect = !!S.collect;
+S.route = !!S.route;
 if (!HFIN[S.hfin]) S.hfin = 'oak';
 if (!(S.fillers >= 0 && S.fillers <= 6)) S.fillers = 0;
 if (S.planCheck === undefined) S.planCheck = true;
@@ -407,8 +410,9 @@ function priceAll(L) {
     sd = (L.sides || []).map(s => ({ s, p: sidePrice(s) })),
     ex = extrasOf(L),
     sub = fr.reduce((a, b) => a + b.p, 0) + sd.reduce((a, b) => a + b.p, 0) + ex.reduce((a, b) => a + b.p * b.n, 0),
-    del = sub >= PRICE.deliveryFree || !fr.length ? 0 : PRICE.delivery;
-  return { fr, sd, ex, sub, del, total: sub + del, n: fr.length, ns: sd.length };
+    dv = !fr.length || S.collect ? null : deliveryFor(S.pc, S.route),
+    del = dv ? dv.price : 0;
+  return { fr, sd, ex, sub, del, dv, total: sub + del, n: fr.length, ns: sd.length };
 }
 /* "5 fronts + 2 sides" */
 function countWords(P) {
@@ -446,7 +450,7 @@ function grouped(L) {
 function priceOfDesign(st) {
   const keep = S;
   try {
-    S = Object.assign({}, keep, { fx: {}, flip: {}, sel: null, plinth: 'ikea', fillers: 0 }, st);
+    S = Object.assign({}, keep, { fx: {}, flip: {}, sel: null, plinth: 'ikea', fillers: 0, collect: true }, st);
     return priceAll(layout()).total;
   } finally {
     S = keep;

@@ -220,7 +220,7 @@ footer { border-top: 1px solid var(--line); padding: 28px 0 60px; color: var(--i
     <details><summary>Will the top warp?</summary><p>Old oak has dried for decades, so it moves less than new oak. We still fit steel strips under every top.</p></details>
     <details><summary>How do I look after it?</summary><p>Wipe it with a damp cloth. Once or twice a year, a little Rubio maintenance oil. Scratches can be sanded and oiled locally.</p></details>
     <details><summary>Why no metal legs?</summary><p>Because the whole table can come from old oak: the legs of the old table often become the new legs or trestles. Oak legs can also be sanded and oiled again, like the top.</p></details>
-    <details><summary>Where do you deliver?</summary><p>All of Belgium, for € 95, carried in and set up. You can also collect it from the workshop for free.</p></details>
+    <details><summary>Where do you deliver?</summary><p>All of Belgium, ourselves: no courier. The price goes by distance from the workshop, € 45 up to 30 km, € 85 up to 80 km, € 135 up to 150 km and € 185 beyond. Two of us carry it in and set it up. Wait for the monthly route day in your region and it is € 30 less, or collect it from the workshop for free.</p></details>
     <details><summary>Can I come and see the wood first?</summary><p>Yes, by appointment. We send you photos of the boards before we glue the top.</p></details>
   </div></section>
 </main>
@@ -248,14 +248,57 @@ const OILS = {
   chocolate: { name: 'Chocolate', wood: '#7A5338', grain: '#5A3B26' },
   charcoal: { name: 'Charcoal', wood: '#5E564D', grain: '#433C35' }
 };
-const PRICE = { base: 590, perM2: 700, own: 350, delivery: 95 };
+const PRICE = { base: 590, perM2: 700, own: 350 };
+/* ---------- delivery: we bring it ourselves, priced by distance from the workshop ---------- */
+// set this to the workshop's own postcode
+const WORKSHOP_PC = '1000';
+// price bands by road distance (km, one way) from the workshop; incl. VAT
+const DELIVERY_BANDS = [
+  [30, 45, 'Up to 30 km'],
+  [80, 85, '30–80 km'],
+  [150, 135, '80–150 km'],
+  [9999, 185, 'Over 150 km']
+];
+const ROUTE_DAY_OFF = 30; // off when the customer takes the monthly route day for their region
+// the middle of each Belgian postcode area (first two digits), roughly, as [lat, lon]
+const PC_AREAS = {
+  10: [50.85, 4.35], 11: [50.85, 4.35], 12: [50.84, 4.4], 13: [50.67, 4.6], 14: [50.6, 4.4], 15: [50.73, 4.24], 16: [50.8, 4.2], 17: [50.87, 4.17], 18: [50.93, 4.43], 19: [50.88, 4.5],
+  20: [51.22, 4.4], 21: [51.23, 4.47], 22: [51.17, 4.8], 23: [51.32, 4.95], 24: [51.19, 5.12], 25: [51.12, 4.55], 26: [51.17, 4.4], 27: [51.2, 4.4], 28: [51.03, 4.48], 29: [51.32, 4.45],
+  30: [50.88, 4.7], 31: [50.97, 4.63], 32: [50.98, 4.97], 33: [50.8, 4.93], 34: [50.75, 5.08], 35: [50.93, 5.34], 36: [50.97, 5.5], 37: [50.78, 5.47], 38: [50.82, 5.19], 39: [51.2, 5.35],
+  40: [50.63, 5.57], 41: [50.56, 5.48], 42: [50.65, 5.25], 43: [50.68, 5.3], 44: [50.6, 5.45], 45: [50.52, 5.24], 46: [50.7, 5.75], 47: [50.63, 6.03], 48: [50.59, 5.86], 49: [50.45, 5.95],
+  50: [50.47, 4.87], 51: [50.4, 4.85], 52: [50.45, 4.95], 53: [50.49, 5.09], 54: [50.35, 4.7], 55: [50.26, 4.91], 56: [50.2, 4.54], 57: [50.4, 4.7], 58: [50.4, 4.75], 59: [50.45, 4.85],
+  60: [50.41, 4.44], 61: [50.4, 4.35], 62: [50.48, 4.55], 63: [50.3, 4.4], 64: [50.05, 4.32], 65: [50.41, 4.17], 66: [50.0, 5.72], 67: [49.68, 5.81], 68: [49.92, 5.38], 69: [50.23, 5.34],
+  70: [50.45, 3.95], 71: [50.48, 4.19], 72: [50.45, 3.9], 73: [50.43, 3.8], 74: [50.5, 3.7], 75: [50.61, 3.39], 76: [50.51, 3.59], 77: [50.74, 3.21], 78: [50.63, 3.78], 79: [50.6, 3.6],
+  80: [51.21, 3.22], 81: [51.15, 3.1], 82: [51.15, 3.2], 83: [51.34, 3.29], 84: [51.22, 2.92], 85: [50.83, 3.27], 86: [51.03, 2.8], 87: [50.95, 3.25], 88: [50.95, 3.12], 89: [50.85, 2.88],
+  90: [51.05, 3.72], 91: [51.15, 4.1], 92: [51.03, 4.1], 93: [50.94, 4.04], 94: [50.83, 4.02], 95: [50.77, 3.88], 96: [50.75, 3.6], 97: [50.85, 3.6], 98: [50.98, 3.53], 99: [51.18, 3.56]
+};
+/* road km from the workshop to a postcode: straight line × 1.3; null for an unknown postcode */
+function deliveryKm(pc) {
+  const a = PC_AREAS[String(WORKSHOP_PC).slice(0, 2)],
+    b = /^\d{4}$/.test(String(pc || '')) ? PC_AREAS[String(pc).slice(0, 2)] : null;
+  if (!a || !b) return null;
+  const r = Math.PI / 180,
+    dLat = (b[0] - a[0]) * r,
+    dLon = (b[1] - a[1]) * r,
+    h = Math.sin(dLat / 2) ** 2 + Math.cos(a[0] * r) * Math.cos(b[0] * r) * Math.sin(dLon / 2) ** 2;
+  return Math.round(2 * 6371 * Math.asin(Math.sqrt(h)) * 1.3);
+}
+/* the delivery price for a postcode: { band, price } or null when we don't know the postcode yet */
+function deliveryFor(pc, routeDay) {
+  const km = deliveryKm(pc);
+  if (km === null) return null;
+  const b = DELIVERY_BANDS.find(x => km <= x[0]);
+  return { km, band: b[2], price: Math.max(0, b[1] - (routeDay ? ROUTE_DAY_OFF : 0)) };
+}
 
-let S = { L: 220, W: 95, D: 130, shape: 'pill', legs: 'block', oil: 'pure', own: false, seed: 7 };
+
+let S = { L: 220, W: 95, D: 130, shape: 'pill', legs: 'block', oil: 'pure', own: false, seed: 7, pc: '', collect: false, route: false };
 try { Object.assign(S, JSON.parse(localStorage.getItem('bruis-tables') || '{}')); } catch (e) {}
 if (!SHAPES[S.shape]) S.shape = 'pill';
 if (!LEGS[S.legs]) S.legs = 'block'; // steel frames were dropped: oak only
 if (!OILS[S.oil]) S.oil = 'pure';
 if (![85, 95, 105].includes(S.W)) S.W = 95;
+if (!/^\d{0,4}$/.test(String(S.pc || ''))) S.pc = '';
 
 const eur = v => '€ ' + Math.round(v).toLocaleString('en-IE');
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
@@ -361,9 +404,10 @@ function legCard(k) {
   return `<button type="button" class="card ${S.legs === k ? 'on' : ''}" data-act="legs" data-a="${k}">${tableSVG(st, { sideOnly: true, id: 'lg' + k }).svg}<b>${LEGS[k].name}</b><small>${LEGS[k].extra ? '+ ' + eur(LEGS[k].extra) : 'Included'}</small></button>`;
 }
 /* the drawing, the sizes and the price: also while a slider moves */
+const delOf = st => (st.collect ? null : deliveryFor(st.pc, st.route));
 function drawOnly() {
   try { localStorage.setItem('bruis-tables', JSON.stringify(S)); } catch (e) {}
-  const t = topSize(S), T = tableSVG(S, { id: 'main' }), p = priceOf(S);
+  const t = topSize(S), T = tableSVG(S, { id: 'main' }), dv = delOf(S), p = priceOf(S) + (dv ? dv.price : 0);
   document.getElementById('pic').innerHTML = T.svg;
   document.getElementById('dims').textContent = `${S.shape === 'circle' ? 'Ø ' + t.L : t.L + ' × ' + t.W} cm · 76 cm high · seats ${seats(S)} · ${T.boards} old boards`;
   document.getElementById('mbar').innerHTML = `<div>${esc(describe(S))}<b>${eur(p)}</b></div><button type="button" class="btn pri" data-act="order">Request</button>`;
@@ -371,6 +415,14 @@ function drawOnly() {
   if (tot) tot.textContent = eur(p);
   ['L', 'D'].forEach(k => { const o = document.getElementById('o-' + k); if (o) o.textContent = S[k] + ' cm'; });
   return p;
+}
+function delHint() {
+  const dv = delOf(S);
+  return dv ? `About ${dv.km} km from our workshop: <b>${eur(dv.price)}</b>, carried in and set up by two of us.` : 'We bring every table ourselves, anywhere in Belgium: € 45 to € 185 by distance.';
+}
+function totLabel() {
+  const dv = delOf(S);
+  return S.collect ? 'Your table, incl. VAT · you collect it' : dv ? 'Your table, incl. VAT and delivery' : 'Your table, incl. VAT · plus delivery by postcode';
 }
 function render() {
   const p = drawOnly();
@@ -385,7 +437,12 @@ function render() {
     <div class="ctl"><h3>Legs</h3><div class="cards" style="grid-template-columns:repeat(2,1fr)">${Object.keys(LEGS).map(legCard).join('')}</div><p class="hint">${esc(LEGS[S.legs].blurb)}.</p></div>
     <div class="ctl"><h3>Oil</h3><div class="oils">${Object.entries(OILS).map(([k, o]) => `<button type="button" class="oil ${S.oil === k ? 'on' : ''}" data-act="oil" data-a="${k}"><i style="background:${o.wood}"></i>${o.name}</button>`).join('')}</div><p class="hint">Rubio Monocoat hardwax oil, two coats.</p></div>
     <div class="ctl"><label class="own"><input type="checkbox" data-act="own" ${S.own ? 'checked' : ''}><span>Make it from my own old oak table<small>We collect it, check it's solid oak and take € ${PRICE.own} off.</small></span></label></div>
-    <div class="price"><small>Your table, incl. VAT · delivery € ${PRICE.delivery} or collect free</small><div class="tot" id="tot">${eur(p)}</div><small>Ready in about 6 weeks</small>
+    <div class="ctl deliv"><h3>Delivery</h3><div class="seg" style="--n:2"><button type="button" class="${S.collect ? '' : 'on'}" data-act="dmode" data-a="deliver">We bring it</button><button type="button" class="${S.collect ? 'on' : ''}" data-act="dmode" data-a="collect">I collect it</button></div>${
+      S.collect
+        ? '<p class="hint">Free, from the workshop, at a time we agree.</p>'
+        : `<label class="field" style="margin-top:12px;max-width:200px">Your postcode<input id="pcIn" inputmode="numeric" maxlength="4" autocomplete="postal-code" value="${esc(S.pc)}" placeholder="e.g. 9000"></label><p class="hint" id="dvh">${delHint()}</p><label class="own" style="margin-top:10px"><input type="checkbox" data-act="route" ${S.route ? 'checked' : ''}><span>Route day, € ${ROUTE_DAY_OFF} off<small>We drive one route per region each month; wait for yours and save.</small></span></label>`
+    }</div>
+    <div class="price"><small id="totl">${totLabel()}</small><div class="tot" id="tot">${eur(p)}</div><small>Ready in about 6 weeks</small>
       <div class="btns"><button type="button" class="btn pri" data-act="order">Request this table</button><button type="button" class="btn" data-act="visit">See the wood first</button></div></div>`;
 }
 function heroArt() {
@@ -410,7 +467,7 @@ function form(title, lede, extra, send) {
   modal(`<h2>${title}</h2><p class="sub" style="margin-bottom:18px">${lede}</p>
     <label class="field">Your name<input autocomplete="name"></label>
     <label class="field">E-mail<input type="email" autocomplete="email"></label>
-    <label class="field">Postcode<input autocomplete="postal-code"></label>${extra}
+    <label class="field">Postcode<input autocomplete="postal-code" value="${esc(S.pc || '')}"></label>${extra}
     <div class="btns"><button type="button" class="btn pri" data-act="sent">${send}</button><button type="button" class="btn" data-act="close">Not now</button></div>
     <p class="hint">Prototype: nothing is sent yet.</p>`);
 }
@@ -426,7 +483,9 @@ document.addEventListener('click', e => {
     case 'W': S.W = +a; break;
     case 'boards': S.seed = (S.seed % 997) + 13; break;
     case 'own': return;
-    case 'order': return form('Request this table', `${esc(describe(S))}: <b>${eur(priceOf(S))}</b> incl. VAT. We send you photos of the boards before we glue the top.`, '<label class="field">Anything we should know?<textarea rows="3"></textarea></label>', 'Send request');
+    case 'dmode': S.collect = a === 'collect'; break;
+    case 'route': S.route = b.checked; break;
+    case 'order': return form('Request this table', `${esc(describe(S))}: <b>${eur(priceOf(S) + ((delOf(S) || {}).price || 0))}</b> incl. VAT${S.collect ? ', collected' : delOf(S) ? ' and delivery' : ', delivery by postcode'}. We send you photos of the boards before we glue the top.`, '<label class="field">Anything we should know?<textarea rows="3"></textarea></label>', 'Send request');
     case 'visit': return form('See the wood first', 'Come to the workshop by appointment, or we send you photos of the boards in stock.', '', 'Ask for a visit');
     case 'sell': return form('Send us your table', 'Its size, and a few photos: the top, an edge or the end of a board, and the legs. We answer within a few days.', '<label class="field">Size (length × width, cm)<input></label><label class="field">Photos<input type="file" accept="image/*" multiple></label>', 'Send');
     case 'sent': modal('<h2>Thank you</h2><p class="sub">In the real site, we would answer within two working days. This prototype sends nothing.</p><button type="button" class="btn" data-act="close">Close</button>'); return;
@@ -439,6 +498,7 @@ document.addEventListener('input', e => {
   const k = e.target.dataset.act;
   if (k === 'L' || k === 'D') { S[k] = +e.target.value; drawOnly(); }
   if (k === 'own') { S.own = e.target.checked; render(); }
+  if (e.target.id === 'pcIn') { S.pc = e.target.value.replace(/\D/g, '').slice(0, 4); drawOnly(); document.getElementById('dvh').innerHTML = delHint(); document.getElementById('totl').textContent = totLabel(); }
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') document.getElementById('modal').hidden = true; });
 render();

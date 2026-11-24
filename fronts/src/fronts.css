@@ -2601,3 +2601,29 @@ button.brand {
     text-overflow: ellipsis;
   }
 }
+
+/* delivery in the order step */
+.deliv {
+  border-top: 1px solid var(--line);
+  margin-top: 18px;
+  padding-top: 14px;
+}
+.deliv h3 {
+  margin: 0 0 8px;
+}
+.deliv .pcf {
+  display: block;
+  margin-top: 12px;
+  max-width: 220px;
+}
+.deliv .pcf input {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 9px 11px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--raised);
+  font: inherit;
+  font-size: 15px;
+}
