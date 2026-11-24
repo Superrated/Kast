@@ -111,17 +111,67 @@ footer p { margin: 0 0 6px; max-width: 52em; }
   .bars .row { grid-template-columns: 82px 1fr; gap: 10px; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+/* scenario + years */
+.scen { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); }
+.scen .wrap { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; padding-top: 10px; padding-bottom: 10px; font-size: 14px; }
+.scen .lab { color: var(--ink2); }
+.tog { display: inline-flex; border: 1px solid var(--ink); border-radius: 999px; overflow: hidden; }
+.tog button { border: 0; background: none; padding: 6px 14px; cursor: pointer; font-size: 14px; }
+.tog button[aria-pressed=true] { background: var(--ink); color: var(--raised); }
+.scen .what { color: var(--ink3); font-size: 13px; flex: 1 1 260px; }
+.yrs { display: flex; gap: 6px; margin: -6px 0 18px; align-items: center; font-size: 14px; color: var(--ink2); }
+.yrs button { border: 1px solid var(--line); background: var(--raised); padding: 5px 12px; border-radius: 999px; cursor: pointer; font-size: 14px; }
+.yrs button[aria-pressed=true] { border-color: var(--ink); font-weight: 600; }
+.three { display: grid; grid-template-columns: 120px repeat(3, 1fr); gap: 0; }
+.three > div { padding: 14px 12px 14px 0; border-bottom: 1px solid var(--line); }
+.three .h { font-size: 13px; color: var(--ink3); padding-top: 0; }
+.three .nm { font-weight: 600; display: flex; gap: 8px; align-items: center; }
+.three .k { font-size: 24px; font-weight: 300; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; font-variation-settings: 'wdth' 85; }
+.three .k.neg { color: var(--warn); }
+.three .kb { height: 5px; background: var(--line); border-radius: 3px; margin: 4px 0 6px; overflow: hidden; }
+.three .kb i { display: block; height: 100%; border-radius: 3px; }
+.three .d { font-size: 12.5px; color: var(--ink2); line-height: 1.4; }
+.three .d .w { color: var(--warn); }
+.assume { font-size: 13px; color: var(--ink2); margin-top: 18px; max-width: 52em; }
+.assume summary { font-weight: 600; color: var(--ink); }
+.assume ul { margin: 8px 0 0; padding-left: 18px; }
+.totals.y3 { grid-template-columns: 120px repeat(3, 1fr); }
+.totals.y3 div { padding: 10px 12px 10px 0; }
+.totals.y3 .v { font-size: 22px; }
+.totals.y3 .rl { font-size: 13px; color: var(--ink2); }
+@media (max-width: 720px) {
+  .three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .three .h:first-child { display: none; }
+  .three .nm { grid-column: 1 / -1; padding-bottom: 0; border-bottom: 0; padding-top: 18px; }
+  .three .k { font-size: 18px; }
+  .three .d { font-size: 11.5px; }
+  .totals.y3 { grid-template-columns: 84px repeat(3, minmax(0, 1fr)); }
+  .totals.y3 .rl { font-size: 12px; }
+  .totals.y3 .v { font-size: 17px; }
+}
 </style>
 </head>
 <body>
 <header><div class="wrap"><b>BRUIS</b><small>four ideas side by side</small></div></header>
+<div class="scen"><div class="wrap">
+  <span class="lab">Numbers</span>
+  <div class="tog" role="group" aria-label="Scenario"><button type="button" data-s="real">Realistic</button><button type="button" data-s="plan">As planned</button></div>
+  <span class="what" id="swhat"></span>
+</div></div>
 
 <div class="wrap">
   <div class="hero">
     <h1>Which BRUIS should you start first?</h1>
-    <p class="lede">Fronts, Tables, Workshops and Objects, compared on money, time and what you lose if it goes wrong. Move the sliders to say what matters to you.</p>
+    <p class="lede">Fronts, Tables, Workshops and Objects over three years: money, time and what you lose if it goes wrong. Move the sliders to say what matters to you.</p>
     <div class="key" id="key"></div>
   </div>
+
+  <section>
+    <h2>Three years, more time each year</h2>
+    <p class="sub">What each idea leaves in your pocket after tax, as you take on more work in years two and three. Under it: hours a week and whether BRUIS must charge VAT.</p>
+    <div class="three" id="three"></div>
+    <details class="assume" id="assume"></details>
+  </section>
 
   <section>
     <h2>What matters to you</h2>
@@ -134,8 +184,9 @@ footer p { margin: 0 0 6px; max-width: 52em; }
 
   <section>
     <h2>Compare one thing at a time</h2>
-    <p class="sub">Year one is April or March to December 2027, while BRUIS is still VAT-exempt.</p>
+    <p class="sub">Pick a measure and a year.</p>
     <div class="seg" id="seg" role="group" aria-label="Measure"></div>
+    <div class="yrs" id="yrs"></div>
     <p class="metric-note" id="mnote"></p>
     <div class="bars" id="bars"></div>
   </section>
@@ -148,105 +199,179 @@ footer p { margin: 0 0 6px; max-width: 52em; }
 
   <section>
     <h2>Combine ideas</h2>
-    <p class="sub">Tick the ideas you'd run together. The KBO registration is counted once; the rest is added up.</p>
+    <p class="sub">Tick the ideas you'd run together. The registration, the accountant and the workshop-at-home deduction count once; VAT goes by the combined turnover.</p>
     <div class="ideas" id="combo"></div>
-    <div class="totals" id="totals"></div>
+    <div class="totals y3" id="totals"></div>
     <div class="verdict" id="cverdict"></div>
   </section>
 
   <section>
     <h2>All the numbers</h2>
+    <div class="yrs" id="tyrs"></div>
     <div class="tbl"><table id="tbl"></table></div>
   </section>
 </div>
 
 <footer><div class="wrap">
-  <p>All four come from their financial plans. Objects plans 330 pieces in year one: 150 candle holders, 80 plant pots, 60 lamps and 40 pairs of bookends.</p>
-  <p>Kept after tax uses each plan on its own; run together, the workshop-at-home deduction counts only once. All figures are estimates to check with your accountant.</p>
+  <p>Built from the four financial plans. "As planned" uses their year one; "Realistic" halves year-one sales, adds slower first pieces, 10% failures and an accountant. Years two and three are my assumptions, listed under the three-year view.</p>
+  <p>Tax: social contributions for a side business and income tax at the top rate on top of a job. All figures are estimates to check with your accountant.</p>
 </div></footer>
-
 <script>
+/* ---------- the model ---------- */
+const THR = [26000, 27000, 28000];          // VAT limit per year (2027, 2028, 2029)
+const WS_DED = 1380;                        // workshop at home, once for all of BRUIS
+const ACC = 600;                            // accountant per year, realistic only
+const KEEP = (1 - 0.205 * 1.042) * (1 - 0.535);
+
 const IDEAS = [
-  { id: 'fronts', name: 'Fronts', what: 'Custom fronts for IKEA cabinets',
-    startup: 1772, tools: 4450, fixed: 260, turnover: 22850, profit: 10494, hours: 246,
-    kept1: 480, kept2: 5295, job: [65, 112], van: 10.3, flex: 0.75,
+  { id: 'fronts', name: 'Fronts', what: 'Custom fronts for IKEA cabinets', unit: 'orders',
+    turnUnit: 2285, left: 1361, vatK: 0.822, hUnit: 15, adminMo: 8, fixedMo: 260, extraFix: 0, extraH: 0,
+    startup: 1772, tools: 4450, toolSave: 120, wYears: 5, small: 1150,
+    units: { plan: [10, 24, 30], real: [5, 12, 20] }, toolYear: { plan: 1, real: 2 }, flex: 0.75,
+    grow: 'Year 2: buy the CNC and do your own cutting (saves €120 an order). Year 3: about 20 orders, one every two to three weeks.',
     worst: 'Nobody orders, or a measuring mistake means remaking a set of fronts.',
     extra: 'A remade order costs about €650–850 in board and cutting.',
-    limit: 'Customers measure with your checklist. Use a cutting partner first; buy the CNC (€3,000) only once orders come in.',
-    toolsNote: 'CNC router, jigs, dust extraction' },
-  { id: 'tables', name: 'Tables', what: 'New oak tables from old ones',
-    startup: 1432, tools: 2570, fixed: 220, turnover: 20850, profit: 11908, hours: 316,
-    kept1: 2680, kept2: 5611, job: [58, 76], van: 12.4, flex: 0.6,
+    limit: 'Customers measure with your checklist. Use a cutting partner first; buy the CNC (€3,000) only once orders come in.' },
+  { id: 'tables', name: 'Tables', what: 'New oak tables from old ones', unit: 'tables',
+    turnUnit: 2085, left: 1455, vatK: 0.823, hUnit: 22, adminMo: 8, fixedMo: 220, extraFix: 0, extraH: 0,
+    startup: 1432, tools: 2570, toolSave: 120, wYears: 5, small: 1050,
+    units: { plan: [10, 25, 30], real: [5, 10, 16] }, toolYear: { plan: 1, real: 2 }, flex: 0.6,
+    grow: 'Year 2: a second-hand planer (saves €120 a table) and a stock of old tables. Year 3: about 16 tables, with a helper for deliveries.',
     worst: 'No sales, or a top warps or cracks after delivery.',
     extra: 'Remaking a top costs another old table (about €150) and 15–20 hours.',
-    limit: 'Check moisture (8–12%), steel strips under every top, and sell the showroom table first.',
-    toolsNote: 'Second-hand planer, sander, jointer, clamps' },
-  { id: 'workshops', name: 'Workshops', what: 'Woodworking for kids, families, adults',
-    startup: 1136, tools: 1710, fixed: 180, turnover: 22752, profit: 13775, hours: 367,
-    kept1: 4072, kept2: 6089, job: [33, 86], van: 15.6, flex: 0.2,
+    limit: 'Check moisture (8–12%), steel strips under every top, and sell the showroom table first.' },
+  { id: 'workshops', name: 'Workshops', what: 'Woodworking for kids, families, adults', unit: 'sessions',
+    turnUnit: 421.3, left: 295.1, vatK: 0.79, hUnit: 5.46, adminMo: 6, fixedMo: 180, extraFix: 0, extraH: 0,
+    startup: 1136, tools: 1710, toolSave: 0, wYears: 3, small: 450,
+    units: { plan: [54, 70, 80], real: [27, 48, 64] }, toolYear: { plan: 1, real: 1 }, flex: 0.2,
+    grow: 'Year 2: a full year of sessions plus school holidays. Year 3: about 64 sessions, more adult days and team days.',
     worst: 'Too few bookings, the city says no to groups at home, or a child gets hurt.',
     extra: 'An injury is insured, but it could end the children’s workshops.',
-    limit: 'Ask Kortrijk first, insure participants, and cancel a week ahead below 4 bookings.',
-    toolsNote: 'Hand-tool sets, benches, drills, sanders' },
-  { id: 'objects', name: 'Objects', what: 'Concrete, oak and 3D-printed decor',
-    startup: 1062, tools: 160, fixed: 110, turnover: 15850, profit: 10078, hours: 318,
-    kept1: 3887, kept2: 4425, job: [67, 84], van: 16.6, flex: 1,
-    worst: 'Pieces don\u2019t sell and you sit on stock, or a lamp or candle holder leads to a complaint.',
+    limit: 'Ask Kortrijk first, insure participants, and cancel a week ahead below 4 bookings.' },
+  { id: 'objects', name: 'Objects', what: 'Concrete, oak and 3D-printed decor', unit: 'pieces',
+    turnUnit: 48.03, left: 35.51, vatK: 0.807, hUnit: 0.48, adminMo: 10, fixedMo: 110, extraFix: 320, extraH: 40,
+    startup: 1062, tools: 160, toolSave: 0, wYears: 3, small: 450, shopShare: [0, 0.35, 0.35],
+    units: { plan: [330, 700, 1000], real: [165, 400, 650] }, toolYear: { plan: 1, real: 1 }, flex: 1,
+    grow: 'Years 2 and 3: about a third sold through shops at a wholesale price (60% of the shop price), so more pieces but less per piece.',
+    worst: 'Pieces don’t sell and you sit on stock, or a lamp or candle holder leads to a complaint.',
     extra: 'Unsold stock is cheap: about €3–20 of material a piece.',
-    limit: 'Small batches, test at one market first, a bought CE-marked LED module, a warning card with every candle holder.',
-    toolsNote: 'Mixing gear, vibration table; you already have a 3D printer' }
+    limit: 'Small batches, test at one market first, a bought CE-marked LED module, a warning card with every candle holder.' }
 ];
+
+let S = 'real';
 const COL = id => `var(--${id})`;
-const eur = n => '€' + Math.round(n).toLocaleString('en-US');
-const perHour = i => i.profit / i.hours;
-const worstLoss = i => i.startup + 6 * i.fixed;
+const eur = n => (n < 0 ? '−€' : '€') + Math.abs(Math.round(n)).toLocaleString('en-US');
+const learnK = y => S === 'real' ? [1.3, 1.1, 1][y - 1] : 1;
+const failK = y => S === 'real' ? [0.9, 0.95, 1][y - 1] : 1;
 
-const METRICS = [
-  { k: 'startup', label: 'Start-up costs', get: i => i.startup, fmt: eur, low: true, note: 'Money out before the first sale, tools for later not included.' },
-  { k: 'tools', label: 'Tools to buy', get: i => i.tools, fmt: eur, low: true, note: 'Investments you can delay until orders come in. They keep some resale value.' },
-  { k: 'worst', label: 'Worst case', get: worstLoss, fmt: eur, low: true, note: 'Start-up costs plus six months of fixed costs with no sales at all.' },
-  { k: 'hours', label: 'Hours in year one', get: i => i.hours, fmt: n => Math.round(n) + ' h', low: true, note: 'All hours: making, selling, admin, delivery.' },
-  { k: 'turnover', label: 'Turnover', get: i => i.turnover, fmt: eur, note: 'Year one, before costs. Over €26,000 a year means charging VAT.' },
-  { k: 'profit', label: 'Left before tax', get: i => i.profit, fmt: eur, note: 'Turnover minus materials and fixed costs, before start-up costs and tax.' },
-  { k: 'ph', label: 'Per hour, all in', get: perHour, fmt: n => eur(n) + '/h', note: 'Left before tax divided by every hour, selling and admin included.' },
-  { k: 'kept1', label: 'Kept, year one', get: i => i.kept1, fmt: eur, note: 'After start-up costs, tools, contributions and income tax.' },
-  { k: 'kept2', label: 'Kept, a later year', get: i => i.kept2, fmt: eur, note: 'A normal year with no start-up costs or tools to buy.' },
-  { k: 'van', label: 'Hours a week for van + €800', get: i => i.van, fmt: n => n.toFixed(1) + ' h', low: true, note: 'Weekly hours to pay a van and €800 a month to yourself from this idea alone. Your budget is 10.' }
-];
+function tax(taxable) {
+  taxable = Math.max(0, taxable);
+  const social = taxable < 1922.16 ? 0 : taxable * 0.205 * 1.042;
+  return { social, income: Math.max(0, (taxable - social) * 0.535) };
+}
 
-/* priorities: each returns 0..1, 1 = best */
-const norm = (v, arr, low) => { const mn = Math.min(...arr), mx = Math.max(...arr); const t = mx === mn ? 1 : (v - mn) / (mx - mn); return low ? 1 - t : t; };
-const PRIOS = [
-  { k: 'risk', label: 'Low risk', hint: 'Little to lose if it doesn’t work', v: 4,
-    s: i => norm(worstLoss(i) + i.tools * 0.4, IDEAS.map(x => worstLoss(x) + x.tools * 0.4), true) },
-  { k: 'money', label: 'Money per hour', hint: 'Every hour pays well', v: 3, s: i => norm(perHour(i), IDEAS.map(perHour)) },
-  { k: 'time', label: 'Fits in 10 hours a week', hint: 'Reaches the van goal in few hours', v: 3, s: i => norm(i.van, IDEAS.map(x => x.van), true) },
-  { k: 'flex', label: 'Free to choose when', hint: 'Evenings, no fixed slots or deliveries', v: 2, s: i => i.flex },
-  { k: 'cash', label: 'Cash in year one', hint: 'Money in your pocket soon', v: 2, s: i => norm(i.kept1, IDEAS.map(x => x.kept1)) }
-];
-const REASON = {
-  risk: ['little to lose', 'more to lose'], money: ['pays well per hour', 'lower pay per hour'],
-  time: ['few hours for the van goal', 'many hours for the van goal'], flex: ['work when you like', 'fixed times'],
-  cash: ['much kept in year one', 'little kept in year one']
-};
+/* the operating side of one idea in one year; vat = forced flag or null to decide alone */
+function ops(i, y, vat) {
+  const units = i.units[S][y - 1];
+  const share = i.shopShare ? i.shopShare[y - 1] : 0;
+  const turnover = units * i.turnUnit * (1 - share * 0.4);
+  const isVat = vat === null ? turnover > THR[y - 1] : vat;
+  const own = i.toolYear[S] <= y;
+  const per = (i.left + (own ? i.toolSave : 0)) * (isVat ? i.vatK : 1) * failK(y);
+  const perShop = per - i.turnUnit * 0.4 * (isVat ? 1 / 1.21 : 1);   // wholesale: 40% less money in
+  const variable = units * ((1 - share) * per + share * perShop);
+  const fixed = i.fixedMo * 12 + i.extraFix;
+  const hours = units * i.hUnit * learnK(y) + i.adminMo * 12 + i.extraH;
+  const tb = i.toolYear[S] === y ? i.tools : 0;
+  const ty = i.toolYear[S];
+  const writeoff = y >= ty && y < ty + i.wYears ? i.tools / i.wYears : 0;
+  return { units, turnover, isVat, variable, fixed, profit: variable - fixed, hours,
+    startup: y === 1 ? i.startup : 0, toolsBought: tb, writeoff, inv: tb * 0.1, small: i.small };
+}
+
+/* one or more ideas run together in year y */
+function run(list, y) {
+  const solo = list.length === 1;
+  let vat = null;
+  if (!solo) vat = list.reduce((a, i) => a + ops(i, y, false).turnover, 0) > THR[y - 1];
+  const o = list.map(i => ops(i, y, solo ? null : vat));
+  const sum = k => o.reduce((a, x) => a + x[k], 0);
+  const acc = S === 'real' ? ACC : 0;
+  const profit = sum('profit') - acc;
+  const startup = sum('startup') - (y === 1 ? (list.length - 1) * 111.5 : 0);
+  const taxable = profit - startup - WS_DED - sum('writeoff') - sum('inv') - sum('small');
+  const t = tax(taxable);
+  const kept = profit - startup - sum('toolsBought') - sum('small') - t.social - t.income;
+  const hours = sum('hours');
+  return { turnover: sum('turnover'), isVat: o.some(x => x.isVat), profit, hours, wk: hours / 52,
+    perHour: hours ? profit / hours : 0, kept, startup, tools: sum('toolsBought'), units: o.map(x => x.units) };
+}
+const one = (i, y) => run([i], y);
+const worstLoss = i => i.startup + 6 * i.fixedMo + (S === 'real' ? ACC / 2 : 0);
+
+/* hours a week to pay a van (€600) and €800 a month take-home, VAT-registered, tools owned, year-3 conditions */
+function vanHours(i) {
+  const dedMo = (WS_DED + i.tools / i.wYears) / 12;
+  const need = (800 - (1 - KEEP) * dedMo) / KEEP + 600 + i.fixedMo + i.extraFix / 12 + (S === 'real' ? ACC / 12 : 0);
+  const share = i.shopShare ? i.shopShare[2] : 0;
+  const per = (i.left + i.toolSave) * i.vatK;
+  const perAvg = (1 - share) * per + share * (per - i.turnUnit * 0.4 / 1.21);
+  const unitsMo = need / perAvg;
+  return (unitsMo * i.hUnit + i.adminMo + i.extraH / 12) * 12 / 52;
+}
+
+/* ---------- scenario switch ---------- */
+function scen() {
+  document.querySelectorAll('.tog button').forEach(b => b.setAttribute('aria-pressed', b.dataset.s === S));
+  document.getElementById('swhat').textContent = S === 'real'
+    ? 'Half the year-one sales of the plans, slower first pieces, 10% failures, an accountant, tools bought when the orders are there.'
+    : 'Year one exactly as in the four financial plans; years two and three grow to the plans’ goals.';
+}
+document.querySelectorAll('.tog button').forEach(b => b.addEventListener('click', () => { S = b.dataset.s; all(); }));
 
 function key() {
-  document.getElementById('key').innerHTML = IDEAS.map(i => `<span><i class="dot" style="background:${COL(i.id)}"></i>${i.name}: ${i.what}${i.est ? ' (estimate)' : ''}</span>`).join('');
+  document.getElementById('key').innerHTML = IDEAS.map(i => `<span><i class="dot" style="background:${COL(i.id)}"></i>${i.name}: ${i.what}</span>`).join('');
 }
 
+/* ---------- three years ---------- */
+function three() {
+  const rows = IDEAS.map(i => [1, 2, 3].map(y => one(i, y)));
+  const mx = Math.max(...rows.flat().map(r => Math.abs(r.kept)), 1);
+  let h = `<div class="h"></div>${[1, 2, 3].map(y => `<div class="h">Year ${y}<br>${2026 + y}</div>`).join('')}`;
+  IDEAS.forEach((i, n) => {
+    h += `<div class="nm"><i class="dot" style="background:${COL(i.id)}"></i>${i.name}</div>`;
+    rows[n].forEach((r, y) => {
+      h += `<div><div class="k ${r.kept < 0 ? 'neg' : ''}">${eur(r.kept)}</div>
+        <div class="kb"><i style="width:${Math.max(0, r.kept) / mx * 100}%;background:${COL(i.id)}"></i></div>
+        <div class="d">${r.units[0]} ${i.unit} · ${r.wk.toFixed(1)} h/wk${r.wk > 10 ? ' <span class="w">over 10</span>' : ''}<br>${r.isVat ? '<span class="w">VAT 21%</span>' : 'no VAT'} · ${eur(r.perHour)}/h</div></div>`;
+    });
+  });
+  document.getElementById('three').innerHTML = h;
+  document.getElementById('assume').innerHTML = `<summary>What grows in years two and three</summary><ul>${IDEAS.map(i => `<li><b>${i.name}:</b> ${i.units[S].join(' → ')} ${i.unit}. ${i.grow}</li>`).join('')}
+    <li>${S === 'real' ? 'Realistic: first pieces take 30% longer in year one and 10% longer in year two; 10% of the work fails or is redone in year one, 5% in year two.' : 'As planned: no failures and no learning time.'}</li>
+    <li>Over the VAT limit (€26,000 in 2027, rising €1,000 a year), prices stay the same and 21% goes to the state, so less is left per sale.</li></ul>`;
+}
+
+/* ---------- priorities ---------- */
+const norm = (v, arr, low) => { const mn = Math.min(...arr), mx = Math.max(...arr); const t = mx === mn ? 1 : (v - mn) / (mx - mn); return low ? 1 - t : t; };
+const PRIOS = [
+  { k: 'risk', label: 'Low risk', hint: 'Little to lose if it doesn’t work', v: 4, s: i => norm(worstLoss(i) + i.tools * 0.4, IDEAS.map(x => worstLoss(x) + x.tools * 0.4), true) },
+  { k: 'money', label: 'Money per hour', hint: 'Every hour pays well, in year three', v: 3, s: i => norm(one(i, 3).perHour, IDEAS.map(x => one(x, 3).perHour)) },
+  { k: 'time', label: 'Fits in 10 hours a week', hint: 'Reaches the van goal in few hours', v: 3, s: i => norm(vanHours(i), IDEAS.map(vanHours), true) },
+  { k: 'flex', label: 'Free to choose when', hint: 'Evenings, no fixed slots or deliveries', v: 2, s: i => i.flex },
+  { k: 'cash', label: 'Money over three years', hint: 'Most kept after tax, years one to three', v: 2, s: i => norm(tot3(i), IDEAS.map(tot3)) }
+];
+const tot3 = i => [1, 2, 3].reduce((a, y) => a + one(i, y).kept, 0);
+const REASON = { risk: ['little to lose', 'more to lose'], money: ['pays well per hour', 'lower pay per hour'],
+  time: ['few hours for the van goal', 'many hours for the van goal'], flex: ['work when you like', 'fixed times'],
+  cash: ['most kept over three years', 'little kept over three years'] };
+const word = v => ['ignore', 'a little', 'some', 'matters', 'a lot', 'most'][v];
 function sliders() {
   document.getElementById('sliders').innerHTML = PRIOS.map(p => `
-    <div class="slider">
-      <label for="p-${p.k}">${p.label}<output id="o-${p.k}">${word(p.v)}</output></label>
-      <p>${p.hint}</p>
-      <input type="range" id="p-${p.k}" min="0" max="5" step="1" value="${p.v}">
-    </div>`).join('');
-  PRIOS.forEach(p => document.getElementById('p-' + p.k).addEventListener('input', e => {
-    p.v = +e.target.value; document.getElementById('o-' + p.k).textContent = word(p.v); rank();
-  }));
+    <div class="slider"><label for="p-${p.k}">${p.label}<output id="o-${p.k}">${word(p.v)}</output></label><p>${p.hint}</p>
+    <input type="range" id="p-${p.k}" min="0" max="5" step="1" value="${p.v}"></div>`).join('');
+  PRIOS.forEach(p => document.getElementById('p-' + p.k).addEventListener('input', e => { p.v = +e.target.value; document.getElementById('o-' + p.k).textContent = word(p.v); rank(); }));
 }
-function word(v) { return ['ignore', 'a little', 'some', 'matters', 'a lot', 'most'][v]; }
-
 function rank() {
   const tw = PRIOS.reduce((a, p) => a + p.v, 0) || 1;
   const rows = IDEAS.map(i => {
@@ -256,48 +381,61 @@ function rank() {
     const weak = parts.filter(x => x.w >= 3 && x.s < 0.35).map(x => REASON[x.k][1]);
     return { i, score, strong, weak };
   }).sort((a, b) => b.score - a.score);
-  document.getElementById('rank').innerHTML = rows.map((r, n) => `
-    <li>
-      <span class="n">${n + 1}</span>
-      <div>
-        <div class="nm"><i class="dot" style="background:${COL(r.i.id)}"></i>${r.i.name}${r.i.est ? ' <span class="est">estimate</span>' : ''}</div>
-        <div class="why">${r.strong.length ? 'Strong: ' + r.strong.join(', ') : 'No clear strength for what you picked'}${r.weak.length ? '. Weak: ' + r.weak.join(', ') : ''}.</div>
-        <div class="bar"><i style="width:${Math.round(r.score * 100)}%;background:${COL(r.i.id)}"></i></div>
-      </div>
-      <span class="sc">${Math.round(r.score * 100)}</span>
-    </li>`).join('');
+  document.getElementById('rank').innerHTML = rows.map((r, n) => `<li><span class="n">${n + 1}</span><div>
+    <div class="nm"><i class="dot" style="background:${COL(r.i.id)}"></i>${r.i.name}</div>
+    <div class="why">${r.strong.length ? 'Strong: ' + r.strong.join(', ') : 'No clear strength for what you picked'}${r.weak.length ? '. Weak: ' + r.weak.join(', ') : ''}.</div>
+    <div class="bar"><i style="width:${Math.round(r.score * 100)}%;background:${COL(r.i.id)}"></i></div></div>
+    <span class="sc">${Math.round(r.score * 100)}</span></li>`).join('');
 }
 
-let cur = 'worst';
+/* ---------- one measure ---------- */
+const METRICS = [
+  { k: 'kept', label: 'Kept after tax', y: true, get: (i, y) => one(i, y).kept, fmt: eur, note: 'After start-up costs, tools bought that year, contributions and income tax.' },
+  { k: 'wk', label: 'Hours a week', y: true, get: (i, y) => one(i, y).wk, fmt: n => n.toFixed(1) + ' h', low: true, note: 'All hours over the year divided by 52. Your budget is 10.' },
+  { k: 'ph', label: 'Per hour, all in', y: true, get: (i, y) => one(i, y).perHour, fmt: n => eur(n) + '/h', note: 'Left before tax divided by every hour, selling and admin included.' },
+  { k: 'turnover', label: 'Turnover', y: true, get: (i, y) => one(i, y).turnover, fmt: eur, note: 'Before costs. Over the VAT limit means charging 21% VAT.' },
+  { k: 'profit', label: 'Left before tax', y: true, get: (i, y) => one(i, y).profit, fmt: eur, note: 'Turnover minus materials and fixed costs, before start-up costs, tools and tax.' },
+  { k: 'startup', label: 'Start-up costs', get: i => i.startup, fmt: eur, low: true, note: 'Money out before the first sale, tools not included.' },
+  { k: 'tools', label: 'Tools to buy', get: i => i.tools, fmt: eur, low: true, note: 'Investments you can delay until orders come in. They keep some resale value.' },
+  { k: 'worst', label: 'Worst case', get: worstLoss, fmt: eur, low: true, note: 'Start-up costs plus six months of fixed costs with no sales at all.' },
+  { k: 'van', label: 'Hours a week for van + €800', get: i => vanHours(i), fmt: n => n.toFixed(1) + ' h', low: true, note: 'Weekly hours to pay a van and €800 a month to yourself from this idea alone, once VAT-registered with tools owned.' }
+];
+let cur = 'kept', curY = 1;
 function seg() {
   const el = document.getElementById('seg');
   el.innerHTML = METRICS.map(m => `<button type="button" data-k="${m.k}" aria-pressed="${m.k === cur}">${m.label}</button>`).join('');
   el.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { cur = b.dataset.k; seg(); bars(); }));
 }
+function yrs(id, get, set) {
+  const el = document.getElementById(id);
+  el.innerHTML = 'Year ' + [1, 2, 3].map(y => `<button type="button" data-y="${y}" aria-pressed="${get() === y}">${y}</button>`).join('');
+  el.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { set(+b.dataset.y); }));
+}
 function bars() {
   const m = METRICS.find(x => x.k === cur);
-  const vals = IDEAS.map(m.get), mx = Math.max(...vals);
+  const yEl = document.getElementById('yrs');
+  if (m.y) { yEl.style.display = ''; yrs('yrs', () => curY, y => { curY = y; bars(); }); } else yEl.style.display = 'none';
+  const vals = IDEAS.map(i => m.get(i, curY)), mx = Math.max(...vals.map(Math.abs), 1);
   const bestV = m.low ? Math.min(...vals) : Math.max(...vals);
   document.getElementById('mnote').textContent = m.note + (m.low ? ' Lower is better.' : ' Higher is better.');
   document.getElementById('bars').innerHTML = IDEAS.map((i, n) => {
-    const v = vals[n], w = mx ? Math.max(0.5, v / mx * 72) : 0.5;
-    return `<div class="row"><div class="lbl">${i.name}${i.est ? '<br><span class="est">estimate</span>' : ''}</div>
-      <div class="track"><div class="fill" style="width:${w}%;background:${COL(i.id)}"></div>
-      <span class="val" style="left:calc(${w}% + 10px)">${m.fmt(v)}${v === bestV ? '<span class="best">best</span>' : ''}</span></div></div>`;
+    const v = vals[n], w = Math.max(0.5, Math.max(0, v) / mx * 62);
+    return `<div class="row"><div class="lbl">${i.name}</div><div class="track"><div class="fill" style="width:${w}%;background:${COL(i.id)}"></div>
+      <span class="val" style="left:calc(${w}% + 10px)${v < 0 ? ';color:var(--warn)' : ''}">${m.fmt(v)}${v === bestV ? '<span class="best">best</span>' : ''}</span></div></div>`;
   }).join('');
 }
 
+/* ---------- worst case ---------- */
 function worst() {
-  document.getElementById('worst').innerHTML = IDEAS.map(i => `
-    <div>
-      <h3><i class="dot" style="background:${COL(i.id)}"></i>${i.name}</h3>
-      <p class="loss">${eur(worstLoss(i))}</p>
-      <p class="losst">lost after six months without sales${i.tools ? `, plus ${eur(i.tools)} of tools if bought early` : ''}</p>
-      <p><b>What goes wrong:</b> ${i.worst} ${i.extra}</p>
-      <p class="lim"><b>How to limit it:</b> ${i.limit}</p>
-    </div>`).join('');
+  document.getElementById('worst').innerHTML = IDEAS.map(i => `<div>
+    <h3><i class="dot" style="background:${COL(i.id)}"></i>${i.name}</h3>
+    <p class="loss">${eur(worstLoss(i))}</p>
+    <p class="losst">lost after six months without sales${i.tools ? `, plus ${eur(i.tools)} of tools if bought early` : ''}</p>
+    <p><b>What goes wrong:</b> ${i.worst} ${i.extra}</p>
+    <p class="lim"><b>How to limit it:</b> ${i.limit}</p></div>`).join('');
 }
 
+/* ---------- combine ---------- */
 const picked = new Set(['fronts', 'objects']);
 function combo() {
   const el = document.getElementById('combo');
@@ -307,39 +445,35 @@ function combo() {
 }
 function totals() {
   const sel = IDEAS.filter(i => picked.has(i.id));
-  const n = sel.length;
-  const sum = f => sel.reduce((a, i) => a + f(i), 0);
-  const start = n ? sum(i => i.startup) - (n - 1) * 111.5 : 0;
-  const turn = sum(i => i.turnover), prof = sum(i => i.profit), hrs = sum(i => i.hours), tools = sum(i => i.tools);
-  const wk = hrs / 52, over = turn > 26000;
-  document.getElementById('totals').innerHTML = `
-    <div><div class="v">${eur(start)}</div><div class="t">start-up costs</div></div>
-    <div><div class="v">${eur(tools)}</div><div class="t">tools, when orders allow</div></div>
-    <div><div class="v ${over ? 'over' : ''}">${eur(turn)}</div><div class="t">turnover, year one${over ? ': over €26,000, so 21% VAT' : ''}</div></div>
-    <div><div class="v">${eur(prof)}</div><div class="t">left before tax</div></div>
-    <div><div class="v ${wk > 10 ? 'over' : ''}">${wk.toFixed(1)} h</div><div class="t">a week on average${wk > 10 ? ': over your 10-hour budget' : ''}</div></div>
-    <div><div class="v">${hrs ? eur(prof / hrs) + '/h' : '—'}</div><div class="t">per hour, all in</div></div>`;
-  let v;
-  if (!n) v = 'Tick at least one idea.';
-  else if (n === 1) v = `${sel[0].name} on its own: ${wk.toFixed(1)} hours a week in year one, and ${eur(sel[0].kept1)} kept after tax.`;
-  else {
-    v = `Together: about ${wk.toFixed(1)} hours a week.`;
-    if (over) v += ' Turnover goes over the VAT limit, so BRUIS charges 21% VAT and keeps roughly 15–20% less per sale. Raise prices a little, or start one idea later in the year.';
-    else v += ' Still under the VAT limit, so no VAT to charge.';
-    if (wk > 10) v += ' That is more than your 10 hours: start with fewer orders or sessions a month.';
-  }
-  document.getElementById('cverdict').textContent = v;
+  const el = document.getElementById('totals'), v = document.getElementById('cverdict');
+  if (!sel.length) { el.innerHTML = ''; v.textContent = 'Tick at least one idea.'; return; }
+  const r = [1, 2, 3].map(y => run(sel, y));
+  const line = (label, f, warn) => `<div class="rl">${label}</div>` + r.map(x => `<div class="v ${warn && warn(x) ? 'over' : ''}">${f(x)}</div>`).join('');
+  el.innerHTML = `<div></div>${[1, 2, 3].map(y => `<div class="rl">Year ${y}</div>`).join('')}` +
+    line('Turnover', x => eur(x.turnover), x => x.isVat) +
+    line('Hours a week', x => x.wk.toFixed(1) + ' h', x => x.wk > 10) +
+    line('Per hour', x => eur(x.perHour)) +
+    line('Kept after tax', x => eur(x.kept), x => x.kept < 0);
+  const total = r.reduce((a, x) => a + x.kept, 0);
+  let t = `Over three years: about ${eur(total)} kept after tax, ${r[0].wk.toFixed(1)} → ${r[2].wk.toFixed(1)} hours a week.`;
+  if (r.some(x => x.isVat)) t += ` VAT from year ${r.findIndex(x => x.isVat) + 1}: red turnover means 21% VAT on every sale.`;
+  if (r[2].wk > 10) t += ` By year three that is more than your 10 hours a week.`;
+  v.textContent = t;
 }
 
+/* ---------- table ---------- */
+let tY = 1;
 function table() {
-  const rows = [
-    ['What', i => i.what], ...METRICS.map(m => [m.label, i => m.fmt(m.get(i))]), ['Per hour, best and worst job', i => `€${i.job[0]}–${i.job[1]}`]
-  ];
-  document.getElementById('tbl').innerHTML = `<thead><tr><th></th>${IDEAS.map(i => `<th>${i.name}${i.est ? '*' : ''}</th>`).join('')}</tr></thead>
+  yrs('tyrs', () => tY, y => { tY = y; table(); });
+  const rows = [['What', i => i.what], ['Sold', i => `${i.units[S][tY - 1]} ${i.unit}`],
+    ...METRICS.map(m => [m.label + (m.y ? ` (year ${tY})` : ''), i => m.fmt(m.get(i, tY))]),
+    ['Kept, three years together', i => eur(tot3(i))]];
+  document.getElementById('tbl').innerHTML = `<thead><tr><th></th>${IDEAS.map(i => `<th>${i.name}</th>`).join('')}</tr></thead>
     <tbody>${rows.map(([l, f]) => `<tr><td>${l}</td>${IDEAS.map(i => `<td>${f(i)}</td>`).join('')}</tr>`).join('')}</tbody>`;
 }
 
-key(); sliders(); rank(); seg(); bars(); worst(); combo(); table();
+function all() { scen(); three(); rank(); seg(); bars(); worst(); totals(); table(); }
+key(); sliders(); combo(); all();
 </script>
 </body>
 </html>
