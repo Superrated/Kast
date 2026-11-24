@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BRUIS Workshops — make something real in wood (prototype)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&display=swap">
+<style>
+:root {
+  --bg: #f3f3f1;
+  --raised: #fbfbfa;
+  --ink: #1a1a1a;
+  --ink2: #6b6b67;
+  --ink3: #8f8f8a;
+  --line: #dcdbd6;
+  --oak: #cda470;
+  --oak2: #a8804f;
+  --f: 'Bricolage Grotesque', system-ui, -apple-system, sans-serif;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+button, input, select, textarea { font: inherit; color: inherit; }
+a { color: inherit; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-left: 28px; padding-right: 28px; }
+header.top { border-bottom: 1px solid var(--line); background: var(--bg); position: sticky; top: 0; z-index: 10; }
+header.top .wrap { display: flex; align-items: baseline; gap: 28px; padding-top: 14px; padding-bottom: 14px; }
+.brand { font-size: 15px; display: flex; gap: 8px; align-items: baseline; text-decoration: none; }
+.brand b { font-weight: 800; font-size: 22px; letter-spacing: 0.01em; }
+.brand small { color: var(--ink3); font-size: 13px; }
+nav.links { margin-left: auto; display: flex; gap: 22px; font-size: 14px; }
+nav.links a { text-decoration: none; color: var(--ink2); }
+nav.links a:hover { color: var(--ink); }
+
+.hero { padding-top: 64px; padding-bottom: 44px; display: grid; grid-template-columns: 6fr 6fr; gap: 48px; align-items: end; }
+h1 { font-weight: 400; font-size: clamp(40px, 6vw, 76px); line-height: 0.98; letter-spacing: -0.025em; margin: 0 0 22px; font-variation-settings: 'wdth' 85, 'opsz' 96; }
+.lede { font-size: 18px; color: var(--ink2); max-width: 34em; margin: 0 0 26px; }
+.btn { display: inline-block; border: 1px solid var(--ink); background: none; padding: 12px 20px; border-radius: 2px; cursor: pointer; text-decoration: none; font-weight: 500; font-size: 15px; }
+.btn.pri { background: var(--ink); color: var(--raised); }
+.btn.sm { padding: 8px 14px; font-size: 14px; }
+.btn:disabled { opacity: 0.35; cursor: default; }
+.btn:focus-visible, button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.btns { display: flex; gap: 10px; flex-wrap: wrap; }
+.bench svg { width: 100%; height: auto; display: block; }
+.bench p { font-size: 13px; color: var(--ink3); margin: 6px 0 0; }
+
+section.block { border-top: 1px solid var(--line); padding: 56px 0; }
+h2 { font-weight: 400; font-size: clamp(30px, 3.6vw, 44px); letter-spacing: -0.02em; line-height: 1.05; margin: 0 0 14px; font-variation-settings: 'wdth' 90, 'opsz' 72; }
+h3 { font-size: 13px; font-weight: 600; margin: 0 0 10px; }
+.sub { color: var(--ink2); max-width: 40em; margin: 0 0 28px; }
+
+/* who is it for: a three-way switch */
+.who { display: inline-grid; grid-template-columns: repeat(4, auto); border: 1px solid var(--line); border-radius: 2px; margin-bottom: 26px; }
+.who button { border: 0; background: none; padding: 9px 16px; cursor: pointer; font-size: 14px; }
+.who button + button { border-left: 1px solid var(--line); }
+.who button.on { background: var(--ink); color: var(--raised); }
+
+/* workshop cards: what you make, drawn, then the facts */
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.ws { background: var(--raised); border: 1px solid var(--line); display: flex; flex-direction: column; }
+.ws .pic { aspect-ratio: 4 / 3; border-bottom: 1px solid var(--line); background: #f7f6f3; }
+.ws .pic svg { width: 100%; height: 100%; display: block; }
+.ws .body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.ws .tag { font-size: 12px; color: var(--ink2); }
+.ws h4 { margin: 0; font-size: 20px; font-weight: 500; letter-spacing: -0.01em; }
+.ws p { margin: 0; color: var(--ink2); font-size: 14.5px; }
+.ws dl { display: grid; grid-template-columns: auto 1fr; gap: 3px 14px; margin: 4px 0 0; font-size: 13.5px; }
+.ws dt { color: var(--ink3); }
+.ws dd { margin: 0; }
+.ws .foot { margin-top: auto; padding-top: 10px; display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.ws .price { font-size: 24px; font-variant-numeric: tabular-nums; }
+.ws .price small { font-size: 13px; color: var(--ink2); }
+
+/* dates */
+.dates { border-top: 1px solid var(--ink); }
+.date { display: grid; grid-template-columns: 120px 1fr auto auto; gap: 18px; align-items: center; border-bottom: 1px solid var(--line); padding: 14px 0; }
+.date .d b { display: block; font-size: 20px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.date .d span { font-size: 13px; color: var(--ink2); }
+.date .t b { display: block; font-weight: 500; }
+.date .t span { font-size: 13px; color: var(--ink2); }
+.seats { font-size: 13px; color: var(--ink2); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.seats i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; border: 1px solid var(--ink3); margin-right: 3px; vertical-align: -1px; }
+.seats i.f { background: var(--ink); border-color: var(--ink); }
+
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+.box { border: 1px solid var(--line); background: var(--raised); padding: 22px 24px; }
+.box dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 8px 18px; font-size: 14.5px; }
+.box dt { color: var(--ink2); }
+.box dd { margin: 0; }
+.rules { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.rules li { border-top: 1px solid var(--line); padding-top: 10px; font-size: 15px; }
+.rules b { font-weight: 560; }
+
+details { border-top: 1px solid var(--line); padding: 14px 0; max-width: 760px; }
+details:last-of-type { border-bottom: 1px solid var(--line); }
+summary { cursor: pointer; font-weight: 500; list-style: none; display: flex; justify-content: space-between; }
+summary::after { content: '+'; color: var(--ink3); }
+details[open] summary::after { content: '–'; }
+details p { color: var(--ink2); margin: 8px 0 0; max-width: 40em; }
+footer { border-top: 1px solid var(--line); padding: 28px 0 60px; color: var(--ink3); font-size: 13px; }
+
+.modal { position: fixed; inset: 0; background: rgba(20, 20, 20, 0.35); display: grid; place-items: center; z-index: 50; padding: 16px; }
+.modal[hidden] { display: none; }
+.mbox { background: var(--bg); max-width: 480px; width: 100%; padding: 26px; border-radius: 2px; max-height: 92vh; overflow: auto; }
+.mbox h2 { font-size: 30px; }
+.field { display: block; margin: 0 0 12px; font-size: 13px; color: var(--ink2); }
+.field input, .field textarea, .field select { display: block; width: 100%; margin-top: 4px; border: 1px solid var(--line); background: var(--raised); padding: 10px 12px; border-radius: 2px; font-size: 15px; color: var(--ink); }
+.qty { display: flex; align-items: center; gap: 12px; margin: 4px 0 14px; }
+.qty button { width: 36px; height: 36px; border: 1px solid var(--line); background: var(--raised); border-radius: 2px; cursor: pointer; font-size: 18px; }
+.qty b { font-size: 18px; min-width: 2ch; text-align: center; font-variant-numeric: tabular-nums; }
+.sum { border-top: 1px solid var(--ink); padding-top: 12px; margin: 6px 0 16px; display: flex; justify-content: space-between; align-items: baseline; }
+.sum b { font-size: 26px; font-weight: 400; font-variant-numeric: tabular-nums; }
+.hint { font-size: 12.5px; color: var(--ink3); margin: 8px 0 0; }
+
+@media (max-width: 900px) {
+  .wrap { padding-left: 18px; padding-right: 18px; }
+  nav.links { display: none; }
+  .hero { grid-template-columns: 1fr; padding-top: 36px; gap: 26px; }
+  .cards, .two { grid-template-columns: 1fr; gap: 20px; }
+  .who { grid-template-columns: repeat(2, auto); }
+  .who button:nth-child(3) { border-left: 0; }
+  .who button:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .date { grid-template-columns: 82px 1fr; }
+  .date .seats { grid-column: 2; }
+  .date .btn { grid-column: 2; justify-self: start; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="#top"><b>BRUIS</b><span>Workshops</span><small>prototype</small></a>
+  <nav class="links"><a href="#workshops">Workshops</a><a href="#dates">Dates</a><a href="#groups">Parties and groups</a><a href="#safe">Safety</a><a href="#faq">Questions</a></nav>
+</div></header>
+
+<main id="top">
+  <div class="wrap hero">
+    <div>
+      <h1>Make something real in wood.</h1>
+      <p class="lede">Small workshops in our workshop in Heule, Kortrijk, for children, parents with their children, and adults. Old oak from our tables, real tools, and you go home with what you made.</p>
+      <div class="btns"><a class="btn pri" href="#dates">See the dates</a><a class="btn" href="#groups">Book a party or a group</a></div>
+    </div>
+    <div class="bench" id="bench"></div>
+  </div>
+
+  <section class="block" id="workshops"><div class="wrap">
+    <h2>Workshops</h2>
+    <p class="sub">At most 8 children or 6 adults at a time, so everyone gets a place at the bench and real help.</p>
+    <div class="who" role="group" aria-label="Who is it for" id="who"></div>
+    <div class="cards" id="cards"></div>
+  </div></section>
+
+  <section class="block" id="dates"><div class="wrap">
+    <h2>Dates</h2>
+    <p class="sub">Saturdays and Sundays, plus a few weekday mornings in the school holidays.</p>
+    <div class="dates" id="datelist"></div>
+    <p class="hint">Example dates: this site is a prototype.</p>
+  </div></section>
+
+  <section class="block" id="groups"><div class="wrap two">
+    <div>
+      <h2>Parties and groups</h2>
+      <p class="sub">A birthday where everyone builds something, a team day away from the screen, or a family day with the grandparents. Pick a date and we make it yours.</p>
+      <div class="btns"><button type="button" class="btn pri" data-act="group">Ask for a date</button><button type="button" class="btn" data-act="voucher">Buy a gift voucher</button></div>
+    </div>
+    <div class="box">
+      <h3>Private bookings</h3>
+      <dl>
+        <dt>Kids' birthday</dt><dd>Up to 8 children, 2 hours, a little box or a birdhouse each: € 240</dd>
+        <dt>Team or friends</dt><dd>Up to 6 adults, a day, an oak serving board and a stool each: € 900</dd>
+        <dt>Family day</dt><dd>Up to 4 adults and 4 children, 3 hours: € 340</dd>
+        <dt>Gift voucher</dt><dd>Any workshop or any amount, valid for a year</dd>
+      </dl>
+    </div>
+  </div></section>
+
+  <section class="block" id="safe"><div class="wrap two">
+    <div>
+      <h2>Safe, and still real</h2>
+      <p class="sub">Children use real hand tools, sized for them, with two of us in the room. Adults also use a cordless drill and a sander. The big saws stay ours.</p>
+    </div>
+    <ul class="rules">
+      <li><b>Two grown-ups for children's workshops</b>, one for every four children.</li>
+      <li><b>Hand tools for children</b>: pull saws, hand drills, hammers, rasps and sandpaper. No machines.</li>
+      <li><b>Glasses and ear protection</b> in every size, and long hair tied back.</li>
+      <li><b>A first-aid kit, a fire extinguisher and a free way out</b>, checked before every workshop.</li>
+      <li><b>Insured</b>: every participant is covered by our liability insurance.</li>
+      <li><b>Photos only with your yes</b>: we ask parents before a child is in any picture.</li>
+    </ul>
+  </div></section>
+
+  <section class="block" id="faq"><div class="wrap">
+    <h2>Questions</h2>
+    <details><summary>From what age?</summary><p>Children's workshops are for 7 to 12 years. In the family workshops children from 5 can join with a parent. Adult workshops are from 16.</p></details>
+    <details><summary>Do parents stay?</summary><p>For children's workshops you can drop them off; we have two grown-ups in the room. For family workshops you work together.</p></details>
+    <details><summary>Do I need to bring anything?</summary><p>Clothes that can get dusty and closed shoes. Tools, wood, glasses, aprons and drinks are there. For a full day, bring your lunch.</p></details>
+    <details><summary>What if I can't come?</summary><p>Up to 7 days before, you get your money back. After that, send someone in your place or take a voucher for another date.</p></details>
+    <details><summary>Where is it?</summary><p>In our workshop in Heule, Kortrijk (8501), with parking in the street. The full address comes with your booking.</p></details>
+  </div></section>
+</main>
+<footer><div class="wrap">BRUIS Workshops · Heule, Kortrijk. Also by BRUIS: fronts for IKEA cabinets and tables from old oak. Prototype: prices and dates are examples, and nothing is sent.</div></footer>
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true"><div class="mbox" id="mbox"></div></div>
+
+<script>
+/* ---------- the workshops ---------- */
+const WS = {
+  kids: { who: 'kids', name: 'Build a birdhouse', tag: 'Children 7–12', blurb: 'Saw, drill, nail and paint your own birdhouse, ready to hang.', time: '2½ hours', places: 8, price: 39, unit: 'per child', take: 'A birdhouse', draw: 'birdhouse' },
+  kidsbox: { who: 'kids', name: 'A treasure box', tag: 'Children 7–12', blurb: 'A little oak box with a lid that slides, and your name burned in.', time: '2½ hours', places: 8, price: 39, unit: 'per child', take: 'A box with a sliding lid', draw: 'box' },
+  family: { who: 'family', name: 'A stool, together', tag: 'A parent and a child (5+)', blurb: 'Make a small oak stool together: one saws, one drills, both sit on it.', time: '3 hours', places: 4, price: 85, unit: 'per duo', take: 'A small stool', draw: 'stool' },
+  adultday: { who: 'adults', name: 'Oak from old tables', tag: 'Adults, beginners welcome', blurb: 'A day with old oak: plane, saw and oil a serving board and a small stool.', time: 'A day, 10:00–16:30', places: 6, price: 155, unit: 'per person', take: 'A serving board and a stool', draw: 'board' },
+  weekend: { who: 'adults', name: 'Your own side table', tag: 'Adults, a weekend', blurb: 'Two days to make a side table from old oak, with real joints.', time: 'Saturday and Sunday', places: 5, price: 340, unit: 'per person', take: 'A side table', draw: 'side' }
+};
+const WHO = [['all', 'Everything'], ['kids', 'Children'], ['family', 'Families'], ['adults', 'Adults']];
+// example dates, 2027
+const DATES = [
+  ['2027-04-03', 'kids', 6], ['2027-04-04', 'adultday', 2], ['2027-04-10', 'family', 1], ['2027-04-17', 'kidsbox', 8], ['2027-04-24', 'weekend', 3],
+  ['2027-05-01', 'kids', 0], ['2027-05-08', 'adultday', 0], ['2027-05-15', 'family', 0], ['2027-05-22', 'kidsbox', 0]
+];
+let S = { who: 'all' };
+const eur = v => '€ ' + Math.round(v).toLocaleString('en-IE');
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+
+/* ---------- what you take home, drawn in oak ---------- */
+function drawThing(k) {
+  const o = 'fill="#cda470" stroke="#7d5c36" stroke-width="3" stroke-linejoin="round"', d = 'fill="#a8804f" stroke="#7d5c36" stroke-width="3"', g = 'stroke="#a8804f" stroke-width="2" fill="none" opacity=".7"';
+  const floor = '<rect x="0" y="246" width="400" height="54" fill="#ebe8e2"/><ellipse cx="200" cy="248" rx="120" ry="8" fill="#000" opacity=".07"/>';
+  const T = {
+    birdhouse: `<polygon points="200,60 290,130 110,130" ${d}/><rect x="125" y="125" width="150" height="120" ${o}/><circle cx="200" cy="175" r="20" fill="#5a3b26"/><rect x="196" y="205" width="8" height="26" fill="#7d5c36"/><path d="M140 150 h40 M220 150 h40 M140 222 h120" ${g}/>`,
+    box: `<polygon points="120,150 280,150 300,130 140,130" fill="#d8b582" stroke="#7d5c36" stroke-width="3"/><rect x="120" y="150" width="160" height="95" ${o}/><polygon points="280,150 300,130 300,225 280,245" ${d}/><text x="200" y="207" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="20" fill="#5a3b26">EMMA</text><path d="M130 170 h140 M130 232 h140" ${g}/>`,
+    stool: `<rect x="120" y="120" width="160" height="26" rx="6" ${o}/><polygon points="140,146 158,146 150,246 128,246" ${d}/><polygon points="242,146 260,146 272,246 250,246" ${d}/><rect x="150" y="196" width="100" height="12" ${d}/><path d="M130 130 h140" ${g}/>`,
+    board: `<rect x="70" y="190" width="200" height="18" rx="9" ${o}/><circle cx="252" cy="199" r="5" fill="#ebe8e2" stroke="#7d5c36" stroke-width="2"/><rect x="250" y="130" width="100" height="16" rx="5" ${o}/><rect x="262" y="146" width="12" height="100" ${d}/><rect x="326" y="146" width="12" height="100" ${d}/><path d="M80 196 h170 M80 202 h160" ${g}/>`,
+    side: `<rect x="110" y="100" width="180" height="22" rx="3" ${o}/><rect x="122" y="122" width="16" height="124" ${d}/><rect x="262" y="122" width="16" height="124" ${d}/><rect x="138" y="122" width="124" height="22" ${d}/><rect x="138" y="196" width="124" height="10" ${d}/><path d="M118 108 h164 M118 114 h150" ${g}/>`
+  };
+  return `<svg viewBox="0 0 400 300" role="img" aria-label="${esc(k)}">${floor}${T[k]}</svg>`;
+}
+function bench() {
+  // the hero: a workbench with the things people make on it
+  const one = (k, x, s) => drawThing(k).replace('<svg viewBox="0 0 400 300"', `<svg x="${x}" y="${161 - 246 * s}" width="${400 * s}" height="${300 * s}" viewBox="0 0 400 300"`).replace(/<rect x="0" y="246"[^>]*\/>|<ellipse[^>]*opacity=".07"\/>/g, '');
+  return `<svg viewBox="0 0 900 400" role="img" aria-label="A workbench with a birdhouse, a box, a stool and a side table"><rect x="0" y="360" width="900" height="40" fill="#ebe8e2"/><rect x="60" y="160" width="780" height="34" fill="#cda470" stroke="#7d5c36" stroke-width="3"/><rect x="90" y="194" width="30" height="166" fill="#a8804f" stroke="#7d5c36" stroke-width="3"/><rect x="780" y="194" width="30" height="166" fill="#a8804f" stroke="#7d5c36" stroke-width="3"/><rect x="120" y="300" width="660" height="16" fill="#a8804f" stroke="#7d5c36" stroke-width="3"/>${one('birdhouse', 70, 0.55)}${one('box', 280, 0.5)}${one('stool', 450, 0.55)}${one('side', 620, 0.55)}</svg><p>What people take home: a birdhouse, a treasure box, a stool, a side table.</p>`;
+}
+function cardHTML(k) {
+  const w = WS[k];
+  return `<article class="ws"><div class="pic">${drawThing(w.draw)}</div><div class="body"><span class="tag">${esc(w.tag)}</span><h4>${esc(w.name)}</h4><p>${esc(w.blurb)}</p>
+    <dl><dt>Time</dt><dd>${esc(w.time)}</dd><dt>Places</dt><dd>${w.places}${w.unit === 'per duo' ? ' duos' : ''}</dd><dt>You take home</dt><dd>${esc(w.take)}</dd></dl>
+    <div class="foot"><span class="price">${eur(w.price)} <small>${w.unit}</small></span><button type="button" class="btn sm" data-act="pick" data-a="${k}">See dates</button></div></div></article>`;
+}
+function dayWords(iso) {
+  const d = new Date(iso + 'T12:00:00');
+  return { day: d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }), wd: d.toLocaleDateString('en-GB', { weekday: 'long' }) };
+}
+function render() {
+  document.getElementById('who').innerHTML = WHO.map(([k, n]) => `<button type="button" class="${S.who === k ? 'on' : ''}" data-act="who" data-a="${k}">${n}</button>`).join('');
+  document.getElementById('cards').innerHTML = Object.keys(WS).filter(k => S.who === 'all' || WS[k].who === S.who).map(cardHTML).join('');
+  document.getElementById('datelist').innerHTML = DATES.filter(([, k]) => S.who === 'all' || WS[k].who === S.who)
+    .map(([iso, k, taken], i) => {
+      const w = WS[k], d = dayWords(iso), left = w.places - taken;
+      return `<div class="date"><div class="d"><b>${d.day}</b><span>${d.wd}</span></div><div class="t"><b>${esc(w.name)}</b><span>${esc(w.tag)} · ${esc(w.time)} · ${eur(w.price)} ${w.unit}</span></div><span class="seats">${'<i class="f"></i>'.repeat(taken)}${'<i></i>'.repeat(left)} ${left ? left + ' left' : 'full'}</span><button type="button" class="btn sm ${left ? 'pri' : ''}" data-act="${left ? 'book' : 'wait'}" data-a="${i}">${left ? 'Book' : 'Waiting list'}</button></div>`;
+    }).join('') || '<p class="sub">No dates yet for this group: ask for one.</p>';
+}
+
+let B = null;
+function modal(html) { document.getElementById('mbox').innerHTML = html; document.getElementById('modal').hidden = false; const f = document.querySelector('#mbox input'); if (f) setTimeout(() => f.focus(), 30); }
+function bookHTML() {
+  const [iso, k, taken] = DATES[B.i], w = WS[k], d = dayWords(iso), left = w.places - taken;
+  return `<h2>${esc(w.name)}</h2><p class="sub" style="margin-bottom:16px">${d.wd} ${d.day} 2027 · ${esc(w.time)} · ${esc(w.tag)}</p>
+    <span class="field">${w.unit === 'per duo' ? 'Duos' : w.unit === 'per child' ? 'Children' : 'People'}</span>
+    <div class="qty"><button type="button" data-act="q" data-a="-1" aria-label="One less">−</button><b>${B.n}</b><button type="button" data-act="q" data-a="1" aria-label="One more" ${B.n >= left ? 'disabled' : ''}>+</button><span class="hint" style="margin:0">${left} left</span></div>
+    <label class="field">Your name<input autocomplete="name"></label>
+    <label class="field">E-mail<input type="email" autocomplete="email"></label>
+    ${w.who !== 'adults' ? '<label class="field">Children\'s names and ages<input placeholder="e.g. Emma, 9"></label>' : ''}
+    <div class="sum"><span>Total</span><b>${eur(w.price * B.n)}</b></div>
+    <div class="btns"><button type="button" class="btn pri" data-act="sent">Book and pay</button><button type="button" class="btn" data-act="close">Not now</button></div>
+    <p class="hint">Prototype: nothing is booked or paid. Money back up to 7 days before.</p>`;
+}
+function form(title, lede, extra, send) {
+  modal(`<h2>${title}</h2><p class="sub" style="margin-bottom:18px">${lede}</p>
+    <label class="field">Your name<input autocomplete="name"></label>
+    <label class="field">E-mail<input type="email" autocomplete="email"></label>${extra}
+    <div class="btns"><button type="button" class="btn pri" data-act="sent">${send}</button><button type="button" class="btn" data-act="close">Not now</button></div>
+    <p class="hint">Prototype: nothing is sent yet.</p>`);
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]');
+  if (!b) { if (e.target.id === 'modal') document.getElementById('modal').hidden = true; return; }
+  const a = b.dataset.a;
+  switch (b.dataset.act) {
+    case 'who': S.who = a; render(); return;
+    case 'pick': S.who = WS[a].who; render(); document.getElementById('dates').scrollIntoView(); return;
+    case 'book': B = { i: +a, n: 1 }; modal(bookHTML()); return;
+    case 'q': { const [, k, taken] = DATES[B.i]; B.n = Math.max(1, Math.min(WS[k].places - taken, B.n + +a)); modal(bookHTML()); return; }
+    case 'wait': return form('Waiting list', 'This one is full. We e-mail you when a place frees up or when we add a date.', '', 'Put me on the list');
+    case 'group': return form('Ask for a date', 'A party, a team day or a family day: tell us what you have in mind.', '<label class="field">What kind<select><option>Kids\' birthday</option><option>Team or friends</option><option>Family day</option></select></label><label class="field">How many, and which dates suit you<textarea rows="3"></textarea></label>', 'Send');
+    case 'voucher': return form('Gift voucher', 'For a workshop or an amount, valid for a year. We e-mail it as a PDF to print or forward.', '<label class="field">Amount or workshop<input placeholder="e.g. € 85, or A stool, together"></label>', 'Buy voucher');
+    case 'sent': modal('<h2>Thank you</h2><p class="sub">In the real site you would get a confirmation by e-mail. This prototype sends nothing.</p><button type="button" class="btn" data-act="close">Close</button>'); return;
+    case 'close': document.getElementById('modal').hidden = true; return;
+  }
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') document.getElementById('modal').hidden = true; });
+document.getElementById('bench').innerHTML = bench();
+render();
+</script>
+</body>
+</html>
