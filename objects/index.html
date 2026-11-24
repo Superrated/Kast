@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BRUIS Objects — concrete and old oak, made in small batches (prototype)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&display=swap">
+<style>
+:root {
+  --bg: #eeedea; --raised: #f8f8f6; --ink: #1a1a1a; --ink2: #5f5f5b; --ink3: #8a8a85; --line: #d6d5cf;
+  --oak: #cda470; --oak2: #a8804f;
+  --grey: #b8b6b0; --charcoal: #5b5b58; --sand: #d9cdb5;
+  --f: 'Bricolage Grotesque', system-ui, -apple-system, sans-serif;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+button, input, select { font: inherit; color: inherit; }
+a { color: inherit; }
+.wrap { max-width: 1200px; margin: 0 auto; padding: 0 28px; }
+header.top { border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 10; background: var(--bg); }
+header.top .wrap { display: flex; align-items: baseline; gap: 26px; padding-top: 14px; padding-bottom: 14px; }
+.brand { display: flex; gap: 8px; align-items: baseline; text-decoration: none; }
+.brand b { font-weight: 800; font-size: 22px; }
+.brand small { color: var(--ink3); font-size: 13px; }
+nav.links { margin-left: auto; display: flex; gap: 22px; font-size: 14px; align-items: baseline; }
+nav.links a { text-decoration: none; color: var(--ink2); }
+nav.links a:hover { color: var(--ink); }
+.bagbtn { border: 1px solid var(--ink); background: none; border-radius: 2px; padding: 6px 12px; cursor: pointer; font-size: 14px; }
+.bagbtn b { font-weight: 700; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+.hero { padding: 56px 0 24px; }
+h1 { font-weight: 400; font-size: clamp(42px, 6.6vw, 88px); line-height: 0.95; letter-spacing: -0.03em; margin: 0 0 18px; font-variation-settings: 'wdth' 80, 'opsz' 96; max-width: 11em; }
+.lede { font-size: 18px; color: var(--ink2); max-width: 32em; margin: 0 0 8px; }
+.shelf { margin-top: 26px; }
+.shelf svg { width: 100%; height: auto; display: block; }
+.batchline { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 13px; color: var(--ink3); border-top: 1px solid var(--ink); padding-top: 8px; }
+
+section.block { border-top: 1px solid var(--line); padding: 56px 0; }
+h2 { font-weight: 400; font-size: clamp(30px, 3.8vw, 46px); letter-spacing: -0.02em; line-height: 1.02; margin: 0 0 12px; font-variation-settings: 'wdth' 88, 'opsz' 72; }
+.sub { color: var(--ink2); max-width: 36em; margin: 0 0 30px; }
+
+.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
+.card { display: flex; flex-direction: column; }
+.pic { background: var(--raised); aspect-ratio: 1 / 1; display: flex; align-items: flex-end; justify-content: center; border-radius: 2px; }
+.pic svg { width: 86%; height: auto; display: block; }
+.card h3 { font-size: 19px; font-weight: 600; margin: 14px 0 0; display: flex; justify-content: space-between; gap: 10px; }
+.card h3 span { font-weight: 400; }
+.card .mat { font-size: 14px; color: var(--ink2); margin: 2px 0 10px; min-height: 3em; }
+.tints { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; font-size: 13px; color: var(--ink2); }
+.tint { width: 24px; height: 24px; border-radius: 50%; border: 1px solid rgba(0,0,0,.18); cursor: pointer; padding: 0; position: relative; }
+.tint[aria-pressed=true]::after { content: ''; position: absolute; inset: -5px; border: 1.5px solid var(--ink); border-radius: 50%; }
+.left { font-size: 13px; color: var(--ink3); margin: 0 0 12px; }
+.left b { color: var(--ink); font-weight: 600; }
+.add { margin-top: auto; border: 1px solid var(--ink); background: var(--ink); color: var(--raised); padding: 10px 14px; border-radius: 2px; cursor: pointer; font-weight: 500; }
+.add:disabled { opacity: .35; cursor: default; }
+
+.story { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+.story h3 { font-size: 20px; font-weight: 600; margin: 12px 0 6px; }
+.story p { margin: 0; color: var(--ink2); font-size: 15px; }
+.story svg { width: 64px; height: 64px; display: block; }
+
+.passport { display: grid; grid-template-columns: 5fr 6fr; gap: 48px; align-items: center; }
+.pcard { background: var(--raised); border: 1px solid var(--line); padding: 24px 26px; max-width: 420px; transform: rotate(-1.2deg); }
+.pcard .row { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--line); padding: 7px 0; font-size: 14px; }
+.pcard .row span:first-child { color: var(--ink3); }
+.pcard .hd { font-weight: 800; font-size: 18px; margin-bottom: 8px; display: flex; justify-content: space-between; }
+.pcard .hd small { font-weight: 400; color: var(--ink3); font-size: 12px; }
+
+.where { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
+.dates { list-style: none; margin: 0; padding: 0; }
+.dates li { display: grid; grid-template-columns: 110px 1fr; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.dates b { font-weight: 600; }
+.dates span { color: var(--ink2); font-size: 14px; }
+.gifts { background: var(--raised); padding: 24px; border-left: 3px solid var(--oak2); }
+.gifts h3 { margin: 0 0 6px; font-size: 20px; font-weight: 600; }
+.gifts p { margin: 0 0 14px; color: var(--ink2); }
+.btn { display: inline-block; border: 1px solid var(--ink); background: none; padding: 10px 16px; border-radius: 2px; cursor: pointer; text-decoration: none; font-weight: 500; font-size: 15px; }
+.btn.pri { background: var(--ink); color: var(--raised); }
+
+.care { display: grid; grid-template-columns: repeat(4, 1fr); gap: 26px; }
+.care h3 { font-size: 16px; font-weight: 600; margin: 0 0 6px; }
+.care p { margin: 0; color: var(--ink2); font-size: 14px; }
+
+details { border-bottom: 1px solid var(--line); padding: 14px 0; max-width: 760px; }
+summary { cursor: pointer; font-weight: 600; }
+details p { color: var(--ink2); margin: 8px 0 0; }
+
+footer { border-top: 1px solid var(--line); padding: 28px 0 60px; color: var(--ink3); font-size: 13px; }
+footer p { margin: 0 0 6px; }
+
+/* bag */
+.scrim { position: fixed; inset: 0; background: rgba(20,20,20,.35); opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 30; }
+.scrim.on { opacity: 1; pointer-events: auto; }
+.bag { position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 100%); background: var(--raised); z-index: 31; transform: translateX(100%); transition: transform .25s ease; display: flex; flex-direction: column; }
+.bag.on { transform: none; }
+.bag header { display: flex; justify-content: space-between; align-items: center; padding: 18px 22px; border-bottom: 1px solid var(--line); }
+.bag header h2 { font-size: 26px; margin: 0; }
+.x { border: 0; background: none; font-size: 26px; cursor: pointer; line-height: 1; }
+.lines { flex: 1; overflow: auto; padding: 8px 22px; }
+.line { display: grid; grid-template-columns: 52px 1fr auto; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.line .sw { width: 52px; height: 52px; background: var(--bg); display: flex; align-items: flex-end; justify-content: center; }
+.line .sw svg { width: 90%; }
+.line .nm { font-weight: 600; font-size: 15px; }
+.line .tn { font-size: 13px; color: var(--ink3); }
+.qty { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+.qty button { width: 26px; height: 26px; border: 1px solid var(--line); background: var(--bg); border-radius: 2px; cursor: pointer; }
+.empty { color: var(--ink3); padding: 24px 0; }
+.ship { padding: 14px 22px; border-top: 1px solid var(--line); }
+.ship label { display: flex; gap: 10px; align-items: baseline; padding: 4px 0; cursor: pointer; font-size: 15px; }
+.ship label span { margin-left: auto; color: var(--ink2); }
+.tot { padding: 14px 22px 20px; border-top: 1px solid var(--line); }
+.tot .r { display: flex; justify-content: space-between; font-size: 15px; color: var(--ink2); }
+.tot .r.big { font-size: 22px; color: var(--ink); font-weight: 600; margin: 6px 0 12px; }
+.tot .note { font-size: 12px; color: var(--ink3); margin: 8px 0 0; }
+.tot .btn { width: 100%; text-align: center; }
+.toast { position: fixed; left: 50%; bottom: 22px; transform: translate(-50%, 20px); background: var(--ink); color: var(--raised); padding: 10px 16px; border-radius: 2px; font-size: 14px; opacity: 0; transition: .2s; z-index: 40; pointer-events: none; }
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+@media (max-width: 960px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+  .care { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 720px) {
+  .wrap { padding: 0 18px; }
+  nav.links a { display: none; }
+  .story, .where, .passport { grid-template-columns: 1fr; gap: 28px; }
+  .grid { gap: 26px 14px; }
+  .card .mat { min-height: 0; }
+}
+@media (max-width: 420px) { .care { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="#"><b>BRUIS</b><small>Objects</small></a>
+  <nav class="links">
+    <a href="#shop">Shop</a><a href="#oak">The oak</a><a href="#where">Markets</a><a href="#care">Care</a>
+    <button class="bagbtn" id="bagbtn" type="button" aria-label="Open your bag">Bag <b id="bagn">0</b></button>
+  </nav>
+</div></header>
+
+<main>
+<div class="wrap">
+  <div class="hero">
+    <h1>Grey concrete, old oak, made in small batches.</h1>
+    <p class="lede">Four objects for the home, cast and finished by hand in our workshop in Heule. The oak comes from old Belgian dining tables; every piece carries the story of the table it came from.</p>
+    <div class="shelf" id="shelf"></div>
+    <div class="batchline"><span>Batch 03 · cast this week</span><span>Pick up in Heule or by post in Belgium</span></div>
+  </div>
+</div>
+
+<section class="block" id="shop"><div class="wrap">
+  <h2>The four objects</h2>
+  <p class="sub">Each batch is small. When it's gone, the next one is cast within about two weeks.</p>
+  <div class="grid" id="grid"></div>
+</div></section>
+
+<section class="block"><div class="wrap">
+  <h2>How they're made</h2>
+  <p class="sub">Three materials, each doing what it's best at.</p>
+  <div class="story">
+    <div>
+      <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="8" y="22" width="48" height="34" rx="3" fill="var(--grey)"/><circle cx="20" cy="34" r="2" fill="#9f9c95"/><circle cx="40" cy="44" r="1.6" fill="#9f9c95"/><circle cx="46" cy="30" r="1.2" fill="#9f9c95"/></svg>
+      <h3>Concrete</h3>
+      <p>Fine concrete with pigment, poured into silicone moulds, cured for a week and sealed. Natural grey, charcoal or sand. Every piece has its own small air holes.</p>
+    </div>
+    <div>
+      <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="6" y="26" width="52" height="14" rx="2" fill="var(--oak)"/><path d="M10 31 q14 -3 26 1 t20 -1 M10 36 q16 2 30 -1 t16 1" stroke="var(--oak2)" fill="none" stroke-width="1.2"/></svg>
+      <h3>Old oak</h3>
+      <p>Offcuts from the old oak tables we turn into new ones. Sanded, oiled with Rubio Monocoat and felted underneath.</p>
+    </div>
+    <div>
+      <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M18 50 L24 14 h16 L46 50 z" fill="#ecebe6" stroke="var(--ink3)" stroke-width="1"/><path d="M22 22 h20 M21 28 h22 M20 34 h24 M19 40 h26 M18 46 h28" stroke="var(--ink3)" stroke-width=".8"/></svg>
+      <h3>3D print</h3>
+      <p>Our own shapes, printed in our workshop: the lamp shade, and the masters for every mould. No downloaded designs.</p>
+    </div>
+  </div>
+</div></section>
+
+<section class="block" id="oak"><div class="wrap passport">
+  <div>
+    <h2>Every piece has a passport</h2>
+    <p class="sub">A small card in the box says which table the oak came from, when it was cast and which batch it belongs to. The same card tells you how to use it safely.</p>
+  </div>
+  <div class="pcard" aria-label="Example passport card">
+    <div class="hd">BRUIS <small>example card</small></div>
+    <div class="row"><span>Object</span><span>Candle holder, charcoal</span></div>
+    <div class="row"><span>Oak from</span><span>Dining table, Menen, about 1965</span></div>
+    <div class="row"><span>Cast</span><span>Batch 03, March 2027</span></div>
+    <div class="row"><span>Made by</span><span>BRUIS, Heule (Kortrijk)</span></div>
+    <div class="row"><span>Care</span><span>Never leave candles burning alone</span></div>
+  </div>
+</div></section>
+
+<section class="block" id="where"><div class="wrap where">
+  <div>
+    <h2>Markets and shops</h2>
+    <p class="sub">See them in real life first. Example dates for 2027.</p>
+    <ul class="dates">
+      <li><b>May 2027</b><span>Spring design market, Kortrijk</span></li>
+      <li><b>Sept 2027</b><span>Makers' market, Ghent</span></li>
+      <li><b>Nov 2027</b><span>Christmas market, Kortrijk</span></li>
+      <li><b>Dec 2027</b><span>Winter design market, Bruges</span></li>
+      <li><b>All year</b><span>A few concept stores in West and East Flanders</span></li>
+    </ul>
+  </div>
+  <div>
+    <div class="gifts">
+      <h3>Gifts for your team or clients</h3>
+      <p>Candle holders or bookends with your logo pressed into the concrete, from 20 pieces. Order by mid-October for Christmas.</p>
+      <button class="btn pri" type="button" id="giftbtn">Ask for a gift quote</button>
+    </div>
+    <div class="gifts" style="margin-top:18px">
+      <h3>For shops</h3>
+      <p>We supply a few shops at a wholesale price, in small batches, with the passport cards. Samples on request.</p>
+      <button class="btn" type="button" id="shopbtn">Ask for wholesale prices</button>
+    </div>
+  </div>
+</div></section>
+
+<section class="block" id="care"><div class="wrap">
+  <h2>Care and safety</h2>
+  <p class="sub">The same information is on the card in every box.</p>
+  <div class="care">
+    <div><h3>Candle holder</h3><p>Never leave burning candles alone. Keep 10 cm between candles and away from anything that can burn. Put it on a heat-proof surface.</p></div>
+    <div><h3>Lamp</h3><p>Charge with the USB-C cable that comes with it. The LED module is CE-marked. Keep the shade away from heat. For indoor use.</p></div>
+    <div><h3>Plant pot</h3><p>Sealed inside, with a drainage hole. Put it on its oak saucer. Not for food.</p></div>
+    <div><h3>Bookends</h3><p>About 1.5 kg each. Felt underneath protects your shelf. Dust with a dry cloth; no cleaning products.</p></div>
+  </div>
+</div></section>
+
+<section class="block"><div class="wrap">
+  <h2>Questions</h2>
+  <details><summary>Why do the pieces look slightly different?</summary><p>Concrete is poured by hand, so every piece has its own air holes and shading, and every bit of oak has its own grain. That is part of it.</p></details>
+  <details><summary>How much is postage?</summary><p>€7 by post in Belgium, free from €100. Picking up in Heule is always free.</p></details>
+  <details><summary>Can I return something?</summary><p>Yes, within 14 days of receiving it, unused and in its box. Pieces with a company logo can't be returned.</p></details>
+  <details><summary>Something broke in the post.</summary><p>Send us a photo within 48 hours and we send a new one.</p></details>
+  <details><summary>Do you ship outside Belgium?</summary><p>Not yet from this site. You can find us on Etsy for other countries.</p></details>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <p>BRUIS Objects · Heule (Kortrijk), Belgium · hello@bruis.example</p>
+  <p>Prototype: nothing is sold, paid or sent. Prices include no VAT while BRUIS uses the small-business exemption.</p>
+</div></footer>
+
+<div class="scrim" id="scrim"></div>
+<aside class="bag" id="bag" aria-label="Your bag" aria-hidden="true">
+  <header><h2>Your bag</h2><button class="x" id="bagx" type="button" aria-label="Close">×</button></header>
+  <div class="lines" id="lines"></div>
+  <div class="ship" id="ship">
+    <label><input type="radio" name="ship" value="pick" checked> Pick up in Heule <span>free</span></label>
+    <label><input type="radio" name="ship" value="post"> Post in Belgium <span id="postp">€7</span></label>
+  </div>
+  <div class="tot">
+    <div class="r"><span>Objects</span><span id="sub">€0</span></div>
+    <div class="r"><span>Delivery</span><span id="del">€0</span></div>
+    <div class="r big"><span>Total</span><span id="tot">€0</span></div>
+    <button class="btn pri" type="button" id="pay">Pay</button>
+    <p class="note">Prototype: nothing is paid or sent.</p>
+  </div>
+</aside>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const TINTS = { grey: ['Natural grey', '#b8b6b0', '#a3a19b'], charcoal: ['Charcoal', '#5b5b58', '#4a4a47'], sand: ['Sand', '#d9cdb5', '#c6b99f'] };
+const OAK = '#cda470', OAK2 = '#a8804f';
+const P = [
+  { id: 'candle', name: 'Candle holder', price: 29, mat: 'Three tea lights in a concrete block on an oak strip. 28 × 8 cm.', left: 9, tint: 'charcoal' },
+  { id: 'pot', name: 'Plant pot', price: 45, mat: 'Ø 14 cm concrete pot with a drainage hole, on an oak saucer.', left: 5, tint: 'grey' },
+  { id: 'lamp', name: 'Cordless lamp', price: 95, mat: 'Printed ribbed shade on an oak base. Rechargeable, USB-C, three light levels.', left: 4, tint: 'sand', tintLabel: 'Shade' },
+  { id: 'bookends', name: 'Bookends', price: 55, mat: 'A pair of concrete blocks with an oak cap and felt underneath.', left: 3, tint: 'grey' }
+];
+const eur = n => '€' + n.toLocaleString('en-US');
+
+function draw(id, t, w) {
+  const [, c, d] = TINTS[t];
+  const holes = (x, y) => `<circle cx="${x}" cy="${y}" r="1.4" fill="${d}"/><circle cx="${x + 23}" cy="${y + 9}" r="1" fill="${d}"/><circle cx="${x + 51}" cy="${y + 3}" r="1.2" fill="${d}"/>`;
+  if (id === 'candle') return `<svg viewBox="0 0 200 120" ${w || ''}><rect x="18" y="98" width="164" height="12" rx="2" fill="${OAK}"/><path d="M24 103 q40 -2 80 1 t72 -1" stroke="${OAK2}" fill="none"/>
+    <rect x="28" y="64" width="144" height="34" rx="3" fill="${c}"/>${holes(46, 76)}
+    ${[60, 100, 140].map(x => `<ellipse cx="${x}" cy="64" rx="13" ry="3.5" fill="${d}"/><rect x="${x - 11}" y="56" width="22" height="8" rx="1" fill="#eeeeea"/><path d="M${x} 56 v-6" stroke="#333" stroke-width="1.2"/><path d="M${x} 50 q-5 -9 0 -17 q5 8 0 17z" fill="#f2b04a"/>`).join('')}</svg>`;
+  if (id === 'pot') return `<svg viewBox="0 0 200 160" ${w || ''}><ellipse cx="100" cy="150" rx="64" ry="7" fill="${OAK2}"/><rect x="36" y="140" width="128" height="10" rx="3" fill="${OAK}"/>
+    <path d="M52 76 h96 l-8 64 h-80 z" fill="${c}"/>${holes(68, 98)}<rect x="48" y="70" width="104" height="10" rx="2" fill="${d}"/>
+    <path d="M100 70 q-8 -40 -34 -48 q22 18 30 48 M100 70 q4 -46 30 -58 q-20 22 -24 58 M100 70 q16 -26 44 -26 q-26 10 -38 26" fill="#6f8a5f"/></svg>`;
+  if (id === 'lamp') return `<svg viewBox="0 0 200 200" ${w || ''}><defs><radialGradient id="gl-${t}-${w ? 's' : 'c'}" cx="50%" cy="55%" r="60%"><stop offset="0" stop-color="#ffe7b0" stop-opacity=".55"/><stop offset="1" stop-color="#ffe7b0" stop-opacity="0"/></radialGradient></defs>
+    <circle cx="100" cy="100" r="90" fill="url(#gl-${t}-${w ? 's' : 'c'})"/><rect x="58" y="176" width="84" height="16" rx="3" fill="${OAK}"/><rect x="94" y="140" width="12" height="36" fill="${OAK2}"/>
+    <path d="M56 140 L72 40 h56 L144 140 z" fill="${c}"/>${[0, 1, 2, 3, 4, 5, 6].map(i => `<path d="M${66 + i * 11.3} 140 L${76 + i * 8} 40" stroke="${d}" stroke-width="1.3"/>`).join('')}</svg>`;
+  return `<svg viewBox="0 0 200 140" ${w || ''}><rect x="20" y="122" width="160" height="4" fill="${d}" opacity=".5"/>
+    <rect x="26" y="58" width="44" height="64" rx="2" fill="${c}"/><rect x="26" y="50" width="44" height="10" rx="2" fill="${OAK}"/>${holes(34, 82)}
+    ${[['#7d5a4a', 76, 52], ['#4f6d8f', 90, 46], ['#e3d8c3', 104, 56], ['#5f8a72', 116, 50]].map(([f, x, y]) => `<rect x="${x}" y="${y}" width="13" height="${122 - y}" fill="${f}"/>`).join('')}
+    <rect x="130" y="58" width="44" height="64" rx="2" fill="${c}"/><rect x="130" y="50" width="44" height="10" rx="2" fill="${OAK}"/></svg>`;
+}
+
+function shelf() {
+  document.getElementById('shelf').innerHTML = `<svg viewBox="0 -10 1140 310" role="img" aria-label="The four BRUIS objects on a shelf">
+    <rect x="0" y="270" width="1140" height="18" fill="${OAK}"/><rect x="0" y="288" width="1140" height="6" fill="${OAK2}"/>
+    <g transform="translate(20 -18) scale(1.5)">${inner(draw('lamp', 'sand'))}</g>
+    <g transform="translate(320 63) scale(1.7)">${inner(draw('bookends', 'charcoal'))}</g>
+    <g transform="translate(640 58) scale(1.35)">${inner(draw('pot', 'grey'))}</g>
+    <g transform="translate(855 116) scale(1.4)">${inner(draw('candle', 'charcoal'))}</g></svg>`;
+}
+const inner = s => s.replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, '');
+
+function grid() {
+  document.getElementById('grid').innerHTML = P.map(p => `
+    <article class="card" id="c-${p.id}">
+      <div class="pic">${draw(p.id, p.tint)}</div>
+      <h3>${p.name}<span>${eur(p.price)}</span></h3>
+      <p class="mat">${p.mat}</p>
+      <div class="tints" role="group" aria-label="${p.tintLabel || 'Concrete'} colour">${Object.entries(TINTS).map(([k, [n, c]]) => `<button type="button" class="tint" data-p="${p.id}" data-t="${k}" style="background:${c}" aria-label="${n}" aria-pressed="${p.tint === k}"></button>`).join('')}<span>${TINTS[p.tint][0]}</span></div>
+      <p class="left">${p.left > 0 ? `<b>${p.left - inBag(p.id)}</b> left in this batch` : 'Next batch in about two weeks'}</p>
+      <button class="add" type="button" data-add="${p.id}" ${p.left - inBag(p.id) <= 0 ? 'disabled' : ''}>Add to bag</button>
+    </article>`).join('');
+  document.querySelectorAll('.tint').forEach(b => b.onclick = () => { P.find(p => p.id === b.dataset.p).tint = b.dataset.t; grid(); document.querySelector(`.tint[data-p="${b.dataset.p}"][data-t="${b.dataset.t}"]`).focus(); });
+  document.querySelectorAll('[data-add]').forEach(b => b.onclick = () => add(b.dataset.add));
+}
+
+let bag = [];
+const inBag = id => bag.filter(l => l.id === id).reduce((a, l) => a + l.q, 0);
+function add(id) {
+  const p = P.find(x => x.id === id);
+  const l = bag.find(x => x.id === id && x.tint === p.tint);
+  l ? l.q++ : bag.push({ id, tint: p.tint, q: 1 });
+  toast(`${p.name}, ${TINTS[p.tint][0].toLowerCase()}, added to your bag`);
+  grid(); render();
+}
+function render() {
+  const n = bag.reduce((a, l) => a + l.q, 0);
+  document.getElementById('bagn').textContent = n;
+  document.getElementById('lines').innerHTML = n ? bag.map((l, i) => {
+    const p = P.find(x => x.id === l.id);
+    return `<div class="line"><div class="sw">${draw(l.id, l.tint, 'aria-hidden="true"')}</div>
+      <div><div class="nm">${p.name}</div><div class="tn">${TINTS[l.tint][0]}</div>
+      <div class="qty"><button type="button" data-i="${i}" data-d="-1" aria-label="One less">−</button><span>${l.q}</span><button type="button" data-i="${i}" data-d="1" aria-label="One more" ${inBag(l.id) >= p.left ? 'disabled' : ''}>+</button></div></div>
+      <div>${eur(p.price * l.q)}</div></div>`;
+  }).join('') : '<p class="empty">Your bag is empty.</p>';
+  document.querySelectorAll('.qty button').forEach(b => b.onclick = () => {
+    const l = bag[+b.dataset.i]; l.q += +b.dataset.d; if (l.q <= 0) bag.splice(+b.dataset.i, 1); grid(); render();
+  });
+  const sub = bag.reduce((a, l) => a + P.find(x => x.id === l.id).price * l.q, 0);
+  const post = document.querySelector('input[name=ship]:checked').value === 'post';
+  const del = post && sub > 0 && sub < 100 ? 7 : 0;
+  document.getElementById('postp').textContent = sub >= 100 ? 'free from €100' : '€7';
+  document.getElementById('sub').textContent = eur(sub);
+  document.getElementById('del').textContent = post ? (del ? eur(del) : 'free') : 'pick up, free';
+  document.getElementById('tot').textContent = eur(sub + del);
+  document.getElementById('pay').disabled = !n;
+}
+document.querySelectorAll('input[name=ship]').forEach(r => r.onchange = render);
+const bagEl = document.getElementById('bag'), scrim = document.getElementById('scrim');
+function openBag(on) { bagEl.classList.toggle('on', on); scrim.classList.toggle('on', on); bagEl.setAttribute('aria-hidden', !on); if (on) document.getElementById('bagx').focus(); else document.getElementById('bagbtn').focus(); }
+document.getElementById('bagbtn').onclick = () => openBag(true);
+document.getElementById('bagx').onclick = () => openBag(false);
+scrim.onclick = () => openBag(false);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && bagEl.classList.contains('on')) openBag(false); });
+document.getElementById('pay').onclick = () => toast('Prototype: nothing is paid or sent');
+document.getElementById('giftbtn').onclick = () => toast('Prototype: the gift form is not connected yet');
+document.getElementById('shopbtn').onclick = () => toast('Prototype: the wholesale form is not connected yet');
+let tt;
+function toast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('on'), 2200); }
+
+shelf(); grid(); render();
+</script>
+</body>
+</html>

@@ -161,7 +161,7 @@ footer p { margin: 0 0 6px; max-width: 52em; }
 </div>
 
 <footer><div class="wrap">
-  <p>Fronts, Tables and Workshops come from their financial plans. Objects is an estimate made before its own plan is finished: about 330 pieces in year one (150 candle holders, 80 plant pots, 60 lamps, 40 pairs of bookends).</p>
+  <p>All four come from their financial plans. Objects plans 330 pieces in year one: 150 candle holders, 80 plant pots, 60 lamps and 40 pairs of bookends.</p>
   <p>Kept after tax uses each plan on its own; run together, the workshop-at-home deduction counts only once. All figures are estimates to check with your accountant.</p>
 </div></footer>
 
@@ -188,13 +188,13 @@ const IDEAS = [
     extra: 'An injury is insured, but it could end the children’s workshops.',
     limit: 'Ask Kortrijk first, insure participants, and cancel a week ahead below 4 bookings.',
     toolsNote: 'Hand-tool sets, benches, drills, sanders' },
-  { id: 'objects', name: 'Objects', what: 'Concrete, oak and 3D-printed decor', est: true,
-    startup: 1150, tools: 0, fixed: 110, turnover: 15850, profit: 10370, hours: 305,
-    kept1: 4120, kept2: 4520, job: [60, 85], van: 18.2, flex: 1,
-    worst: 'Pieces don’t sell and you sit on stock, or a lamp or candle holder leads to a complaint.',
+  { id: 'objects', name: 'Objects', what: 'Concrete, oak and 3D-printed decor',
+    startup: 1062, tools: 560, fixed: 110, turnover: 15850, profit: 10078, hours: 318,
+    kept1: 3597, kept2: 4509, job: [67, 84], van: 16.5, flex: 1,
+    worst: 'Pieces don\u2019t sell and you sit on stock, or a lamp or candle holder leads to a complaint.',
     extra: 'Unsold stock is cheap: about €3–20 of material a piece.',
     limit: 'Small batches, test at one market first, a bought CE-marked LED module, a warning card with every candle holder.',
-    toolsNote: 'The 3D printer is in the start-up costs' }
+    toolsNote: '3D printer, mixing gear, vibration table' }
 ];
 const COL = id => `var(--${id})`;
 const eur = n => '€' + Math.round(n).toLocaleString('en-US');
