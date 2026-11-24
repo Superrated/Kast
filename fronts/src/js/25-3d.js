@@ -304,6 +304,11 @@ function build3D() {
       });
     });
   }
+  // side panels, flush with the front of the fronts
+  L.sides.forEach(sd => {
+    const lk = sideLook();
+    box(SIDE_T, sd.h, sd.w, matFor(lk, { w: sd.w, h: sd.h }), sd.x + SIDE_T / 2, sd.y + sd.h / 2, 20 - sd.w / 2);
+  });
   // the fronts
   const FT = 19,
     hcache = {};

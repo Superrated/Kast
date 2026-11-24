@@ -755,3 +755,174 @@ h3.big {
 .btn.surp {
   white-space: nowrap;
 }
+
+/* ---------- the IKEA list: paste, see what was found, use it ---------- */
+.impcard {
+  background: var(--raised);
+  border: 1.5px solid var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+  border-radius: 14px;
+  padding: 12px;
+  margin: 6px 0 4px;
+}
+.imphead {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.imphead .sp {
+  flex: 1;
+}
+.file {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.file input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.impcard textarea {
+  font-family: var(--f-m);
+  font-size: 12.5px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+  resize: vertical;
+  min-height: 92px;
+}
+.impprev {
+  margin-top: 6px;
+}
+.igrp {
+  border-top: 1px solid var(--line);
+  padding: 10px 0 4px;
+}
+.igrp:first-child {
+  border-top: 0;
+}
+.igh {
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+.ichips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 9px;
+}
+.ichip {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 13px;
+}
+.ichip small {
+  margin-left: 2px;
+}
+.hint.warn {
+  background: var(--warn-soft);
+  color: var(--ink);
+  border-radius: 8px;
+  padding: 6px 9px;
+}
+.impbad {
+  font-size: 13.5px;
+  color: var(--ink2);
+}
+.impok {
+  background: var(--accent-soft);
+  border-radius: 10px;
+  padding: 9px 11px;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 8px 0 2px;
+}
+.lnk {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--accent);
+  text-decoration: underline;
+  font-weight: 600;
+}
+.how {
+  margin-top: 8px;
+  font-size: 13.5px;
+}
+.how summary {
+  cursor: pointer;
+  color: var(--ink2);
+  font-weight: 600;
+}
+.how ol {
+  margin: 8px 0 4px;
+  padding-left: 20px;
+  line-height: 1.5;
+}
+.how li {
+  margin-bottom: 4px;
+}
+.or {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 22px 0 12px;
+  color: var(--ink2);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+.or::before,
+.or::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid var(--line);
+}
+.addrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+.addrow > span {
+  font-size: 13px;
+  color: var(--ink2);
+  margin-right: 4px;
+}
+
+.impsub {
+  display: flex;
+  gap: 14px;
+  justify-content: flex-end;
+  font-size: 13px;
+  margin-top: 4px;
+}
+@media (max-width: 480px) {
+  .stagebar .surp span {
+    display: none;
+  }
+}
+
+/* cabinet cards fold to one line */
+details.cab > summary {
+  list-style: none;
+  cursor: pointer;
+  margin-bottom: 0;
+}
+details.cab > summary::-webkit-details-marker {
+  display: none;
+}
+details.cab[open] > summary {
+  margin-bottom: 6px;
+}
+.cabh span small {
+  display: block;
+  font-size: 12px;
+}

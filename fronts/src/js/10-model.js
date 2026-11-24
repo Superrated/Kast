@@ -16,6 +16,7 @@ function freshState(sys) {
     col: 'racing',
     oil: 'pure',
     edge: 'round',
+    sides: 'none',
     gframe: 'black',
     handle: 'knob',
     hfin: 'brass',
@@ -76,6 +77,7 @@ S.fx = S.fx || {};
 if (!S.flute.gpitch) S.flute.gpitch = 50;
 if (!OILS[S.oil]) S.oil = 'pure';
 if (!EDGES[S.edge]) S.edge = 'round';
+if (!SIDES[S.sides]) S.sides = 'none';
 function save() {
   try {
     localStorage.setItem(KEY, JSON.stringify(S));
@@ -234,7 +236,64 @@ function layout() {
   });
   const W = Math.max(xb, xw, 600),
     Hmax = Math.max(...cabs.map(p => p.y + p.h), 900);
-  return { cabs, fronts, W, H: Hmax, plinth, worktop: S.sys === 'metod' && S.cabs.some(c => c.kind === 'base') };
+  return {
+    cabs,
+    fronts,
+    sides: sidesOf(cabs),
+    W,
+    H: Hmax,
+    plinth,
+    worktop: S.sys === 'metod' && S.cabs.some(c => c.kind === 'base')
+  };
+}
+
+/* ---------- side panels: one look and one choice for the whole run ----------
+   A panel covers the outer side of the first and/or last cabinet of each row (a kitchen has a base row and a
+   wall row). It is a little deeper than the cabinet so it ends flush with the fronts:
+     PAX 60 cm (58 frame + door), METOD base and tall 62 cm, METOD wall 39 cm, BESTÅ 42 cm; as high as the cabinet.
+   A side: { id, kind: 'side', end: 'L'|'R', w: depth (mm), h (mm), x (where its 19 mm edge shows), y, cab } */
+const SIDE_T = 19;
+function sideDepth(c) {
+  if (c.sys === 'pax') return 600;
+  if (c.sys === 'besta') return 420;
+  return c.kind === 'wall' ? 390 : 620;
+}
+function sidesOf(cabs) {
+  if (S.sides === 'none' || !cabs.length) return [];
+  const rows = {};
+  cabs.forEach(p => {
+    const r = p.c.sys === 'metod' && p.c.kind === 'wall' ? 'wall' : 'base';
+    (rows[r] = rows[r] || []).push(p);
+  });
+  const out = [];
+  Object.entries(rows).forEach(([r, ps]) => {
+    const first = ps.reduce((a, b) => (b.x < a.x ? b : a)),
+      last = ps.reduce((a, b) => (b.x + b.w > a.x + a.w ? b : a)),
+      mk = (p, end) => ({
+        id: `side:${r}:${end}`,
+        kind: 'side',
+        end,
+        row: r,
+        cab: p.c.id,
+        w: sideDepth(p.c),
+        h: p.h,
+        nom: `${sideDepth(p.c) / 10}×${p.h / 10}`,
+        x: end === 'L' ? p.x - SIDE_T : p.x + p.w,
+        y: p.y
+      });
+    if (S.sides === 'left' || S.sides === 'both') out.push(mk(first, 'L'));
+    if (S.sides === 'right' || S.sides === 'both') out.push(mk(last, 'R'));
+  });
+  // a tall cabinet at the end already has a full-height panel: no second panel for the wall cabinet above it
+  return out.filter(
+    sd => sd.row !== 'wall' || !out.some(o => o.row !== 'wall' && Math.abs(o.x - sd.x) < 1 && o.y + o.h > sd.y)
+  );
+}
+/* sides take the look of "all fronts"; glass is for doors only, so glass sides become painted */
+function sideLook() {
+  const lk = lookOf(null);
+  if (MATS[lk.mat].glass) return { style: 'flat', mat: 'painted', col: lk.col, oil: lk.oil, own: false };
+  return lk;
 }
 
 /* ---------- the look of a front: the overall choice, unless this front has its own ---------- */
@@ -281,11 +340,22 @@ function frontPrice(f) {
   if (f.kind === 'door') p += PRICE.hinge;
   return Math.round(p * 100) / 100;
 }
+function sidePrice(sd) {
+  const lk = sideLook(),
+    m = MATS[lk.mat],
+    area = Math.max(PRICE.minArea, (sd.w * sd.h) / 1e6);
+  return Math.round((PRICE.perFront + area * m.rate * STYLES[lk.style].f) * 100) / 100;
+}
 function priceAll(L) {
   const fr = L.fronts.map(f => ({ f, p: frontPrice(f) })),
-    sub = fr.reduce((a, b) => a + b.p, 0),
+    sd = (L.sides || []).map(s => ({ s, p: sidePrice(s) })),
+    sub = fr.reduce((a, b) => a + b.p, 0) + sd.reduce((a, b) => a + b.p, 0),
     del = sub >= PRICE.deliveryFree || !fr.length ? 0 : PRICE.delivery;
-  return { fr, sub, del, total: sub + del, n: fr.length };
+  return { fr, sd, sub, del, total: sub + del, n: fr.length, ns: sd.length };
+}
+/* "5 fronts + 2 sides" */
+function countWords(P) {
+  return `${P.n} front${P.n === 1 ? '' : 's'}${P.ns ? ` + ${P.ns} side${P.ns === 1 ? '' : 's'}` : ''}`;
 }
 const eur = v => '€ ' + Math.round(v).toLocaleString('en-IE');
 
@@ -299,5 +369,18 @@ function grouped(L) {
       m.set(k, { kind: f.kind, w: f.w, h: f.h, nom: f.nom, hinge: f.hinge, look: lk, n: 0, p: frontPrice(f) });
     m.get(k).n++;
   });
-  return [...m.values()].sort((a, b) => lookKey(a.look).localeCompare(lookKey(b.look)) || b.h - a.h || b.w - a.w);
+  (L.sides || []).forEach(sd => {
+    const lk = sideLook(),
+      k = `side|${sd.w}|${sd.h}||${lookKey(lk)}`;
+    if (!m.has(k))
+      m.set(k, { kind: 'side', w: sd.w, h: sd.h, nom: sd.nom, hinge: null, look: lk, n: 0, p: sidePrice(sd) });
+    m.get(k).n++;
+  });
+  return [...m.values()].sort(
+    (a, b) =>
+      lookKey(a.look).localeCompare(lookKey(b.look)) ||
+      (a.kind === 'side') - (b.kind === 'side') ||
+      b.h - a.h ||
+      b.w - a.w
+  );
 }

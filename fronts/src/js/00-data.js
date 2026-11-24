@@ -72,6 +72,8 @@ const OILS = {
   smoke5: { name: 'Smoke 5%', blurb: 'Soft grey, like weathered wood', hex: '#C9C1B6', mix: 0.42 },
   charcoal: { name: 'Charcoal', blurb: 'Near black, the grain still shows', hex: '#34302D', mix: 0.74 }
 };
+/* side panels: none, or on the left / right / both ends of the run */
+const SIDES = { none: 'None', left: 'Left', right: 'Right', both: 'Both ends' };
 /* the rounded or chamfered edge on every front */
 const EDGES = {
   round: { name: 'Round', blurb: '2 mm radius, soft and hard-wearing' },

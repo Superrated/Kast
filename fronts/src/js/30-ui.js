@@ -39,14 +39,14 @@ function render() {
   document.getElementById('stagebar').innerHTML = `${seg('view', S.view, [
     ['2d', 'Front'],
     ['3d', '3D']
-  ])}<span class="chip"><b>${SYS[S.sys].name}</b> ${P.n} front${P.n === 1 ? '' : 's'}</span>${S.recipe ? `<span class="chip rec">✨ ${esc(S.recipeSay || S.recipe)}</span>` : ''}<span class="sp"></span><button type="button" class="btn sm surp" data-act="surprise">✨ Surprise me</button>`;
+  ])}<span class="chip"><b>${SYS[S.sys].name}</b> ${countWords(P)}</span>${S.recipe ? `<span class="chip rec">✨ ${esc(S.recipeSay || S.recipe)}</span>` : ''}<span class="sp"></span><button type="button" class="btn sm surp" data-act="surprise" aria-label="Surprise me">✨<span> Surprise me</span></button>`;
   document.getElementById('pichint').textContent = L.fronts.length
     ? v3
       ? 'Drag to turn · scroll or pinch to zoom · tap a front to change just that one'
       : 'Tap a front to change just that one'
     : '';
   document.getElementById('pbar').innerHTML =
-    `<div class="ptot"><span>${P.n} front${P.n === 1 ? '' : 's'} · incl. VAT${P.del ? ' + delivery' : ''}</span><b>${eur(P.total)}</b></div>${
+    `<div class="ptot"><span>${countWords(P)} · incl. VAT${P.del ? ' + delivery' : ''}</span><b>${eur(P.total)}</b></div>${
       S.step === 'order'
         ? ''
         : `<button type="button" class="btn ghost" data-act="next">${i < STEPS.length - 2 ? 'Next: ' + STEPS[i + 1][1] : 'See the order'} →</button>`
@@ -188,15 +188,21 @@ function cabsHTML() {
           qh,
           kinds.frame.heights.map(v => [v, v])
         )}</div>`;
-  const addRows = Object.entries(kinds)
-    .map(
-      ([k, kd]) =>
-        `<div class="row"><label>${S.sys === 'metod' ? kd.label.replace(' cabinet', '') : 'Add'}</label><div class="chips">${kd.widths.map(w => `<button type="button" class="btn sm" data-act="addw" data-a="${k}|${w}">+ ${w}</button>`).join('')}</div></div>`
+  const addRow = `<div class="addrow"><span>Add</span>${Object.entries(kinds)
+    .map(([k, kd]) =>
+      kd.widths
+        .map(
+          w =>
+            `<button type="button" class="btn sm" data-act="addw" data-a="${k}|${w}">+ ${S.sys === 'metod' ? kd.label.replace(' cabinet', '').toLowerCase() + ' ' : ''}${w}</button>`
+        )
+        .join('')
     )
-    .join('');
+    .join('')}</div>`;
   const card = (c, n) => {
     const kd = kinds[c.kind];
-    return `<div class="cab"><div class="cabh"><b>${n + 1}</b><span>${S.sys === 'metod' ? kd.label : SYS[S.sys].name + ' frame'} · ${c.w}${kd.heights.length > 1 ? ' × ' + c.h : ''}</span><span class="sp"></span><button type="button" class="ib" data-act="mv" data-a="${c.id}|-1" aria-label="Move left">◀</button><button type="button" class="ib" data-act="mv" data-a="${c.id}|1" aria-label="Move right">▶</button><button type="button" class="ib" data-act="del" data-a="${c.id}" aria-label="Remove">✕</button></div>
+    const ln = layoutsFor(c).find(x => x[0] === c.layout),
+      open = S.openCab === c.id || S.cabs.length <= 2;
+    return `<details class="cab" data-c="${c.id}"${open ? ' open' : ''}><summary class="cabh"><b>${n + 1}</b><span>${S.sys === 'metod' ? kd.label : SYS[S.sys].name + ' frame'} · ${c.w}${kd.heights.length > 1 ? ' × ' + c.h : ''}<small>${ln ? esc(ln[1]) : ''}</small></span><span class="sp"></span><button type="button" class="ib" data-act="mv" data-a="${c.id}|-1" aria-label="Move left">◀</button><button type="button" class="ib" data-act="mv" data-a="${c.id}|1" aria-label="Move right">▶</button><button type="button" class="ib" data-act="del" data-a="${c.id}" aria-label="Remove">✕</button></summary>
       <div class="row"><label>Width</label>${segC(
         'cw',
         c,
@@ -218,20 +224,28 @@ function cabsHTML() {
         c,
         c.layout,
         layoutsFor(c).map(([k, l]) => [k, l])
-      )}</div></div>`;
+      )}</div></details>`;
   };
-  return `<h2>What do you have?</h2><p class="lede">Pick your IKEA system and set up your cabinets the quickest way for you.</p>
+  const how = `<details class="how"${S.howOpen ? ' open' : ''}><summary>Where do I find my IKEA list?</summary><ol>
+      <li><b>IKEA planner</b> (PAX, kitchen or BESTÅ): open your design, go to the <b>shopping list</b> or <b>item list</b>, select all of it and copy.</li>
+      <li><b>Cart or order confirmation</b> (website, app or e-mail): select the products and copy.</li>
+      <li>Paste it here. Prices, article numbers and the other products don’t matter — only the cabinets are picked up, in any language IKEA uses here (EN, NL, FR, DE).</li></ol>
+      <p class="hint">Only have a PDF? Open it, select all and copy — or type your widths below.</p></details>`;
+  return `<h2>Your IKEA cabinets</h2><p class="lede">Paste the list from the IKEA planner and we set everything up for you. No list? Start from a layout below.</p>
+    <div class="impcard">
+      <div class="imphead"><b>Paste your IKEA list</b><span class="sp"></span><button type="button" class="btn sm pri" data-act="impPaste">Paste</button></div>
+      <textarea id="impText" rows="5" spellcheck="false" placeholder="PAX Wardrobe frame, white, 100x58x236 cm   2 pcs&#10;METOD Base cabinet with 3 drawers, 60x60x80 cm   1">${esc(S.impText || '')}</textarea>
+      <div class="impsub"><label class="lnk file">Open a file<input type="file" id="impFile" accept=".txt,.csv,.tsv,text/plain"></label>${S.impText ? '<button type="button" class="lnk" data-act="impClear">Clear</button>' : ''}</div>
+      ${S.impMsg ? `<p class="impok">${S.impMsg}</p>` : `<div id="impPrev" class="impprev" aria-live="polite">${impPreviewHTML(S.impText)}</div>`}
+      ${how}
+    </div>
+    <div class="or"><span>no list? start here</span></div>
     <div class="syss">${sysBtns}</div>
-    <h3>Start from a common layout</h3><div class="qks">${quick}</div>
-    <h3>Or type your widths</h3>${typeRow}<div class="adds"><button type="button" class="btn pri" data-act="typed">Make these cabinets</button></div>
-    <h3>Or add one at a time</h3>${addRows}
-    <h3>Your cabinets, left to right</h3>
+    <h3>A common layout</h3><div class="qks">${quick}</div>
+    <h3>Or type your widths</h3>${typeRow}<div class="adds"><button type="button" class="btn" data-act="typed">Make these cabinets</button></div>
+    <h3 id="yourCabs">Your cabinets, left to right · ${S.cabs.length}</h3>
     <div class="cabs">${S.cabs.map(card).join('') || '<p class="hint">No cabinets yet.</p>'}</div>
-    <details class="imp"${S.impOpen ? ' open' : ''}><summary>Have an IKEA planner list? Paste it</summary>
-      <p class="hint">Copy the item list from the IKEA planner (or your order confirmation) and paste it here. Frames and cabinets are picked up with their sizes; doors, hinges and legs are skipped.</p>
-      <textarea id="impText" rows="6" placeholder="PAX Wardrobe frame, white, 100x58x236 cm   2 pcs">${esc(S.impText || '')}</textarea>
-      <div class="adds"><button type="button" class="btn pri" data-act="imp">Read the list</button><button type="button" class="btn" data-act="impEx">Try an example</button></div>
-      ${S.impMsg ? `<p class="hint">${S.impMsg}</p>` : ''}</details>`;
+    ${addRow}`;
 }
 function quickWords(q) {
   if (Array.isArray(q)) return q.map(x => x[0]).join(' + ') + (q[0][1] ? ` · ${q[0][1]} high` : '');
@@ -280,7 +294,7 @@ function lookEdHTML(target, lk) {
 }
 function frontsHTML(L) {
   let h = `<h2>Your fronts</h2><p class="lede">19 mm thick, made to the exact IKEA sizes and drilled for the IKEA hinges you already have. Choose one look for all of them, then tap any front in the picture to give it its own.</p>
-    <div class="adds"><button type="button" class="btn surp" data-act="surprise">✨ Surprise me</button>${S.recipe ? `<span class="hint">${esc(S.recipe)}: ${esc(S.recipeSay || '')} — tap again for another idea</span>` : ''}</div>`;
+    <div class="adds"><button type="button" class="btn surp" data-act="surprise">✨ ${S.recipe ? 'Another idea' : 'Surprise me'}</button>${S.recipe ? `<span class="hint">${esc(S.recipe)}: ${esc(S.recipeSay || '')}</span>` : '<span class="hint">A matching look, picked for your cabinets</span>'}</div>`;
   const f = S.sel && L.fronts.find(x => x.id === S.sel);
   if (f) {
     const lk = lookOf(f),
@@ -297,6 +311,16 @@ function frontsHTML(L) {
   }
   const all = { style: S.style, mat: S.mat, col: S.col, oil: S.oil };
   h += `<h3 class="big">${f ? 'All the other fronts' : 'All fronts'}</h3>${lookEdHTML('all', all)}`;
+  const sl = sideLook();
+  h += `<h3>Side panels</h3>${seg(
+    'sides',
+    S.sides,
+    Object.entries(SIDES).map(([k, n]) => [k, n])
+  )}<p class="hint">${
+    S.sides === 'none'
+      ? 'Cover the white IKEA side at the end of your run with a panel in the same look as your fronts.'
+      : `${L.sides.length} panel${L.sides.length === 1 ? '' : 's'} in ${esc(lookName(sl).toLowerCase())}, ${[...new Set(L.sides.map(x => x.nom.replace('×', ' × ')))].join(' and ')} cm, flush with the fronts.${MATS[lookOf(null).mat].glass ? ' Glass is for doors only, so the sides are painted.' : ''}`
+  }</p>`;
   h += `<h3>Edges</h3>${seg(
     'edge',
     S.edge,
@@ -370,14 +394,14 @@ function orderHTML(L, P) {
             ? `<tr class="lkh"><td colspan="4"><i class="sw${MATS[r.look.mat].glass ? ' gl' : ''}" style="background:${faceHex(r.look)}"></i>${esc(lookName(r.look))}</td></tr>`
             : '';
       last = key;
-      return `${head}<tr><td>${r.n}×</td><td>${r.kind === 'door' ? 'Door' + (r.hinge ? ` <small>hinge ${r.hinge === 'L' ? 'left' : 'right'}</small>` : '') : 'Drawer front'}</td><td class="num">${f1(r.w)} × ${f1(r.h)}<small>IKEA ${r.nom}</small></td><td class="num">${eur(r.p * r.n)}</td></tr>`;
+      return `${head}<tr><td>${r.n}×</td><td>${r.kind === 'door' ? 'Door' + (r.hinge ? ` <small>hinge ${r.hinge === 'L' ? 'left' : 'right'}</small>` : '') : r.kind === 'side' ? 'Side panel <small>19 mm</small>' : 'Drawer front'}</td><td class="num">${f1(r.w)} × ${f1(r.h)}<small>${r.kind === 'side' ? 'depth × height' : 'IKEA ' + r.nom}</small></td><td class="num">${eur(r.p * r.n)}</td></tr>`;
     })
     .join('');
-  return `<h2>Your order</h2><p class="lede">${P.n} fronts with ${esc(HANDLES[S.handle].name.toLowerCase())}${S.handle === 'push' ? ' latches' : S.handle === 'grip' ? 's' : 's in ' + esc(HFIN[S.hfin].name.toLowerCase())}. Made to measure and drilled for your IKEA hinges; ready ${leadOf(L)} after you order${L.fronts.some(f => MATS[lookOf(f).mat].paint) ? ' (painted fronts take 1–2 weeks longer: they go to our spray shop)' : ''}.</p>
+  return `<h2>Your order</h2><p class="lede">${countWords(P)}, ${esc(EDGES[S.edge].name.toLowerCase())} edges, with ${esc(HANDLES[S.handle].name.toLowerCase())}${S.handle === 'push' ? ' latches' : S.handle === 'grip' ? 's' : 's in ' + esc(HFIN[S.hfin].name.toLowerCase())}. Made to measure and drilled for your IKEA hinges; ready ${leadOf(L)} after you order${L.fronts.some(f => MATS[lookOf(f).mat].paint) ? ' (painted fronts take 1–2 weeks longer: they go to our spray shop)' : ''}.</p>
     ${
       P.n
         ? `<table class="ord"><thead><tr><th></th><th>Front</th><th class="num">Size, mm</th><th class="num">Price</th></tr></thead><tbody>${rows}</tbody>
-    <tfoot><tr><td></td><td colspan="2">Fronts</td><td class="num">${eur(P.sub)}</td></tr><tr><td></td><td colspan="2">Delivery${P.del ? ` <small>free from ${eur(PRICE.deliveryFree)}</small>` : ' — free'}</td><td class="num">${P.del ? eur(P.del) : '€ 0'}</td></tr><tr class="tot"><td></td><td colspan="2">Total incl. VAT</td><td class="num">${eur(P.total)}</td></tr></tfoot></table>
+    <tfoot><tr><td></td><td colspan="2">${P.ns ? 'Fronts and sides' : 'Fronts'}</td><td class="num">${eur(P.sub)}</td></tr><tr><td></td><td colspan="2">Delivery${P.del ? ` <small>free from ${eur(PRICE.deliveryFree)}</small>` : ' — free'}</td><td class="num">${P.del ? eur(P.del) : '€ 0'}</td></tr><tr class="tot"><td></td><td colspan="2">Total incl. VAT</td><td class="num">${eur(P.total)}</td></tr></tfoot></table>
     <button type="button" class="btn pri big" data-act="orderNow">Order these fronts</button>`
         : '<p class="hint">Add a cabinet with fronts first.</p>'
     }
@@ -390,7 +414,7 @@ function openOrder() {
     P = priceAll(L);
   if (!P.n) return;
   document.getElementById('mbox').innerHTML =
-    `<h2>Order your fronts</h2><p class="lede">${P.n} fronts · <b>${eur(P.total)}</b> incl. VAT and delivery. We check every size with you before we cut.</p>
+    `<h2>Order your fronts</h2><p class="lede">${countWords(P)} · <b>${eur(P.total)}</b> incl. VAT and delivery. We check every size with you before we cut.</p>
     <label class="field"><span>Your name</span><input id="oName" autocomplete="name"></label>
     <label class="field"><span>E-mail</span><input id="oMail" type="email" autocomplete="email"></label>
     <label class="field"><span>Postcode</span><input id="oZip" autocomplete="postal-code"></label>
@@ -409,7 +433,7 @@ function orderText() {
     '',
     ...grouped(L).map(
       r =>
-        `${r.n} × ${r.kind === 'door' ? 'door' : 'drawer front'} ${f1(r.w)} × ${f1(r.h)} mm (IKEA ${r.nom})${r.hinge ? ', hinge ' + (r.hinge === 'L' ? 'left' : 'right') : ''} — ${lookName(r.look)}${MATS[r.look.mat].paint ? ' (RAL ' + COLOURS[r.look.col].ral + ')' : ''}`
+        `${r.n} × ${r.kind === 'door' ? 'door' : r.kind === 'side' ? 'side panel' : 'drawer front'} ${f1(r.w)} × ${f1(r.h)} mm (${r.kind === 'side' ? 'depth × height' : 'IKEA ' + r.nom})${r.hinge ? ', hinge ' + (r.hinge === 'L' ? 'left' : 'right') : ''} — ${lookName(r.look)}${MATS[r.look.mat].paint ? ' (RAL ' + COLOURS[r.look.col].ral + ')' : ''}`
     ),
     '',
     `Total ${eur(P.total)} incl. VAT${P.del ? ' and delivery' : ''}`
@@ -463,6 +487,7 @@ document.addEventListener('click', e => {
   }
   const b = e.target.closest('[data-act]');
   if (!b || b.disabled) return;
+  if (b.closest('summary')) e.preventDefault();
   const a = b.dataset.a || '',
     [id, val] = a.split('|'),
     c = S.cabs.find(x => x.id === id);
@@ -543,6 +568,7 @@ document.addEventListener('click', e => {
                 ? S.qh
                 : kd.heights[1];
       S.cabs.push(cab(S.sys, id, +val, h));
+      S.openCab = S.cabs[S.cabs.length - 1].id;
       break;
     }
     case 'cw':
@@ -571,30 +597,47 @@ document.addEventListener('click', e => {
       break;
     case 'impEx':
       S.impText = IMPORT_EXAMPLE;
-      S.impOpen = true;
+      S.impMsg = '';
       S.impMsg = '';
       break;
-    case 'imp': {
-      const t = document.getElementById('impText').value;
-      S.impText = t;
-      S.impOpen = true;
-      const r = parsePlanner(t);
-      if (!r.found.length) {
-        S.impMsg =
-          'No PAX, METOD or BESTÅ frames found in that list. Each line needs the name and a size like 60x60x80 cm.';
-        break;
-      }
-      const bySys = {};
-      r.found.forEach(x => (bySys[x.sys] = (bySys[x.sys] || 0) + 1));
-      const main = Object.entries(bySys).sort((p, q) => q[1] - p[1])[0][0];
-      S.sys = main;
-      S.cabs = r.found.filter(x => x.sys === main);
-      S.flip = {};
+    case 'impUse': {
+      const r = parsePlanner(S.impText),
+        got = r.found.filter(c => c.sys === a);
+      if (!got.length) break;
+      S.undo = JSON.stringify({ sys: S.sys, cabs: S.cabs, fx: S.fx, flip: S.flip });
+      S.sys = a;
+      S.cabs = got;
       S.fx = {};
-      const other = Object.entries(bySys).filter(([k]) => k !== main);
-      S.impMsg = `Found ${S.cabs.length} ${SYS[main].name} cabinet${S.cabs.length === 1 ? '' : 's'}.${other.length ? ` The list also has ${other.map(([k, n]) => `${n} ${SYS[k].name}`).join(' and ')} — one system per order for now; switch above to do those next.` : ''}${r.skipped.length ? ` Skipped ${r.skipped.length} line${r.skipped.length === 1 ? '' : 's'} that are not frames.` : ''}`;
+      S.flip = {};
+      S.sel = null;
+      S.impMsg = `✓ ${got.length} ${SYS[a].name} cabinet${got.length === 1 ? '' : 's'} set up from your list — check them below. <button type="button" class="lnk" data-act="undo">Undo</button> · <button type="button" class="lnk" data-act="step" data-a="fronts">Choose your fronts →</button>`;
       break;
     }
+    case 'undo':
+      if (S.undo) {
+        Object.assign(S, JSON.parse(S.undo));
+        S.undo = null;
+        S.impMsg = '';
+      }
+      break;
+    case 'impClear':
+      S.impText = '';
+      S.impMsg = '';
+      break;
+    case 'impPaste':
+      try {
+        navigator.clipboard
+          .readText()
+          .then(t => {
+            S.impText = t;
+            S.impMsg = '';
+            render();
+          })
+          .catch(() => impPasteHelp());
+      } catch (er) {
+        impPasteHelp();
+      }
+      return;
     case 'lk': {
       const [t, field, v] = a.split('|');
       setLook(t, field, v);
@@ -640,6 +683,9 @@ document.addEventListener('click', e => {
     case 'edge':
       S.edge = a;
       break;
+    case 'sides':
+      S.sides = a;
+      break;
     case 'handle':
       S.handle = a;
       if (a === 'tab' && S.hfin === 'steel') S.hfin = 'black';
@@ -672,10 +718,46 @@ document.addEventListener('click', e => {
 document.addEventListener(
   'toggle',
   e => {
-    if (e.target.classList && e.target.classList.contains('imp')) S.impOpen = e.target.open;
+    if (e.target.classList && e.target.classList.contains('how')) S.howOpen = e.target.open;
+    if (e.target.classList && e.target.classList.contains('cab')) {
+      if (e.target.open) S.openCab = e.target.dataset.c;
+      else if (S.openCab === e.target.dataset.c) S.openCab = null;
+    }
   },
   true
 );
+/* the IKEA list: read it while you type or paste, without redrawing the box you type in */
+let impTimer = 0;
+document.addEventListener('input', e => {
+  if (e.target.id !== 'impText') return;
+  S.impText = e.target.value;
+  clearTimeout(impTimer);
+  impTimer = setTimeout(() => {
+    if (S.impMsg) {
+      S.impMsg = '';
+      return render();
+    }
+    const el = document.getElementById('impPrev');
+    if (el) el.innerHTML = impPreviewHTML(S.impText);
+    save();
+  }, 120);
+});
+document.addEventListener('change', e => {
+  if (e.target.id !== 'impFile' || !e.target.files[0]) return;
+  e.target.files[0].text().then(t => {
+    S.impText = t;
+    S.impMsg = '';
+    render();
+  });
+});
+function impPasteHelp() {
+  const t = document.getElementById('impText');
+  if (t) t.focus();
+  const el = document.getElementById('impPrev');
+  if (el)
+    el.innerHTML =
+      '<p class="hint warn">Your browser didn’t let us read the clipboard — tap in the box and paste (long-press → Paste, or Ctrl/⌘ + V).</p>';
+}
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') document.getElementById('modal').hidden = true;
   if (e.key === 'Enter' && e.target && /^tw/.test(e.target.id)) document.querySelector('[data-act=typed]').click();

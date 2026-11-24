@@ -11,6 +11,19 @@ CHECK = """(()=>{const bad=[];
   for (const sys of ['pax','metod','besta']) { S=freshState(sys); for (const st of ['cabs','fronts','handles','order']) { S.step=st; render(); } }
   const r=parsePlanner(IMPORT_EXAMPLE); const sy=new Set(r.found.map(c=>c.sys));
   if (sy.size!==3) bad.push('planner example: systems found '+[...sy]);
+  // the IKEA list reader: other shapes and languages (cart over several lines, Dutch, French, typed, combinations, table rows)
+  const IMPS=[
+    ['PAX\\nWardrobe frame, white, 100x58x236 cm\\n702.145.67\\n€ 95,00\\n2\\nFORSAND\\nDoor, white, 50x229 cm\\n4', 'pax:100x236:doors,pax:100x236:doors'],
+    ['METOD / MAXIMERA Onderkast met 3 lades, wit/Voxtorp, 60x60x80 cm  1 st\\nMETOD Bovenkast met 2 deuren, wit, 80x37x80 cm  Aantal: 2', 'metod:60x80:drawers3,metod:80x80:doors2,metod:80x80:doors2'],
+    ['METOD / MAXIMERA Élt bas 4 faces/4 tiroirs, blanc, 40x60 cm  1', 'metod:40x80:drawers4'],
+    ['pax 100x236\\nmetod base 60x60x80', 'pax:100x236:doors,metod:60x80:door'],
+    ['PAX / FORSAND Wardrobe combination, white, 150x60x236 cm  1', 'pax:100x236:doors,pax:50x236:doors'],
+    ['METOD\\tWall cabinet frame, white, 60x37x80 cm\\t302.055.53\\t2\\t€ 35', 'metod:60x80:door,metod:60x80:door']];
+  IMPS.forEach(([t,want])=>{ const got=parsePlanner(t).found.map(c=>`${c.sys}:${c.w}x${c.h}:${c.layout}`).join(); if(got!==want) bad.push('IKEA list: '+JSON.stringify(t.slice(0,40))+' gave '+got) });
+  // side panels: priced and in the order list
+  S=freshState('metod'); S.sides='both'; let Ls=layout(); if(Ls.sides.length!==3) bad.push('kitchen sides (tall at the left end covers the wall row too): '+Ls.sides.length);
+  if(!(priceAll(Ls).ns===3&&grouped(Ls).some(r=>r.kind==='side'))) bad.push('sides not priced/listed');
+  S.step='fronts'; render(); S.step='order'; render(); if(!/Side panel/.test(document.getElementById('panel').textContent)) bad.push('no side panel in the order');
   for (const [sys,s] of Object.entries(SYS)) for (const [k,kd] of Object.entries(s.kinds)) for (const w of kd.widths) for (const h of kd.heights) {
     const c=cab(sys,k,w,h);
     for (const [lk] of layoutsFor(c)) { c.layout=lk; const fr=frontsOf(c,0,0);

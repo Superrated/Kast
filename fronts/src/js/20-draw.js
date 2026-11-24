@@ -175,6 +175,13 @@ function drawPic() {
       s += `<rect x="${a - 10}" y="${Y(940)}" width="${b - a + 20}" height="40" fill="#cfc8bb" stroke="#a9a293" stroke-width="2"/>`;
     }
   }
+  // side panels: from the front you see their 19 mm edge, in the look of the fronts
+  L.sides.forEach(sd => {
+    const lk = sideLook(),
+      m = MATS[lk.mat],
+      fill = m.wood ? woodCol(lk.mat, lk.oil).wood : faceHex(lk);
+    s += `<rect class="side" x="${sd.x}" y="${Y(sd.y + sd.h)}" width="${SIDE_T}" height="${sd.h}" fill="${fill}" stroke="${shade(fill, -0.35)}" stroke-width="2"/>`;
+  });
   L.fronts.forEach(f => (s += frontSVG(f, Y)));
   L.cabs
     .filter(p => p.c.kind !== 'wall')

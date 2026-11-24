@@ -829,6 +829,177 @@ h3.big {
   white-space: nowrap;
 }
 
+/* ---------- the IKEA list: paste, see what was found, use it ---------- */
+.impcard {
+  background: var(--raised);
+  border: 1.5px solid var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+  border-radius: 14px;
+  padding: 12px;
+  margin: 6px 0 4px;
+}
+.imphead {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.imphead .sp {
+  flex: 1;
+}
+.file {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.file input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.impcard textarea {
+  font-family: var(--f-m);
+  font-size: 12.5px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+  resize: vertical;
+  min-height: 92px;
+}
+.impprev {
+  margin-top: 6px;
+}
+.igrp {
+  border-top: 1px solid var(--line);
+  padding: 10px 0 4px;
+}
+.igrp:first-child {
+  border-top: 0;
+}
+.igh {
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+.ichips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 9px;
+}
+.ichip {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 13px;
+}
+.ichip small {
+  margin-left: 2px;
+}
+.hint.warn {
+  background: var(--warn-soft);
+  color: var(--ink);
+  border-radius: 8px;
+  padding: 6px 9px;
+}
+.impbad {
+  font-size: 13.5px;
+  color: var(--ink2);
+}
+.impok {
+  background: var(--accent-soft);
+  border-radius: 10px;
+  padding: 9px 11px;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 8px 0 2px;
+}
+.lnk {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--accent);
+  text-decoration: underline;
+  font-weight: 600;
+}
+.how {
+  margin-top: 8px;
+  font-size: 13.5px;
+}
+.how summary {
+  cursor: pointer;
+  color: var(--ink2);
+  font-weight: 600;
+}
+.how ol {
+  margin: 8px 0 4px;
+  padding-left: 20px;
+  line-height: 1.5;
+}
+.how li {
+  margin-bottom: 4px;
+}
+.or {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 22px 0 12px;
+  color: var(--ink2);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+.or::before,
+.or::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid var(--line);
+}
+.addrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+.addrow > span {
+  font-size: 13px;
+  color: var(--ink2);
+  margin-right: 4px;
+}
+
+.impsub {
+  display: flex;
+  gap: 14px;
+  justify-content: flex-end;
+  font-size: 13px;
+  margin-top: 4px;
+}
+@media (max-width: 480px) {
+  .stagebar .surp span {
+    display: none;
+  }
+}
+
+/* cabinet cards fold to one line */
+details.cab > summary {
+  list-style: none;
+  cursor: pointer;
+  margin-bottom: 0;
+}
+details.cab > summary::-webkit-details-marker {
+  display: none;
+}
+details.cab[open] > summary {
+  margin-bottom: 6px;
+}
+.cabh span small {
+  display: block;
+  font-size: 12px;
+}
+
 </style>
 </head>
 <body>
@@ -926,6 +1097,8 @@ const OILS = {
   smoke5: { name: 'Smoke 5%', blurb: 'Soft grey, like weathered wood', hex: '#C9C1B6', mix: 0.42 },
   charcoal: { name: 'Charcoal', blurb: 'Near black, the grain still shows', hex: '#34302D', mix: 0.74 }
 };
+/* side panels: none, or on the left / right / both ends of the run */
+const SIDES = { none: 'None', left: 'Left', right: 'Right', both: 'Both ends' };
 /* the rounded or chamfered edge on every front */
 const EDGES = {
   round: { name: 'Round', blurb: '2 mm radius, soft and hard-wearing' },
@@ -1120,6 +1293,7 @@ function freshState(sys) {
     col: 'racing',
     oil: 'pure',
     edge: 'round',
+    sides: 'none',
     gframe: 'black',
     handle: 'knob',
     hfin: 'brass',
@@ -1180,6 +1354,7 @@ S.fx = S.fx || {};
 if (!S.flute.gpitch) S.flute.gpitch = 50;
 if (!OILS[S.oil]) S.oil = 'pure';
 if (!EDGES[S.edge]) S.edge = 'round';
+if (!SIDES[S.sides]) S.sides = 'none';
 function save() {
   try {
     localStorage.setItem(KEY, JSON.stringify(S));
@@ -1338,7 +1513,64 @@ function layout() {
   });
   const W = Math.max(xb, xw, 600),
     Hmax = Math.max(...cabs.map(p => p.y + p.h), 900);
-  return { cabs, fronts, W, H: Hmax, plinth, worktop: S.sys === 'metod' && S.cabs.some(c => c.kind === 'base') };
+  return {
+    cabs,
+    fronts,
+    sides: sidesOf(cabs),
+    W,
+    H: Hmax,
+    plinth,
+    worktop: S.sys === 'metod' && S.cabs.some(c => c.kind === 'base')
+  };
+}
+
+/* ---------- side panels: one look and one choice for the whole run ----------
+   A panel covers the outer side of the first and/or last cabinet of each row (a kitchen has a base row and a
+   wall row). It is a little deeper than the cabinet so it ends flush with the fronts:
+     PAX 60 cm (58 frame + door), METOD base and tall 62 cm, METOD wall 39 cm, BESTÅ 42 cm; as high as the cabinet.
+   A side: { id, kind: 'side', end: 'L'|'R', w: depth (mm), h (mm), x (where its 19 mm edge shows), y, cab } */
+const SIDE_T = 19;
+function sideDepth(c) {
+  if (c.sys === 'pax') return 600;
+  if (c.sys === 'besta') return 420;
+  return c.kind === 'wall' ? 390 : 620;
+}
+function sidesOf(cabs) {
+  if (S.sides === 'none' || !cabs.length) return [];
+  const rows = {};
+  cabs.forEach(p => {
+    const r = p.c.sys === 'metod' && p.c.kind === 'wall' ? 'wall' : 'base';
+    (rows[r] = rows[r] || []).push(p);
+  });
+  const out = [];
+  Object.entries(rows).forEach(([r, ps]) => {
+    const first = ps.reduce((a, b) => (b.x < a.x ? b : a)),
+      last = ps.reduce((a, b) => (b.x + b.w > a.x + a.w ? b : a)),
+      mk = (p, end) => ({
+        id: `side:${r}:${end}`,
+        kind: 'side',
+        end,
+        row: r,
+        cab: p.c.id,
+        w: sideDepth(p.c),
+        h: p.h,
+        nom: `${sideDepth(p.c) / 10}×${p.h / 10}`,
+        x: end === 'L' ? p.x - SIDE_T : p.x + p.w,
+        y: p.y
+      });
+    if (S.sides === 'left' || S.sides === 'both') out.push(mk(first, 'L'));
+    if (S.sides === 'right' || S.sides === 'both') out.push(mk(last, 'R'));
+  });
+  // a tall cabinet at the end already has a full-height panel: no second panel for the wall cabinet above it
+  return out.filter(
+    sd => sd.row !== 'wall' || !out.some(o => o.row !== 'wall' && Math.abs(o.x - sd.x) < 1 && o.y + o.h > sd.y)
+  );
+}
+/* sides take the look of "all fronts"; glass is for doors only, so glass sides become painted */
+function sideLook() {
+  const lk = lookOf(null);
+  if (MATS[lk.mat].glass) return { style: 'flat', mat: 'painted', col: lk.col, oil: lk.oil, own: false };
+  return lk;
 }
 
 /* ---------- the look of a front: the overall choice, unless this front has its own ---------- */
@@ -1385,11 +1617,22 @@ function frontPrice(f) {
   if (f.kind === 'door') p += PRICE.hinge;
   return Math.round(p * 100) / 100;
 }
+function sidePrice(sd) {
+  const lk = sideLook(),
+    m = MATS[lk.mat],
+    area = Math.max(PRICE.minArea, (sd.w * sd.h) / 1e6);
+  return Math.round((PRICE.perFront + area * m.rate * STYLES[lk.style].f) * 100) / 100;
+}
 function priceAll(L) {
   const fr = L.fronts.map(f => ({ f, p: frontPrice(f) })),
-    sub = fr.reduce((a, b) => a + b.p, 0),
+    sd = (L.sides || []).map(s => ({ s, p: sidePrice(s) })),
+    sub = fr.reduce((a, b) => a + b.p, 0) + sd.reduce((a, b) => a + b.p, 0),
     del = sub >= PRICE.deliveryFree || !fr.length ? 0 : PRICE.delivery;
-  return { fr, sub, del, total: sub + del, n: fr.length };
+  return { fr, sd, sub, del, total: sub + del, n: fr.length, ns: sd.length };
+}
+/* "5 fronts + 2 sides" */
+function countWords(P) {
+  return `${P.n} front${P.n === 1 ? '' : 's'}${P.ns ? ` + ${P.ns} side${P.ns === 1 ? '' : 's'}` : ''}`;
 }
 const eur = v => '€ ' + Math.round(v).toLocaleString('en-IE');
 
@@ -1403,7 +1646,20 @@ function grouped(L) {
       m.set(k, { kind: f.kind, w: f.w, h: f.h, nom: f.nom, hinge: f.hinge, look: lk, n: 0, p: frontPrice(f) });
     m.get(k).n++;
   });
-  return [...m.values()].sort((a, b) => lookKey(a.look).localeCompare(lookKey(b.look)) || b.h - a.h || b.w - a.w);
+  (L.sides || []).forEach(sd => {
+    const lk = sideLook(),
+      k = `side|${sd.w}|${sd.h}||${lookKey(lk)}`;
+    if (!m.has(k))
+      m.set(k, { kind: 'side', w: sd.w, h: sd.h, nom: sd.nom, hinge: null, look: lk, n: 0, p: sidePrice(sd) });
+    m.get(k).n++;
+  });
+  return [...m.values()].sort(
+    (a, b) =>
+      lookKey(a.look).localeCompare(lookKey(b.look)) ||
+      (a.kind === 'side') - (b.kind === 'side') ||
+      b.h - a.h ||
+      b.w - a.w
+  );
 }
 
 /* ==== 20-draw.js ====
@@ -1583,6 +1839,13 @@ function drawPic() {
       s += `<rect x="${a - 10}" y="${Y(940)}" width="${b - a + 20}" height="40" fill="#cfc8bb" stroke="#a9a293" stroke-width="2"/>`;
     }
   }
+  // side panels: from the front you see their 19 mm edge, in the look of the fronts
+  L.sides.forEach(sd => {
+    const lk = sideLook(),
+      m = MATS[lk.mat],
+      fill = m.wood ? woodCol(lk.mat, lk.oil).wood : faceHex(lk);
+    s += `<rect class="side" x="${sd.x}" y="${Y(sd.y + sd.h)}" width="${SIDE_T}" height="${sd.h}" fill="${fill}" stroke="${shade(fill, -0.35)}" stroke-width="2"/>`;
+  });
   L.fronts.forEach(f => (s += frontSVG(f, Y)));
   L.cabs
     .filter(p => p.c.kind !== 'wall')
@@ -1911,6 +2174,11 @@ function build3D() {
       });
     });
   }
+  // side panels, flush with the front of the fronts
+  L.sides.forEach(sd => {
+    const lk = sideLook();
+    box(SIDE_T, sd.h, sd.w, matFor(lk, { w: sd.w, h: sd.h }), sd.x + SIDE_T / 2, sd.y + sd.h / 2, 20 - sd.w / 2);
+  });
   // the fronts
   const FT = 19,
     hcache = {};
@@ -2153,14 +2421,14 @@ function render() {
   document.getElementById('stagebar').innerHTML = `${seg('view', S.view, [
     ['2d', 'Front'],
     ['3d', '3D']
-  ])}<span class="chip"><b>${SYS[S.sys].name}</b> ${P.n} front${P.n === 1 ? '' : 's'}</span>${S.recipe ? `<span class="chip rec">✨ ${esc(S.recipeSay || S.recipe)}</span>` : ''}<span class="sp"></span><button type="button" class="btn sm surp" data-act="surprise">✨ Surprise me</button>`;
+  ])}<span class="chip"><b>${SYS[S.sys].name}</b> ${countWords(P)}</span>${S.recipe ? `<span class="chip rec">✨ ${esc(S.recipeSay || S.recipe)}</span>` : ''}<span class="sp"></span><button type="button" class="btn sm surp" data-act="surprise" aria-label="Surprise me">✨<span> Surprise me</span></button>`;
   document.getElementById('pichint').textContent = L.fronts.length
     ? v3
       ? 'Drag to turn · scroll or pinch to zoom · tap a front to change just that one'
       : 'Tap a front to change just that one'
     : '';
   document.getElementById('pbar').innerHTML =
-    `<div class="ptot"><span>${P.n} front${P.n === 1 ? '' : 's'} · incl. VAT${P.del ? ' + delivery' : ''}</span><b>${eur(P.total)}</b></div>${
+    `<div class="ptot"><span>${countWords(P)} · incl. VAT${P.del ? ' + delivery' : ''}</span><b>${eur(P.total)}</b></div>${
       S.step === 'order'
         ? ''
         : `<button type="button" class="btn ghost" data-act="next">${i < STEPS.length - 2 ? 'Next: ' + STEPS[i + 1][1] : 'See the order'} →</button>`
@@ -2302,15 +2570,21 @@ function cabsHTML() {
           qh,
           kinds.frame.heights.map(v => [v, v])
         )}</div>`;
-  const addRows = Object.entries(kinds)
-    .map(
-      ([k, kd]) =>
-        `<div class="row"><label>${S.sys === 'metod' ? kd.label.replace(' cabinet', '') : 'Add'}</label><div class="chips">${kd.widths.map(w => `<button type="button" class="btn sm" data-act="addw" data-a="${k}|${w}">+ ${w}</button>`).join('')}</div></div>`
+  const addRow = `<div class="addrow"><span>Add</span>${Object.entries(kinds)
+    .map(([k, kd]) =>
+      kd.widths
+        .map(
+          w =>
+            `<button type="button" class="btn sm" data-act="addw" data-a="${k}|${w}">+ ${S.sys === 'metod' ? kd.label.replace(' cabinet', '').toLowerCase() + ' ' : ''}${w}</button>`
+        )
+        .join('')
     )
-    .join('');
+    .join('')}</div>`;
   const card = (c, n) => {
     const kd = kinds[c.kind];
-    return `<div class="cab"><div class="cabh"><b>${n + 1}</b><span>${S.sys === 'metod' ? kd.label : SYS[S.sys].name + ' frame'} · ${c.w}${kd.heights.length > 1 ? ' × ' + c.h : ''}</span><span class="sp"></span><button type="button" class="ib" data-act="mv" data-a="${c.id}|-1" aria-label="Move left">◀</button><button type="button" class="ib" data-act="mv" data-a="${c.id}|1" aria-label="Move right">▶</button><button type="button" class="ib" data-act="del" data-a="${c.id}" aria-label="Remove">✕</button></div>
+    const ln = layoutsFor(c).find(x => x[0] === c.layout),
+      open = S.openCab === c.id || S.cabs.length <= 2;
+    return `<details class="cab" data-c="${c.id}"${open ? ' open' : ''}><summary class="cabh"><b>${n + 1}</b><span>${S.sys === 'metod' ? kd.label : SYS[S.sys].name + ' frame'} · ${c.w}${kd.heights.length > 1 ? ' × ' + c.h : ''}<small>${ln ? esc(ln[1]) : ''}</small></span><span class="sp"></span><button type="button" class="ib" data-act="mv" data-a="${c.id}|-1" aria-label="Move left">◀</button><button type="button" class="ib" data-act="mv" data-a="${c.id}|1" aria-label="Move right">▶</button><button type="button" class="ib" data-act="del" data-a="${c.id}" aria-label="Remove">✕</button></summary>
       <div class="row"><label>Width</label>${segC(
         'cw',
         c,
@@ -2332,20 +2606,28 @@ function cabsHTML() {
         c,
         c.layout,
         layoutsFor(c).map(([k, l]) => [k, l])
-      )}</div></div>`;
+      )}</div></details>`;
   };
-  return `<h2>What do you have?</h2><p class="lede">Pick your IKEA system and set up your cabinets the quickest way for you.</p>
+  const how = `<details class="how"${S.howOpen ? ' open' : ''}><summary>Where do I find my IKEA list?</summary><ol>
+      <li><b>IKEA planner</b> (PAX, kitchen or BESTÅ): open your design, go to the <b>shopping list</b> or <b>item list</b>, select all of it and copy.</li>
+      <li><b>Cart or order confirmation</b> (website, app or e-mail): select the products and copy.</li>
+      <li>Paste it here. Prices, article numbers and the other products don’t matter — only the cabinets are picked up, in any language IKEA uses here (EN, NL, FR, DE).</li></ol>
+      <p class="hint">Only have a PDF? Open it, select all and copy — or type your widths below.</p></details>`;
+  return `<h2>Your IKEA cabinets</h2><p class="lede">Paste the list from the IKEA planner and we set everything up for you. No list? Start from a layout below.</p>
+    <div class="impcard">
+      <div class="imphead"><b>Paste your IKEA list</b><span class="sp"></span><button type="button" class="btn sm pri" data-act="impPaste">Paste</button></div>
+      <textarea id="impText" rows="5" spellcheck="false" placeholder="PAX Wardrobe frame, white, 100x58x236 cm   2 pcs&#10;METOD Base cabinet with 3 drawers, 60x60x80 cm   1">${esc(S.impText || '')}</textarea>
+      <div class="impsub"><label class="lnk file">Open a file<input type="file" id="impFile" accept=".txt,.csv,.tsv,text/plain"></label>${S.impText ? '<button type="button" class="lnk" data-act="impClear">Clear</button>' : ''}</div>
+      ${S.impMsg ? `<p class="impok">${S.impMsg}</p>` : `<div id="impPrev" class="impprev" aria-live="polite">${impPreviewHTML(S.impText)}</div>`}
+      ${how}
+    </div>
+    <div class="or"><span>no list? start here</span></div>
     <div class="syss">${sysBtns}</div>
-    <h3>Start from a common layout</h3><div class="qks">${quick}</div>
-    <h3>Or type your widths</h3>${typeRow}<div class="adds"><button type="button" class="btn pri" data-act="typed">Make these cabinets</button></div>
-    <h3>Or add one at a time</h3>${addRows}
-    <h3>Your cabinets, left to right</h3>
+    <h3>A common layout</h3><div class="qks">${quick}</div>
+    <h3>Or type your widths</h3>${typeRow}<div class="adds"><button type="button" class="btn" data-act="typed">Make these cabinets</button></div>
+    <h3 id="yourCabs">Your cabinets, left to right · ${S.cabs.length}</h3>
     <div class="cabs">${S.cabs.map(card).join('') || '<p class="hint">No cabinets yet.</p>'}</div>
-    <details class="imp"${S.impOpen ? ' open' : ''}><summary>Have an IKEA planner list? Paste it</summary>
-      <p class="hint">Copy the item list from the IKEA planner (or your order confirmation) and paste it here. Frames and cabinets are picked up with their sizes; doors, hinges and legs are skipped.</p>
-      <textarea id="impText" rows="6" placeholder="PAX Wardrobe frame, white, 100x58x236 cm   2 pcs">${esc(S.impText || '')}</textarea>
-      <div class="adds"><button type="button" class="btn pri" data-act="imp">Read the list</button><button type="button" class="btn" data-act="impEx">Try an example</button></div>
-      ${S.impMsg ? `<p class="hint">${S.impMsg}</p>` : ''}</details>`;
+    ${addRow}`;
 }
 function quickWords(q) {
   if (Array.isArray(q)) return q.map(x => x[0]).join(' + ') + (q[0][1] ? ` · ${q[0][1]} high` : '');
@@ -2394,7 +2676,7 @@ function lookEdHTML(target, lk) {
 }
 function frontsHTML(L) {
   let h = `<h2>Your fronts</h2><p class="lede">19 mm thick, made to the exact IKEA sizes and drilled for the IKEA hinges you already have. Choose one look for all of them, then tap any front in the picture to give it its own.</p>
-    <div class="adds"><button type="button" class="btn surp" data-act="surprise">✨ Surprise me</button>${S.recipe ? `<span class="hint">${esc(S.recipe)}: ${esc(S.recipeSay || '')} — tap again for another idea</span>` : ''}</div>`;
+    <div class="adds"><button type="button" class="btn surp" data-act="surprise">✨ ${S.recipe ? 'Another idea' : 'Surprise me'}</button>${S.recipe ? `<span class="hint">${esc(S.recipe)}: ${esc(S.recipeSay || '')}</span>` : '<span class="hint">A matching look, picked for your cabinets</span>'}</div>`;
   const f = S.sel && L.fronts.find(x => x.id === S.sel);
   if (f) {
     const lk = lookOf(f),
@@ -2411,6 +2693,16 @@ function frontsHTML(L) {
   }
   const all = { style: S.style, mat: S.mat, col: S.col, oil: S.oil };
   h += `<h3 class="big">${f ? 'All the other fronts' : 'All fronts'}</h3>${lookEdHTML('all', all)}`;
+  const sl = sideLook();
+  h += `<h3>Side panels</h3>${seg(
+    'sides',
+    S.sides,
+    Object.entries(SIDES).map(([k, n]) => [k, n])
+  )}<p class="hint">${
+    S.sides === 'none'
+      ? 'Cover the white IKEA side at the end of your run with a panel in the same look as your fronts.'
+      : `${L.sides.length} panel${L.sides.length === 1 ? '' : 's'} in ${esc(lookName(sl).toLowerCase())}, ${[...new Set(L.sides.map(x => x.nom.replace('×', ' × ')))].join(' and ')} cm, flush with the fronts.${MATS[lookOf(null).mat].glass ? ' Glass is for doors only, so the sides are painted.' : ''}`
+  }</p>`;
   h += `<h3>Edges</h3>${seg(
     'edge',
     S.edge,
@@ -2484,14 +2776,14 @@ function orderHTML(L, P) {
             ? `<tr class="lkh"><td colspan="4"><i class="sw${MATS[r.look.mat].glass ? ' gl' : ''}" style="background:${faceHex(r.look)}"></i>${esc(lookName(r.look))}</td></tr>`
             : '';
       last = key;
-      return `${head}<tr><td>${r.n}×</td><td>${r.kind === 'door' ? 'Door' + (r.hinge ? ` <small>hinge ${r.hinge === 'L' ? 'left' : 'right'}</small>` : '') : 'Drawer front'}</td><td class="num">${f1(r.w)} × ${f1(r.h)}<small>IKEA ${r.nom}</small></td><td class="num">${eur(r.p * r.n)}</td></tr>`;
+      return `${head}<tr><td>${r.n}×</td><td>${r.kind === 'door' ? 'Door' + (r.hinge ? ` <small>hinge ${r.hinge === 'L' ? 'left' : 'right'}</small>` : '') : r.kind === 'side' ? 'Side panel <small>19 mm</small>' : 'Drawer front'}</td><td class="num">${f1(r.w)} × ${f1(r.h)}<small>${r.kind === 'side' ? 'depth × height' : 'IKEA ' + r.nom}</small></td><td class="num">${eur(r.p * r.n)}</td></tr>`;
     })
     .join('');
-  return `<h2>Your order</h2><p class="lede">${P.n} fronts with ${esc(HANDLES[S.handle].name.toLowerCase())}${S.handle === 'push' ? ' latches' : S.handle === 'grip' ? 's' : 's in ' + esc(HFIN[S.hfin].name.toLowerCase())}. Made to measure and drilled for your IKEA hinges; ready ${leadOf(L)} after you order${L.fronts.some(f => MATS[lookOf(f).mat].paint) ? ' (painted fronts take 1–2 weeks longer: they go to our spray shop)' : ''}.</p>
+  return `<h2>Your order</h2><p class="lede">${countWords(P)}, ${esc(EDGES[S.edge].name.toLowerCase())} edges, with ${esc(HANDLES[S.handle].name.toLowerCase())}${S.handle === 'push' ? ' latches' : S.handle === 'grip' ? 's' : 's in ' + esc(HFIN[S.hfin].name.toLowerCase())}. Made to measure and drilled for your IKEA hinges; ready ${leadOf(L)} after you order${L.fronts.some(f => MATS[lookOf(f).mat].paint) ? ' (painted fronts take 1–2 weeks longer: they go to our spray shop)' : ''}.</p>
     ${
       P.n
         ? `<table class="ord"><thead><tr><th></th><th>Front</th><th class="num">Size, mm</th><th class="num">Price</th></tr></thead><tbody>${rows}</tbody>
-    <tfoot><tr><td></td><td colspan="2">Fronts</td><td class="num">${eur(P.sub)}</td></tr><tr><td></td><td colspan="2">Delivery${P.del ? ` <small>free from ${eur(PRICE.deliveryFree)}</small>` : ' — free'}</td><td class="num">${P.del ? eur(P.del) : '€ 0'}</td></tr><tr class="tot"><td></td><td colspan="2">Total incl. VAT</td><td class="num">${eur(P.total)}</td></tr></tfoot></table>
+    <tfoot><tr><td></td><td colspan="2">${P.ns ? 'Fronts and sides' : 'Fronts'}</td><td class="num">${eur(P.sub)}</td></tr><tr><td></td><td colspan="2">Delivery${P.del ? ` <small>free from ${eur(PRICE.deliveryFree)}</small>` : ' — free'}</td><td class="num">${P.del ? eur(P.del) : '€ 0'}</td></tr><tr class="tot"><td></td><td colspan="2">Total incl. VAT</td><td class="num">${eur(P.total)}</td></tr></tfoot></table>
     <button type="button" class="btn pri big" data-act="orderNow">Order these fronts</button>`
         : '<p class="hint">Add a cabinet with fronts first.</p>'
     }
@@ -2504,7 +2796,7 @@ function openOrder() {
     P = priceAll(L);
   if (!P.n) return;
   document.getElementById('mbox').innerHTML =
-    `<h2>Order your fronts</h2><p class="lede">${P.n} fronts · <b>${eur(P.total)}</b> incl. VAT and delivery. We check every size with you before we cut.</p>
+    `<h2>Order your fronts</h2><p class="lede">${countWords(P)} · <b>${eur(P.total)}</b> incl. VAT and delivery. We check every size with you before we cut.</p>
     <label class="field"><span>Your name</span><input id="oName" autocomplete="name"></label>
     <label class="field"><span>E-mail</span><input id="oMail" type="email" autocomplete="email"></label>
     <label class="field"><span>Postcode</span><input id="oZip" autocomplete="postal-code"></label>
@@ -2523,7 +2815,7 @@ function orderText() {
     '',
     ...grouped(L).map(
       r =>
-        `${r.n} × ${r.kind === 'door' ? 'door' : 'drawer front'} ${f1(r.w)} × ${f1(r.h)} mm (IKEA ${r.nom})${r.hinge ? ', hinge ' + (r.hinge === 'L' ? 'left' : 'right') : ''} — ${lookName(r.look)}${MATS[r.look.mat].paint ? ' (RAL ' + COLOURS[r.look.col].ral + ')' : ''}`
+        `${r.n} × ${r.kind === 'door' ? 'door' : r.kind === 'side' ? 'side panel' : 'drawer front'} ${f1(r.w)} × ${f1(r.h)} mm (${r.kind === 'side' ? 'depth × height' : 'IKEA ' + r.nom})${r.hinge ? ', hinge ' + (r.hinge === 'L' ? 'left' : 'right') : ''} — ${lookName(r.look)}${MATS[r.look.mat].paint ? ' (RAL ' + COLOURS[r.look.col].ral + ')' : ''}`
     ),
     '',
     `Total ${eur(P.total)} incl. VAT${P.del ? ' and delivery' : ''}`
@@ -2577,6 +2869,7 @@ document.addEventListener('click', e => {
   }
   const b = e.target.closest('[data-act]');
   if (!b || b.disabled) return;
+  if (b.closest('summary')) e.preventDefault();
   const a = b.dataset.a || '',
     [id, val] = a.split('|'),
     c = S.cabs.find(x => x.id === id);
@@ -2657,6 +2950,7 @@ document.addEventListener('click', e => {
                 ? S.qh
                 : kd.heights[1];
       S.cabs.push(cab(S.sys, id, +val, h));
+      S.openCab = S.cabs[S.cabs.length - 1].id;
       break;
     }
     case 'cw':
@@ -2685,30 +2979,47 @@ document.addEventListener('click', e => {
       break;
     case 'impEx':
       S.impText = IMPORT_EXAMPLE;
-      S.impOpen = true;
+      S.impMsg = '';
       S.impMsg = '';
       break;
-    case 'imp': {
-      const t = document.getElementById('impText').value;
-      S.impText = t;
-      S.impOpen = true;
-      const r = parsePlanner(t);
-      if (!r.found.length) {
-        S.impMsg =
-          'No PAX, METOD or BESTÅ frames found in that list. Each line needs the name and a size like 60x60x80 cm.';
-        break;
-      }
-      const bySys = {};
-      r.found.forEach(x => (bySys[x.sys] = (bySys[x.sys] || 0) + 1));
-      const main = Object.entries(bySys).sort((p, q) => q[1] - p[1])[0][0];
-      S.sys = main;
-      S.cabs = r.found.filter(x => x.sys === main);
-      S.flip = {};
+    case 'impUse': {
+      const r = parsePlanner(S.impText),
+        got = r.found.filter(c => c.sys === a);
+      if (!got.length) break;
+      S.undo = JSON.stringify({ sys: S.sys, cabs: S.cabs, fx: S.fx, flip: S.flip });
+      S.sys = a;
+      S.cabs = got;
       S.fx = {};
-      const other = Object.entries(bySys).filter(([k]) => k !== main);
-      S.impMsg = `Found ${S.cabs.length} ${SYS[main].name} cabinet${S.cabs.length === 1 ? '' : 's'}.${other.length ? ` The list also has ${other.map(([k, n]) => `${n} ${SYS[k].name}`).join(' and ')} — one system per order for now; switch above to do those next.` : ''}${r.skipped.length ? ` Skipped ${r.skipped.length} line${r.skipped.length === 1 ? '' : 's'} that are not frames.` : ''}`;
+      S.flip = {};
+      S.sel = null;
+      S.impMsg = `✓ ${got.length} ${SYS[a].name} cabinet${got.length === 1 ? '' : 's'} set up from your list — check them below. <button type="button" class="lnk" data-act="undo">Undo</button> · <button type="button" class="lnk" data-act="step" data-a="fronts">Choose your fronts →</button>`;
       break;
     }
+    case 'undo':
+      if (S.undo) {
+        Object.assign(S, JSON.parse(S.undo));
+        S.undo = null;
+        S.impMsg = '';
+      }
+      break;
+    case 'impClear':
+      S.impText = '';
+      S.impMsg = '';
+      break;
+    case 'impPaste':
+      try {
+        navigator.clipboard
+          .readText()
+          .then(t => {
+            S.impText = t;
+            S.impMsg = '';
+            render();
+          })
+          .catch(() => impPasteHelp());
+      } catch (er) {
+        impPasteHelp();
+      }
+      return;
     case 'lk': {
       const [t, field, v] = a.split('|');
       setLook(t, field, v);
@@ -2754,6 +3065,9 @@ document.addEventListener('click', e => {
     case 'edge':
       S.edge = a;
       break;
+    case 'sides':
+      S.sides = a;
+      break;
     case 'handle':
       S.handle = a;
       if (a === 'tab' && S.hfin === 'steel') S.hfin = 'black';
@@ -2786,10 +3100,46 @@ document.addEventListener('click', e => {
 document.addEventListener(
   'toggle',
   e => {
-    if (e.target.classList && e.target.classList.contains('imp')) S.impOpen = e.target.open;
+    if (e.target.classList && e.target.classList.contains('how')) S.howOpen = e.target.open;
+    if (e.target.classList && e.target.classList.contains('cab')) {
+      if (e.target.open) S.openCab = e.target.dataset.c;
+      else if (S.openCab === e.target.dataset.c) S.openCab = null;
+    }
   },
   true
 );
+/* the IKEA list: read it while you type or paste, without redrawing the box you type in */
+let impTimer = 0;
+document.addEventListener('input', e => {
+  if (e.target.id !== 'impText') return;
+  S.impText = e.target.value;
+  clearTimeout(impTimer);
+  impTimer = setTimeout(() => {
+    if (S.impMsg) {
+      S.impMsg = '';
+      return render();
+    }
+    const el = document.getElementById('impPrev');
+    if (el) el.innerHTML = impPreviewHTML(S.impText);
+    save();
+  }, 120);
+});
+document.addEventListener('change', e => {
+  if (e.target.id !== 'impFile' || !e.target.files[0]) return;
+  e.target.files[0].text().then(t => {
+    S.impText = t;
+    S.impMsg = '';
+    render();
+  });
+});
+function impPasteHelp() {
+  const t = document.getElementById('impText');
+  if (t) t.focus();
+  const el = document.getElementById('impPrev');
+  if (el)
+    el.innerHTML =
+      '<p class="hint warn">Your browser didn’t let us read the clipboard — tap in the box and paste (long-press → Paste, or Ctrl/⌘ + V).</p>';
+}
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') document.getElementById('modal').hidden = true;
   if (e.key === 'Enter' && e.target && /^tw/.test(e.target.id)) document.querySelector('[data-act=typed]').click();
@@ -2799,66 +3149,260 @@ document.getElementById('modal').addEventListener('click', e => {
 });
 
 /* ==== 40-import.js ====
-   Read the item list from the IKEA planner (copied as text, or typed): every line with a PAX, METOD or BESTÅ
-   frame/cabinet and its size becomes a cabinet. Doors, hinges, legs and the rest are skipped.
-   Understands quantities like "2 x …", "2× …", "… 2 pcs", "Qty: 2", and sizes like 60x60x80 cm (width first).
+   Read an IKEA list — the planner's item list, the shopping cart, an order confirmation, or typed by hand —
+   and turn every PAX frame, METOD cabinet and BESTÅ frame into a cabinet. Everything else (doors, hinges,
+   legs, drawers) is skipped, but IKEA doors and drawer fronts are counted so we can compare.
+
+   Copied text comes in two shapes, and both work:
+     one item per line      PAX Wardrobe frame, white, 100x58x236 cm   2 pcs
+     one item over lines    PAX
+                            Wardrobe frame, white, 100x58x236 cm
+                            € 95
+                            2
+   A new item starts at a line that begins with an IKEA name in capitals (PAX, METOD / MAXIMERA, KOMPLEMENT …)
+   or names one of the three systems; lines in between belong to the item above.
+   English, Dutch, French and German words are understood. Sizes are width × depth × height in cm
+   ("cm" may be left out); with two numbers the second is the height, unless it is clearly a depth.
+   METOD cabinets that come with drawers or doors ("with 3 drawers", "2 fronts/4 drawers", "met 2 deuren")
+   get the matching front layout.
 */
 const IMPORT_EXAMPLE = `PAX Wardrobe frame, white, 100x58x236 cm   2 pcs
 PAX Wardrobe frame, white, 50x58x236 cm   1 pcs
 KOMPLEMENT Hinge with damper, 4 pack   3
-METOD Base cabinet frame, white, 60x60x80 cm   Qty: 2
-METOD Wall cabinet frame, white, 40x37x80 cm   1
+METOD / MAXIMERA Base cabinet with 3 drawers, white/Voxtorp, 60x60x80 cm   Qty: 1
+METOD Base cabinet frame, white, 80x60x80 cm   Qty: 2
+METOD Wall cabinet with 2 doors, white, 80x37x80 cm   2
 METOD High cabinet frame, white, 60x60x200 cm   1
 BESTÅ Frame, white, 120x40x38 cm   1`;
 
-function parsePlanner(text, only) {
-  const found = [],
-    skipped = [];
+const IMP = {
+  frame:
+    /FRAME|CABINET|CARCASS|STOMME|KORPUS|CORPS|CAISSON|OMBOUW|ONDERKAST|BOVENKAST|HOGE ?KAST|KASTFRAME|KAST\b|SCHRANK|ÉLÉMENT|ELEMENT|ÉLT\b|ELT\b|ARMOIRE|BENCH|BANC|MEUBLE|UNIT\b/,
+  // words that make the head of the line something else than a frame
+  other:
+    /\b(DOORS?|DEUR(EN)?|PORTES?|TÜR(EN)?|FRONTS?|FRONTEN|FAÇADES?|FACADES?|HINGES?|SCHARNIER(EN)?|CHARNIÈRES?|LEGS?|POOT|POTEN|PIEDS?|FÜSSE|PLINTH|PLINT|SOCLE|SOCKEL|SHELF|SHELVES|PLANK(EN)?|TABLETTES?|EINLEGEBODEN|RAILS?|KNOBS?|HANDLES?|GREPEN?|GREEP|POIGNÉES?|GRIFFE?|COVER PANEL|DEKPANEEL|PANNEAU|ABDECKSEITE|DECO STRIP|WORKTOP|COUNTERTOP|WERKBLAD|PLAN DE TRAVAIL|DRAWERS?|LADES?|LADEN|TIROIRS?|SCHUBLADEN?|INTERIOR|ORGANI[SZ]ER|MIRROR|SPIEGEL|LIGHTING|LED)\b/,
+  combo: /COMBINATION|COMBINATIE|COMBINAISON|KOMBINATION/,
+  wall: /WALL|BOVENKAST|WANDKAST|OBERSCHRANK|WANDSCHRANK|MURAL|ÉLÉMENT HAUT|\bBOVEN\b/,
+  high: /HIGH|TALL|HOGE ?KAST|HOCHSCHRANK|ARMOIRE|COLONNE/,
+  doorFront:
+    /\b(DOORS?|DEUR(EN)?|PORTES?|TÜR(EN)?|DRAWER FRONTS?|LADEFRONTS?|FAÇADES? DE TIROIR|SCHUBLADENFRONTS?|FRONTS?)\b/,
+  depths: [20, 35, 37, 39, 40, 42, 58, 60, 61]
+};
+
+/* split the text into items */
+function impBlocks(text) {
+  const blocks = [];
   String(text || '')
+    .replace(/ /g, ' ')
     .split(/\r?\n/)
     .map(l => l.trim())
     .filter(Boolean)
-    .forEach(line => {
-      const up = line.toUpperCase(),
-        sys = /\bPAX\b/.test(up)
-          ? 'pax'
-          : /\bMETOD\b/.test(up)
-            ? 'metod'
-            : /\bBEST[AÅ](?![A-Z])/.test(up)
-              ? 'besta'
-              : null;
-      const isFrame =
-        /FRAME|CABINET|STOMME|KORPUS|CORPS|KAST/.test(up) &&
-        !/DOOR|FRONT|HINGE|LEG|PLINTH|SHELF|RAIL|DRAWER(?! UNIT)/.test(up.replace(/CABINET FRAME/, ''));
-      const dm = line.match(/(\d{2,3})\s*[x×]\s*(\d{2,3})(?:\s*[x×]\s*(\d{2,3}))?\s*cm/i);
-      if (!sys || !isFrame || !dm) {
-        if (sys && !isFrame) skipped.push(line);
-        return;
-      }
-      if (only && sys !== only) {
-        skipped.push(line);
-        return;
-      }
-      const a = +dm[1],
-        c3 = dm[3] ? +dm[3] : null;
-      // width × depth × height (IKEA's order); with two numbers: width × height
-      const w = a,
-        h = c3 != null ? c3 : +dm[2];
-      let kind = 'frame';
-      if (sys === 'metod') kind = /WALL/.test(up) ? 'wall' : /HIGH|TALL/.test(up) ? 'high' : 'base';
-      const kd = SYS[sys].kinds[kind];
-      const W = kd.widths.reduce((b, v) => (Math.abs(v - w) < Math.abs(b - w) ? v : b), kd.widths[0]),
-        Hh = kd.heights.reduce((b, v) => (Math.abs(v - h) < Math.abs(b - h) ? v : b), kd.heights[0]);
-      const q = +(
-        (line.match(/^(\d+)\s*[x×]\s+/i) || [])[1] ||
-        (line.match(/(?:qty|quantity|antal|aantal)\s*:?\s*(\d+)/i) || [])[1] ||
-        (line.match(/(\d+)\s*(?:pcs|pc|st|stk|pieces|x)\s*$/i) || [])[1] ||
-        (line.match(/\s(\d{1,2})\s*$/) || [])[1] ||
-        1
-      );
-      for (let i = 0; i < Math.min(q, 20); i++) found.push(cab(sys, kind, W, Hh));
+    .forEach(l => {
+      const starts =
+        /^(\d{1,2}\s*[x×]\s+)?[A-ZÅÄÖ]{3,}(\s*\/\s*[A-ZÅÄÖ]{3,})*(\s|,|$)/.test(l) ||
+        /\b(pax|metod|best[aå])\b/i.test(l);
+      if (starts || !blocks.length) blocks.push([l]);
+      else blocks[blocks.length - 1].push(l);
     });
-  return { found, skipped };
+  return blocks;
+}
+function impQty(lines) {
+  const all = lines.join('  '),
+    pats = [
+      /^\s*(\d{1,2})\s*[x×]\s+/i,
+      /(?:QTY|QUANTITY|AANTAL|ANTAL|QUANTITÉ|QTÉ|ANZAHL|MENGE)\s*[:.]?\s*(\d{1,3})/i,
+      /(\d{1,3})\s*(?:PCS|PC|PIECES|PIÈCES|ST|STK|STUKS?)\.?(?:\s|$)/i,
+      /(?:^|[^\d\s])\s*[x×]\s*(\d{1,2})\s*$/i
+    ];
+  for (const p of pats) {
+    const m = all.match(p);
+    if (m) return +m[1];
+  }
+  // a table row: a cell that is just a number (tabs or wide gaps between the columns)
+  for (const l of lines) {
+    const cells = l.split(/\t|\s{2,}/).map(c => c.trim());
+    const q = cells.slice(1).find(c => /^\d{1,2}$/.test(c));
+    if (q) return +q;
+  }
+  const after = all.match(/\bcm\.?\s+(\d{1,2})\s*$/i) || all.match(/\b(\d)\s*[x×]\s+(?=\d{2,3}\s*[x×])/i);
+  if (after) return +after[1];
+  // a line that is just a number (the quantity column), or a number at the end after a wide gap
+  for (const l of lines.slice(1)) if (/^\d{1,2}$/.test(l)) return +l;
+  const t = lines[0].match(/\s{2,}(\d{1,2})\s*$/);
+  return t ? +t[1] : 1;
+}
+const impNum = s => +String(s).replace(',', '.');
+/* a PAX combination's width as frames: as many 100s as fit, then a 50 or 75 (125 = 75 + 50) */
+function paxSplit(w) {
+  if (w < 50 || w > 600 || w % 25) return null;
+  let n = Math.floor(w / 100),
+    r = w - n * 100;
+  const out = [];
+  if (r === 25) {
+    if (!n) return null;
+    n--;
+    out.push(75, 50);
+  } else if (r) out.push(r);
+  return Array(n).fill(100).concat(out);
+}
+
+function parsePlanner(text, only) {
+  const found = [],
+    skipped = [],
+    notes = [],
+    combos = [];
+  let ikeaFronts = 0;
+  impBlocks(text).forEach(lines => {
+    const line = lines.join(' '),
+      up = line.toUpperCase(),
+      sys = /\bPAX\b/.test(up)
+        ? 'pax'
+        : /\bMETOD\b/.test(up)
+          ? 'metod'
+          : /\bBEST[AÅ](?![A-Z])/.test(up)
+            ? 'besta'
+            : null;
+    // the head: the name of the thing, before its colour, size and "with …"
+    const head = up.replace(/^\d{1,2}\s*[x×]\s+/, '').split(/,|\s(?:WITH|W\/|MET|AVEC|MIT|FOR|VOOR|POUR|FÜR)\s/)[0];
+    const dm = line.match(/(\d{2,3}(?:[.,]\d)?)\s*[x×*]\s*(\d{2,3}(?:[.,]\d)?)(?:\s*[x×*]\s*(\d{2,3}(?:[.,]\d)?))?/);
+    const qty = Math.min(impQty(lines), 30);
+    if (IMP.combo.test(head)) {
+      const pw = dm && sys === 'pax' ? paxSplit(impNum(dm[1])) : null;
+      if (!pw || /CORNER|HOEK|ANGLE|ECK/.test(up)) {
+        if (sys) combos.push(line);
+        return;
+      }
+      const hh = impNum(dm[3] || dm[2]) > 210 ? 236 : 201;
+      for (let q = 0; q < qty; q++)
+        pw.forEach(w => found.push(cab('pax', 'frame', w, hh, /\bOPEN\b/.test(up) ? 'open' : 'doors')));
+      notes.push(`PAX combination ${impNum(dm[1])} cm wide read as frames ${pw.join(' + ')} — check the order below.`);
+      return;
+    }
+    const name = head.replace(/\b(PAX|METOD|BEST[AÅ])\b/g, ''),
+      fm = name.match(IMP.frame),
+      om = name.match(IMP.other),
+      bare = !name
+        .replace(
+          /\d+([.,]\d)?|[x×*\/:\-]|\bCM\b|\b(BASE|WALL|HIGH|TALL|FRAME|ONDER|BOVEN|HOOG|HOGE|BAS|MURAL|PCS|ST|QTY)\b/gi,
+          ''
+        )
+        .trim();
+    const isFrame = sys && dm && ((fm && (!om || om.index > fm.index)) || (bare && !om));
+    if (!isFrame) {
+      if (dm && IMP.doorFront.test(head) && !/HINGE|SCHARNIER|CHARNIÈRE|SCHARNIERE/.test(up)) ikeaFronts += qty;
+      if (sys || /^[A-ZÅÄÖ]{3,}/.test(lines[0])) skipped.push(lines[0]);
+      return;
+    }
+    if (!dm) {
+      notes.push(`No size found in “${lines[0].slice(0, 60)}” — add the size like 60x60x80 cm.`);
+      return;
+    }
+    if (only && sys !== only) {
+      skipped.push(lines[0]);
+      return;
+    }
+    let kind = 'frame';
+    if (sys === 'metod') kind = IMP.wall.test(up) ? 'wall' : IMP.high.test(up) ? 'high' : 'base';
+    const kd = SYS[sys].kinds[kind],
+      a = impNum(dm[1]),
+      b = impNum(dm[2]),
+      c3 = dm[3] ? impNum(dm[3]) : null;
+    // width × depth × height; with two numbers the second is the height unless it is a depth
+    const w = a,
+      h =
+        c3 != null
+          ? c3
+          : IMP.depths.includes(b)
+            ? kd.heights[kind === 'high' ? kd.heights.length - 1 : kind === 'wall' ? 2 : 0]
+            : b;
+    const near = (list, v) => list.reduce((p, q) => (Math.abs(q - v) < Math.abs(p - v) ? q : p), list[0]);
+    const W = near(kd.widths, w),
+      H = near(kd.heights, h);
+    if (Math.abs(W - w) > 2 || Math.abs(H - h) > 2)
+      notes.push(
+        `${SYS[sys].name} ${w}×${h} is not a standard size — read as ${W}×${H}. Check it in your cabinets below.`
+      );
+    const lay = impLayout(sys, kind, W, H, up);
+    for (let i = 0; i < qty; i++) {
+      const c = cab(sys, kind, W, H, lay || undefined);
+      fixLayout(c);
+      found.push(c);
+    }
+  });
+  if (combos.length)
+    notes.push(
+      `${combos.length} ready-made combination${combos.length === 1 ? '' : 's'} (like PAX/FORSAND) can’t be split into frames from the name alone — paste the frame lines, or type the widths below.`
+    );
+  return { found, skipped, notes, ikeaFronts };
+}
+
+/* the front layout a cabinet came with, from words like "with 3 drawers", "2 fronts/4 drawers", "met 2 deuren" */
+function impLayout(sys, kind, w, h, up) {
+  const num = re => {
+    const m = up.match(re);
+    return m ? +m[1] : 0;
+  };
+  const nf = num(/(\d)\s*(?:FRONTS?|FRONTEN|FAÇADES?|FACES)\b/),
+    nd = num(/(\d)\s*(?:HIGH\s+|LOW\s+)?(?:DRAWERS?|LADES?|LADEN|TIROIRS?|SCHUBLADEN?)\b/),
+    nDoor = num(/(\d)\s*(?:DOORS?|DEUREN|PORTES|TÜREN)\b/) || (/\b(DOOR|DEUR|PORTE|TÜR)\b/.test(up) ? 1 : 0),
+    hasDrawer = /\b(DRAWERS?|LADES?|LADEN|TIROIRS?|SCHUBLADEN?)\b/.test(up);
+  if (sys === 'pax') return /\bOPEN\b/.test(up) ? 'open' : 'doors';
+  if (sys === 'besta') return hasDrawer ? 'drawers' : null;
+  if (kind === 'base') {
+    if (hasDrawer && nDoor) return 'drawer_door';
+    if (hasDrawer) {
+      const n = nf || nd || 3;
+      return n >= 4 ? 'drawers4' : n === 3 ? 'drawers3' : n === 2 ? 'drawers2' : 'drawer_door';
+    }
+    if (nDoor) return nDoor >= 2 && w >= 60 ? 'doors2' : 'door';
+    return null;
+  }
+  if (kind === 'wall') return nDoor >= 2 && w >= 60 ? 'doors2' : nDoor ? 'door' : null;
+  if (kind === 'high') return nDoor >= 2 && h === 200 ? 'split' : null;
+  return null;
+}
+
+/* what the reader found, as a short preview with a button per system */
+function impPreviewHTML(text) {
+  if (!String(text || '').trim())
+    return `<p class="hint">Nothing pasted yet. <button type="button" class="lnk" data-act="impEx">Try an example list</button></p>`;
+  const r = parsePlanner(text),
+    bySys = {};
+  r.found.forEach(c => (bySys[c.sys] = bySys[c.sys] || []).push(c));
+  if (!r.found.length)
+    return `<p class="impbad">No PAX, METOD or BESTÅ frames in this text yet.${r.notes.length ? ' ' + esc(r.notes[0]) : ' Each item needs its name and a size, like “METOD Base cabinet frame 60x60x80 cm”.'}</p>`;
+  const order = Object.keys(bySys).sort((p, q) => bySys[q].length - bySys[p].length);
+  const groups = order
+    .map(sys => {
+      const m = new Map();
+      bySys[sys].forEach(c => {
+        const k = `${c.kind}|${c.w}|${c.h}|${c.layout}`;
+        m.set(k, (m.get(k) || 0) + 1);
+      });
+      const chips = [...m.entries()]
+        .map(([k, n]) => {
+          const [kind, w, h, lay] = k.split('|'),
+            kd = SYS[sys].kinds[kind],
+            ln = (LAYOUTS[sys === 'metod' ? 'metod_' + kind : sys] || []).find(x => x[0] === lay);
+          return `<span class="ichip"><b>${n}×</b> ${sys === 'metod' ? kd.label.replace(' cabinet', '') : 'Frame'} ${w}×${h}${ln && ln[0] !== 'door' && ln[0] !== 'doors' ? ` <small>${esc(ln[1].toLowerCase())}</small>` : ''}</span>`;
+        })
+        .join('');
+      return `<div class="igrp"><div class="igh"><b>${SYS[sys].name}</b> ${bySys[sys].length} cabinet${bySys[sys].length === 1 ? '' : 's'}</div><div class="ichips">${chips}</div>
+        <button type="button" class="btn ${sys === order[0] ? 'pri' : ''} sm" data-act="impUse" data-a="${sys}">Use ${order.length > 1 ? 'these ' + bySys[sys].length + ' ' + SYS[sys].name : 'these ' + bySys[sys].length} cabinet${bySys[sys].length === 1 ? '' : 's'} →</button></div>`;
+    })
+    .join('');
+  const ours = order.length
+    ? (() => {
+        const n = layoutFronts(bySys[order[0]]);
+        return r.ikeaFronts
+          ? `<p class="hint">Your list also has ${r.ikeaFronts} IKEA door${r.ikeaFronts === 1 ? '' : 's'} and drawer fronts; these cabinets take ${n} of ours.${r.ikeaFronts !== n ? ' Check the fronts per cabinet after you use them.' : ''}</p>`
+          : '';
+      })()
+    : '';
+  return `${groups}${r.notes.map(n => `<p class="hint warn">${esc(n)}</p>`).join('')}${ours}${order.length > 1 ? '<p class="hint">One system per order for now — use one, order, then come back for the other.</p>' : ''}`;
+}
+function layoutFronts(cabs) {
+  return cabs.reduce((n, c) => n + frontsOf(c, 0, 0).length, 0);
 }
 
 /* ==== 45-surprise.js ====
