@@ -190,6 +190,7 @@ footer p { margin: 0 0 6px; max-width: 52em; }
 .homeset .hl { display: block; font-size: 15px; margin-bottom: 4px; }
 .homeset #upgl label { font-weight: 400; font-size: 14px; padding: 2px 0; }
 .homeset .uc { margin-left: auto; color: var(--ink2); font-variant-numeric: tabular-nums; }
+.buy { color: var(--oak2); }
 </style>
 </head>
 <body>
@@ -295,12 +296,26 @@ const upgTotal = () => UPGS.reduce((a, u) => a + (u.on ? u.cost : 0), 0);
 const UPG = true;     // home settings, once for all of BRUIS
 const HOME_M2 = 180, HOME_COSTS = 4500, HOME_ENERGY = 2400, WS_ENERGY = 900;
 const wsDed = () => AREA / HOME_M2 * HOME_COSTS + (METER ? WS_ENERGY : AREA / HOME_M2 * HOME_ENERGY);
-const upgShare = () => S === 'real' ? [0, 0.5, 0.5] : [0.5, 0.5, 0];   // half one year, half the next
-const upg = y => {
-  const sh = upgShare(), t = upgTotal(), cash = t * sh[y - 1];
-  const bought = t * sh.slice(0, y).reduce((a, b) => a + b, 0);
-  return { cash, wo: bought / 10, inv: cash * 0.1 };
-};
+/* buy upgrades one at a time, in list order, only in a year when BRUIS's own profit pays for it:
+   your extra income must stay at €0 or more after the purchase */
+const NOU = { cash: 0, wo: 0, inv: 0, items: [] };
+function schedule(calc) {
+  const pending = UPGS.filter(u => u.on), out = [];
+  let owned = 0;
+  for (let y = 1; y <= 3; y++) {
+    let u = { cash: 0, wo: owned / 10, inv: 0, items: [] };
+    let r = calc(y, u);
+    while (pending.length) {
+      const c = pending[0].cost / (r.isVat ? 1.21 : 1);
+      const tryU = { cash: u.cash + c, wo: u.wo + c / 10, inv: u.inv + c * 0.1, items: [...u.items, pending[0].name] };
+      const t = calc(y, tryU);
+      if (t.kept - wsDed() < 0) break;
+      u = tryU; r = t; owned += c; pending.shift();
+    }
+    out.push(r);
+  }
+  return out;
+}
 const ACC = 600;                            // accountant per year, realistic only
 const KEEP = (1 - 0.205 * 1.042) * (1 - 0.535);
 
@@ -343,7 +358,7 @@ const LINKS = {fronts: { site: 'https://claude.ai/artifact/Tc6UC5ZcFp6XLm8RLnDVM
 let S = 'real', VANON = true;
 const VAN = 7200, RENTC = '#c4a77a', VANC = '#8e9db1';
 const vanCost = y => VANON && y >= 2 ? VAN : 0;
-const benefit = (kept, y) => { const van = vanCost(y), d = wsDed(), u = upg(y).cash; return { free: kept - d, rent: d + u, van, total: kept + u + van }; };
+const benefit = (kept, y, uc) => { const van = vanCost(y), d = wsDed(); return { free: kept - d, rent: d + uc, van, total: kept + uc + van }; };
 const COL = id => `var(--${id})`;
 const eur = n => (n < 0 ? '−€' : '€') + Math.abs(Math.round(n)).toLocaleString('en-US');
 const learnK = y => S === 'real' ? [1.3, 1.1, 1][y - 1] : 1;
@@ -375,7 +390,7 @@ function ops(i, y, vat) {
 }
 
 /* one or more ideas run together in year y */
-function run(list, y) {
+function runCore(list, y, u) {
   const solo = list.length === 1;
   let vat = null;
   if (!solo) vat = list.reduce((a, i) => a + ops(i, y, false).turnover, 0) > THR[y - 1];
@@ -384,14 +399,14 @@ function run(list, y) {
   const acc = S === 'real' ? ACC : 0;
   const profit = sum('profit') - acc - vanCost(y);
   const startup = sum('startup') - (y === 1 ? (list.length - 1) * 111.5 : 0);
-  const u = upg(y);
   const taxable = profit - startup - wsDed() - u.wo - u.inv - sum('writeoff') - sum('inv') - sum('small');
   const t = tax(taxable);
   const kept = profit - startup - u.cash - sum('toolsBought') - sum('small') - t.social - t.income;
   const hours = sum('hours');
   return { turnover: sum('turnover'), isVat: o.some(x => x.isVat), profit, hours, wk: hours / 52,
-    perHour: hours ? (profit + vanCost(y)) / hours : 0, kept, ben: benefit(kept, y), startup, tools: sum('toolsBought'), units: o.map(x => x.units) };
+    perHour: hours ? (profit + vanCost(y)) / hours : 0, kept, ben: benefit(kept, y, u.cash), upg: u, startup, tools: sum('toolsBought'), units: o.map(x => x.units) };
 }
+const run = (list, y) => schedule((yy, u) => runCore(list, yy, u))[y - 1];
 const one = (i, y) => run([i], y);
 const worstLoss = i => i.startup + 6 * i.fixedMo + (S === 'real' ? ACC / 2 : 0);
 
@@ -421,11 +436,11 @@ function key() {
 }
 
 /* one cell: real benefit per month, split into income, rent and van */
-function benCell(b, col, mx, sub) {
+function benCell(b, col, mx, sub, u) {
   const m = v => v / 12, seg = (v, c) => v > 0 ? `<i style="width:${v / mx * 100}%;background:${c}"></i>` : '';
   return `<div><div class="k ${b.total < 0 ? 'neg' : ''}">${eur(m(b.total))}<span class="pm"> /mo</span></div>
     <div class="kb stack">${seg(b.free, col)}${seg(b.rent, RENTC)}${seg(b.van, VANC)}</div>
-    <div class="d"><span class="${b.free < 0 ? 'w' : ''}">${eur(m(b.free))} income</span> · ${eur(m(b.rent))} home${b.van ? ` · ${eur(m(b.van))} van` : ''}<br>${sub}</div></div>`;
+    <div class="d"><span class="${b.free < 0 ? 'w' : ''}">${eur(m(b.free))} income</span> · ${eur(m(b.rent))} home${b.van ? ` · ${eur(m(b.van))} van` : ''}<br>${sub}${u && u.items.length ? `<br><span class="buy">Buys: ${u.items.join('; ')}</span>` : ''}</div></div>`;
 }
 const legend = () => `<div class="legend"><span><i style="background:linear-gradient(90deg,var(--fronts),var(--tables),var(--workshops),var(--objects))"></i>Extra net income: yours to spend</span><span><i style="background:${RENTC}"></i>Home: BRUIS pays the business share of your home costs${upgTotal() ? ' and the workshop upgrades' : ''}</span>${VANON ? `<span><i style="background:${VANC}"></i>Van: BRUIS pays it from year two</span>` : ''}</div>`;
 
@@ -437,7 +452,7 @@ function three() {
   IDEAS.forEach((i, n) => {
     h += `<div class="nm"><i class="dot" style="background:${COL(i.id)}"></i>${i.name}</div>`;
     rows[n].forEach(r => {
-      h += benCell(r.ben, COL(i.id), mx, `${r.units[0]} ${i.unit} · ${r.wk.toFixed(1)} h/wk${r.wk > 10 ? ' <span class="w">over 10</span>' : ''} · ${r.isVat ? '<span class="w">VAT</span>' : 'no VAT'}`);
+      h += benCell(r.ben, COL(i.id), mx, `${r.units[0]} ${i.unit} · ${r.wk.toFixed(1)} h/wk${r.wk > 10 ? ' <span class="w">over 10</span>' : ''} · ${r.isVat ? '<span class="w">VAT</span>' : 'no VAT'}`, r.upg);
     });
   });
   document.getElementById('leg3').innerHTML = legend();
@@ -595,22 +610,22 @@ function gOps(i, y, wk, vat) {
     startup: y === 1 ? i.startup : 0, toolsBought: tb, writeoff: y >= ty && y < ty + i.wYears ? i.tools / i.wYears : 0,
     inv: tb * 0.1, small: i.small, hard: units > CEIL[i.id] * (S === 'plan' ? 1.5 : 1) };
 }
-function gRun(list, y) {
+function gCore(list, y, u) {
   const wk = yHours(y), each = wk / list.length, solo = list.length === 1;
   const vat = solo ? null : list.reduce((a, i) => a + gOps(i, y, each, false).turnover, 0) > THR[y - 1];
   const o = list.map(i => gOps(i, y, each, solo ? null : vat));
   const sum = k => o.reduce((a, x) => a + x[k], 0);
   const profit = sum('profit') - (S === 'real' ? ACC : 0) - vanCost(y);
   const startup = sum('startup') - (y === 1 ? (list.length - 1) * 111.5 : 0);
-  const u = upg(y);
   const taxable = Math.max(0, profit - startup - wsDed() - u.wo - u.inv - sum('writeoff') - sum('inv') - sum('small'));
   const main = wk >= 30;
   let social, income;
   if (main) { social = Math.min(Math.max(3561.68, taxable * 0.205 * 1.042), 5103.05 * 4 * 1.042); income = incomeTax(taxable - social); }
   else { const t = tax(taxable); social = t.social; income = t.income; }
   const kept = profit - startup - u.cash - sum('toolsBought') - sum('small') - social - income;
-  return { wk, main, kept, mo: kept / 12, ben: benefit(kept, y), isVat: o.some(x => x.isVat), turnover: sum('turnover'), units: o.map(x => x.units), hard: o.some(x => x.hard) };
+  return { wk, main, kept, mo: kept / 12, ben: benefit(kept, y, u.cash), upg: u, isVat: o.some(x => x.isVat), turnover: sum('turnover'), units: o.map(x => x.units), hard: o.some(x => x.hard) };
 }
+const gRun = (list, y) => schedule((yy, u) => gCore(list, yy, u))[y - 1];
 function grow() {
   document.getElementById('gho').textContent = H3 + ' h';
   const rows = IDEAS.map(i => ({ name: i.name, id: i.id, unit: i.unit, r: [1, 2, 3].map(y => gRun([i], y)) }));
@@ -623,7 +638,7 @@ function grow() {
     h += `<div class="nm">${x.id ? `<i class="dot" style="background:${COL(x.id)}"></i>` : ''}${x.name}</div>`;
     x.r.forEach(r => {
       const sold = x.id ? `${(r.units[0] / 52).toFixed(r.units[0] < 520 ? 1 : 0)} ${x.unit}/wk` : r.units.map((u, k) => `${(u / 52).toFixed(1)} ${x.sel[k].unit}`).join(', ') + ' /wk';
-      h += benCell(r.ben, x.id ? COL(x.id) : 'var(--ink)', mx, `${sold}${r.hard ? ' <span class="flag">hard to sell</span>' : ''} · ${eur(r.turnover)}${r.isVat ? ' · <span class="w">VAT</span>' : ''}`);
+      h += benCell(r.ben, x.id ? COL(x.id) : 'var(--ink)', mx, `${sold}${r.hard ? ' <span class="flag">hard to sell</span>' : ''} · ${eur(r.turnover)}${r.isVat ? ' · <span class="w">VAT</span>' : ''}`, r.upg);
     });
   });
   document.getElementById('legg').innerHTML = legend();
@@ -637,9 +652,9 @@ function upgList() {
 }
 upgList();
 function homeSum() {
-  document.getElementById('upgw').textContent = upgTotal() ? `${eur(upgTotal())} incl. VAT, written off over 10 years; bought half in year ${S === 'real' ? 2 : 1} and half in year ${S === 'real' ? 3 : 2}. About 17% cheaper once BRUIS charges VAT.` : 'No upgrades.';
+  document.getElementById('upgw').textContent = upgTotal() ? `${eur(upgTotal())} incl. VAT, written off over 10 years. Bought one at a time, top to bottom, only in a year when BRUIS's own profit pays for it; about 17% cheaper once BRUIS charges VAT.` : 'No upgrades.';
   document.getElementById('areao').textContent = AREA + ' m²';
-  document.getElementById('hsum').innerHTML = `<div class="v">${eur(wsDed() / 12)}<span class="pm"> /mo</span></div><div class="t">home costs BRUIS carries (${Math.round(AREA / HOME_M2 * 100)}% of the house${METER ? ' + the workshop meter' : ''})${upgTotal() ? `, plus ${eur(upgTotal())} of upgrades` : ''}</div>`;
+  document.getElementById('hsum').innerHTML = `<div class="v">${eur(wsDed() / 12)}<span class="pm"> /mo</span></div><div class="t">home costs BRUIS carries (${Math.round(AREA / HOME_M2 * 100)}% of the house${METER ? ' + the workshop meter' : ''})${upgTotal() ? `, plus upgrades when profit allows` : ''}</div>`;
 }
 document.getElementById('vanon').addEventListener('change', e => { VANON = e.target.checked; all(); });
 document.getElementById('gh').addEventListener('input', e => { H3 = +e.target.value; grow(); });
