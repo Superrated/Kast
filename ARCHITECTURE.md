@@ -15,7 +15,7 @@ Fitted is one web page with no server and no framework. `python3 build.py` glues
 ## How it works
 
 1. **The design** is one object, `S`: the room (`S.room`), the columns (`S.sections`, each with levels in `zones`), materials (`S.mat`), options (`S.opts`) and, for a room with several walls, `S.proj`.
-2. **`build(S)`** (`10-build.js`) turns it into geometry `G`: every part (`G.panels`), front (`G.fronts`), 3D item (`G.items`), the hardware list (`G.H`) and design notes (`G.warns`).
+2. **`build(S)`** (`10-build.js`) turns it into geometry `G`: every part (`G.panels`), front (`G.fronts`), 3D item (`G.items`), the hardware list (`G.H`) and design notes (`G.warns`). During a shuffle, `withBuildCache()` remembers each result so the same design is never built twice (`build()` never changes its input, and nothing may change the `G` it returns).
 3. Every view reads `G`: the drawing (`31-elevation.js`), cut list and prices (`65-`, `66-`), the guide (`70-`), 3D (`80-`), exports (`50-`).
 4. **`changed()`** rebuilds `G` and redraws after every edit; undo/redo keeps snapshots of `S`.
 5. **Clicks**: every button has `data-act="…"`; `92-events.js` handles them in one switch. Number fields use `data-p="path.in.S"` and are saved automatically.

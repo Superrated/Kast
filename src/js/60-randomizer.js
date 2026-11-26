@@ -940,6 +940,9 @@ function mustOff() {
   });
 }
 function randomize(mode) {
+  return withBuildCache(() => randomize0(mode));
+}
+function randomize0(mode) {
   if (mode === 'keep' || mode === 'sec') {
     const off = mustOff(),
       key = JSON.stringify(S.opts.must || []) + geo.W;

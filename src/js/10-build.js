@@ -2,7 +2,27 @@
    build(S): turns the design state S into geometry G — every part (G.panels), front (G.fronts), 3D item (G.items), the hardware list (G.H) and the design notes (G.warns).
    Everything else (drawing, cut list, price, guide, 3D) reads G. New checks go at the end of build, next to accessCheck/roomCheck/cornerCheck.
 */
+/* During a shuffle the same design is built many times over (the tidy-up passes build it again to check their work).
+   withBuildCache() remembers each result for the length of one shuffle, keyed by the design itself.
+   Safe because build() never changes the design it is given, and nothing changes what it returns. */
+let BUILD_CACHE = null;
 function build(S) {
+  if (!BUILD_CACHE) return build0(S);
+  const k = JSON.stringify(S);
+  let G = BUILD_CACHE.get(k);
+  if (!G) BUILD_CACHE.set(k, (G = build0(S)));
+  return G;
+}
+function withBuildCache(fn) {
+  if (BUILD_CACHE) return fn();
+  BUILD_CACHE = new Map();
+  try {
+    return fn();
+  } finally {
+    BUILD_CACHE = null;
+  }
+}
+function build0(S) {
   regCustom(S);
   applyLinks(S);
   (S.sections || []).forEach(sc =>

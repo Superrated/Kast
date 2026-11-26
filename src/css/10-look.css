@@ -2077,3 +2077,26 @@ details.mx .mustbox .mbh b {
     padding: 8px 14px 8px 10px;
   }
 }
+
+/* while a shuffle works: busy cursor, the pressed button dims and gently pulses, the other shuffle buttons wait */
+body.shuffling,
+body.shuffling * {
+  cursor: progress !important;
+}
+body.shuffling [data-act='rand'] {
+  pointer-events: none;
+}
+[data-act='rand'].busy {
+  opacity: 0.6;
+  animation: shufPulse 0.7s ease-in-out infinite alternate;
+}
+@keyframes shufPulse {
+  to {
+    opacity: 0.35;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-act='rand'].busy {
+    animation: none;
+  }
+}

@@ -1614,6 +1614,9 @@ function styleColours(base, key, seed) {
   return fitTypes(st);
 }
 function styleNow(key) {
+  return withBuildCache(() => styleNow0(key));
+}
+function styleNow0(key) {
   const base = JSON.parse(JSON.stringify(S));
   let best = null,
     bs = Infinity;

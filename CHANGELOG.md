@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.136
+
+**Surprise me and the shuffle buttons no longer hang.** A shuffle took 2.5–4.7 seconds on a computer (longer on a phone), because each try was built over and over by the tidy-up passes: about 265 builds per shuffle, of only 40–70 different designs.
+
+- Within one shuffle each design is now built once and remembered (`withBuildCache`, in `10-build.js`); also used by the style buttons. A shuffle now takes about 0.5–0.7 seconds, with exactly the same results as before.
+- The pressed button dims and pulses straight away and the cursor shows it's busy, before the shuffle starts; the other shuffle buttons wait until it's done.
+
 ## v0.135
 
 **One way through the app: Room → Design → Order → Build.** The same four steps in the top bar on a computer and the bottom bar on a phone; each step shows only its own settings and screens.

@@ -2345,9 +2345,25 @@ document.addEventListener('click', e => {
       changed(true);
       break;
     }
-    case 'rand':
-      randomize(a);
+    case 'rand': {
+      // show the press first (button dims, busy cursor), then shuffle on the next frame, so a tap never feels frozen
+      if (ui.shufBusy) break;
+      ui.shufBusy = true;
+      b.classList.add('busy');
+      document.body.classList.add('shuffling');
+      requestAnimationFrame(() =>
+        setTimeout(() => {
+          try {
+            randomize(a);
+          } finally {
+            ui.shufBusy = false;
+            b.classList.remove('busy');
+            document.body.classList.remove('shuffling');
+          }
+        }, 0)
+      );
       break;
+    }
     case 'style':
       styleNow(a);
       break;
