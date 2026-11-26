@@ -2100,3 +2100,29 @@ body.shuffling [data-act='rand'] {
     animation: none;
   }
 }
+
+/* ＋ New in the top bar: always visible, so starting a new design is one obvious tap */
+.acts .btn.newb {
+  gap: 4px;
+  font-weight: 600;
+}
+.acts .btn.newb span[aria-hidden] {
+  font-size: 1.1em;
+  line-height: 1;
+}
+.acts .btn.newb {
+  display: inline-flex;
+  align-items: center;
+}
+@media (max-width: 520px) {
+  .acts .btn.newb .nbt {
+    display: none;
+  }
+}
+.mmenu button.mnew {
+  font-weight: 600;
+}
+/* the start dialog's column may never grow wider than the screen (on a phone the choices stack instead) */
+#stm .mbody {
+  grid-template-columns: minmax(0, 1fr);
+}

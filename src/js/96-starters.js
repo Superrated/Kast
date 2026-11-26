@@ -458,7 +458,8 @@ function stRender() {
       return `<option value="${esc(r.id)}"${r.id === ST.roomId ? ' selected' : ''}>${esc(r.name || 'Room')} (${f0(+rr.W)} × ${f0(+rr.H)} mm)</option>`;
     })
     .join('')}</select></div>`;
-  m.innerHTML = `<div class="mbox" role="dialog" aria-modal="true" aria-label="New design"><div class="mhead"><h2>New design</h2></div><div class="mbody" style="display:grid;gap:14px">
+  m.innerHTML = `<div class="mbox" role="dialog" aria-modal="true" aria-label="Start a new design"><div class="mhead"><h2>Start a new design</h2></div><div class="mbody" style="display:grid;gap:14px">
+    <p class="hintp" style="margin:0">Pick how you want to start. The design you have open now is kept — you'll find it under ☰ → My designs.</p>
     <div class="sthub"><button type="button" class="sthb" data-act="wizard"><b>Step by step</b><small>Measure your wall and tell Fitted what you need — it proposes designs.</small></button>${rooms.length ? `<button type="button" class="sthb" data-act="stInRoom"><b>In a saved room</b><small>${rooms.length} room${rooms.length > 1 ? 's' : ''} saved — choose the room below, then a design.</small></button>` : ''}<button type="button" class="sthb" data-act="wizStart"><b>The example attic</b><small>A sloped attic wall with a beam, ready to explore.</small></button></div>
     <h3 class="sth">Or start from a ready-made design</h3>
     <p class="hintp" style="margin:0">Pick one and make it yours — every part can be changed. They go from simple to showing off everything Fitted can do.</p>

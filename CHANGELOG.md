@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.137
+
+**Starting a new design is one obvious tap.**
+
+- **＋ New** button in the top bar, next to Save, on every screen (just ＋ on a narrow phone). Before, "New design" was hidden in the ☰ menu.
+- In the ☰ menu, **＋ New design** is now the first item under Designs.
+- The dialog is called **Start a new design** and says up front that the design you have open is kept (☰ → My designs).
+- Fixed: on a phone the start dialog was wider than the screen (cards and text cut off on the right); the choices now stack.
+
 ## v0.136
 
 **Surprise me and the shuffle buttons no longer hang.** A shuffle took 2.5–4.7 seconds on a computer (longer on a phone), because each try was built over and over by the tidy-up passes: about 265 builds per shuffle, of only 40–70 different designs.
